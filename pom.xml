@@ -12,12 +12,12 @@
     </properties>
     <distributionManagement>
         <repository>
-            <id>deployment</id>
+            <id>digitalid-deployment</id>
             <name>Final Releases</name>
             <url>https://repo.digitalid.net/content/repositories/releases/</url>
         </repository>
         <snapshotRepository>
-            <id>deployment</id>
+            <id>digitalid-deployment</id>
             <name>Snapshot Releases</name>
             <url>https://repo.digitalid.net/content/repositories/snapshots/</url>
         </snapshotRepository>
@@ -48,13 +48,13 @@
                         <link>http://docs.oracle.com/javase/7/docs/api/</link>
                     </links>
                     <doctitle>Digital ID Database</doctitle>
-<!--                    <tagletArtifacts>
+                    <tagletArtifacts>
                         <tagletArtifact>
                             <groupId>net.digitalid</groupId>
-                            <artifactId>utility-taglets</artifactId>
+                            <artifactId>digitalid-utility-taglets</artifactId>
                             <version>1.0.0</version>
                         </tagletArtifact>
-                    </tagletArtifacts>-->
+                    </tagletArtifacts>
                 </configuration>
                 <executions>
                     <execution>
