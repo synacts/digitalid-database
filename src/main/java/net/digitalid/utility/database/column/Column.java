@@ -165,7 +165,7 @@ public class Column {
     
     @Pure
     @Override
-    public @Nonnull String toString() {
+    public @Nonnull String toString() { // TODO: Rename to getDeclaration?
         return name + " " + type + (nullable ? "" : " NOT NULL");
     }
     

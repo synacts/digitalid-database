@@ -22,6 +22,9 @@ import net.digitalid.utility.system.logger.Log;
 /**
  * This class is used to configure various databases.
  * 
+ * TODO: Introduce an abstract getMaximumIdentifierLength().
+ * TODO: Split this class into various subconfigurations.
+ * 
  * @see MySQLConfiguration
  * @see PostgreSQLConfiguration
  * @see SQLiteConfiguration

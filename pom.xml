@@ -90,6 +90,11 @@
         </dependency>
         <dependency>
             <groupId>net.digitalid</groupId>
+            <artifactId>digitalid-utility-collections</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.digitalid</groupId>
             <artifactId>digitalid-utility-system</artifactId>
             <version>1.0.0</version>
         </dependency>
