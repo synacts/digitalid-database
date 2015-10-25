@@ -12,9 +12,6 @@ import net.digitalid.utility.database.configuration.Database;
  * Otherwise, the current transaction has to be rolled back by the caller of the method (in case there is one).
  * 
  * @see NonCommitting
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Documented
 @Retention(RetentionPolicy.CLASS)

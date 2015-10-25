@@ -11,9 +11,6 @@ import net.digitalid.utility.database.configuration.Database;
  * This annotation indicates that a method should only be called if the {@link Database database} is in {@link Database#isSingleAccess() single-access} mode.
  * 
  * @see OnlyForMultiAccess
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Documented
 @Retention(RetentionPolicy.CLASS)

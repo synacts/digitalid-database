@@ -12,9 +12,6 @@ import net.digitalid.utility.database.configuration.Database;
 
 /**
  * Columns are used to store data in the database.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public class Column {

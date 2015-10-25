@@ -20,9 +20,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * @param <E> the type of the external object that is needed to restore an object, which is quite often an {@link Entity}.
  *            In case no external information is needed for the restoration of an object, declare it as an {@link Object}.
  * @param <K> the type of the objects that the other factory stores and restores (usually as a key for the objects of this factory).
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class FactoryBasedStoringFactory<O, E, K> extends AbstractStoringFactory<O, E> {
@@ -42,7 +39,7 @@ public abstract class FactoryBasedStoringFactory<O, E, K> extends AbstractStorin
      * @param keyFactory the factory used to store and restore the object's key.
      */
     protected FactoryBasedStoringFactory(@Nonnull AbstractStoringFactory<K, E> keyFactory) {
-        super(keyFactory.getColumns().toArray());
+        super(keyFactory.getColumns());
         
         this.keyFactory = keyFactory;
     }

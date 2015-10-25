@@ -12,9 +12,6 @@ import net.digitalid.utility.database.configuration.Database;
  * In order to being able to roll back the whole method, actions and queries should never commit.
  * 
  * @see Committing
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Documented
 @Retention(RetentionPolicy.CLASS)

@@ -29,9 +29,6 @@ import net.digitalid.utility.system.logger.Log;
  * Moreover, if a host is run with SQLite as database, its identifier may not contain a hyphen.
  * 
  * @see Configuration
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Stateless
 public final class Database {

@@ -8,9 +8,6 @@ import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class enumerates the various SQL types.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public enum SQLType {

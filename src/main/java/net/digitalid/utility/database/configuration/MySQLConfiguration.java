@@ -23,9 +23,6 @@ import net.digitalid.utility.system.directory.Directory;
 
 /**
  * This class configures a MySQL database.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class MySQLConfiguration extends Configuration {

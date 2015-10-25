@@ -20,9 +20,6 @@ import net.digitalid.utility.system.directory.Directory;
 
 /**
  * This class configures a SQLite database.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public final class SQLiteConfiguration extends Configuration {

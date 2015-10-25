@@ -8,9 +8,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 
 /**
  * This class allows to retrieve foreign key references that are {@link Site site}-independent.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Stateless
 public abstract class GeneralReference extends Reference {

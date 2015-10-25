@@ -10,9 +10,6 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * This class allows to retrieve foreign key references in a unified way.
  * 
  * @see GeneralReference
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Stateless
 public abstract class Reference {

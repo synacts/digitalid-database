@@ -11,9 +11,6 @@ import net.digitalid.utility.database.configuration.Database;
  * This annotation indicates that a method may only be called when the {@link Database database} is {@link Database#isLocked() locked}.
  * 
  * @see NonLocked
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Documented
 @Retention(RetentionPolicy.CLASS)

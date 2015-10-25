@@ -30,9 +30,6 @@ import net.digitalid.utility.system.logger.Log;
  * @see SQLiteConfiguration
  * 
  * @see Database
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class Configuration {

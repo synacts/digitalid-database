@@ -33,9 +33,6 @@ import net.digitalid.utility.database.configuration.Database;
  * @see Storable
  * @see BlockBasedStoringFactory
  * @see FactoryBasedStoringFactory
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 @Immutable
 public abstract class AbstractStoringFactory<O, E> {
@@ -496,14 +493,23 @@ public abstract class AbstractStoringFactory<O, E> {
      * 
      * @param columns the columns used to store objects of the storable class.
      */
-    protected AbstractStoringFactory(@Captured @Nonnull @NonNullableElements Column... columns) {
-        this.columns = FreezableArray.getNonNullable(columns).freeze();
+    protected AbstractStoringFactory(@Nonnull @NonNullableElements @Frozen ReadOnlyArray<Column> columns) {
+        this.columns = columns;
         int maximumColumnLength = 0;
         for (final @Nonnull Column column : columns) {
             final int columnLength = column.getName().length();
             if (columnLength > maximumColumnLength) maximumColumnLength = columnLength;
         }
         this.maximumColumnLength = maximumColumnLength;
+    }
+    
+    /**
+     * Creates a new storing factory with the given columns.
+     * 
+     * @param columns the columns used to store objects of the storable class.
+     */
+    protected AbstractStoringFactory(@Captured @Nonnull @NonNullableElements Column... columns) {
+        this(FreezableArray.getNonNullable(columns).freeze());
     }
     
 }

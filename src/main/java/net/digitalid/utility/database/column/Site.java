@@ -7,9 +7,6 @@ import net.digitalid.utility.database.configuration.Database;
 
 /**
  * This class provides an interface so that the same code works on both hosts and clients.
- * 
- * @author Kaspar Etter (kaspar.etter@digitalid.net)
- * @version 1.0.0
  */
 public abstract class Site {
     
