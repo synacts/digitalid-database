@@ -17,7 +17,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
  * This class implements a storing factory that is based on another storing factory.
  * 
  * @param <O> the type of the objects that this factory can store and restore, which is typically the surrounding class.
- * @param <E> the type of the external object that is needed to restore an object, which is quite often an {@link Entity}.
+ * @param <E> the type of the external object that is needed to restore an object, which is quite often an entity.
  *            In case no external information is needed for the restoration of an object, declare it as an {@link Object}.
  * @param <K> the type of the objects that the other factory stores and restores (usually as a key for the objects of this factory).
  */

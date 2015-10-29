@@ -1,4 +1,4 @@
-package net.digitalid.utility.database.column;
+package net.digitalid.utility.database.site;
 
 import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.state.Pure;

@@ -20,18 +20,17 @@ import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.Column;
-import net.digitalid.utility.database.column.Site;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.site.Site;
 
 /**
  * A storing factory allows to store and restore objects into and from the {@link Database database}.
  * 
  * @param <O> the type of the objects that this factory can store and restore, which is typically the surrounding class.
- * @param <E> the type of the external object that is needed to restore an object, which is quite often an {@link Entity}.
+ * @param <E> the type of the external object that is needed to restore an object, which is quite often an entity.
  *            In case no external information is needed for the restoration of an object, declare it as an {@link Object}.
  * 
  * @see Storable
- * @see BlockBasedStoringFactory
  * @see FactoryBasedStoringFactory
  */
 @Immutable
@@ -354,7 +353,6 @@ public abstract class AbstractStoringFactory<O, E> {
      * Returns the name of each column followed by the equality sign and a question mark separated by commas.
      * 
      * @param prefix the prefix that is to be prepended to all column names.
-     * @param object the object whose values are to be used for equality.
      * 
      * @return the name of each column followed by the equality sign and a question mark separated by commas.
      */
@@ -365,8 +363,6 @@ public abstract class AbstractStoringFactory<O, E> {
     
     /**
      * Returns the name of each column followed by the equality sign and a question mark separated by commas.
-     * 
-     * @param object the object whose values are to be used for equality.
      * 
      * @return the name of each column followed by the equality sign and a question mark separated by commas.
      */
@@ -380,7 +376,6 @@ public abstract class AbstractStoringFactory<O, E> {
      * 
      * @param alias the table alias that is to be prepended to all columns.
      * @param prefix the prefix that is to be prepended to all column names.
-     * @param object the object whose values are to be used for equality.
      * 
      * @return the name of each column followed by the equality sign and a question mark separated by {@code AND}.
      */
@@ -393,7 +388,6 @@ public abstract class AbstractStoringFactory<O, E> {
      * Returns the name of each column followed by the equality sign and a question mark separated by {@code AND}.
      * 
      * @param prefix the prefix that is to be prepended to all column names.
-     * @param object the object whose values are to be used for equality.
      * 
      * @return the name of each column followed by the equality sign and a question mark separated by {@code AND}.
      */
@@ -404,8 +398,6 @@ public abstract class AbstractStoringFactory<O, E> {
     
     /**
      * Returns the name of each column followed by the equality sign and a question mark separated by {@code AND}.
-     * 
-     * @param object the object whose values are to be used for equality.
      * 
      * @return the name of each column followed by the equality sign and a question mark separated by {@code AND}.
      */

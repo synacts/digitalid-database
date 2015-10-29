@@ -2,6 +2,7 @@ package net.digitalid.utility.database.storing;
 
 import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.configuration.Database;
 
 /**
  * Objects of classes that implement this interface can be stored in the {@link Database database}.
