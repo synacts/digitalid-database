@@ -65,6 +65,11 @@ public enum SQLType {
     STRING(Types.VARCHAR, "TEXT"),
     
     /**
+     * The SQL type for varchars.
+     */
+    VARCHAR(Types.VARCHAR, "VARCHAR(63) COLLATE " + Database.getConfiguration().BINARY()),
+    
+    /**
      * The SQL type for chars.
      */
     CHAR(Types.VARCHAR, "CHAR(1)"),

@@ -2,6 +2,7 @@ package net.digitalid.utility.database.column;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
@@ -20,6 +21,7 @@ public abstract class Reference {
      * 
      * @return whether this reference depends on an entity.
      */
+    @Pure
     public abstract boolean isEntityDependent();
     
     /**
