@@ -24,14 +24,13 @@ import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.site.Site;
 
 /**
- * A storing factory allows to store and restore objects into and from the {@link Database database}.
+ * An SQL converter allows to store and restore objects into and from the {@link Database database}.
  * 
- * @param <O> the type of the objects that this factory can store and restore, which is typically the surrounding class.
+ * @param <O> the type of the objects that this converter can store and restore, which is typically the surrounding class.
  * @param <E> the type of the external object that is needed to restore an object, which is quite often an entity.
  *            In case no external information is needed for the restoration of an object, declare it as an {@link Object}.
  * 
- * @see Storable
- * @see FactoryBasedStoringFactory
+ * @see SQL
  */
 @Immutable
 public abstract class AbstractSQLConverter<O, E> {
@@ -39,14 +38,14 @@ public abstract class AbstractSQLConverter<O, E> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Columns –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Stores the columns used to store objects of the storable class in the database.
+     * Stores the columns used to store objects of the surrounding class in the database.
      */
     private final @Nonnull @Frozen @NonNullableElements ReadOnlyArray<Column> columns;
     
     /**
-     * Returns the columns used to store objects of the storable class in the database.
+     * Returns the columns used to store objects of the surrounding class in the database.
      * 
-     * @return the columns used to store objects of the storable class in the database.
+     * @return the columns used to store objects of the surrounding class in the database.
      */
     @Pure
     public final @Nonnull @Frozen @NonNullableElements ReadOnlyArray<Column> getColumns() {
@@ -54,9 +53,9 @@ public abstract class AbstractSQLConverter<O, E> {
     }
     
     /**
-     * Returns the number of columns used to store objects of the storable class in the database.
+     * Returns the number of columns used to store objects of the surrounding class in the database.
      * 
-     * @return the number of columns used to store objects of the storable class in the database.
+     * @return the number of columns used to store objects of the surrounding class in the database.
      */
     @Pure
     public final int getNumberOfColumns() {
@@ -481,9 +480,9 @@ public abstract class AbstractSQLConverter<O, E> {
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
     /**
-     * Creates a new storing factory with the given columns.
+     * Creates a new SQL converter with the given columns.
      * 
-     * @param columns the columns used to store objects of the storable class.
+     * @param columns the columns used to store objects of the surrounding class.
      */
     protected AbstractSQLConverter(@Nonnull @NonNullableElements @Frozen ReadOnlyArray<Column> columns) {
         this.columns = columns;
@@ -496,9 +495,9 @@ public abstract class AbstractSQLConverter<O, E> {
     }
     
     /**
-     * Creates a new storing factory with the given columns.
+     * Creates a new SQL converter with the given columns.
      * 
-     * @param columns the columns used to store objects of the storable class.
+     * @param columns the columns used to store objects of the surrounding class.
      */
     protected AbstractSQLConverter(@Captured @Nonnull @NonNullableElements Column... columns) {
         this(FreezableArray.getNonNullable(columns).freeze());
