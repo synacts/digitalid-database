@@ -14,7 +14,7 @@ import net.digitalid.utility.database.site.Site;
 @Stateless
 public final class GeneralReference extends Reference {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Entity Dependence –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Entity Dependence -------------------------------------------------- */
     
     @Pure
     @Override
@@ -22,7 +22,7 @@ public final class GeneralReference extends Reference {
         return false;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– String –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- String -------------------------------------------------- */
     
     /**
      * Stores the string of this reference.
@@ -50,7 +50,7 @@ public final class GeneralReference extends Reference {
         return get();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new general reference with the given string.

@@ -27,7 +27,7 @@ import net.digitalid.utility.system.directory.Directory;
 @Immutable
 public final class MySQLConfiguration extends Configuration {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Existence –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Existence -------------------------------------------------- */
     
     /**
      * Returns whether a MySQL configuration exists.
@@ -39,7 +39,7 @@ public final class MySQLConfiguration extends Configuration {
         return new File(Directory.getDataDirectory().getPath() + File.separator + "MySQL.conf").exists();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Fields –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Fields -------------------------------------------------- */
     
     /**
      * Stores the server address of the database.
@@ -71,7 +71,7 @@ public final class MySQLConfiguration extends Configuration {
      */
     private final @Nonnull Properties properties = new Properties();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates a new MySQL configuration by reading the properties from the indicated file or from the user's input.
@@ -176,7 +176,7 @@ public final class MySQLConfiguration extends Configuration {
         return new MySQLConfiguration("MySQL", false);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Database –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Database -------------------------------------------------- */
     
     @Pure
     @Override
@@ -200,7 +200,7 @@ public final class MySQLConfiguration extends Configuration {
         Database.commit();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Syntax –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Syntax -------------------------------------------------- */
     
     /**
      * The pattern that valid database identifiers have to match.
@@ -304,7 +304,7 @@ public final class MySQLConfiguration extends Configuration {
         return Boolean.toString(value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Index –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Index -------------------------------------------------- */
     
     @Pure
     @Override

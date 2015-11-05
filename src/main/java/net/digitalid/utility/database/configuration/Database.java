@@ -33,7 +33,7 @@ import net.digitalid.utility.system.logger.Log;
 @Stateless
 public final class Database {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Configuration –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Configuration -------------------------------------------------- */
     
     /**
      * Stores the configuration of the database.
@@ -56,7 +56,7 @@ public final class Database {
         return configuration;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Single-Access –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Single-Access -------------------------------------------------- */
     
     /**
      * Stores whether the database is set up for single-access.
@@ -87,7 +87,7 @@ public final class Database {
         return !singleAccess;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Main Thread –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Main Thread -------------------------------------------------- */
     
     /**
      * Stores whether the current thread is the main thread used for initializations.
@@ -108,7 +108,7 @@ public final class Database {
         return mainThread.get();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Initialization –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Initialization -------------------------------------------------- */
     
     /**
      * Initializes the database with the given configuration.
@@ -142,7 +142,7 @@ public final class Database {
     @Pure
     public static boolean isInitialized() { return configuration != null; }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Connection –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Connection -------------------------------------------------- */
     
     /**
      * Stores the open connection to the database that is associated with the current thread.
@@ -181,7 +181,7 @@ public final class Database {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Transactions –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Transactions -------------------------------------------------- */
     
     /**
      * Commits all changes of the current thread since the last commit or rollback.
@@ -222,7 +222,7 @@ public final class Database {
         getConnection().close();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Savepoints –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Savepoints -------------------------------------------------- */
     
     /**
      * Returns a savepoint for the connection of the current thread or null if not supported or required.
@@ -248,7 +248,7 @@ public final class Database {
         getConfiguration().rollback(getConnection(), savepoint);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Statements –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Statements -------------------------------------------------- */
     
     /**
      * Creates a new statement on the connection of the current thread.
@@ -276,7 +276,7 @@ public final class Database {
         return getConnection().prepareStatement(SQL);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Conversions –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Conversions -------------------------------------------------- */
     
     /**
      * Returns the syntax for storing a boolean value.
@@ -291,7 +291,7 @@ public final class Database {
         return getConfiguration().BOOLEAN(value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Insertions –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Insertions -------------------------------------------------- */
     
     /**
      * Executes the given insertion and returns the generated key.
@@ -339,7 +339,7 @@ public final class Database {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Ignoring –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Ignoring -------------------------------------------------- */
     
     /**
      * Creates a rule to ignore duplicate insertions.
@@ -372,7 +372,7 @@ public final class Database {
         getConfiguration().onInsertNotIgnore(statement, table);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Updating –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Updating -------------------------------------------------- */
     
     /**
      * Creates a rule to update duplicate insertions.
@@ -404,7 +404,7 @@ public final class Database {
         getConfiguration().onInsertNotUpdate(statement, table);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Locking –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Locking -------------------------------------------------- */
     
     /**
      * Locks the database if its access should be serialized.
@@ -435,7 +435,7 @@ public final class Database {
         return getConfiguration().isLocked();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Purging –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Purging -------------------------------------------------- */
     
     /**
      * Stores the timer to schedule tasks.

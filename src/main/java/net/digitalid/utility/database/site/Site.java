@@ -10,7 +10,7 @@ import net.digitalid.utility.database.configuration.Database;
  */
 public abstract class Site {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Prefix –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Prefix -------------------------------------------------- */
     
     /**
      * Returns whether the given prefix is valid.
@@ -40,7 +40,7 @@ public abstract class Site {
         return prefix;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new site with the given prefix.
@@ -53,7 +53,7 @@ public abstract class Site {
         this.prefix = prefix;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Reference –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Reference -------------------------------------------------- */
         
     /**
      * Returns the foreign key referenced by the entity column.

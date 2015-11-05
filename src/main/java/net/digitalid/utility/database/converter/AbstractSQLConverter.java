@@ -35,17 +35,17 @@ import net.digitalid.utility.database.site.Site;
 @Immutable
 public abstract class AbstractSQLConverter<O, E> {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Columns –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Columns -------------------------------------------------- */
     
     /**
-     * Stores the columns used to store objects of the surrounding class in the database.
+     * Stores the columns used to store objects of the class that implements SQL in the database.
      */
     private final @Nonnull @Frozen @NonNullableElements ReadOnlyArray<Column> columns;
     
     /**
-     * Returns the columns used to store objects of the surrounding class in the database.
+     * Returns the columns used to store objects of the class that implements SQL in the database.
      * 
-     * @return the columns used to store objects of the surrounding class in the database.
+     * @return the columns used to store objects of the class that implements SQL in the database.
      */
     @Pure
     public final @Nonnull @Frozen @NonNullableElements ReadOnlyArray<Column> getColumns() {
@@ -53,9 +53,9 @@ public abstract class AbstractSQLConverter<O, E> {
     }
     
     /**
-     * Returns the number of columns used to store objects of the surrounding class in the database.
+     * Returns the number of columns used to store objects of the class that implements SQL in the database.
      * 
-     * @return the number of columns used to store objects of the surrounding class in the database.
+     * @return the number of columns used to store objects of the class that implements SQL in the database.
      */
     @Pure
     public final int getNumberOfColumns() {
@@ -174,7 +174,7 @@ public abstract class AbstractSQLConverter<O, E> {
         return getForeignKeys("", site);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storing (with Statement) –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Storing (with Statement) -------------------------------------------------- */
     
     /**
      * Returns the value of the given object for each column.
@@ -314,7 +314,7 @@ public abstract class AbstractSQLConverter<O, E> {
         return getConditionForStatement("", object);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Storing (with PreparedStatement) –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Storing (with PreparedStatement) -------------------------------------------------- */
     
     /**
      * Returns as many question marks as columns separated by commas.
@@ -443,13 +443,13 @@ public abstract class AbstractSQLConverter<O, E> {
         else storeNonNullable(object, preparedStatement, parameterIndex);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Retrieving –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Retrieving -------------------------------------------------- */
     
     /**
      * Returns a nullable object from the given columns of the result set.
      * The number of columns that are read is given by {@link #getNumberOfColumns()}.
      * 
-     * @param entity the entisetNonNullablety which is needed to reconstruct the object.
+     * @param entity the entisetNonNullablety which is needed to recover the object.
      * @param resultSet the result set from which the data is to be retrieved.
      * @param columnIndex the starting index of the columns containing the data.
      * 
@@ -463,7 +463,7 @@ public abstract class AbstractSQLConverter<O, E> {
      * Returns a non-nullable object from the given columns of the result set.
      * The number of columns that are read is given by {@link #getNumberOfColumns()}.
      * 
-     * @param entity the entity which is needed to reconstruct the object.
+     * @param entity the entity which is needed to recover the object.
      * @param resultSet the result set from which the data is to be retrieved.
      * @param columnIndex the starting index of the columns containing the data.
      * 
@@ -477,12 +477,12 @@ public abstract class AbstractSQLConverter<O, E> {
         return object;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new SQL converter with the given columns.
      * 
-     * @param columns the columns used to store objects of the surrounding class.
+     * @param columns the columns used to store objects of the class that implements SQL.
      */
     protected AbstractSQLConverter(@Nonnull @NonNullableElements @Frozen ReadOnlyArray<Column> columns) {
         this.columns = columns;
@@ -497,7 +497,7 @@ public abstract class AbstractSQLConverter<O, E> {
     /**
      * Creates a new SQL converter with the given columns.
      * 
-     * @param columns the columns used to store objects of the surrounding class.
+     * @param columns the columns used to store objects of the class that implements SQL.
      */
     protected AbstractSQLConverter(@Captured @Nonnull @NonNullableElements Column... columns) {
         this(FreezableArray.getNonNullable(columns).freeze());

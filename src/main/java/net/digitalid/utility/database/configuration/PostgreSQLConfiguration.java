@@ -31,7 +31,7 @@ import net.digitalid.utility.system.directory.Directory;
 @Immutable
 public final class PostgreSQLConfiguration extends Configuration {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Existence –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Existence -------------------------------------------------- */
     
     /**
      * Returns whether a PostgreSQL configuration exists.
@@ -42,7 +42,7 @@ public final class PostgreSQLConfiguration extends Configuration {
         return new File(Directory.getDataDirectory().getPath() + File.separator + "PostgreSQL.conf").exists();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Fields –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Fields -------------------------------------------------- */
     
     /**
      * Stores the server address of the database.
@@ -74,7 +74,7 @@ public final class PostgreSQLConfiguration extends Configuration {
      */
     private final @Nonnull Properties properties = new Properties();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates a new PostgreSQL configuration by reading the properties from the indicated file or from the user's input.
@@ -180,7 +180,7 @@ public final class PostgreSQLConfiguration extends Configuration {
         return new PostgreSQLConfiguration("PostgreSQL", false);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Database –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Database -------------------------------------------------- */
     
     @Pure
     @Override
@@ -205,7 +205,7 @@ public final class PostgreSQLConfiguration extends Configuration {
         Database.commit();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Syntax –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Syntax -------------------------------------------------- */
     
     /**
      * The pattern that valid database identifiers have to match.
@@ -308,7 +308,7 @@ public final class PostgreSQLConfiguration extends Configuration {
         return Boolean.toString(value);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Index –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Index -------------------------------------------------- */
     
     @Pure
     @Override
@@ -336,7 +336,7 @@ public final class PostgreSQLConfiguration extends Configuration {
         statement.execute(string.toString());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Savepoints –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Savepoints -------------------------------------------------- */
     
     @Locked
     @Override
@@ -353,7 +353,7 @@ public final class PostgreSQLConfiguration extends Configuration {
         connection.releaseSavepoint(savepoint);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Ignoring –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Ignoring -------------------------------------------------- */
     
     @Locked
     @Override
@@ -387,7 +387,7 @@ public final class PostgreSQLConfiguration extends Configuration {
         statement.executeUpdate("DROP RULE IF EXISTS " + table + "_on_insert_ignore ON " + table);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Updating –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Updating -------------------------------------------------- */
     
     @Locked
     @Override

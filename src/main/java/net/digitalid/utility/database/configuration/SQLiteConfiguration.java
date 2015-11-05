@@ -24,7 +24,7 @@ import net.digitalid.utility.system.directory.Directory;
 @Immutable
 public final class SQLiteConfiguration extends Configuration {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Existence –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Existence -------------------------------------------------- */
     
     /**
      * Returns whether a SQLite database exists.
@@ -46,7 +46,7 @@ public final class SQLiteConfiguration extends Configuration {
         return new File(Directory.getDataDirectory().getPath() + File.separator + name + ".db-journal").exists();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Fields –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Fields -------------------------------------------------- */
     
     /**
      * Stores the name of the database.
@@ -58,7 +58,7 @@ public final class SQLiteConfiguration extends Configuration {
      */
     private final @Nonnull Properties properties = new Properties();
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructors –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
     
     /**
      * Creates a new SQLite configuration with the given name.
@@ -134,7 +134,7 @@ public final class SQLiteConfiguration extends Configuration {
         return new SQLiteConfiguration("SQLite", false);
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Database –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Database -------------------------------------------------- */
     
     @Pure
     @Override
@@ -165,7 +165,7 @@ public final class SQLiteConfiguration extends Configuration {
         new File(Directory.getDataDirectory().getPath() + File.separator + name + ".db-journal").delete();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Syntax –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Syntax -------------------------------------------------- */
     
     /**
      * The pattern that valid database identifiers have to match.
@@ -268,7 +268,7 @@ public final class SQLiteConfiguration extends Configuration {
         return value ? "1" : "0";
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Index –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Index -------------------------------------------------- */
     
     @Pure
     @Override
@@ -293,7 +293,7 @@ public final class SQLiteConfiguration extends Configuration {
         statement.executeUpdate(string.append(")").toString());
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Supports –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Supports -------------------------------------------------- */
     
     @Pure
     @Override
@@ -301,7 +301,7 @@ public final class SQLiteConfiguration extends Configuration {
         return false;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Insertions –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Insertions -------------------------------------------------- */
     
     @Locked
     @Override
@@ -314,7 +314,7 @@ public final class SQLiteConfiguration extends Configuration {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Locking –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Locking -------------------------------------------------- */
     
     /**
      * Stores a reentrant lock to serialize database access.

@@ -34,7 +34,7 @@ import net.digitalid.utility.system.logger.Log;
 @Immutable
 public abstract class Configuration {
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Validity –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Validity -------------------------------------------------- */
     
     /**
      * The pattern that valid database names have to match.
@@ -53,7 +53,7 @@ public abstract class Configuration {
         return name.length() <= 40 && PATTERN.matcher(name).matches();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Constructor –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new configuration with the given driver.
@@ -69,7 +69,7 @@ public abstract class Configuration {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Database –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Database -------------------------------------------------- */
     
     /**
      * Returns the database URL of this configuration.
@@ -123,7 +123,7 @@ public abstract class Configuration {
         return Database.getConnection();
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Syntax –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Syntax -------------------------------------------------- */
     
     /**
      * Returns whether the given identifier is valid.
@@ -255,7 +255,7 @@ public abstract class Configuration {
     @Pure
     public abstract @Nonnull String BOOLEAN(boolean value);
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Index –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Index -------------------------------------------------- */
     
     /**
      * Returns the syntax for creating an index inside a table declaration.
@@ -282,7 +282,7 @@ public abstract class Configuration {
     @NonCommitting
     public abstract void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException;
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Supports –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Supports -------------------------------------------------- */
     
     /**
      * Returns whether binary streams are supported.
@@ -294,7 +294,7 @@ public abstract class Configuration {
         return true;
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Insertions –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Insertions -------------------------------------------------- */
     
     /**
      * Executes the given insertion and returns the generated key.
@@ -314,7 +314,7 @@ public abstract class Configuration {
         }
     }
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Savepoints –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Savepoints -------------------------------------------------- */
     
     /**
      * Returns a savepoint for the given connection or null if not supported or required.
@@ -340,7 +340,7 @@ public abstract class Configuration {
     protected void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws SQLException {}
     
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Ignoring –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Ignoring -------------------------------------------------- */
     
     /**
      * Creates a rule to ignore duplicate insertions.
@@ -366,7 +366,7 @@ public abstract class Configuration {
     protected void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws SQLException {}
     
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Updating –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Updating -------------------------------------------------- */
     
     /**
      * Creates a rule to update duplicate insertions.
@@ -393,7 +393,7 @@ public abstract class Configuration {
     protected void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws SQLException {}
     
     
-    /* –––––––––––––––––––––––––––––––––––––––––––––––––– Locking –––––––––––––––––––––––––––––––––––––––––––––––––– */
+    /* -------------------------------------------------- Locking -------------------------------------------------- */
     
     /**
      * Stores a lock counter that is associated with the current thread.
