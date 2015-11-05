@@ -1,4 +1,4 @@
-package net.digitalid.utility.database.storing;
+package net.digitalid.utility.database.converter;
 
 import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.state.Pure;
@@ -11,7 +11,7 @@ import net.digitalid.utility.database.configuration.Database;
  * @param <E> the type of the external object that is needed to restore an object, which is quite often an Entity.
  *            In case no external information is needed for the restoration of an object, declare it as an Object.
  */
-public interface Storable<O, E> {
+public interface SQL<O, E> {
     
     /**
      * Returns the factory to store and restore objects of this class.
@@ -19,6 +19,6 @@ public interface Storable<O, E> {
      * @return the factory to store and restore objects of this class.
      */
     @Pure
-    public @Nonnull AbstractStoringFactory<O, E> getStoringFactory();
+    public @Nonnull AbstractSQLConverter<O, E> getStoringFactory();
     
 }

@@ -1,4 +1,4 @@
-package net.digitalid.utility.database.storing;
+package net.digitalid.utility.database.converter;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -34,7 +34,7 @@ import net.digitalid.utility.database.site.Site;
  * @see FactoryBasedStoringFactory
  */
 @Immutable
-public abstract class AbstractStoringFactory<O, E> {
+public abstract class AbstractSQLConverter<O, E> {
     
     /* –––––––––––––––––––––––––––––––––––––––––––––––––– Columns –––––––––––––––––––––––––––––––––––––––––––––––––– */
     
@@ -485,7 +485,7 @@ public abstract class AbstractStoringFactory<O, E> {
      * 
      * @param columns the columns used to store objects of the storable class.
      */
-    protected AbstractStoringFactory(@Nonnull @NonNullableElements @Frozen ReadOnlyArray<Column> columns) {
+    protected AbstractSQLConverter(@Nonnull @NonNullableElements @Frozen ReadOnlyArray<Column> columns) {
         this.columns = columns;
         int maximumColumnLength = 0;
         for (final @Nonnull Column column : columns) {
@@ -500,7 +500,7 @@ public abstract class AbstractStoringFactory<O, E> {
      * 
      * @param columns the columns used to store objects of the storable class.
      */
-    protected AbstractStoringFactory(@Captured @Nonnull @NonNullableElements Column... columns) {
+    protected AbstractSQLConverter(@Captured @Nonnull @NonNullableElements Column... columns) {
         this(FreezableArray.getNonNullable(columns).freeze());
     }
     
