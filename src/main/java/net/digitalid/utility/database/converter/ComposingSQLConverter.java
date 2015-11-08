@@ -1,5 +1,6 @@
 package net.digitalid.utility.database.converter;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -17,7 +18,8 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import static net.digitalid.utility.database.converter.AbstractSQLConverter.isValidAlias;
+import net.digitalid.utility.database.column.ColumnIndex;
+import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.site.Site;
 
 /**
@@ -30,14 +32,14 @@ import net.digitalid.utility.database.site.Site;
  * @see SQL
  */
 @Immutable
-public class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O, E> {
+public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O, E> {
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
      * Stores the converters used to store objects of the class that implements SQL in the database.
      */
-    private final @Nonnull @Frozen @NonNullableElements ReadOnlyArray<AbstractSQLConverter<O, E>> converters;
+    private final @Nonnull @Frozen @NonNullableElements ReadOnlyArray<AbstractSQLConverter<?, ?>> converters;
     
     /**
      * Returns the converters used to store objects of the class that implements SQL in the database.
@@ -45,7 +47,7 @@ public class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O, E> {
      * @return the converters used to store objects of the class that implements SQL in the database.
      */
     @Pure
-    public final @Nonnull @Frozen @NonNullableElements ReadOnlyArray<AbstractSQLConverter<O, E>> getConverters() {
+    public final @Nonnull @Frozen @NonNullableElements ReadOnlyArray<AbstractSQLConverter<?, ?>> getConverters() {
         return converters;
     }
     
@@ -80,8 +82,8 @@ public class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O, E> {
     public final @Nonnull String getDeclaration(final @Nonnull @Validated String prefix) {
         assert isValidPrefix(prefix) : "The prefix is valid.";
         
-        return IterableConverter.toString(converters, new ElementConverter<AbstractSQLConverter<O, E>>() { 
-            @Pure @Override public String toString(@Nullable AbstractSQLConverter<O, E> converter) { 
+        return IterableConverter.toString(converters, new ElementConverter<AbstractSQLConverter<?, ?>>() { 
+            @Pure @Override public String toString(@Nullable AbstractSQLConverter<?, ?> converter) { 
                 assert converter != null : "The converter is not null.";
                 
                 return converter.getDeclaration(prefix);
@@ -96,8 +98,8 @@ public class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O, E> {
     public final @Nonnull String getSelection(final @Nonnull @Validated String prefix) {
         assert isValidPrefix(prefix) : "The prefix is valid.";
         
-        return IterableConverter.toString(converters, new ElementConverter<AbstractSQLConverter<O, E>>() {
-            @Pure @Override public String toString(@Nullable AbstractSQLConverter<O, E> converter) {
+        return IterableConverter.toString(converters, new ElementConverter<AbstractSQLConverter<?, ?>>() {
+            @Pure @Override public String toString(@Nullable AbstractSQLConverter<?, ?> converter) {
                 assert converter != null : "The converter is not null.";
                 
                 return converter.getSelection(prefix);
@@ -115,27 +117,28 @@ public class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O, E> {
         
         final @Nonnull StringBuilder string = new StringBuilder();
         // Cannot use IterableConverter.toString() here because the getForeignKeys() method must throw an SQLException.
-        for (@Nonnull AbstractSQLConverter<O, E> converter : converters) {
+        for (@Nonnull AbstractSQLConverter<?, ?> converter : converters) {
             string.append(converter.getForeignKeys(prefix, site));
         }
         return string.toString();
     }
     
     /* -------------------------------------------------- Storing (with Statement) -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    @SuppressWarnings("unchecked")
-    protected final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnsEqualValues(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @Nullable O object) {
-        assert isValidAlias(alias) : "The alias is valid.";
-        assert isValidPrefix(prefix) : "The prefix is valid.";
-        
-        final @Nonnull FreezableArray<String>[] values = (FreezableArray<String>[]) new Object[converters.size()];
+
+    protected final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnNames(@Nonnull @Validated String alias, @Nonnull @Validated String prefix) {
+        final @Nonnull FreezableArray<String>[] names = (FreezableArray<String>[]) new Object[converters.size()];
         int i = 0;
-        for (@Nonnull AbstractSQLConverter<O, E> converter : converters) {
-            values[i++] = converter.getColumnsEqualValues(alias, prefix, object);
+        for (@Nonnull AbstractSQLConverter<?, ?> converter : converters) {
+            names[i++] = converter.getColumnNames(alias, prefix);
         }
-        return FreezableArray.getNonNullable(values);
+        return FreezableArray.getNonNullable(names);
+    }
+
+    @Override
+    public final void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull ColumnIndex parameterIndex) throws SQLException {
+        for (AbstractSQLConverter<?, ?> converter : converters) {
+            converter.storeNull(preparedStatement, parameterIndex);
+        }
     }
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
@@ -148,33 +151,20 @@ public class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O, E> {
      * @return a new composing SQL converter with the given SQL converters.
      */
     @SafeVarargs
-    protected ComposingSQLConverter(@Captured @Nonnull AbstractSQLConverter<O, E>... converters) {
+    protected ComposingSQLConverter(@Captured @Nonnull AbstractSQLConverter<?, ?>... converters) {
         this.converters = FreezableArray.getNonNullable(converters).freeze();
         int numberOfColumns = 0;
-        for (@Nonnull AbstractSQLConverter<O, E> converter : converters) {
+        for (@Nonnull AbstractSQLConverter<?, ?> converter : converters) {
             numberOfColumns += converter.getNumberOfColumns();
         }
         this.numberOfColumns = numberOfColumns;
         
         int maximumColumnNameLength = 0;
-        for (@Nonnull AbstractSQLConverter<O, E> converter : converters) {
+        for (@Nonnull AbstractSQLConverter<?, ?> converter : converters) {
             final int columnNameLength = converter.getMaximumColumnNameLength();
             if (columnNameLength > maximumColumnNameLength) maximumColumnNameLength = columnNameLength;
         }
         this.maximumColumnNameLength = maximumColumnNameLength;
-    }
-    
-    /**
-     * Creates a new composing SQL converter with the given SQL converters.
-     * 
-     * @param converters the converters used to store objects of the class that implements SQL.
-     * 
-     * @return a new composing SQL converter with the given SQL converters.
-     */
-    @Pure
-    @SafeVarargs
-    public static @Nonnull <O, E> ComposingSQLConverter<O, E> get(@Captured @Nonnull AbstractSQLConverter<O, E>... converters) {
-        return new ComposingSQLConverter<>(converters);
     }
     
 }

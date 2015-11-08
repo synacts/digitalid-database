@@ -1,9 +1,11 @@
 package net.digitalid.utility.database.converter;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.reference.Capturable;
+import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
@@ -12,6 +14,7 @@ import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.column.ColumnIndex;
 import net.digitalid.utility.database.column.Reference;
 import net.digitalid.utility.database.column.SQLType;
 import net.digitalid.utility.database.configuration.Database;
@@ -128,32 +131,6 @@ public abstract class ColumnSQLConverter<O, E> extends AbstractSQLConverter<O, E
         this.reference = reference;
     }
     
-    /**
-     * Returns a new column SQL converter with the given parameters.
-     * 
-     * @param name the columnName of the new column.
-     * @param type the SQL type of the new column.
-     * @param nullable whether the new column is nullable.
-     * @param reference the foreign key reference of the new column or null if there is none.
-     * 
-     * @return a new column SQL converter with the given parameters.
-     */
-    public static final @Nonnull <O, E> ColumnSQLConverter<O, E> get(@Nonnull @Validated String name, @Nonnull SQLType type, boolean nullable, @Nullable Reference reference) {
-        return new ColumnSQLConverter<>(name, type, nullable, reference);
-    }
-    
-    /**
-     * Returns a new column SQL converter with the given parameters for a non-nullable value.
-     * 
-     * @param name the columnName of the new column.
-     * @param type the SQL type of the new column.
-     * 
-     * @return a new column SQL converter with the given parameters for a non-nullable value.
-     */
-    public static final @Nonnull <O, E> ColumnSQLConverter<O, E> get(@Nonnull @Validated String name, @Nonnull SQLType type) {
-        return get(name, type, false, null);
-    }
-    
     /* -------------------------------------------------- Declaration -------------------------------------------------- */
     
     /**
@@ -195,15 +172,35 @@ public abstract class ColumnSQLConverter<O, E> extends AbstractSQLConverter<O, E
     
     /* -------------------------------------------------- Storing (with Statement) -------------------------------------------------- */
     
+    /**
+     * Returns the value of the given object for this column.
+     * 
+     * @param object the object whose value is returned.
+     *  
+     * @return the value of the given object for this column.
+     */
+    @Pure
+    protected abstract @Nonnull String getValue(@Nonnull O object);
+    
+    @Override
+    public final void getValues(@Nonnull O object, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull ColumnIndex columnIndex) {
+        values.set(columnIndex.getAndIncrementValue(), getValue(object));
+    }
+    
     @Pure
     @Override
-    protected final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnsEqualValues(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @Nullable O object) {
+    protected final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnNames(@Nonnull @Validated String alias, @Nonnull @Validated String prefix) {
         assert isValidAlias(alias) : "The alias is valid.";
         assert isValidPrefix(prefix) : "The prefix is valid.";
         
-        return FreezableArray.getNonNullable((alias.isEmpty() ? "" : alias + ".") + prefix + columnName + " = " + getValuesOrNulls(object));        
+        return FreezableArray.getNonNullable((alias.isEmpty() ? "" : alias + ".") + prefix + columnName);
     }
-
+    
+    @Pure
+    @Override
+    public final void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull ColumnIndex parameterIndex) throws SQLException {
+        preparedStatement.setNull(parameterIndex.getAndIncrementValue(), getType().getCode());
+    }
     /* -------------------------------------------------- Columns -------------------------------------------------- */
     
     @Pure

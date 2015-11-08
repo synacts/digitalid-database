@@ -164,6 +164,12 @@ public final class SQLiteConfiguration extends Configuration {
         new File(Directory.getDataDirectory().getPath() + File.separator + name + ".db").delete();
         new File(Directory.getDataDirectory().getPath() + File.separator + name + ".db-journal").delete();
     }
+
+    @Pure
+    @Override
+    public int getMaximumIdentifierLength() {
+        return 64;
+    }
     
     /* -------------------------------------------------- Syntax -------------------------------------------------- */
     

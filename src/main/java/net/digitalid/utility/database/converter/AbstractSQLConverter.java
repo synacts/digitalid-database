@@ -6,12 +6,14 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.reference.Capturable;
+import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.converter.IterableConverter;
+import net.digitalid.utility.collections.freezable.Freezable;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
@@ -142,13 +144,12 @@ public abstract class AbstractSQLConverter<O, E> {
      * Returns the value of the given object for each column.
      * 
      * @param object the object whose values are to be returned.
+     * @param values a mutable array which stores the values of the object for each column.
+     * @param columnIndex the current index into the values array.
      * 
-     * @return the value of the given object for each column.
-     * 
-     * @ensure return.size() == getColumns().size() : "The returned array contains a value for each column.";
+     * @ensure values.size() == getNumberOfColumns().size() : "The returned array contains a value for each column.";
      */
-    @Pure
-    protected abstract @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull O object);
+    public abstract void getValues(@Nonnull O object, @NonCapturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> values, @Nonnull ColumnIndex columnIndex);
     
     /**
      * Returns the value of the given object or null for each column.
@@ -157,13 +158,16 @@ public abstract class AbstractSQLConverter<O, E> {
      * 
      * @return the value of the given object or null for each column.
      * 
-     * @ensure return.size() == columns.size() : "The returned array contains a value for each column.";
+     * @ensure return.size() == getNumberOfColumns() : "The returned array contains a value for each column.";
      */
     @Pure
     protected final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValuesOrNulls(@Nullable O object) {
         final @Nonnull FreezableArray<String> values = FreezableArray.get(getNumberOfColumns());
         if (object == null) return values.setAll("NULL");
-        else return getValues(object, values, ColumnIndex.get());
+        else {
+            getValues(object, values, ColumnIndex.get());
+            return values;
+        }
     }
     
     /**
@@ -199,10 +203,19 @@ public abstract class AbstractSQLConverter<O, E> {
      * 
      * @return the name of each column followed by the equality sign and the corresponding value of the given object.
      * 
-     * @ensure return.size() == columns.size() : "The returned array contains a value for each column.";
+     * @ensure return.size() == getNumberOfColumns() : "The returned array contains a value for each column.";
      */
-    @Pure // TODO: Postcondition should include getNumberOfColumns() instead of columns.size().
-    protected abstract @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnsEqualValues(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @Nullable O object);
+    @Pure // TODO: Postcondition should include getNumberOfColumns() instead of getNumberOfColumns().
+    private @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnsEqualValues(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @Nullable O object) {
+        final @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> columnNames = getColumnNames(alias, prefix);
+        final @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> values = getValuesOrNulls(object);
+        for (int i = 0; i < getNumberOfColumns(); i++) {
+            columnNames.set(i, columnNames.getNonNullable(i) + " = " + values.getNonNullable(i)); 
+        }
+        return columnNames;
+    }
+
+    protected abstract @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnNames(@Nonnull @Validated String alias, @Nonnull @Validated String prefix);
     
     /**
      * Returns the name of each column followed by the equality sign and the corresponding value of the given object separated by commas.
@@ -277,7 +290,7 @@ public abstract class AbstractSQLConverter<O, E> {
      */
     @Pure
     public final @Nonnull String getInsertForPreparedStatement() {
-        return IterableConverter.toString(FreezableArray.<String>get(columns.size()).setAll("?"));
+        return IterableConverter.toString(FreezableArray.<String>get(getNumberOfColumns()).setAll("?"));
     }
     
     /**
@@ -288,18 +301,15 @@ public abstract class AbstractSQLConverter<O, E> {
      * 
      * @return the name of each column followed by the equality sign and a question mark.
      * 
-     * @ensure return.size() == columns.size() : "The returned array contains a value for each column.";
+     * @ensure return.size() == getNumberOfColumns() : "The returned array contains a value for each column.";
      */
     @Pure
     private @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnsEqualQuestionMarks(@Nonnull @Validated String alias, @Nonnull @Validated String prefix) {
-        assert isValidAlias(alias) : "The alias is valid.";
-        assert isValidPrefix(prefix) : "The prefix is valid.";
-        
-        final @Nonnull FreezableArray<String> values = FreezableArray.get(columns.size());
-        for (int i = 0; i < values.size(); i++) {
-            values.set(i, (alias.isEmpty() ? "" : alias + ".") + prefix + columns.getNonNullable(i).getName() + " = ?");
+        final @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> columnNames = getColumnNames(alias, prefix);
+        for (int i = 0; i < getNumberOfColumns(); i++) {
+            columnNames.set(i, columnNames.getNonNullable(i) + " = ?"); 
         }
-        return values;
+        return columnNames;
     }
     
     /**
@@ -377,12 +387,8 @@ public abstract class AbstractSQLConverter<O, E> {
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
     @NonCommitting
-    public final void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull ColumnIndex parameterIndex) throws SQLException {
-        for (int i = 0; i < columns.size(); i++) {
-            preparedStatement.setNull(parameterIndex.getAndIncrementValue(), columns.getNonNullable(i).getType().getCode());
-        }
-    }
-    
+    public abstract void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull ColumnIndex parameterIndex) throws SQLException;
+        
     /**
      * Sets the parameters starting from the given index of the prepared statement to the given nullable object.
      * The number of parameters that are set is given by {@link #getNumberOfColumns()}.
@@ -397,13 +403,13 @@ public abstract class AbstractSQLConverter<O, E> {
         else storeNonNullable(object, preparedStatement, parameterIndex);
     }
     
-    /* -------------------------------------------------- Retrieving -------------------------------------------------- */
+    /* -------------------------------------------------- Restoring -------------------------------------------------- */
     
     /**
      * Returns a nullable object from the given columns of the result set.
      * The number of columns that are read is given by {@link #getNumberOfColumns()}.
      * 
-     * @param entity the entisetNonNullablety which is needed to recover the object.
+     * @param entity the entity which is needed to recover the object.
      * @param resultSet the result set from which the data is to be retrieved.
      * @param columnIndex the starting index of the columns containing the data.
      * 

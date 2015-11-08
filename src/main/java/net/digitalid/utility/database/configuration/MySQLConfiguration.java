@@ -199,6 +199,12 @@ public final class MySQLConfiguration extends Configuration {
         }
         Database.commit();
     }
+
+    @Pure
+    @Override
+    public int getMaximumIdentifierLength() {
+        return 64;
+    }
     
     /* -------------------------------------------------- Syntax -------------------------------------------------- */
     

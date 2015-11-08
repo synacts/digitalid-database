@@ -204,6 +204,12 @@ public final class PostgreSQLConfiguration extends Configuration {
         }
         Database.commit();
     }
+
+    @Pure
+    @Override
+    public int getMaximumIdentifierLength() {
+        return 64;
+    }
     
     /* -------------------------------------------------- Syntax -------------------------------------------------- */
     

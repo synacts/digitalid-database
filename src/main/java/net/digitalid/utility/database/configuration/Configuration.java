@@ -122,7 +122,14 @@ public abstract class Configuration {
     protected final static @Nonnull Connection getCurrentConnection() throws SQLException {
         return Database.getConnection();
     }
-    
+
+    /**
+     * Returns the maximum length that a database identifier can have.
+     * @return
+     */
+    @Pure
+    public abstract int getMaximumIdentifierLength();
+   
     /* -------------------------------------------------- Syntax -------------------------------------------------- */
     
     /**
