@@ -148,15 +148,15 @@ public class Column {
     }
     
     /**
-     * Returns a new column with the given parameters.
+     * Returns a new column with the given parameters for a non-nullable value.
      * 
      * @param name the name of the new column.
      * @param type the SQL type of the new column.
      * 
-     * @return a new column with the given parameters.
+     * @return a new column with the given parameters for a non-nullable value.
      */
     public static final @Nonnull Column get(@Nonnull @Validated String name, @Nonnull SQLType type) {
-        return get(name, type, true, null);
+        return get(name, type, false, null);
     }
     
     /* -------------------------------------------------- Declaration -------------------------------------------------- */

@@ -6,20 +6,16 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.reference.Capturable;
-import net.digitalid.utility.annotations.reference.Captured;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
-import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
-import net.digitalid.utility.collections.converter.ElementConverter;
 import net.digitalid.utility.collections.converter.IterableConverter;
 import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.column.Column;
+import net.digitalid.utility.database.column.ColumnIndex;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.site.Site;
 
@@ -38,34 +34,12 @@ public abstract class AbstractSQLConverter<O, E> {
     /* -------------------------------------------------- Columns -------------------------------------------------- */
     
     /**
-     * Stores the columns used to store objects of the class that implements SQL in the database.
-     */
-    private final @Nonnull @Frozen @NonNullableElements ReadOnlyArray<Column> columns;
-    
-    /**
-     * Returns the columns used to store objects of the class that implements SQL in the database.
-     * 
-     * @return the columns used to store objects of the class that implements SQL in the database.
-     */
-    @Pure
-    public final @Nonnull @Frozen @NonNullableElements ReadOnlyArray<Column> getColumns() {
-        return columns;
-    }
-    
-    /**
      * Returns the number of columns used to store objects of the class that implements SQL in the database.
      * 
      * @return the number of columns used to store objects of the class that implements SQL in the database.
      */
     @Pure
-    public final int getNumberOfColumns() {
-        return columns.size();
-    }
-    
-    /**
-     * Stores the maximum length of the column names.
-     */
-    private final int maximumColumnLength;
+    public abstract int getNumberOfColumns();
     
     /**
      * Returns the maximum length of the column names.
@@ -73,9 +47,7 @@ public abstract class AbstractSQLConverter<O, E> {
      * @return the maximum length of the column names.
      */
     @Pure
-    public final int getMaximumColumnLength() {
-        return maximumColumnLength;
-    }
+    public abstract int getMaximumColumnNameLength();
     
     /**
      * Returns whether the given prefix is valid.
@@ -86,9 +58,11 @@ public abstract class AbstractSQLConverter<O, E> {
      */
     @Pure
     public final boolean isValidPrefix(@Nonnull String prefix) {
-        return prefix.isEmpty() || prefix.length() + maximumColumnLength <= 62 && Database.getConfiguration().isValidIdentifier(prefix); // TODO: Adjust the number 62 to Database.getConfiguration().getMaximumIdentifierLength() - 1.
+        return prefix.isEmpty() || prefix.length() + getMaximumColumnNameLength() <= Database.getConfiguration().getMaximumIdentifierLength() - 1 && Database.getConfiguration().isValidIdentifier(prefix);
     }
     
+    /* -------------------------------------------------- Declaration -------------------------------------------------- */
+
     /**
      * Returns the columns as declaration with the given prefix.
      * 
@@ -97,11 +71,7 @@ public abstract class AbstractSQLConverter<O, E> {
      * @return the columns as declaration with the given prefix.
      */
     @Pure
-    public final @Nonnull String getDeclaration(final @Nonnull @Validated String prefix) {
-        assert isValidPrefix(prefix) : "The prefix is valid.";
-        
-        return IterableConverter.toString(columns, new ElementConverter<Column>() { @Pure @Override public String toString(@Nullable Column column) { return prefix + "_" + String.valueOf(column); } });
-    }
+    public abstract @Nonnull String getDeclaration(final @Nonnull @Validated String prefix);
     
     /**
      * Returns the columns as declaration without a prefix.
@@ -110,8 +80,10 @@ public abstract class AbstractSQLConverter<O, E> {
      */
     @Pure
     public final @Nonnull String getDeclaration() {
-        return IterableConverter.toString(columns);
+        return getDeclaration("");
     }
+    
+    /* -------------------------------------------------- Selection -------------------------------------------------- */
     
     /**
      * Returns the columns for selection with the given prefix.
@@ -121,11 +93,7 @@ public abstract class AbstractSQLConverter<O, E> {
      * @return the columns for selection with the given prefix.
      */
     @Pure
-    public final @Nonnull String getSelection(final @Nonnull @Validated String prefix) {
-        assert isValidPrefix(prefix) : "The prefix is valid.";
-        
-        return IterableConverter.toString(columns, new ElementConverter<Column>() { @Pure @Override public String toString(@Nullable Column column) { return prefix + "_" + (column == null ? "null" : column.getName()); } });
-    }
+    public abstract @Nonnull String getSelection(final @Nonnull @Validated String prefix);
     
     /**
      * Returns the columns for selection without a prefix.
@@ -136,6 +104,8 @@ public abstract class AbstractSQLConverter<O, E> {
     public final @Nonnull String getSelection() {
         return getSelection("");
     }
+    
+    /* -------------------------------------------------- Foreign Keys -------------------------------------------------- */
     
     /**
      * Returns the foreign key constraints of the columns with the given prefix.
@@ -149,15 +119,7 @@ public abstract class AbstractSQLConverter<O, E> {
      */
     @Locked
     @NonCommitting
-    public @Nonnull String getForeignKeys(@Nonnull @Validated String prefix, @Nonnull Site site) throws SQLException {
-        assert isValidPrefix(prefix) : "The prefix is valid.";
-        
-        final @Nonnull StringBuilder string = new StringBuilder();
-        for (final @Nonnull Column column : columns) {
-            string.append(column.getForeignKey(prefix, site));
-        }
-        return string.toString();
-    }
+    public abstract @Nonnull String getForeignKeys(@Nonnull @Validated String prefix, @Nonnull Site site) throws SQLException;
     
     /**
      * Returns the foreign key constraints of the columns without a prefix.
@@ -186,7 +148,7 @@ public abstract class AbstractSQLConverter<O, E> {
      * @ensure return.size() == getColumns().size() : "The returned array contains a value for each column.";
      */
     @Pure
-    public abstract @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull O object);
+    protected abstract @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nonnull O object);
     
     /**
      * Returns the value of the given object or null for each column.
@@ -198,9 +160,10 @@ public abstract class AbstractSQLConverter<O, E> {
      * @ensure return.size() == columns.size() : "The returned array contains a value for each column.";
      */
     @Pure
-    private @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValuesOrNulls(@Nullable O object) {
-        if (object == null) return FreezableArray.<String>get(columns.size()).setAll("NULL");
-        else return getValues(object);
+    protected final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValuesOrNulls(@Nullable O object) {
+        final @Nonnull FreezableArray<String> values = FreezableArray.get(getNumberOfColumns());
+        if (object == null) return values.setAll("NULL");
+        else return getValues(object, values, ColumnIndex.get());
     }
     
     /**
@@ -238,17 +201,8 @@ public abstract class AbstractSQLConverter<O, E> {
      * 
      * @ensure return.size() == columns.size() : "The returned array contains a value for each column.";
      */
-    @Pure
-    private @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnsEqualValues(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @Nullable O object) {
-        assert isValidAlias(alias) : "The alias is valid.";
-        assert isValidPrefix(prefix) : "The prefix is valid.";
-        
-        final @Nonnull FreezableArray<String> values = getValuesOrNulls(object);
-        for (int i = 0; i < values.size(); i++) {
-            values.set(i, (alias.isEmpty() ? "" : alias + ".") + prefix + columns.getNonNullable(i).getName() + " = " + values.getNonNullable(i));
-        }
-        return values;
-    }
+    @Pure // TODO: Postcondition should include getNumberOfColumns() instead of columns.size().
+    protected abstract @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnsEqualValues(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @Nullable O object);
     
     /**
      * Returns the name of each column followed by the equality sign and the corresponding value of the given object separated by commas.
@@ -414,7 +368,7 @@ public abstract class AbstractSQLConverter<O, E> {
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
     @NonCommitting
-    public abstract void storeNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException;
+    public abstract void storeNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, @Nonnull ColumnIndex parameterIndex) throws SQLException;
     
     /**
      * Sets the parameters starting from the given index of the prepared statement to null.
@@ -423,9 +377,9 @@ public abstract class AbstractSQLConverter<O, E> {
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
     @NonCommitting
-    public final void storeNull(@Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public final void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull ColumnIndex parameterIndex) throws SQLException {
         for (int i = 0; i < columns.size(); i++) {
-            preparedStatement.setNull(parameterIndex + i, columns.getNonNullable(i).getType().getCode());
+            preparedStatement.setNull(parameterIndex.getAndIncrementValue(), columns.getNonNullable(i).getType().getCode());
         }
     }
     
@@ -438,7 +392,7 @@ public abstract class AbstractSQLConverter<O, E> {
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
     @NonCommitting
-    public final void storeNullable(@Nullable O object, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public final void storeNullable(@Nullable O object, @Nonnull PreparedStatement preparedStatement, @Nonnull ColumnIndex parameterIndex) throws SQLException {
         if (object == null) storeNull(preparedStatement, parameterIndex);
         else storeNonNullable(object, preparedStatement, parameterIndex);
     }
@@ -457,7 +411,7 @@ public abstract class AbstractSQLConverter<O, E> {
      */
     @Pure
     @NonCommitting
-    public abstract @Nullable O restoreNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException;
+    public abstract @Nullable O restoreNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, @Nonnull ColumnIndex columnIndex) throws SQLException;
     
     /**
      * Returns a non-nullable object from the given columns of the result set.
@@ -471,7 +425,7 @@ public abstract class AbstractSQLConverter<O, E> {
      */
     @Pure
     @NonCommitting
-    public @Nonnull O restoreNonNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, int columnIndex) throws SQLException {
+    public @Nonnull O restoreNonNullable(@Nonnull E entity, @Nonnull ResultSet resultSet, @Nonnull ColumnIndex columnIndex) throws SQLException {
         final @Nullable O object = restoreNullable(entity, resultSet, columnIndex);
         if (object == null) throw new SQLException("An object which should not be null was null.");
         return object;
@@ -480,27 +434,9 @@ public abstract class AbstractSQLConverter<O, E> {
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new SQL converter with the given columns.
-     * 
-     * @param columns the columns used to store objects of the class that implements SQL.
+     * Creates a new SQL converter.
      */
-    protected AbstractSQLConverter(@Nonnull @NonNullableElements @Frozen ReadOnlyArray<Column> columns) {
-        this.columns = columns;
-        int maximumColumnLength = 0;
-        for (final @Nonnull Column column : columns) {
-            final int columnLength = column.getName().length();
-            if (columnLength > maximumColumnLength) maximumColumnLength = columnLength;
-        }
-        this.maximumColumnLength = maximumColumnLength;
-    }
-    
-    /**
-     * Creates a new SQL converter with the given columns.
-     * 
-     * @param columns the columns used to store objects of the class that implements SQL.
-     */
-    protected AbstractSQLConverter(@Captured @Nonnull @NonNullableElements Column... columns) {
-        this(FreezableArray.getNonNullable(columns).freeze());
+    protected AbstractSQLConverter() {
     }
     
 }
