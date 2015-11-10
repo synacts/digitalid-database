@@ -13,7 +13,7 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.ColumnIndex;
-import net.digitalid.utility.database.column.ColumnReference;
+import net.digitalid.utility.database.reference.ColumnReference;
 import net.digitalid.utility.database.column.SQLType;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.site.Site;
