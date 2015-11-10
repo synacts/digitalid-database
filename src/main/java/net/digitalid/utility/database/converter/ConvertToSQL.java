@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.state.Stateless;
+import net.digitalid.utility.database.column.ColumnIndex;
 import net.digitalid.utility.database.configuration.Database;
 
 /**
@@ -19,7 +20,7 @@ public final class ConvertToSQL {
      * @param preparedStatement the prepared statement whose parameters are to be set.
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
-    public static <V extends SQL<V, ?>> void nonNullable(@Nonnull V object, @Nonnull PreparedStatement preparedStatement, int parameterIndex) throws SQLException {
+    public static <V extends SQL<V, ?>> void nonNullable(@Nonnull V object, @Nonnull PreparedStatement preparedStatement, @Nonnull ColumnIndex parameterIndex) throws SQLException {
         object.getSQLConverter().storeNonNullable(object, preparedStatement, parameterIndex);
     }
     
