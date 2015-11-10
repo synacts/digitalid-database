@@ -30,6 +30,8 @@ import net.digitalid.utility.database.site.Site;
  *            In case no external information is needed for the restoration of an object, declare it as an {@link Object}.
  * 
  * @see SQL
+ * @see ColumnSQLConverter
+ * @see ComposingSQLConverter
  */
 @Immutable
 public abstract class AbstractSQLConverter<O, E> {
@@ -155,7 +157,7 @@ public abstract class AbstractSQLConverter<O, E> {
     @Locked
     @NonCommitting
     @SuppressWarnings("unchecked")
-    public void executeAfterCreation(@Nonnull @NonNullableElements @Frozen ReadOnlyPair<AbstractSQLConverter<?, ?>, String>... convertersOfSameUniqueConstraint) throws SQLException {}
+    public void executeAfterCreation(@Nonnull @NonNullableElements @Frozen ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, String>... convertersOfSameUniqueConstraint) throws SQLException {}
     
     /**
      * This method is called before the deletion of a table on all converters that belong to a unique constraint.
@@ -166,7 +168,7 @@ public abstract class AbstractSQLConverter<O, E> {
     @Locked
     @NonCommitting
     @SuppressWarnings("unchecked")
-    public void executeBeforeDeletion(@Nonnull @NonNullableElements @Frozen ReadOnlyPair<AbstractSQLConverter<?, ?>, String>... convertersOfSameUniqueConstraint) throws SQLException {}
+    public void executeBeforeDeletion(@Nonnull @NonNullableElements @Frozen ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, String>... convertersOfSameUniqueConstraint) throws SQLException {}
     
     /* -------------------------------------------------- Storing (with Statement) -------------------------------------------------- */
     

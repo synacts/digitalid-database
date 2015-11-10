@@ -39,7 +39,7 @@ public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O
     /**
      * Stores the converters used to store the fields of an object of the generic type {@link O} and their nullability.
      */
-    private final @Nonnull @NonNullableElements @Frozen ReadOnlyArray<ReadOnlyPair<AbstractSQLConverter<?, ?>, Boolean>> converters;
+    private final @Nonnull @NonNullableElements @Frozen ReadOnlyArray<ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean>> converters;
     
     /**
      * Returns the converters used to store the fields of an object of the generic type {@link O} and their nullability.
@@ -47,7 +47,7 @@ public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O
      * @return the converters used to store the fields of an object of the generic type {@link O} and their nullability.
      */
     @Pure
-    public final @Nonnull @NonNullableElements @Frozen ReadOnlyArray<ReadOnlyPair<AbstractSQLConverter<?, ?>, Boolean>> getConverters() {
+    public final @Nonnull @NonNullableElements @Frozen ReadOnlyArray<ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean>> getConverters() {
         return converters;
     }
     
@@ -82,8 +82,8 @@ public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O
     public final @Nonnull String getDeclaration(final boolean nullable, final @Nonnull @Validated String prefix) {
         assert isValidPrefix(prefix) : "The prefix is valid.";
         
-        return IterableConverter.toString(converters, new ElementConverter<ReadOnlyPair<AbstractSQLConverter<?, ?>, Boolean>>() { 
-            @Pure @Override public String toString(@Nullable ReadOnlyPair<AbstractSQLConverter<?, ?>, Boolean> converter) { 
+        return IterableConverter.toString(converters, new ElementConverter<ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean>>() { 
+            @Pure @Override public String toString(@Nullable ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean> converter) { 
                 assert converter != null : "The converter is not null.";
                 
                 return converter.getNonNullableElement0().getDeclaration(nullable || converter.getNonNullableElement1(), prefix);
@@ -98,8 +98,8 @@ public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O
     public final @Nonnull String getSelection(final @Nonnull @Validated String prefix) {
         assert isValidPrefix(prefix) : "The prefix is valid.";
         
-        return IterableConverter.toString(converters, new ElementConverter<ReadOnlyPair<AbstractSQLConverter<?, ?>, Boolean>>() {
-            @Pure @Override public String toString(@Nullable ReadOnlyPair<AbstractSQLConverter<?, ?>, Boolean> converter) {
+        return IterableConverter.toString(converters, new ElementConverter<ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean>>() {
+            @Pure @Override public String toString(@Nullable ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean> converter) {
                 assert converter != null : "The converter is not null.";
                 
                 return converter.getNonNullableElement0().getSelection(prefix);
@@ -117,7 +117,7 @@ public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O
         
         final @Nonnull StringBuilder string = new StringBuilder();
         // Cannot use IterableConverter.toString() here because the getForeignKeys() method can throw an SQLException.
-        for (@Nonnull ReadOnlyPair<AbstractSQLConverter<?, ?>, Boolean> converter : converters) {
+        for (@Nonnull ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean> converter : converters) {
             string.append(converter.getNonNullableElement0().getForeignKeys(site, prefix));
         }
         return string.toString();
@@ -129,8 +129,8 @@ public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O
     @Override
     @SafeVarargs
     @NonCommitting
-    public final void executeAfterCreation(@Nonnull @NonNullableElements @Frozen ReadOnlyPair<AbstractSQLConverter<?, ?>, String>... convertersOfSameUniqueConstraint) throws SQLException {
-        for (@Nonnull ReadOnlyPair<AbstractSQLConverter<?, ?>, Boolean> converter : converters) {
+    public final void executeAfterCreation(@Nonnull @NonNullableElements @Frozen ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, String>... convertersOfSameUniqueConstraint) throws SQLException {
+        for (@Nonnull ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean> converter : converters) {
             converter.getNonNullableElement0().executeAfterCreation(convertersOfSameUniqueConstraint);
         }
     }
@@ -139,8 +139,8 @@ public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O
     @Override
     @SafeVarargs
     @NonCommitting
-    public final void executeBeforeDeletion(@Nonnull @NonNullableElements @Frozen ReadOnlyPair<AbstractSQLConverter<?, ?>, String>... convertersOfSameUniqueConstraint) throws SQLException {
-        for (@Nonnull ReadOnlyPair<AbstractSQLConverter<?, ?>, Boolean> converter : converters) {
+    public final void executeBeforeDeletion(@Nonnull @NonNullableElements @Frozen ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, String>... convertersOfSameUniqueConstraint) throws SQLException {
+        for (@Nonnull ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean> converter : converters) {
             converter.getNonNullableElement0().executeBeforeDeletion(convertersOfSameUniqueConstraint);
         }
     }
@@ -149,7 +149,7 @@ public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O
     
     @Override
     protected final void getColumnNames(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull ColumnIndex index) {
-        for (@Nonnull ReadOnlyPair<AbstractSQLConverter<?, ?>, Boolean> converter : converters) {
+        for (@Nonnull ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean> converter : converters) {
             converter.getNonNullableElement0().getColumnNames(alias, prefix, names, index);
         }
     }
@@ -159,7 +159,7 @@ public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O
     @Override
     @NonCommitting
     public final void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull ColumnIndex parameterIndex) throws SQLException {
-        for (@Nonnull ReadOnlyPair<AbstractSQLConverter<?, ?>, Boolean> converter : converters) {
+        for (@Nonnull ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean> converter : converters) {
             converter.getNonNullableElement0().storeNull(preparedStatement, parameterIndex);
         }
     }
@@ -174,17 +174,17 @@ public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O
      * @return a new composing SQL converter with the given SQL converters and their nullability.
      */
     @SafeVarargs
-    protected ComposingSQLConverter(@Nonnull @NonNullableElements @Frozen ReadOnlyPair<AbstractSQLConverter<?, ?>, Boolean>... converters) {
+    protected ComposingSQLConverter(@Nonnull @NonNullableElements @Frozen ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean>... converters) {
         this.converters = FreezableArray.getNonNullable(converters).freeze();
         
         int numberOfColumns = 0;
-        for (@Nonnull ReadOnlyPair<AbstractSQLConverter<?, ?>, Boolean> converter : converters) {
+        for (@Nonnull ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean> converter : converters) {
             numberOfColumns += converter.getNonNullableElement0().getNumberOfColumns();
         }
         this.numberOfColumns = numberOfColumns;
         
         int lengthOfLongestColumnName = 0;
-        for (@Nonnull ReadOnlyPair<AbstractSQLConverter<?, ?>, Boolean> converter : converters) {
+        for (@Nonnull ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean> converter : converters) {
             final int columnNameLength = converter.getNonNullableElement0().getLengthOfLongestColumnName();
             if (columnNameLength > lengthOfLongestColumnName) lengthOfLongestColumnName = columnNameLength;
         }
