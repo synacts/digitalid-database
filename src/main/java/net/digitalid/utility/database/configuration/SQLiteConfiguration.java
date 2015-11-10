@@ -168,7 +168,7 @@ public final class SQLiteConfiguration extends Configuration {
     @Pure
     @Override
     public int getMaximumIdentifierLength() {
-        return 64;
+        return Integer.MAX_VALUE;
     }
     
     /* -------------------------------------------------- Syntax -------------------------------------------------- */

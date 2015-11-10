@@ -85,7 +85,7 @@ public class Column {
     /**
      * Stores the foreign key reference of this column or null if there is none.
      */
-    private final @Nullable Reference reference;
+    private final @Nullable ColumnReference reference;
     
     /**
      * Returns the foreign key reference of this column or null if there is none.
@@ -93,7 +93,7 @@ public class Column {
      * @return the foreign key reference of this column or null if there is none.
      */
     @Pure
-    public final @Nullable Reference getReference() {
+    public final @Nullable ColumnReference getReference() {
         return reference;
     }
     
@@ -124,7 +124,7 @@ public class Column {
      * @param nullable whether the new column is nullable.
      * @param reference the foreign key reference of the new column or null if there is none.
      */
-    protected Column(@Nonnull @Validated String name, @Nonnull SQLType type, boolean nullable, @Nullable Reference reference) {
+    protected Column(@Nonnull @Validated String name, @Nonnull SQLType type, boolean nullable, @Nullable ColumnReference reference) {
         assert isValidName(name) : "The name is valid.";
         
         this.name = name;
@@ -143,7 +143,7 @@ public class Column {
      * 
      * @return a new column with the given parameters.
      */
-    public static final @Nonnull Column get(@Nonnull @Validated String name, @Nonnull SQLType type, boolean nullable, @Nullable Reference reference) {
+    public static final @Nonnull Column get(@Nonnull @Validated String name, @Nonnull SQLType type, boolean nullable, @Nullable ColumnReference reference) {
         return new Column(name, type, nullable, reference);
     }
     

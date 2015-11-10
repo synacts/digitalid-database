@@ -208,7 +208,7 @@ public final class PostgreSQLConfiguration extends Configuration {
     @Pure
     @Override
     public int getMaximumIdentifierLength() {
-        return 64;
+        return 63;
     }
     
     /* -------------------------------------------------- Syntax -------------------------------------------------- */

@@ -14,7 +14,7 @@ import net.digitalid.utility.database.site.Site;
  * @see GeneralReference
  */
 @Stateless
-public abstract class Reference {
+public abstract class ColumnReference {
     
     /**
      * Returns whether this reference depends on an entity.

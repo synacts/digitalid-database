@@ -4,18 +4,16 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.ColumnIndex;
-import net.digitalid.utility.database.column.Reference;
+import net.digitalid.utility.database.column.ColumnReference;
 import net.digitalid.utility.database.column.SQLType;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.site.Site;
@@ -35,30 +33,30 @@ public abstract class ColumnSQLConverter<O, E> extends AbstractSQLConverter<O, E
     /* -------------------------------------------------- Name -------------------------------------------------- */
     
     /**
-     * Returns whether the given columnName is valid.
+     * Returns whether the given name is valid.
      * 
-     * @param name the columnName to be checked.
+     * @param name the name to be checked.
      * 
-     * @return whether the given columnName is valid.
+     * @return whether the given name is valid.
      */
     @Pure
     public static boolean isValidName(@Nonnull String name) {
-        return name.length() <= 22 && !name.equalsIgnoreCase("entity") && Database.getConfiguration().isValidIdentifier(name); // TODO: Why to exclude "entity" and limit the length? Remove both!
+        return Database.getConfiguration().isValidIdentifier(name);
     }
     
     /**
-     * Stores the columnName of this column.
+     * Stores the name of this column.
      */
-    private final @Nonnull @Validated String columnName;
+    private final @Nonnull @Validated String name;
     
     /**
-     * Returns the columnName of this column.
+     * Returns the name of this column.
      * 
-     * @return the columnName of this column.
+     * @return the name of this column.
      */
     @Pure
     public final @Nonnull @Validated String getName() {
-        return columnName;
+        return name;
     }
     
     /* -------------------------------------------------- Type -------------------------------------------------- */
@@ -78,29 +76,12 @@ public abstract class ColumnSQLConverter<O, E> extends AbstractSQLConverter<O, E
         return type;
     }
     
-    /* -------------------------------------------------- Nullable -------------------------------------------------- */
-    
-    /**
-     * Stores whether this column is nullable.
-     */
-    private final boolean nullable; // TODO: I think this should not be determined by the column but rather by its occurrence (the table). Or both?
-    
-    /**
-     * Returns whether this column is nullable.
-     * 
-     * @return whether this column is nullable.
-     */
-    @Pure
-    public final boolean isNullable() {
-        return nullable;
-    }
-    
     /* -------------------------------------------------- Reference -------------------------------------------------- */
     
     /**
      * Stores the foreign key reference of this column or null if there is none.
      */
-    private final @Nullable Reference reference;
+    private final @Nullable ColumnReference reference;
     
     /**
      * Returns the foreign key reference of this column or null if there is none.
@@ -108,7 +89,7 @@ public abstract class ColumnSQLConverter<O, E> extends AbstractSQLConverter<O, E
      * @return the foreign key reference of this column or null if there is none.
      */
     @Pure
-    public final @Nullable Reference getReference() {
+    public final @Nullable ColumnReference getReference() {
         return reference;
     }
     
@@ -117,35 +98,40 @@ public abstract class ColumnSQLConverter<O, E> extends AbstractSQLConverter<O, E
     /**
      * Creates a new column SQL converter with the given parameters.
      * 
-     * @param name the columnName of the new column.
+     * @param name the name of the new column.
      * @param type the SQL type of the new column.
-     * @param nullable whether the new column is nullable.
      * @param reference the foreign key reference of the new column or null if there is none.
      */
-    protected ColumnSQLConverter(@Nonnull @Validated String name, @Nonnull SQLType type, boolean nullable, @Nullable Reference reference) {
+    protected ColumnSQLConverter(@Nonnull @Validated String name, @Nonnull SQLType type, @Nullable ColumnReference reference) {
         assert isValidName(name) : "The name is valid.";
         
-        this.columnName = name;
+        this.name = name;
         this.type = type;
-        this.nullable = nullable;
         this.reference = reference;
+    }
+    
+    /* -------------------------------------------------- Columns -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public final int getNumberOfColumns() {
+        return 1;
+    }
+    
+    @Pure
+    @Override
+    public final int getLengthOfLongestColumnName() {
+        return name.length();
     }
     
     /* -------------------------------------------------- Declaration -------------------------------------------------- */
     
-    /**
-     * Returns the abstract SQL converters as declaration with the given prefix.
-     * 
-     * @param prefix the prefix to prepend to all column names.
-     * 
-     * @return the column as declaration with the given prefix.
-     */
     @Pure
     @Override
-    public final @Nonnull String getDeclaration(final @Nonnull @Validated String prefix) {
+    public final @Nonnull String getDeclaration(boolean nullable, @Nonnull @Validated String prefix) {
         assert isValidPrefix(prefix) : "The prefix is valid.";
         
-        return (prefix.isEmpty() ? "" : prefix + "_") + columnName + " " + type + (nullable ? "" : " NOT NULL");
+        return (prefix.isEmpty() ? "" : prefix + "_") + name + " " + type + (nullable ? "" : " NOT NULL");
     }
     
     /* -------------------------------------------------- Selection -------------------------------------------------- */
@@ -155,7 +141,7 @@ public abstract class ColumnSQLConverter<O, E> extends AbstractSQLConverter<O, E
     public final @Nonnull String getSelection(final @Nonnull @Validated String prefix) {
         assert isValidPrefix(prefix) : "The prefix is valid.";
         
-        return (prefix.isEmpty() ? "" : prefix + "_") + columnName;
+        return (prefix.isEmpty() ? "" : prefix + "_") + name;
     }
     
     /* -------------------------------------------------- Foreign Keys -------------------------------------------------- */
@@ -163,10 +149,10 @@ public abstract class ColumnSQLConverter<O, E> extends AbstractSQLConverter<O, E
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull String getForeignKeys(@Nonnull @Validated String prefix, @Nonnull Site site) throws SQLException {
+    public @Nonnull String getForeignKeys(@Nonnull Site site, @Nonnull @Validated String prefix) throws SQLException {
         assert isValidPrefix(prefix) : "The prefix is valid.";
         
-        if (reference != null) return ", FOREIGN KEY (" + (reference.isEntityDependent() ? "entity, " : "") + (prefix.isEmpty() ? "" : prefix + "_") + columnName + ") " + reference.get(site);
+        if (reference != null) return ", FOREIGN KEY (" + (reference.isEntityDependent() ? "entity, " : "") + (prefix.isEmpty() ? "" : prefix + "_") + name + ") " + reference.get(site);
         else return "";
     }
     
@@ -183,36 +169,24 @@ public abstract class ColumnSQLConverter<O, E> extends AbstractSQLConverter<O, E
     protected abstract @Nonnull String getValue(@Nonnull O object);
     
     @Override
-    public final void getValues(@Nonnull O object, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull ColumnIndex columnIndex) {
-        values.set(columnIndex.getAndIncrementValue(), getValue(object));
+    public final void getValues(@Nonnull O object, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull ColumnIndex index) {
+        values.set(index.getAndIncrementValue(), getValue(object));
     }
     
-    @Pure
     @Override
-    protected final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnNames(@Nonnull @Validated String alias, @Nonnull @Validated String prefix) {
+    protected final void getColumnNames(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull ColumnIndex index) {
         assert isValidAlias(alias) : "The alias is valid.";
         assert isValidPrefix(prefix) : "The prefix is valid.";
         
-        return FreezableArray.getNonNullable((alias.isEmpty() ? "" : alias + ".") + prefix + columnName);
+        names.set(index.getAndIncrementValue(), (alias.isEmpty() ? "" : alias + ".") + (prefix.isEmpty() ? "" : prefix + "_") + name);
     }
     
-    @Pure
+    /* -------------------------------------------------- Storing (with PreparedStatement) -------------------------------------------------- */
+    
     @Override
+    @NonCommitting
     public final void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull ColumnIndex parameterIndex) throws SQLException {
         preparedStatement.setNull(parameterIndex.getAndIncrementValue(), getType().getCode());
-    }
-    /* -------------------------------------------------- Columns -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public final int getNumberOfColumns() {
-        return 1;
-    }
-    
-    @Pure
-    @Override
-    public final int getMaximumColumnNameLength() {
-        return columnName.length();
     }
     
 }

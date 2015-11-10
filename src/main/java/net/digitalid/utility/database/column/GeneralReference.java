@@ -12,7 +12,7 @@ import net.digitalid.utility.database.site.Site;
  * This class allows to retrieve foreign key references that are {@link Site site}-independent.
  */
 @Stateless
-public final class GeneralReference extends Reference {
+public final class GeneralReference extends ColumnReference {
     
     /* -------------------------------------------------- Entity Dependence -------------------------------------------------- */
     
