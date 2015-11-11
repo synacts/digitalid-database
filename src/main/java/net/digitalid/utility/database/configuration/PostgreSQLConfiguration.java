@@ -123,9 +123,9 @@ public final class PostgreSQLConfiguration extends Configuration {
         properties.setProperty("password", password);
         
         try (@Nonnull Connection connection = DriverManager.getConnection("jdbc:postgresql://" + server + ":" + port + "/", properties); @Nonnull Statement statement = connection.createStatement()) {
-            if (reset) statement.executeUpdate("DROP DATABASE IF EXISTS " + database);
+            if (reset) { statement.executeUpdate("DROP DATABASE IF EXISTS " + database); }
             final @Nonnull ResultSet resultSet = statement.executeQuery("SELECT EXISTS (SELECT * FROM pg_catalog.pg_database WHERE datname = '" + database + "')");
-            if (resultSet.next() && !resultSet.getBoolean(1)) statement.executeUpdate("CREATE DATABASE " + database);
+            if (resultSet.next() && !resultSet.getBoolean(1)) { statement.executeUpdate("CREATE DATABASE " + database); }
         }
     }
     
@@ -335,7 +335,7 @@ public final class PostgreSQLConfiguration extends Configuration {
         string.append("SELECT COUNT(*) INTO counter FROM pg_indexes WHERE schemaname = 'public' AND tablename = '").append(table).append("' AND indexname = '").append(table).append("_index").append("';");
         string.append("IF counter = 0 THEN EXECUTE 'CREATE INDEX ").append(table).append("_index ON ").append(table).append(" (");
         for (final @Nonnull String column : columns) {
-            if (column != columns[0]) string.append(", ");
+            if (column != columns[0]) { string.append(", "); }
             string.append(column);
         }
         string.append(")'; END IF; END; $$");
@@ -371,15 +371,15 @@ public final class PostgreSQLConfiguration extends Configuration {
         string.append("AS ON INSERT TO ").append(table).append(" WHERE EXISTS(SELECT 1 FROM ").append(table).append(" WHERE (");
         boolean first = true;
         for (@Nonnull String column : columns) {
-            if (first) first = false;
-            else string.append(", ");
+            if (first) { first = false; }
+            else { string.append(", "); }
             string.append(column);
         }
         string.append(") = (");
         first = true;
         for (@Nonnull String column : columns) {
-            if (first) first = false;
-            else string.append(", ");
+            if (first) { first = false; }
+            else { string.append(", "); }
             string.append("NEW.").append(column);
         }
         string.append(")) DO INSTEAD NOTHING");
@@ -407,19 +407,19 @@ public final class PostgreSQLConfiguration extends Configuration {
         
         final @Nonnull StringBuilder condition = new StringBuilder(" WHERE (");
         for (int i = 0; i < key; i++) {
-            if (i > 0) condition.append(", ");
+            if (i > 0) { condition.append(", "); }
             condition.append(columns[i]);
         }
         condition.append(") = (");
         for (int i = 0; i < key; i++) {
-            if (i > 0) condition.append(", ");
+            if (i > 0) { condition.append(", "); }
             condition.append("NEW.").append(columns[i]);
         }
         condition.append(")");
         
         string.append(condition).append(") DO INSTEAD UPDATE ").append(table).append(" SET ");
         for (int i = key; i < columns.length; i++) {
-            if (i > key) string.append(", ");
+            if (i > key) { string.append(", "); }
             string.append(columns[i]).append(" = NEW.").append(columns[i]);
         }
         string.append(condition);

@@ -293,7 +293,7 @@ public final class SQLiteConfiguration extends Configuration {
         
         final @Nonnull StringBuilder string = new StringBuilder("CREATE INDEX IF NOT EXISTS ").append(table).append("_index ON ").append(table).append(" (");
         for (final @Nonnull String column : columns) {
-            if (column != columns[0]) string.append(", ");
+            if (column != columns[0]) { string.append(", "); }
             string.append(column);
         }
         statement.executeUpdate(string.append(")").toString());
@@ -315,8 +315,8 @@ public final class SQLiteConfiguration extends Configuration {
     protected long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
         statement.executeUpdate(SQL);
         try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT last_insert_rowid()")) {
-            if (resultSet.next()) return resultSet.getLong(1);
-            else throw new SQLException("The given SQL statement did not generate any keys.");
+            if (resultSet.next()) { return resultSet.getLong(1); }
+            else { throw new SQLException("The given SQL statement did not generate any keys."); }
         }
     }
     

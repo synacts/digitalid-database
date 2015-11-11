@@ -319,7 +319,7 @@ public final class MySQLConfiguration extends Configuration {
         
         final @Nonnull StringBuilder string = new StringBuilder(", INDEX(");
         for (final @Nonnull String column : columns) {
-            if (string.length() != 8) string.append(", ");
+            if (string.length() != 8) { string.append(", "); }
             string.append(column);
         }
         return string.append(")").toString();

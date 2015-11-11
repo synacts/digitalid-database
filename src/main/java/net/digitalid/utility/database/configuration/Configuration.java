@@ -22,7 +22,6 @@ import net.digitalid.utility.system.logger.Log;
 /**
  * This class is used to configure various databases.
  * 
- * TODO: Introduce an abstract getMaximumIdentifierLength().
  * TODO: Split this class into various subconfigurations.
  * 
  * @see MySQLConfiguration
@@ -316,8 +315,8 @@ public abstract class Configuration {
     protected long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
         statement.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
         try (@Nonnull ResultSet resultSet = statement.getGeneratedKeys()) {
-            if (resultSet.next()) return resultSet.getLong(1);
-            else throw new SQLException("The given SQL statement did not generate a key.");
+            if (resultSet.next()) { return resultSet.getLong(1); }
+            else { throw new SQLException("The given SQL statement did not generate a key."); }
         }
     }
     

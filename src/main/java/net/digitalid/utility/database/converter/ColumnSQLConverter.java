@@ -13,9 +13,9 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.column.ColumnIndex;
-import net.digitalid.utility.database.reference.ColumnReference;
 import net.digitalid.utility.database.column.SQLType;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.reference.ColumnReference;
 import net.digitalid.utility.database.site.Site;
 
 /**
@@ -149,11 +149,11 @@ public abstract class ColumnSQLConverter<O, E> extends AbstractSQLConverter<O, E
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull String getForeignKeys(@Nonnull Site site, @Nonnull @Validated String prefix) throws SQLException {
+    public final @Nonnull String getForeignKeys(@Nonnull Site site, @Nonnull @Validated String prefix) throws SQLException {
         assert isValidPrefix(prefix) : "The prefix is valid.";
         
-        if (reference != null) return ", FOREIGN KEY (" + (reference.isEntityDependent() ? "entity, " : "") + (prefix.isEmpty() ? "" : prefix + "_") + name + ") " + reference.get(site);
-        else return "";
+        if (reference != null) { return ", FOREIGN KEY (" + (reference.isEntityDependent() ? "entity, " : "") + (prefix.isEmpty() ? "" : prefix + "_") + name + ") " + reference.get(site); }
+        else { return ""; }
     }
     
     /* -------------------------------------------------- Storing (with Statement) -------------------------------------------------- */

@@ -34,7 +34,13 @@ import net.digitalid.utility.database.site.Site;
 @Immutable
 public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O, E> {
     
+    // TODO: Introduce an IndexingSQLConverter that extends this class similarly to the ChainingSQLConverter.
+    
     /* -------------------------------------------------- Converters -------------------------------------------------- */
+    
+    // TODO: One should also be able to specify prefixes here!
+    
+    // TODO: Replace the ReadOnlyPair with something more specific like DatabaseDeclaration.
     
     /**
      * Stores the converters used to store the fields of an object of the generic type {@link O} and their nullability.
@@ -86,7 +92,7 @@ public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O
             @Pure @Override public String toString(@Nullable ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean> converter) { 
                 assert converter != null : "The converter is not null.";
                 
-                return converter.getNonNullableElement0().getDeclaration(nullable || converter.getNonNullableElement1(), prefix);
+                return converter.getNonNullableElement0().getDeclaration(nullable || converter.getNonNullableElement1(), prefix); // TODO: Include the declaration-specific prefix as well.
             } 
         });
     }
@@ -127,9 +133,9 @@ public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O
     
     @Locked
     @Override
-    @SafeVarargs
     @NonCommitting
-    public final void executeAfterCreation(@Nonnull @NonNullableElements @Frozen ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, String>... convertersOfSameUniqueConstraint) throws SQLException {
+    @SuppressWarnings("unchecked")
+    public void executeAfterCreation(@Nonnull @NonNullableElements @Frozen ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, String>... convertersOfSameUniqueConstraint) throws SQLException {
         for (@Nonnull ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean> converter : converters) {
             converter.getNonNullableElement0().executeAfterCreation(convertersOfSameUniqueConstraint);
         }
@@ -137,9 +143,9 @@ public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O
     
     @Locked
     @Override
-    @SafeVarargs
     @NonCommitting
-    public final void executeBeforeDeletion(@Nonnull @NonNullableElements @Frozen ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, String>... convertersOfSameUniqueConstraint) throws SQLException {
+    @SuppressWarnings("unchecked")
+    public void executeBeforeDeletion(@Nonnull @NonNullableElements @Frozen ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, String>... convertersOfSameUniqueConstraint) throws SQLException {
         for (@Nonnull ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean> converter : converters) {
             converter.getNonNullableElement0().executeBeforeDeletion(convertersOfSameUniqueConstraint);
         }
@@ -186,7 +192,7 @@ public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O
         int lengthOfLongestColumnName = 0;
         for (@Nonnull ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean> converter : converters) {
             final int columnNameLength = converter.getNonNullableElement0().getLengthOfLongestColumnName();
-            if (columnNameLength > lengthOfLongestColumnName) lengthOfLongestColumnName = columnNameLength;
+            if (columnNameLength > lengthOfLongestColumnName) { lengthOfLongestColumnName = columnNameLength; }
         }
         this.lengthOfLongestColumnName = lengthOfLongestColumnName;
     }
