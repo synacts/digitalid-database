@@ -38,10 +38,6 @@ public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     
-    // TODO: One should also be able to specify prefixes here!
-    
-    // TODO: Replace the ReadOnlyPair with something more specific like DatabaseDeclaration.
-    
     /**
      * Stores the converters used to store the fields of an object of the generic type {@link O} and their nullability.
      */
