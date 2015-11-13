@@ -1,4 +1,4 @@
-package net.digitalid.utility.database.column;
+package net.digitalid.utility.database.declaration;
 
 import java.sql.Types;
 import javax.annotation.Nonnull;

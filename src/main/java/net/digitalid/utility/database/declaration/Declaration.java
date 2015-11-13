@@ -10,7 +10,11 @@ import net.digitalid.utility.database.converter.AbstractSQLConverter;
  * This class models a database declaration, specifying the converter, the used prefix and whether the columns are nullable and indexed.
  */
 @Immutable
-public final class DatabaseDeclaration {
+public abstract class Declaration {
+    
+    // TODO: Make a builder pattern out of it, i.e. introduce methods like toNullableDeclaration(), toPrefixedDeclaration(@Nonnull String prefix) and toIndexedDeclaration() (or rather nullable(), prefixedWith(String), indexed(), combinedWith(Declaration), nonUnique(), etc.)
+    
+    // TODO: Introduce a contains(Declaration) method here.
     
     /* -------------------------------------------------- Converter -------------------------------------------------- */
     
@@ -90,7 +94,7 @@ public final class DatabaseDeclaration {
      * @param prefix the prefix that is prepended to all column names.
      * @param indexed whether the columns of the converter are indexed.
      */
-    private DatabaseDeclaration(@Nonnull AbstractSQLConverter<?, ?> converter, boolean nullable, @Nonnull @Validated String prefix, boolean indexed) {
+    private Declaration(@Nonnull AbstractSQLConverter<?, ?> converter, boolean nullable, @Nonnull @Validated String prefix, boolean indexed) {
         this.converter = converter;
         this.nullable = nullable;
         this.prefix = prefix;
@@ -108,8 +112,8 @@ public final class DatabaseDeclaration {
      * @return a new database declaration with the given parameters.
      */
     @Pure
-    public static @Nonnull DatabaseDeclaration get(@Nonnull AbstractSQLConverter<?, ?> converter, boolean nullable, @Nonnull @Validated String prefix, boolean indexed) {
-        return new DatabaseDeclaration(converter, nullable, prefix, indexed);
+    public static @Nonnull Declaration get(@Nonnull AbstractSQLConverter<?, ?> converter, boolean nullable, @Nonnull @Validated String prefix, boolean indexed) {
+        return new Declaration(converter, nullable, prefix, indexed);
     }
     
     /**
@@ -122,7 +126,7 @@ public final class DatabaseDeclaration {
      * @return a new database declaration with the given parameters.
      */
     @Pure
-    public static @Nonnull DatabaseDeclaration get(@Nonnull AbstractSQLConverter<?, ?> converter, boolean nullable, @Nonnull @Validated String prefix) {
+    public static @Nonnull Declaration get(@Nonnull AbstractSQLConverter<?, ?> converter, boolean nullable, @Nonnull @Validated String prefix) {
         return get(converter, nullable, prefix, false);
     }
     
@@ -135,7 +139,7 @@ public final class DatabaseDeclaration {
      * @return a new database declaration with the given parameters.
      */
     @Pure
-    public static @Nonnull DatabaseDeclaration get(@Nonnull AbstractSQLConverter<?, ?> converter, boolean nullable) {
+    public static @Nonnull Declaration get(@Nonnull AbstractSQLConverter<?, ?> converter, boolean nullable) {
         return get(converter, nullable, "", false);
     }
     

@@ -13,7 +13,7 @@ import net.digitalid.utility.database.site.Site;
  * This class models a database table that is {@link Site site}-independent.
  */
 @Immutable
-public final class GeneralDatabaseTable implements DatabaseTable {
+public final class GeneralTable implements Table {
     
     /* -------------------------------------------------- Name -------------------------------------------------- */
     
@@ -44,7 +44,7 @@ public final class GeneralDatabaseTable implements DatabaseTable {
      * 
      * @param name the site-independent name of the new table.
      */
-    private GeneralDatabaseTable(@Nonnull String name) {
+    private GeneralTable(@Nonnull String name) {
         this.name = name;
     }
     
@@ -56,8 +56,8 @@ public final class GeneralDatabaseTable implements DatabaseTable {
      * @return a new general database table with the given name.
      */
     @Pure
-    public static @Nonnull GeneralDatabaseTable get(@Nonnull String name) {
-        return new GeneralDatabaseTable(name);
+    public static @Nonnull GeneralTable get(@Nonnull String name) {
+        return new GeneralTable(name);
     }
     
 }

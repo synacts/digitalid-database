@@ -1,4 +1,4 @@
-package net.digitalid.utility.database.converter;
+package net.digitalid.utility.database.declaration;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -18,8 +18,9 @@ import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.column.ColumnIndex;
+import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.site.Site;
 
 /**
@@ -32,7 +33,7 @@ import net.digitalid.utility.database.site.Site;
  * @see SQL
  */
 @Immutable
-public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O, E> {
+public abstract class CombiningDeclaration<O, E> extends AbstractSQLConverter<O, E> {
     
     // TODO: Introduce an IndexingSQLConverter that extends this class similarly to the ChainingSQLConverter.
     
@@ -150,7 +151,7 @@ public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O
     /* -------------------------------------------------- Storing (with Statement) -------------------------------------------------- */
     
     @Override
-    protected final void getColumnNames(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull ColumnIndex index) {
+    protected final void getColumnNames(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull MutableIndex index) {
         for (@Nonnull ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean> converter : converters) {
             converter.getNonNullableElement0().getColumnNames(alias, prefix, names, index);
         }
@@ -160,7 +161,7 @@ public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O
     
     @Override
     @NonCommitting
-    public final void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull ColumnIndex parameterIndex) throws SQLException {
+    public final void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
         for (@Nonnull ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean> converter : converters) {
             converter.getNonNullableElement0().storeNull(preparedStatement, parameterIndex);
         }
@@ -176,7 +177,7 @@ public abstract class ComposingSQLConverter<O, E> extends AbstractSQLConverter<O
      * @return a new composing SQL converter with the given SQL converters and their nullability.
      */
     @SafeVarargs
-    protected ComposingSQLConverter(@Nonnull @NonNullableElements @Frozen ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean>... converters) {
+    protected CombiningDeclaration(@Nonnull @NonNullableElements @Frozen ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, Boolean>... converters) {
         this.converters = FreezableArray.getNonNullable(converters).freeze();
         
         int numberOfColumns = 0;

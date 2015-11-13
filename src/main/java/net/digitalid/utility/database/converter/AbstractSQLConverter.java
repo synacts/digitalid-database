@@ -15,10 +15,10 @@ import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.converter.IterableConverter;
 import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.collections.tuples.ReadOnlyPair;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.column.ColumnIndex;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.site.Site;
 
@@ -35,6 +35,8 @@ import net.digitalid.utility.database.site.Site;
  */
 @Immutable
 public abstract class AbstractSQLConverter<O, E> {
+    
+    // TODO: Introduce a getDeclaration() here!
     
     /* -------------------------------------------------- Columns -------------------------------------------------- */
     
@@ -103,7 +105,9 @@ public abstract class AbstractSQLConverter<O, E> {
      * @return the columns for selection with the given prefix.
      */
     @Pure
-    public abstract @Nonnull String getSelection(@Nonnull @Validated String prefix);
+    public abstract @Nonnull String getSelection(@Nonnull @Validated String prefix); // TODO: This should include an alias! And also a boolean to indicate whether it belongs to the primary key. And also be protected.
+    
+    // TODO: Introduce a method getPrimaryKey();
     
     /**
      * Returns the columns for selection without a prefix.
@@ -142,7 +146,7 @@ public abstract class AbstractSQLConverter<O, E> {
      */
     @Locked
     @NonCommitting
-    public final @Nonnull String getForeignKeys(@Nonnull Site site) throws SQLException {
+    public final @Nonnull String getForeignKeys(@Nonnull Site site) throws SQLException { // TODO: Site should be nullable.
         return getForeignKeys(site, "");
     }
     
@@ -156,7 +160,7 @@ public abstract class AbstractSQLConverter<O, E> {
      */
     @Locked
     @NonCommitting
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked") // TODO: Pass the table or its primary key and the prefix so far instead of the current array. Or rather a mutable index and the number of primary key columns instead of the table? No, primary key as boolean (together with the table to get all primary key columns).
     public void executeAfterCreation(@Nonnull @NonNullableElements @Frozen ReadOnlyPair<? extends AbstractSQLConverter<?, ?>, String>... convertersOfSameUniqueConstraint) throws SQLException {}
     
     /**
@@ -183,7 +187,7 @@ public abstract class AbstractSQLConverter<O, E> {
      * 
      * @ensure !values.containsNull() : "After the execution of this method, the array of values does not contain null.";
      */
-    public abstract void getValues(@Nonnull O object, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull ColumnIndex index);
+    public abstract void getValues(@Nonnull O object, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index);
     
     /**
      * Returns the value of the given object or 'NULL' for each column.
@@ -200,7 +204,7 @@ public abstract class AbstractSQLConverter<O, E> {
         if (object == null) {
             return values.setAll("NULL");
         } else {
-            getValues(object, values, ColumnIndex.get());
+            getValues(object, values, MutableIndex.get());
             return values;
         }
     }
@@ -241,7 +245,7 @@ public abstract class AbstractSQLConverter<O, E> {
      * 
      * @ensure !names.containsNull() : "After the execution of this method, the array of names does not contain null.";
      */
-    protected abstract void getColumnNames(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull ColumnIndex index);
+    protected abstract void getColumnNames(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull MutableIndex index);
     
     /**
      * Returns the name of each column with the given alias and prefix.
@@ -254,7 +258,7 @@ public abstract class AbstractSQLConverter<O, E> {
     @Pure
     public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnNames(@Nonnull @Validated String alias, @Nonnull @Validated String prefix) {
         final @Nonnull FreezableArray<String> names = FreezableArray.get(getNumberOfColumns());
-        getColumnNames(alias, prefix, names, ColumnIndex.get());
+        getColumnNames(alias, prefix, names, MutableIndex.get());
         return names;
     }
     
@@ -440,7 +444,7 @@ public abstract class AbstractSQLConverter<O, E> {
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
     @NonCommitting
-    public abstract void storeNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, @Nonnull ColumnIndex parameterIndex) throws SQLException;
+    public abstract void storeNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException;
     
     /**
      * Sets the parameters starting from the given index of the prepared statement to null.
@@ -450,8 +454,8 @@ public abstract class AbstractSQLConverter<O, E> {
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
     @NonCommitting
-    public abstract void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull ColumnIndex parameterIndex) throws SQLException;
-        
+    public abstract void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException;
+    
     /**
      * Sets the parameters starting from the given index of the prepared statement to the given nullable object.
      * The number of parameters that are set is given by {@link #getNumberOfColumns()}.
@@ -461,7 +465,7 @@ public abstract class AbstractSQLConverter<O, E> {
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
     @NonCommitting
-    public final void storeNullable(@Nullable O object, @Nonnull PreparedStatement preparedStatement, @Nonnull ColumnIndex parameterIndex) throws SQLException {
+    public final void storeNullable(@Nullable O object, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
         if (object == null) { storeNull(preparedStatement, parameterIndex); }
         else { storeNonNullable(object, preparedStatement, parameterIndex); }
     }
@@ -480,7 +484,7 @@ public abstract class AbstractSQLConverter<O, E> {
      */
     @Pure
     @NonCommitting
-    public abstract @Nullable O restoreNullable(@Nonnull E external, @Nonnull ResultSet resultSet, @Nonnull ColumnIndex columnIndex) throws SQLException;
+    public abstract @Nullable O restoreNullable(@Nonnull E external, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException;
     
     /**
      * Returns a non-nullable object from the given columns of the result set.
@@ -494,7 +498,7 @@ public abstract class AbstractSQLConverter<O, E> {
      */
     @Pure
     @NonCommitting
-    public final @Nonnull O restoreNonNullable(@Nonnull E external, @Nonnull ResultSet resultSet, @Nonnull ColumnIndex columnIndex) throws SQLException {
+    public final @Nonnull O restoreNonNullable(@Nonnull E external, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
         final @Nullable O object = restoreNullable(external, resultSet, columnIndex);
         if (object == null) { throw new SQLException("An object which should not be null was null."); }
         return object;

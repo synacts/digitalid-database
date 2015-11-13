@@ -1,4 +1,4 @@
-package net.digitalid.utility.database.converter;
+package net.digitalid.utility.database.declaration;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -12,10 +12,11 @@ import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.column.ColumnIndex;
-import net.digitalid.utility.database.column.SQLType;
+import net.digitalid.utility.collections.index.MutableIndex;
+import net.digitalid.utility.database.declaration.SQLType;
 import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.reference.ColumnReference;
+import net.digitalid.utility.database.converter.AbstractSQLConverter;
+import net.digitalid.utility.database.reference.Reference;
 import net.digitalid.utility.database.site.Site;
 
 /**
@@ -28,7 +29,7 @@ import net.digitalid.utility.database.site.Site;
  * @see SQL
  */
 @Immutable
-public abstract class ColumnSQLConverter<O, E> extends AbstractSQLConverter<O, E> {
+public abstract class ColumnDeclaration<O, E> extends AbstractSQLConverter<O, E> {
     
     /* -------------------------------------------------- Name -------------------------------------------------- */
     
@@ -81,7 +82,7 @@ public abstract class ColumnSQLConverter<O, E> extends AbstractSQLConverter<O, E
     /**
      * Stores the foreign key reference of this column or null if there is none.
      */
-    private final @Nullable ColumnReference reference;
+    private final @Nullable Reference reference;
     
     /**
      * Returns the foreign key reference of this column or null if there is none.
@@ -89,7 +90,7 @@ public abstract class ColumnSQLConverter<O, E> extends AbstractSQLConverter<O, E
      * @return the foreign key reference of this column or null if there is none.
      */
     @Pure
-    public final @Nullable ColumnReference getReference() {
+    public final @Nullable Reference getReference() {
         return reference;
     }
     
@@ -102,7 +103,7 @@ public abstract class ColumnSQLConverter<O, E> extends AbstractSQLConverter<O, E
      * @param type the SQL type of the new column.
      * @param reference the foreign key reference of the new column or null if there is none.
      */
-    protected ColumnSQLConverter(@Nonnull @Validated String name, @Nonnull SQLType type, @Nullable ColumnReference reference) {
+    protected ColumnDeclaration(@Nonnull @Validated String name, @Nonnull SQLType type, @Nullable Reference reference) {
         assert isValidName(name) : "The name is valid.";
         
         this.name = name;
@@ -169,12 +170,12 @@ public abstract class ColumnSQLConverter<O, E> extends AbstractSQLConverter<O, E
     protected abstract @Nonnull String getValue(@Nonnull O object);
     
     @Override
-    public final void getValues(@Nonnull O object, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull ColumnIndex index) {
+    public final void getValues(@Nonnull O object, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
         values.set(index.getAndIncrementValue(), getValue(object));
     }
     
     @Override
-    protected final void getColumnNames(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull ColumnIndex index) {
+    protected final void getColumnNames(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull MutableIndex index) {
         assert isValidAlias(alias) : "The alias is valid.";
         assert isValidPrefix(prefix) : "The prefix is valid.";
         
@@ -185,7 +186,7 @@ public abstract class ColumnSQLConverter<O, E> extends AbstractSQLConverter<O, E
     
     @Override
     @NonCommitting
-    public final void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull ColumnIndex parameterIndex) throws SQLException {
+    public final void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
         preparedStatement.setNull(parameterIndex.getAndIncrementValue(), getType().getCode());
     }
     

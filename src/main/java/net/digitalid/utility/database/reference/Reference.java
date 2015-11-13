@@ -6,9 +6,9 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.converter.ColumnSQLConverter;
+import net.digitalid.utility.database.declaration.ColumnDeclaration;
 import net.digitalid.utility.database.site.Site;
-import net.digitalid.utility.database.table.DatabaseTable;
+import net.digitalid.utility.database.table.Table;
 
 /**
  * This class models single-column foreign key references.
@@ -16,14 +16,14 @@ import net.digitalid.utility.database.table.DatabaseTable;
  * @see GeneralColumnReference
  */
 @Immutable
-public class ColumnReference {
+public class Reference {
     
     /* -------------------------------------------------- Table -------------------------------------------------- */
     
     /**
      * Stores the database table whose column is referenced.
      */
-    private final @Nonnull DatabaseTable table;
+    private final @Nonnull Table table;
     
     /**
      * Returns the database table whose column is referenced.
@@ -31,7 +31,7 @@ public class ColumnReference {
      * @return the database table whose column is referenced.
      */
     @Pure
-    public final @Nonnull DatabaseTable getTable() {
+    public final @Nonnull Table getTable() {
         return table;
     }
     
@@ -40,7 +40,7 @@ public class ColumnReference {
     /**
      * Stores the referenced column within the given table.
      */
-    private final @Nonnull ColumnSQLConverter<?, ?> column;
+    private final @Nonnull ColumnDeclaration<?, ?> column;
     
     /**
      * Returns the referenced column within the given table.
@@ -48,7 +48,7 @@ public class ColumnReference {
      * @return the referenced column within the given table.
      */
     @Pure
-    public final @Nonnull ColumnSQLConverter<?, ?> getColumn() {
+    public final @Nonnull ColumnDeclaration<?, ?> getColumn() {
         return column;
     }
     
@@ -114,7 +114,7 @@ public class ColumnReference {
      * @param updateOption the referential action triggered on update.
      * @param entityDependent whether this reference depends on an entity.
      */
-    protected ColumnReference(@Nonnull DatabaseTable table, @Nonnull ColumnSQLConverter<?, ?> column, @Nonnull ReferenceOption deleteOption, @Nonnull ReferenceOption updateOption, boolean entityDependent) {
+    protected Reference(@Nonnull Table table, @Nonnull ColumnDeclaration<?, ?> column, @Nonnull ReferenceOption deleteOption, @Nonnull ReferenceOption updateOption, boolean entityDependent) {
         this.table = table;
         this.column = column;
         this.deleteOption = deleteOption;

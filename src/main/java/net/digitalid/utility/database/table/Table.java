@@ -11,9 +11,8 @@ import net.digitalid.utility.database.site.Site;
 /**
  * This interface models a database table.
  */
-public interface DatabaseTable { // TODO: Inherit from ComposingSQLConverter?
+public interface Table { // TODO: Inherit from ComposingSQLConverter? No, but it also has a declaration.
     
-    // TODO: Introduce the converters with their prefixes here, separated by primary key and other converters?
     // TODO: Implement the creation and deletion of this table here.
     
     // TODO: Introduce an abstract isSiteSpecific() method to use as a precondition when the site parameter can be nullable.
