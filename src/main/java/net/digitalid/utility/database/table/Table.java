@@ -2,6 +2,7 @@ package net.digitalid.utility.database.table;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.Locked;
@@ -18,6 +19,14 @@ public interface Table { // TODO: Inherit from ComposingSQLConverter? No, but it
     // TODO: Introduce an abstract isSiteSpecific() method to use as a precondition when the site parameter can be nullable.
     
     /**
+     * Returns whether this table is {@link Site site}-specific.
+     * 
+     * @return whether this table is {@link Site site}-specific.
+     */
+    @Pure
+    public abstract boolean isSiteSpecific();
+    
+    /**
      * Returns the name of this table with the prefix of the given site.
      * 
      * @param site the site whose prefix is to be used for the returned name.
@@ -25,7 +34,7 @@ public interface Table { // TODO: Inherit from ComposingSQLConverter? No, but it
      * @return the name of this table with the prefix of the given site.
      */
     @Pure
-    public @Nonnull @Validated String getName(@Nonnull Site site);
+    public @Nonnull @Validated String getName(@Nullable Site site);
     
     /**
      * Creates this table for the given site.

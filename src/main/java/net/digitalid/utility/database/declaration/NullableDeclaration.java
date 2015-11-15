@@ -1,12 +1,46 @@
 package net.digitalid.utility.database.declaration;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.annotations.state.Validated;
+
 /**
- * Description.
+ * This class implements a nullable version of another declaration.
  */
-public class NullableDeclaration {
+@Immutable
+public final class NullableDeclaration extends ChainingDeclaration {
     
-    public NullableDeclaration() {
-        
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
+    
+    /**
+     * Creates a new nullable declaration with the given declaration.
+     * 
+     * @param declaration declaration on which the new declaration is based.
+     */
+    private NullableDeclaration(@Nonnull Declaration declaration) {
+        super(declaration);
+    }
+    
+    /**
+     * Returns a new nullable declaration with the given declaration.
+     * 
+     * @param declaration declaration on which the new declaration is based.
+     * 
+     * @return a new nullable declaration with the given declaration.
+     */
+    @Pure
+    public static @Nonnull NullableDeclaration get(@Nonnull Declaration declaration) {
+        return new NullableDeclaration(declaration);
+    }
+    
+    /* -------------------------------------------------- Declaration -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    protected @Nonnull String toString(boolean nullable, @Nullable @Validated String prefix) {
+        return getDeclaration().toString(true, prefix);
     }
     
 }

@@ -2,6 +2,7 @@ package net.digitalid.utility.database.reference;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.Locked;
@@ -40,7 +41,7 @@ public class Reference {
     /**
      * Stores the referenced column within the given table.
      */
-    private final @Nonnull ColumnDeclaration<?, ?> column;
+    private final @Nonnull ColumnDeclaration column;
     
     /**
      * Returns the referenced column within the given table.
@@ -48,7 +49,7 @@ public class Reference {
      * @return the referenced column within the given table.
      */
     @Pure
-    public final @Nonnull ColumnDeclaration<?, ?> getColumn() {
+    public final @Nonnull ColumnDeclaration getColumn() {
         return column;
     }
     
@@ -114,7 +115,7 @@ public class Reference {
      * @param updateOption the referential action triggered on update.
      * @param entityDependent whether this reference depends on an entity.
      */
-    protected Reference(@Nonnull Table table, @Nonnull ColumnDeclaration<?, ?> column, @Nonnull ReferenceOption deleteOption, @Nonnull ReferenceOption updateOption, boolean entityDependent) {
+    protected Reference(@Nonnull Table table, @Nonnull ColumnDeclaration column, @Nonnull ReferenceOption deleteOption, @Nonnull ReferenceOption updateOption, boolean entityDependent) {
         this.table = table;
         this.column = column;
         this.deleteOption = deleteOption;
@@ -131,11 +132,15 @@ public class Reference {
      * 
      * @return the reference to the table of the given site after creating it first.
      * 
+     * @require !table.isSiteSpecific() || site != null : "If the table is site-specific, the site may not be null.";
+     * 
      * @ensure return.startsWith("REFERENCES") : "The returned string is a reference.";
      */
     @Locked
     @NonCommitting
-    public final @Nonnull String get(@Nonnull Site site) throws SQLException {
+    public final @Nonnull String get(@Nullable Site site) throws SQLException {
+        assert !table.isSiteSpecific() || site != null : "If the table is site-specific, the site may not be null.";
+        
         table.create(site);
         return "REFERENCES " + table.getName(site) + " (" + (isEntityDependent() ? "entity, " : "") + column.getName() + ") ON DELETE " + deleteOption + " ON UPDATE " + updateOption;
     }

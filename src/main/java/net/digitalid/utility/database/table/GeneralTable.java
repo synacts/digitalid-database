@@ -60,4 +60,12 @@ public final class GeneralTable implements Table {
         return new GeneralTable(name);
     }
     
+    /* -------------------------------------------------- Method -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public boolean isSiteSpecific() {
+        return false;
+    }
+    
 }

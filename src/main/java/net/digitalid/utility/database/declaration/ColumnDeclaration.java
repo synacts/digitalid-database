@@ -2,6 +2,7 @@ package net.digitalid.utility.database.declaration;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.reference.NonCapturable;
@@ -10,26 +11,19 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.collections.index.MutableIndex;
-import net.digitalid.utility.database.declaration.SQLType;
 import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.converter.AbstractSQLConverter;
 import net.digitalid.utility.database.reference.Reference;
 import net.digitalid.utility.database.site.Site;
+import net.digitalid.utility.database.table.Table;
 
 /**
- * A column SQL converter allows to store and restore objects into and from a single column of the {@link Database database}.
- * 
- * @param <O> the type of the objects that this converter can store and restore, which is typically the surrounding class.
- * @param <E> the type of the external object that is needed to restore an object, which is quite often an entity.
- *            In case no external information is needed for the restoration of an object, declare it as an {@link Object}.
- * 
- * @see SQL
+ * This class implements the declaration of a single column.
  */
 @Immutable
-public abstract class ColumnDeclaration<O, E> extends AbstractSQLConverter<O, E> {
+public class ColumnDeclaration extends Declaration {
     
     /* -------------------------------------------------- Name -------------------------------------------------- */
     
@@ -46,14 +40,14 @@ public abstract class ColumnDeclaration<O, E> extends AbstractSQLConverter<O, E>
     }
     
     /**
-     * Stores the name of this column.
+     * Stores the name of this column declaration.
      */
     private final @Nonnull @Validated String name;
     
     /**
-     * Returns the name of this column.
+     * Returns the name of this column declaration.
      * 
-     * @return the name of this column.
+     * @return the name of this column declaration.
      */
     @Pure
     public final @Nonnull @Validated String getName() {
@@ -63,14 +57,14 @@ public abstract class ColumnDeclaration<O, E> extends AbstractSQLConverter<O, E>
     /* -------------------------------------------------- Type -------------------------------------------------- */
     
     /**
-     * Stores the SQL type of this column.
+     * Stores the SQL type of this column declaration.
      */
     private final @Nonnull SQLType type;
     
     /**
-     * Returns the SQL type of this column.
+     * Returns the SQL type of this column declaration.
      * 
-     * @return the SQL type of this column.
+     * @return the SQL type of this column declaration.
      */
     @Pure
     public final @Nonnull SQLType getType() {
@@ -80,14 +74,14 @@ public abstract class ColumnDeclaration<O, E> extends AbstractSQLConverter<O, E>
     /* -------------------------------------------------- Reference -------------------------------------------------- */
     
     /**
-     * Stores the foreign key reference of this column or null if there is none.
+     * Stores the foreign key reference of this column declaration or null if there is none.
      */
     private final @Nullable Reference reference;
     
     /**
-     * Returns the foreign key reference of this column or null if there is none.
+     * Returns the foreign key reference of this column declaration or null if there is none.
      * 
-     * @return the foreign key reference of this column or null if there is none.
+     * @return the foreign key reference of this column declaration or null if there is none.
      */
     @Pure
     public final @Nullable Reference getReference() {
@@ -97,11 +91,11 @@ public abstract class ColumnDeclaration<O, E> extends AbstractSQLConverter<O, E>
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new column SQL converter with the given parameters.
+     * Creates a new column declaration with the given parameters.
      * 
-     * @param name the name of the new column.
-     * @param type the SQL type of the new column.
-     * @param reference the foreign key reference of the new column or null if there is none.
+     * @param name the name of the new column declaration.
+     * @param type the SQL type of the new column declaration.
+     * @param reference the foreign key reference of the new column declaration or null if there is none.
      */
     protected ColumnDeclaration(@Nonnull @Validated String name, @Nonnull SQLType type, @Nullable Reference reference) {
         assert isValidName(name) : "The name is valid.";
@@ -111,11 +105,25 @@ public abstract class ColumnDeclaration<O, E> extends AbstractSQLConverter<O, E>
         this.reference = reference;
     }
     
+    /**
+     * Returns a new column declaration with the given parameters.
+     * 
+     * @param name the name of the new column declaration.
+     * @param type the SQL type of the new column declaration.
+     * @param reference the foreign key reference of the new column declaration or null if there is none.
+     * 
+     * @return a new column declaration with the given parameters.
+     */
+    @Pure
+    public static @Nonnull ColumnDeclaration get(@Nonnull @Validated String name, @Nonnull SQLType type, @Nullable Reference reference) {
+        return new ColumnDeclaration(name, type, reference);
+    }
+    
     /* -------------------------------------------------- Columns -------------------------------------------------- */
     
     @Pure
     @Override
-    public final int getNumberOfColumns() {
+    protected final int getNumberOfColumns(boolean unique) {
         return 1;
     }
     
@@ -129,57 +137,54 @@ public abstract class ColumnDeclaration<O, E> extends AbstractSQLConverter<O, E>
     
     @Pure
     @Override
-    public final @Nonnull String getDeclaration(boolean nullable, @Nonnull @Validated String prefix) {
-        assert isValidPrefix(prefix) : "The prefix is valid.";
+    protected @Nonnull String toString(boolean nullable, @Nullable @Validated String prefix) {
+        assert prefix == null || isValidPrefix(prefix) : "The prefix is null or valid.";
         
-        return (prefix.isEmpty() ? "" : prefix + "_") + name + " " + type + (nullable ? "" : " NOT NULL");
+        return (prefix == null ? "" : prefix + "_") + name + " " + type + (nullable ? "" : " NOT NULL");
     }
     
-    /* -------------------------------------------------- Selection -------------------------------------------------- */
+    /* -------------------------------------------------- Column Names -------------------------------------------------- */
     
-    @Pure
     @Override
-    public final @Nonnull String getSelection(final @Nonnull @Validated String prefix) {
-        assert isValidPrefix(prefix) : "The prefix is valid.";
+    protected final void getColumnNames(boolean unique, @Nullable @Validated String alias, @Nullable @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull MutableIndex index) {
+        assert alias == null || isValidAlias(alias) : "The alias is null or valid.";
+        assert prefix == null || isValidPrefix(prefix) : "The prefix is null or valid.";
         
-        return (prefix.isEmpty() ? "" : prefix + "_") + name;
+        names.set(index.getAndIncrementValue(), (alias == null ? "" : alias + ".") + (prefix == null ? "" : prefix + "_") + name);
     }
     
     /* -------------------------------------------------- Foreign Keys -------------------------------------------------- */
     
+    @Pure
+    @Override
+    public final boolean isSiteSpecific() {
+        return reference == null ? false : reference.getTable().isSiteSpecific();
+    }
+    
     @Locked
     @Override
     @NonCommitting
-    public final @Nonnull String getForeignKeys(@Nonnull Site site, @Nonnull @Validated String prefix) throws SQLException {
-        assert isValidPrefix(prefix) : "The prefix is valid.";
+    protected final @Nonnull String getForeignKeys(@Nullable Site site, @Nullable @Validated String prefix) throws SQLException {
+        assert prefix == null || isValidPrefix(prefix) : "The prefix is null or valid.";
         
-        if (reference != null) { return ", FOREIGN KEY (" + (reference.isEntityDependent() ? "entity, " : "") + (prefix.isEmpty() ? "" : prefix + "_") + name + ") " + reference.get(site); }
+        if (reference != null) { return ", FOREIGN KEY (" + (reference.isEntityDependent() ? "entity, " : "") + (prefix == null ? "" : prefix + "_") + name + ") " + reference.get(site); }
         else { return ""; }
     }
     
-    /* -------------------------------------------------- Storing (with Statement) -------------------------------------------------- */
+    /* -------------------------------------------------- Creation and Deletion -------------------------------------------------- */
     
-    /**
-     * Returns the value of the given object for this column.
-     * 
-     * @param object the object whose value is returned.
-     *  
-     * @return the value of the given object for this column.
-     */
-    @Pure
-    protected abstract @Nonnull String getValue(@Nonnull O object);
-    
+    @Locked
     @Override
-    public final void getValues(@Nonnull O object, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
-        values.set(index.getAndIncrementValue(), getValue(object));
+    @NonCommitting
+    public void executeAfterCreation(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws SQLException {
+        assert prefix == null || isValidPrefix(prefix) : "The prefix is null or valid.";
     }
     
+    @Locked
     @Override
-    protected final void getColumnNames(@Nonnull @Validated String alias, @Nonnull @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull MutableIndex index) {
-        assert isValidAlias(alias) : "The alias is valid.";
-        assert isValidPrefix(prefix) : "The prefix is valid.";
-        
-        names.set(index.getAndIncrementValue(), (alias.isEmpty() ? "" : alias + ".") + (prefix.isEmpty() ? "" : prefix + "_") + name);
+    @NonCommitting
+    public void executeBeforeDeletion(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws SQLException {
+        assert prefix == null || isValidPrefix(prefix) : "The prefix is null or valid.";
     }
     
     /* -------------------------------------------------- Storing (with PreparedStatement) -------------------------------------------------- */

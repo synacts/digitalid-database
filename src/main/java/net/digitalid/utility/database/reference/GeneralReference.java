@@ -23,7 +23,7 @@ public final class GeneralReference extends Reference {
      * @param deleteOption the referential action triggered on deletion.
      * @param updateOption the referential action triggered on update.
      */
-    private GeneralReference(@Nonnull GeneralTable table, @Nonnull ColumnDeclaration<?, ?> column, @Nonnull ReferenceOption deleteOption, @Nonnull ReferenceOption updateOption) {
+    private GeneralReference(@Nonnull GeneralTable table, @Nonnull ColumnDeclaration column, @Nonnull ReferenceOption deleteOption, @Nonnull ReferenceOption updateOption) {
         super(table, column, deleteOption, updateOption, false);
     }
     
@@ -38,7 +38,7 @@ public final class GeneralReference extends Reference {
      * @return a new general column reference with the given parameters.
      */
     @Pure
-    public static @Nonnull GeneralReference get(@Nonnull GeneralTable table, @Nonnull ColumnDeclaration<?, ?> column, @Nonnull ReferenceOption deleteOption, @Nonnull ReferenceOption updateOption) {
+    public static @Nonnull GeneralReference get(@Nonnull GeneralTable table, @Nonnull ColumnDeclaration column, @Nonnull ReferenceOption deleteOption, @Nonnull ReferenceOption updateOption) {
         return new GeneralReference(table, column, deleteOption, updateOption);
     }
     
