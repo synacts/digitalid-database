@@ -23,6 +23,10 @@ import net.digitalid.utility.database.table.Table;
 
 /**
  * This class models a database declaration that consists of a certain number of columns.
+ * 
+ * @see ColumnDeclaration
+ * @see ChainingDeclaration
+ * @see CombiningDeclaration
  */
 @Immutable
 public abstract class Declaration {

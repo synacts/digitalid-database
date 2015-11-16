@@ -44,7 +44,7 @@ public abstract class AbstractSQLConverter<O, E> {
      * @return the declaration of this SQL converter.
      */
     @Pure
-    public final @Nonnull Declaration getDeclaration () {
+    public final @Nonnull Declaration getDeclaration() {
         return declaration;
     }
     
@@ -68,11 +68,11 @@ public abstract class AbstractSQLConverter<O, E> {
      * @param values a mutable array which stores the value of the object for each column.
      * @param index the current index into the values array.
      * 
-     * @require values.size() == getNumberOfColumns() : "The array contains a value for each column.";
+     * @require values.size() == getDeclaration().getNumberOfColumns() : "The array contains a value for each column.";
      * 
      * @ensure !values.containsNull() : "After the execution of this method, the array of values does not contain null.";
      */
-    public abstract void getValues(@Nonnull O object, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index);
+    protected abstract void getValues(@Nonnull O object, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index);
     
     /**
      * Returns the value of the given object or 'NULL' for each column.
@@ -81,10 +81,10 @@ public abstract class AbstractSQLConverter<O, E> {
      * 
      * @return the value of the given object or 'NULL' for each column.
      * 
-     * @ensure return.size() == getNumberOfColumns() : "The returned array contains a value for each column.";
+     * @ensure return.size() == getDeclaration().getNumberOfColumns() : "The returned array contains a value for each column.";
      */
     @Pure
-    public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValuesOrNulls(@Nullable O object) {
+    public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nullable O object) {
         final @Nonnull FreezableArray<String> values = FreezableArray.get(declaration.getNumberOfColumns());
         if (object == null) {
             return values.setAll("NULL");
@@ -105,7 +105,7 @@ public abstract class AbstractSQLConverter<O, E> {
      */
     @Pure
     public final @Nonnull String getInsertForStatement(@Nullable O object) {
-        return IterableConverter.toString(getValuesOrNulls(object));
+        return IterableConverter.toString(getValues(object));
     }
     
     /**
@@ -117,12 +117,12 @@ public abstract class AbstractSQLConverter<O, E> {
      * 
      * @return the name of each column followed by the equality sign and the corresponding value of the given object.
      * 
-     * @ensure return.size() == getNumberOfColumns() : "The returned array contains an entry for each column.";
+     * @ensure return.size() == getDeclaration().getNumberOfColumns() : "The returned array contains an entry for each column.";
      */
     @Pure
-    private @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnsEqualValues(@Nullable O object, @Nonnull @Validated String prefix, @Nonnull @Validated String alias) {
+    private @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnsEqualValues(@Nullable O object, @Nullable @Validated String prefix, @Nullable @Validated String alias) {
         final @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> names = declaration.getColumnNames(alias, prefix);
-        final @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> values = getValuesOrNulls(object);
+        final @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> values = getValues(object);
         for (int i = 0; i < names.size(); i++) {
             names.set(i, names.getNonNullable(i) + " = " + values.getNonNullable(i)); 
         }
@@ -138,8 +138,8 @@ public abstract class AbstractSQLConverter<O, E> {
      * @return the name of each column followed by the equality sign and the corresponding value of the given object separated by commas.
      */
     @Pure
-    public final @Nonnull String getUpdateForStatement(@Nullable O object, @Nonnull @Validated String prefix) {
-        return IterableConverter.toString(getColumnsEqualValues(object, prefix, ""));
+    public final @Nonnull String getUpdateForStatement(@Nullable O object, @Nullable @Validated String prefix) {
+        return IterableConverter.toString(getColumnsEqualValues(object, prefix, null));
     }
     
     /**
@@ -151,7 +151,7 @@ public abstract class AbstractSQLConverter<O, E> {
      */
     @Pure
     public final @Nonnull String getUpdateForStatement(@Nullable O object) {
-        return getUpdateForStatement(object, "");
+        return getUpdateForStatement(object, null);
     }
     
     /**
@@ -164,7 +164,7 @@ public abstract class AbstractSQLConverter<O, E> {
      * @return the name of each column followed by the equality sign and the corresponding value of the given object separated by {@code AND}.
      */
     @Pure
-    public final @Nonnull String getConditionForStatement(@Nullable O object, @Nonnull @Validated String prefix, @Nonnull @Validated String alias) {
+    public final @Nonnull String getConditionForStatement(@Nullable O object, @Nullable @Validated String prefix, @Nullable @Validated String alias) {
         return IterableConverter.toString(getColumnsEqualValues(object, prefix, alias), " AND ");
     }
     
@@ -177,8 +177,8 @@ public abstract class AbstractSQLConverter<O, E> {
      * @return the name of each column followed by the equality sign and the corresponding value of the given object separated by {@code AND}.
      */
     @Pure
-    public final @Nonnull String getConditionForStatement(@Nullable O object, @Nonnull @Validated String prefix) {
-        return getConditionForStatement(object, prefix, "");
+    public final @Nonnull String getConditionForStatement(@Nullable O object, @Nullable @Validated String prefix) {
+        return getConditionForStatement(object, prefix, null);
     }
     
     /**
@@ -190,14 +190,14 @@ public abstract class AbstractSQLConverter<O, E> {
      */
     @Pure
     public final @Nonnull String getConditionForStatement(@Nullable O object) {
-        return getConditionForStatement(object, "");
+        return getConditionForStatement(object, null);
     }
     
     /* -------------------------------------------------- Storing (with PreparedStatement) -------------------------------------------------- */
     
     /**
      * Sets the parameters starting from the given index of the prepared statement to the given non-nullable object.
-     * The number of parameters that are set is given by {@link #getNumberOfColumns()}.
+     * The number of parameters that are set is given by {@link Declaration#getNumberOfColumns()}.
      * 
      * @param object the non-nullable object which is to be stored in the database.
      * @param preparedStatement the prepared statement whose parameters are to be set.
@@ -208,7 +208,7 @@ public abstract class AbstractSQLConverter<O, E> {
     
     /**
      * Sets the parameters starting from the given index of the prepared statement to the given nullable object.
-     * The number of parameters that are set is given by {@link #getNumberOfColumns()}.
+     * The number of parameters that are set is given by {@link Declaration#getNumberOfColumns()}.
      * 
      * @param object the nullable object which is to be stored in the database.
      * @param preparedStatement the prepared statement whose parameters are to be set.
@@ -224,7 +224,7 @@ public abstract class AbstractSQLConverter<O, E> {
     
     /**
      * Returns a nullable object from the given columns of the result set.
-     * The number of columns that are read is given by {@link #getNumberOfColumns()}.
+     * The number of columns that are read is given by {@link Declaration#getNumberOfColumns()}.
      * 
      * @param external the external object which is needed to recover the object.
      * @param resultSet the result set from which the data is to be retrieved.
@@ -238,7 +238,7 @@ public abstract class AbstractSQLConverter<O, E> {
     
     /**
      * Returns a non-nullable object from the given columns of the result set.
-     * The number of columns that are read is given by {@link #getNumberOfColumns()}.
+     * The number of columns that are read is given by {@link Declaration#getNumberOfColumns()}.
      * 
      * @param external the external object which is needed to recover the object.
      * @param resultSet the result set from which the data is to be retrieved.

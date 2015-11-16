@@ -21,6 +21,8 @@ import net.digitalid.utility.database.table.Table;
 
 /**
  * This class implements the declaration of a single column.
+ * 
+ * @see AutoIncrementingColumnDeclaration
  */
 @Immutable
 public class ColumnDeclaration extends Declaration {
