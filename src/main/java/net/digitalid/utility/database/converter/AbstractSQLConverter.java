@@ -62,17 +62,33 @@ public abstract class AbstractSQLConverter<O, E> {
     /* -------------------------------------------------- Storing (with Statement) -------------------------------------------------- */
     
     /**
-     * Stores the value of the given object for each column in the given array.
+     * Stores the value of the given non-nullable object for each column in the given array.
      * 
-     * @param object the object whose values are to be returned.
+     * @param object the object whose values are to be stored in the values array.
      * @param values a mutable array which stores the value of the object for each column.
      * @param index the current index into the values array.
      * 
-     * @require values.size() == getDeclaration().getNumberOfColumns() : "The array contains a value for each column.";
-     * 
-     * @ensure !values.containsNull() : "After the execution of this method, the array of values does not contain null.";
+     * @require values.size() >= index.getValue() + getDeclaration().getNumberOfColumns() : "The array has enough space for each column.";
      */
-    protected abstract void getValues(@Nonnull O object, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index);
+    public abstract void storeNonNullable(@Nonnull O object, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index);
+    
+    /**
+     * Stores the value of the given nullable object for each column in the given array.
+     * 
+     * @param object the object whose values are to be stored in the values array.
+     * @param values a mutable array which stores the value of the object for each column.
+     * @param index the current index into the values array.
+     * 
+     * @require values.size() >= index.getValue() + getDeclaration().getNumberOfColumns() : "The array has enough space for each column.";
+     */
+    public final void storeNullable(@Nullable O object, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
+        if (object == null) {
+            final int limit = index.getValue() + declaration.getNumberOfColumns();
+            while (index.getValue() < limit) { values.set(index.getAndIncrementValue(), "NULL"); }
+        } else {
+            storeNonNullable(object, values, index);
+        }
+    }
     
     /**
      * Returns the value of the given object or 'NULL' for each column.
@@ -86,12 +102,8 @@ public abstract class AbstractSQLConverter<O, E> {
     @Pure
     public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nullable O object) {
         final @Nonnull FreezableArray<String> values = FreezableArray.get(declaration.getNumberOfColumns());
-        if (object == null) {
-            return values.setAll("NULL");
-        } else {
-            getValues(object, values, MutableIndex.get());
-            return values;
-        }
+        storeNullable(object, values, MutableIndex.get());
+        return values;
     }
     
     // Most of this section will hopefully soon be replaced by the SQL builder.
@@ -217,7 +229,7 @@ public abstract class AbstractSQLConverter<O, E> {
     @NonCommitting
     public final void storeNullable(@Nullable O object, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
         if (object == null) { declaration.storeNull(preparedStatement, parameterIndex); }
-        else { storeNonNullable(object, preparedStatement, parameterIndex); }
+        else { AbstractSQLConverter.this.storeNonNullable(object, preparedStatement, parameterIndex); }
     }
     
     /* -------------------------------------------------- Restoring -------------------------------------------------- */

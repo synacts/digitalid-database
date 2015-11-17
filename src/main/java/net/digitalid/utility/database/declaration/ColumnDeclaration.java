@@ -98,9 +98,12 @@ public class ColumnDeclaration extends Declaration {
      * @param name the name of the new column declaration.
      * @param type the SQL type of the new column declaration.
      * @param reference the foreign key reference of the new column declaration or null if there is none.
+     * 
+     * @require reference == null || reference.getColumn().getType() == type : "If the reference is not null, the type of its column is the same as the given type.";
      */
     protected ColumnDeclaration(@Nonnull @Validated String name, @Nonnull SQLType type, @Nullable Reference reference) {
         assert isValidName(name) : "The name is valid.";
+        assert reference == null || reference.getColumn().getType() == type : "If the reference is not null, the type of its column is the same as the given type.";
         
         this.name = name;
         this.type = type;
@@ -112,13 +115,25 @@ public class ColumnDeclaration extends Declaration {
      * 
      * @param name the name of the new column declaration.
      * @param type the SQL type of the new column declaration.
-     * @param reference the foreign key reference of the new column declaration or null if there is none.
      * 
      * @return a new column declaration with the given parameters.
      */
     @Pure
-    public static @Nonnull ColumnDeclaration get(@Nonnull @Validated String name, @Nonnull SQLType type, @Nullable Reference reference) {
-        return new ColumnDeclaration(name, type, reference);
+    public static @Nonnull ColumnDeclaration get(@Nonnull @Validated String name, @Nonnull SQLType type) {
+        return new ColumnDeclaration(name, type, null);
+    }
+    
+    /**
+     * Returns a new column declaration with the given parameters.
+     * 
+     * @param name the name of the new column declaration.
+     * @param reference the foreign key reference of the new column declaration.
+     * 
+     * @return a new column declaration with the given parameters.
+     */
+    @Pure
+    public static @Nonnull ColumnDeclaration get(@Nonnull @Validated String name, @Nonnull Reference reference) {
+        return new ColumnDeclaration(name, reference.getColumn().getType(), reference);
     }
     
     /* -------------------------------------------------- Columns -------------------------------------------------- */
