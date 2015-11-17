@@ -17,36 +17,19 @@ import net.digitalid.utility.database.table.Table;
  * @see GeneralColumnReference
  */
 @Immutable
-public class Reference {
-    
-    /* -------------------------------------------------- Table -------------------------------------------------- */
-    
-    /**
-     * Stores the database table whose column is referenced.
-     */
-    private final @Nonnull Table table;
-    
-    /**
-     * Returns the database table whose column is referenced.
-     * 
-     * @return the database table whose column is referenced.
-     */
-    @Pure
-    public final @Nonnull Table getTable() {
-        return table;
-    }
+public abstract class Reference {
     
     /* -------------------------------------------------- Column -------------------------------------------------- */
     
     /**
-     * Stores the referenced column within the given table.
+     * Stores the referenced column within the specified table.
      */
     private final @Nonnull ColumnDeclaration column;
     
     /**
-     * Returns the referenced column within the given table.
+     * Returns the referenced column within the specified table.
      * 
-     * @return the referenced column within the given table.
+     * @return the referenced column within the specified table.
      */
     @Pure
     public final @Nonnull ColumnDeclaration getColumn() {
@@ -87,43 +70,40 @@ public class Reference {
         return updateOption;
     }
     
-    /* -------------------------------------------------- Entity Dependence -------------------------------------------------- */
-    
-    /**
-     * Stores whether this reference depends on an entity.
-     */
-    private final boolean entityDependent;
-    
-    /**
-     * Returns whether this reference depends on an entity.
-     * 
-     * @return whether this reference depends on an entity.
-     */
-    @Pure
-    public final boolean isEntityDependent() {
-        return entityDependent;
-    }
-    
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new column reference with the given parameters.
      * 
-     * @param table the database table whose column is referenced.
-     * @param column the referenced column within the given table.
+     * @param column the referenced column within the specified table.
      * @param deleteOption the referential action triggered on deletion.
      * @param updateOption the referential action triggered on update.
-     * @param entityDependent whether this reference depends on an entity.
      */
-    protected Reference(@Nonnull Table table, @Nonnull ColumnDeclaration column, @Nonnull ReferenceOption deleteOption, @Nonnull ReferenceOption updateOption, boolean entityDependent) {
-        this.table = table;
+    protected Reference(@Nonnull ColumnDeclaration column, @Nonnull ReferenceOption deleteOption, @Nonnull ReferenceOption updateOption) {
         this.column = column;
         this.deleteOption = deleteOption;
         this.updateOption = updateOption;
-        this.entityDependent = entityDependent;
     }
     
+    /* -------------------------------------------------- Table -------------------------------------------------- */
+    
+    /**
+     * Returns the database table whose column is referenced.
+     * 
+     * @return the database table whose column is referenced.
+     */
+    @Pure
+    public abstract @Nonnull Table getTable();
+    
     /* -------------------------------------------------- Retrieval -------------------------------------------------- */
+    
+    /**
+     * Returns whether this reference is {@link Site site}-specific.
+     * 
+     * @return whether this reference is {@link Site site}-specific.
+     */
+    @Pure
+    public abstract boolean isSiteSpecific();
     
     /**
      * Returns the reference to the table of the given site after creating it first.
@@ -132,17 +112,12 @@ public class Reference {
      * 
      * @return the reference to the table of the given site after creating it first.
      * 
-     * @require !table.isSiteSpecific() || site != null : "If the table is site-specific, the site may not be null.";
+     * @require !isSiteSpecific() || site != null : "If this reference is site-specific, the site is not null.";
      * 
      * @ensure return.startsWith("REFERENCES") : "The returned string is a reference.";
      */
     @Locked
     @NonCommitting
-    public final @Nonnull String get(@Nullable Site site) throws SQLException {
-        assert !table.isSiteSpecific() || site != null : "If the table is site-specific, the site may not be null.";
-        
-        table.create(site);
-        return "REFERENCES " + table.getName(site) + " (" + (isEntityDependent() ? "entity, " : "") + column.getName() + ") ON DELETE " + deleteOption + " ON UPDATE " + updateOption;
-    }
+    public abstract @Nonnull String get(@Nullable Site site) throws SQLException;
     
 }

@@ -193,14 +193,14 @@ public class ColumnDeclaration extends Declaration {
     @Pure
     @Override
     public final boolean isSiteSpecific() {
-        return reference == null ? false : reference.getTable().isSiteSpecific();
+        return reference == null ? false : reference.isSiteSpecific();
     }
     
     @Locked
     @Override
     @NonCommitting
     protected final @Nonnull String getForeignKeys(@Nullable Site site, @Nullable @Validated String prefix) throws SQLException {
-        if (reference != null) { return ", FOREIGN KEY (" + (reference.isEntityDependent() ? "entity, " : "") + getName(prefix) + ") " + reference.get(site); }
+        if (reference != null) { return ", FOREIGN KEY (" + (reference.isSiteSpecific() ? "entity, " : "") + getName(prefix) + ") " + reference.get(site); }
         else { return ""; }
     }
     
@@ -226,6 +226,20 @@ public class ColumnDeclaration extends Declaration {
     @NonCommitting
     public final void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
         preparedStatement.setNull(parameterIndex.getAndIncrementValue(), getType().getCode());
+    }
+    
+    /* -------------------------------------------------- Renaming -------------------------------------------------- */
+    
+    /**
+     * Returns a new, renamed column declaration with the same column type and reference.
+     * 
+     * @param name the name of the returned column declaration with the same other fields.
+     * 
+     * @return a new, renamed column declaration with the same column type and reference.
+     */
+    @Pure
+    public final @Nonnull ColumnDeclaration renamedAs(@Nonnull @Validated String name) {
+        return new ColumnDeclaration(name, type, reference);
     }
     
 }

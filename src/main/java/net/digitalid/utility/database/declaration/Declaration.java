@@ -314,7 +314,7 @@ public abstract class Declaration {
      * @param unique whether this declaration is considered to be unique.
      * @param prefix the prefix that is to be prepended to the column names of this declaration.
      * 
-     * @require !table.isSiteSpecific() || site != null : "If the table is site-specific, the site may not be null.";
+     * @require !table.isSiteSpecific() || site != null : "If the table is site-specific, the site is not null.";
      */
     @Locked
     @NonCommitting
@@ -330,7 +330,7 @@ public abstract class Declaration {
      * @param unique whether this declaration is considered to be unique.
      * @param prefix the prefix that is to be prepended to the column names of this declaration.
      * 
-     * @require !table.isSiteSpecific() || site != null : "If the table is site-specific, the site may not be null.";
+     * @require !table.isSiteSpecific() || site != null : "If the table is site-specific, the site is not null.";
      */
     @Locked
     @NonCommitting
