@@ -114,7 +114,7 @@ public abstract class Declaration {
     /* -------------------------------------------------- Column Names -------------------------------------------------- */
     
     /**
-     * Stores the name of each (unique) column prepended with the given alias and prefix in the given array.
+     * Stores the name of each (unique) column (prepended with the given alias and prefix) in the given array.
      * 
      * @param unique whether only the names of unique columns shall be returned.
      * @param alias the table alias that is to be prepended to all column names.
@@ -122,40 +122,35 @@ public abstract class Declaration {
      * @param names a mutable array which stores the name of each column.
      * @param index the current index into the names array.
      * 
-     * @require names.size() == getNumberOfColumns(unique) : "The array contains a name for each column.";
-     * 
-     * @ensure !names.containsNull() : "After the execution of this method, the array of names does not contain null.";
+     * @require names.size() >= index.getValue() + getNumberOfColumns(unique) : "The array has enough space for each column.";
      */
-    protected abstract void getColumnNames(boolean unique, @Nullable @Validated String alias, @Nullable @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull MutableIndex index);
+    protected abstract void storeColumnNames(boolean unique, @Nullable @Validated String alias, @Nullable @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull MutableIndex index);
     
     /**
-     * Returns the name of each (unique) column prepended with the given alias.
+     * Returns the name of each (unique) column (prepended with the given alias).
      * 
      * @param unique whether only the names of unique columns shall be returned.
      * @param alias the table alias that is to be prepended to all column names.
-     * @param prefix the prefix that is to be prepended to all column names.
      * 
-     * @return the name of each (unique) column prepended with the given alias.
+     * @return the name of each (unique) column (prepended with the given alias).
      */
     @Pure
-    private @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnNames(boolean unique, @Nullable @Validated String alias, @Nullable @Validated String prefix) {
+    private @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnNames(boolean unique, @Nullable @Validated String alias) {
         final @Nonnull FreezableArray<String> names = FreezableArray.get(getNumberOfColumns(unique));
-        getColumnNames(unique, alias, prefix, names, MutableIndex.get());
+        storeColumnNames(unique, alias, null, names, MutableIndex.get());
         return names;
     }
     
     /**
-     * Returns the name of each column prepended with the given alias and prefix.
+     * Returns the name of each column prepended with the given alias if not null.
      * 
      * @param alias the table alias that is to be prepended to all column names.
-     * @param prefix the prefix that is to be prepended to all column names.
      * 
-     * @return the name of each column prepended with the given alias and prefix.
+     * @return the name of each column prepended with the given alias if not null.
      */
     @Pure
-    public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnNames(@Nullable @Validated String alias, @Nullable @Validated String prefix) {
-        // The prefix will no longer be necessary here once both the declaration and the SQL converter are passed to the SQL builder.
-        return getColumnNames(false, alias, prefix);
+    public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnNames(@Nullable @Validated String alias) {
+        return getColumnNames(false, alias);
     }
     
     /**
@@ -165,7 +160,7 @@ public abstract class Declaration {
      */
     @Pure
     public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnNames() {
-        return getColumnNames(false, null, null);
+        return getColumnNames(false, null);
     }
     
     /**
@@ -175,7 +170,46 @@ public abstract class Declaration {
      */
     @Pure
     public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getPrimaryKeyColumnNames() {
-        return getColumnNames(true, null, null);
+        return getColumnNames(true, null);
+    }
+    
+    /* -------------------------------------------------- Column Types -------------------------------------------------- */
+    
+    /**
+     * Stores the type of each column in the given array.
+     * 
+     * @param types an array to store the type of each column.
+     * @param index the current index into the types array.
+     * 
+     * @require types.size() >= index.getValue() + getNumberOfColumns() : "The array has enough space for each column.";
+     */
+    protected abstract void storeColumnTypes(@NonCapturable @Nonnull @NonFrozen FreezableArray<SQLType> types, @Nonnull MutableIndex index);
+    
+    /**
+     * Returns the name of each (unique) column (prepended with the given alias).
+     * 
+     * @param unique whether only the names of unique columns shall be returned.
+     * @param alias the table alias that is to be prepended to all column names.
+     * 
+     * @return the name of each (unique) column (prepended with the given alias).
+     */
+    @Pure
+    public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<SQLType> getColumnTypes() {
+        final @Nonnull FreezableArray<SQLType> types = FreezableArray.get(getNumberOfColumns());
+        storeColumnTypes(types, MutableIndex.get());
+        return types;
+    }
+    
+    /**
+     * Returns whether the column types of this declaration matches the column types of the given declaration.
+     * 
+     * @param declaration the declaration whose column types are to be compared with those of this declaration.
+     * 
+     * @return whether the column types of this declaration matches the column types of the given declaration.
+     */
+    @Pure
+    public final boolean matches(@Nonnull Declaration declaration) {
+        return this.getColumnTypes().equals(declaration.getColumnTypes());
     }
     
     /* -------------------------------------------------- Selection -------------------------------------------------- */
@@ -190,7 +224,7 @@ public abstract class Declaration {
      */
     @Pure
     private @Nonnull String getSelection(boolean unique, @Nullable @Validated String alias) {
-        return IterableConverter.toString(getColumnNames(unique, alias, null));
+        return IterableConverter.toString(getColumnNames(unique, alias));
     }
     
     /**
@@ -212,7 +246,7 @@ public abstract class Declaration {
      */
     @Pure
     public final @Nonnull String getSelection() {
-        return getSelection("");
+        return getSelection(null);
     }
     
     /**
@@ -222,7 +256,7 @@ public abstract class Declaration {
      */
     @Pure
     public final @Nonnull String getPrimaryKeySelection() {
-        return getSelection(true, "");
+        return getSelection(true, null);
     }
     
     /* -------------------------------------------------- Foreign Keys -------------------------------------------------- */
@@ -280,7 +314,7 @@ public abstract class Declaration {
      * @param unique whether this declaration is considered to be unique.
      * @param prefix the prefix that is to be prepended to the column names of this declaration.
      * 
-     * @require !isSiteSpecific() || site != null : "If this declaration is site-specific, the site may not be null.";
+     * @require !table.isSiteSpecific() || site != null : "If the table is site-specific, the site may not be null.";
      */
     @Locked
     @NonCommitting
@@ -296,7 +330,7 @@ public abstract class Declaration {
      * @param unique whether this declaration is considered to be unique.
      * @param prefix the prefix that is to be prepended to the column names of this declaration.
      * 
-     * @require !isSiteSpecific() || site != null : "If this declaration is site-specific, the site may not be null.";
+     * @require !table.isSiteSpecific() || site != null : "If the table is site-specific, the site may not be null.";
      */
     @Locked
     @NonCommitting
@@ -327,7 +361,7 @@ public abstract class Declaration {
      */
     @Pure
     private @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnNamesEqualQuestionMarks(@Nullable @Validated String alias) {
-        final @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> names = getColumnNames(alias, null);
+        final @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> names = getColumnNames(alias);
         for (int i = 0; i < getNumberOfColumns(); i++) {
             names.set(i, names.getNonNullable(i) + " = ?");
         }

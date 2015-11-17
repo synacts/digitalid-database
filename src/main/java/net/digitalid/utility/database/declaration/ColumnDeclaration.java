@@ -56,6 +56,20 @@ public class ColumnDeclaration extends Declaration {
         return name;
     }
     
+    /**
+     * Returns the name of this column declaration with the given prefix.
+     * 
+     * @param prefix the prefix that is to be prepended to this declaration.
+     * 
+     * @return the name of this column declaration with the given prefix.
+     */
+    @Pure
+    public final @Nonnull @Validated String getName(@Nullable @Validated String prefix) {
+        assert prefix == null || isValidPrefix(prefix) : "The prefix is null or valid.";
+        
+        return (prefix == null ? "" : prefix + "_") + name;
+    }
+    
     /* -------------------------------------------------- Type -------------------------------------------------- */
     
     /**
@@ -155,19 +169,23 @@ public class ColumnDeclaration extends Declaration {
     @Pure
     @Override
     protected @Nonnull String toString(boolean nullable, @Nullable @Validated String prefix) {
-        assert prefix == null || isValidPrefix(prefix) : "The prefix is null or valid.";
-        
-        return (prefix == null ? "" : prefix + "_") + name + " " + type + (nullable ? "" : " NOT NULL");
+        return getName(prefix) + " " + type + (nullable ? "" : " NOT NULL");
     }
     
     /* -------------------------------------------------- Column Names -------------------------------------------------- */
     
     @Override
-    protected final void getColumnNames(boolean unique, @Nullable @Validated String alias, @Nullable @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull MutableIndex index) {
+    protected final void storeColumnNames(boolean unique, @Nullable @Validated String alias, @Nullable @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull MutableIndex index) {
         assert alias == null || isValidAlias(alias) : "The alias is null or valid.";
-        assert prefix == null || isValidPrefix(prefix) : "The prefix is null or valid.";
         
-        names.set(index.getAndIncrementValue(), (alias == null ? "" : alias + ".") + (prefix == null ? "" : prefix + "_") + name);
+        names.set(index.getAndIncrementValue(), (alias == null ? "" : alias + ".") + getName(prefix));
+    }
+    
+    /* -------------------------------------------------- Column Types -------------------------------------------------- */
+    
+    @Override
+    protected final void storeColumnTypes(@NonCapturable @Nonnull @NonFrozen FreezableArray<SQLType> types, @Nonnull MutableIndex index) {
+        types.set(index.getAndIncrementValue(), type);
     }
     
     /* -------------------------------------------------- Foreign Keys -------------------------------------------------- */
@@ -182,9 +200,7 @@ public class ColumnDeclaration extends Declaration {
     @Override
     @NonCommitting
     protected final @Nonnull String getForeignKeys(@Nullable Site site, @Nullable @Validated String prefix) throws SQLException {
-        assert prefix == null || isValidPrefix(prefix) : "The prefix is null or valid.";
-        
-        if (reference != null) { return ", FOREIGN KEY (" + (reference.isEntityDependent() ? "entity, " : "") + (prefix == null ? "" : prefix + "_") + name + ") " + reference.get(site); }
+        if (reference != null) { return ", FOREIGN KEY (" + (reference.isEntityDependent() ? "entity, " : "") + getName(prefix) + ") " + reference.get(site); }
         else { return ""; }
     }
     

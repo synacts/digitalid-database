@@ -91,8 +91,8 @@ public final class PrefixingDeclaration extends ChainingDeclaration {
     /* -------------------------------------------------- Column Names -------------------------------------------------- */
     
     @Override
-    protected void getColumnNames(boolean unique, @Nullable @Validated String alias, @Nullable @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull MutableIndex index) {
-        getDeclaration().getColumnNames(unique, alias, getPrefix(prefix), names, index);
+    protected void storeColumnNames(boolean unique, @Nullable @Validated String alias, @Nullable @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull MutableIndex index) {
+        getDeclaration().storeColumnNames(unique, alias, getPrefix(prefix), names, index);
     }
     
     /* -------------------------------------------------- Creation and Deletion -------------------------------------------------- */

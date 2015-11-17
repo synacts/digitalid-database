@@ -50,8 +50,8 @@ public final class NonUniqueDeclaration extends ChainingDeclaration {
     /* -------------------------------------------------- Column Names -------------------------------------------------- */
     
     @Override
-    protected void getColumnNames(boolean unique, @Nullable @Validated String alias, @Nullable @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull MutableIndex index) {
-        if (!unique) { getDeclaration().getColumnNames(unique, alias, prefix, names, index); }
+    protected void storeColumnNames(boolean unique, @Nullable @Validated String alias, @Nullable @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull MutableIndex index) {
+        if (!unique) { getDeclaration().storeColumnNames(unique, alias, prefix, names, index); }
     }
     
 }

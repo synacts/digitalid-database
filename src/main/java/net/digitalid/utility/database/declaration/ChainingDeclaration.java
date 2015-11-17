@@ -81,8 +81,15 @@ public abstract class ChainingDeclaration extends Declaration {
     /* -------------------------------------------------- Column Names -------------------------------------------------- */
     
     @Override
-    protected void getColumnNames(boolean unique, @Nullable @Validated String alias, @Nullable @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull MutableIndex index) {
-        declaration.getColumnNames(unique, alias, prefix, names, index);
+    protected void storeColumnNames(boolean unique, @Nullable @Validated String alias, @Nullable @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull MutableIndex index) {
+        declaration.storeColumnNames(unique, alias, prefix, names, index);
+    }
+    
+    /* -------------------------------------------------- Column Types -------------------------------------------------- */
+    
+    @Override
+    protected final void storeColumnTypes(@NonCapturable @Nonnull @NonFrozen FreezableArray<SQLType> types, @Nonnull MutableIndex index) {
+        declaration.storeColumnTypes(types, index);
     }
     
     /* -------------------------------------------------- Foreign Keys -------------------------------------------------- */

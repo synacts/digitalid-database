@@ -108,9 +108,18 @@ public final class CombiningDeclaration extends Declaration {
     /* -------------------------------------------------- Column Names -------------------------------------------------- */
     
     @Override
-    protected void getColumnNames(boolean unique, @Nullable @Validated String alias, @Nullable @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull MutableIndex index) {
+    protected void storeColumnNames(boolean unique, @Nullable @Validated String alias, @Nullable @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull MutableIndex index) {
         for (final @Nonnull Declaration declaration : declarations) {
-            declaration.getColumnNames(unique, alias, prefix, names, index);
+            declaration.storeColumnNames(unique, alias, prefix, names, index);
+        }
+    }
+    
+    /* -------------------------------------------------- Column Types -------------------------------------------------- */
+    
+    @Override
+    protected final void storeColumnTypes(@NonCapturable @Nonnull @NonFrozen FreezableArray<SQLType> types, @Nonnull MutableIndex index) {
+        for (final @Nonnull Declaration declaration : declarations) {
+            declaration.storeColumnTypes(types, index);
         }
     }
     

@@ -41,9 +41,7 @@ public final class AutoIncrementingColumnDeclaration extends ColumnDeclaration {
     @Pure
     @Override
     protected @Nonnull String toString(boolean nullable, @Nullable @Validated String prefix) {
-        assert prefix == null || isValidPrefix(prefix) : "The prefix is null or valid.";
-        
-        return (prefix == null ? "" : prefix + "_") + getName() + Database.getConfiguration().PRIMARY_KEY();
+        return getName(prefix) + Database.getConfiguration().PRIMARY_KEY();
     }
     
 }

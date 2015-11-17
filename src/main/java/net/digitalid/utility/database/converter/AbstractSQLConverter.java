@@ -124,7 +124,6 @@ public abstract class AbstractSQLConverter<O, E> {
      * Returns the name of each column followed by the equality sign and the corresponding value of the given object.
      * 
      * @param object the object whose values are to be used for equality.
-     * @param prefix the prefix that is to be prepended to all column names.
      * @param alias the table alias that is to be prepended to all column names.
      * 
      * @return the name of each column followed by the equality sign and the corresponding value of the given object.
@@ -132,26 +131,13 @@ public abstract class AbstractSQLConverter<O, E> {
      * @ensure return.size() == getDeclaration().getNumberOfColumns() : "The returned array contains an entry for each column.";
      */
     @Pure
-    private @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnsEqualValues(@Nullable O object, @Nullable @Validated String prefix, @Nullable @Validated String alias) {
-        final @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> names = declaration.getColumnNames(alias, prefix);
+    private @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getColumnsEqualValues(@Nullable O object, @Nullable @Validated String alias) {
+        final @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> names = declaration.getColumnNames(alias);
         final @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> values = getValues(object);
         for (int i = 0; i < names.size(); i++) {
             names.set(i, names.getNonNullable(i) + " = " + values.getNonNullable(i)); 
         }
         return names;
-    }
-
-    /**
-     * Returns the name of each column followed by the equality sign and the corresponding value of the given object separated by commas.
-     * 
-     * @param object the object whose values are to be used for equality.
-     * @param prefix the prefix that is to be prepended to all column names.
-     * 
-     * @return the name of each column followed by the equality sign and the corresponding value of the given object separated by commas.
-     */
-    @Pure
-    public final @Nonnull String getUpdateForStatement(@Nullable O object, @Nullable @Validated String prefix) {
-        return IterableConverter.toString(getColumnsEqualValues(object, prefix, null));
     }
     
     /**
@@ -163,34 +149,20 @@ public abstract class AbstractSQLConverter<O, E> {
      */
     @Pure
     public final @Nonnull String getUpdateForStatement(@Nullable O object) {
-        return getUpdateForStatement(object, null);
+        return IterableConverter.toString(getColumnsEqualValues(object, null));
     }
     
     /**
      * Returns the name of each column followed by the equality sign and the corresponding value of the given object separated by {@code AND}.
      * 
      * @param object the object whose values are to be used for equality.
-     * @param prefix the prefix that is to be prepended to all column names.
      * @param alias the table alias that is to be prepended to all column names.
      * 
      * @return the name of each column followed by the equality sign and the corresponding value of the given object separated by {@code AND}.
      */
     @Pure
-    public final @Nonnull String getConditionForStatement(@Nullable O object, @Nullable @Validated String prefix, @Nullable @Validated String alias) {
-        return IterableConverter.toString(getColumnsEqualValues(object, prefix, alias), " AND ");
-    }
-    
-    /**
-     * Returns the name of each column followed by the equality sign and the corresponding value of the given object separated by {@code AND}.
-     * 
-     * @param object the object whose values are to be used for equality.
-     * @param prefix the prefix that is to be prepended to all column names.
-     * 
-     * @return the name of each column followed by the equality sign and the corresponding value of the given object separated by {@code AND}.
-     */
-    @Pure
-    public final @Nonnull String getConditionForStatement(@Nullable O object, @Nullable @Validated String prefix) {
-        return getConditionForStatement(object, prefix, null);
+    public final @Nonnull String getConditionForStatement(@Nullable O object, @Nullable @Validated String alias) {
+        return IterableConverter.toString(getColumnsEqualValues(object, alias), " AND ");
     }
     
     /**
