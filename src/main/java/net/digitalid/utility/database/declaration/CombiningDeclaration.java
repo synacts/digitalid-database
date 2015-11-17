@@ -74,7 +74,7 @@ public final class CombiningDeclaration extends Declaration {
     @Override
     protected int getNumberOfColumns(boolean unique) {
         int numberOfColumns = 0;
-        for (@Nonnull Declaration declaration : declarations) {
+        for (final @Nonnull Declaration declaration : declarations) {
             numberOfColumns += declaration.getNumberOfColumns(unique);
         }
         return numberOfColumns;
@@ -84,7 +84,7 @@ public final class CombiningDeclaration extends Declaration {
     @Override
     public int getLengthOfLongestColumnName() {
         int lengthOfLongestColumnName = 0;
-        for (@Nonnull Declaration declaration : declarations) {
+        for (final @Nonnull Declaration declaration : declarations) {
             final int columnNameLength = declaration.getLengthOfLongestColumnName();
             if (columnNameLength > lengthOfLongestColumnName) { lengthOfLongestColumnName = columnNameLength; }
         }
@@ -109,7 +109,7 @@ public final class CombiningDeclaration extends Declaration {
     
     @Override
     protected void getColumnNames(boolean unique, @Nullable @Validated String alias, @Nullable @Validated String prefix, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> names, @Nonnull MutableIndex index) {
-        for (@Nonnull Declaration declaration : declarations) {
+        for (final @Nonnull Declaration declaration : declarations) {
             declaration.getColumnNames(unique, alias, prefix, names, index);
         }
     }
@@ -119,7 +119,7 @@ public final class CombiningDeclaration extends Declaration {
     @Pure
     @Override
     public boolean isSiteSpecific() {
-        for (@Nonnull Declaration declaration : declarations) {
+        for (final @Nonnull Declaration declaration : declarations) {
             if (declaration.isSiteSpecific()) { return true; }
         }
         return false;
@@ -131,7 +131,7 @@ public final class CombiningDeclaration extends Declaration {
     protected @Nonnull String getForeignKeys(@Nullable Site site, @Nullable @Validated String prefix) throws SQLException {
         // Cannot use IterableConverter.toString() here because the getForeignKeys() method can throw an SQLException.
         final @Nonnull StringBuilder string = new StringBuilder();
-        for (@Nonnull Declaration declaration : declarations) {
+        for (final @Nonnull Declaration declaration : declarations) {
             string.append(declaration.getForeignKeys(site, prefix));
         }
         return string.toString();
@@ -143,7 +143,7 @@ public final class CombiningDeclaration extends Declaration {
     @Override
     @NonCommitting
     public void executeAfterCreation(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws SQLException {
-        for (@Nonnull Declaration declaration : declarations) {
+        for (final @Nonnull Declaration declaration : declarations) {
             declaration.executeAfterCreation(statement, table, site, unique, prefix);
         }
     }
@@ -152,7 +152,7 @@ public final class CombiningDeclaration extends Declaration {
     @Override
     @NonCommitting
     public void executeBeforeDeletion(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws SQLException {
-        for (@Nonnull Declaration declaration : declarations) {
+        for (final @Nonnull Declaration declaration : declarations) {
             declaration.executeBeforeDeletion(statement, table, site, unique, prefix);
         }
     }
@@ -162,7 +162,7 @@ public final class CombiningDeclaration extends Declaration {
     @Override
     @NonCommitting
     public void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
-        for (@Nonnull Declaration declaration : declarations) {
+        for (final @Nonnull Declaration declaration : declarations) {
             declaration.storeNull(preparedStatement, parameterIndex);
         }
     }

@@ -173,7 +173,7 @@ public final class Database {
         assert isLocked() : "The database is locked.";
         
         final @Nullable Connection connection = Database.connection.get();
-        if (connection != null) return connection;
+        if (connection != null) { return connection; }
         else {
             Database.connection.remove();
             Log.warning("Could not connect to the database.");
@@ -334,8 +334,8 @@ public final class Database {
     @NonCommitting
     public static long getGeneratedKey(@Nonnull PreparedStatement preparedStatement) throws SQLException {
         try (@Nonnull ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
-            if (resultSet.next()) return resultSet.getLong(1);
-            else throw new SQLException("The given SQL statement did not generate a key.");
+            if (resultSet.next()) { return resultSet.getLong(1); }
+            else { throw new SQLException("The given SQL statement did not generate a key."); }
         }
     }
     

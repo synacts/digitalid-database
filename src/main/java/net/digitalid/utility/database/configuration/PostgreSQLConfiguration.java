@@ -370,14 +370,14 @@ public final class PostgreSQLConfiguration extends Configuration {
         final @Nonnull StringBuilder string = new StringBuilder("CREATE OR REPLACE RULE ").append(table).append("_on_insert_ignore ");
         string.append("AS ON INSERT TO ").append(table).append(" WHERE EXISTS(SELECT 1 FROM ").append(table).append(" WHERE (");
         boolean first = true;
-        for (@Nonnull String column : columns) {
+        for (final @Nonnull String column : columns) {
             if (first) { first = false; }
             else { string.append(", "); }
             string.append(column);
         }
         string.append(") = (");
         first = true;
-        for (@Nonnull String column : columns) {
+        for (final @Nonnull String column : columns) {
             if (first) { first = false; }
             else { string.append(", "); }
             string.append("NEW.").append(column);

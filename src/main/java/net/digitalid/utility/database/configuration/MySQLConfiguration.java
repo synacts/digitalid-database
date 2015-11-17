@@ -120,7 +120,7 @@ public final class MySQLConfiguration extends Configuration {
         properties.setProperty("password", password);
         
         try (@Nonnull Connection connection = DriverManager.getConnection("jdbc:mysql://" + server + ":" + port, properties); @Nonnull Statement statement = connection.createStatement()) {
-            if (reset) statement.executeUpdate("DROP DATABASE IF EXISTS " + database);
+            if (reset) { statement.executeUpdate("DROP DATABASE IF EXISTS " + database); }
             statement.executeUpdate("CREATE DATABASE IF NOT EXISTS " + database);
         }
     }
