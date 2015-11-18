@@ -26,7 +26,7 @@ public final class GeneralReference extends Reference {
     
     @Pure
     @Override
-    public @Nonnull GeneralTable getTable() {
+    public final @Nonnull GeneralTable getTable() {
         return table;
     }
     
@@ -40,7 +40,7 @@ public final class GeneralReference extends Reference {
      * @param deleteOption the referential action triggered on deletion.
      * @param updateOption the referential action triggered on update.
      */
-    private GeneralReference(@Nonnull GeneralTable table, @Nonnull ColumnDeclaration column, @Nonnull ReferenceOption deleteOption, @Nonnull ReferenceOption updateOption) {
+    protected GeneralReference(@Nonnull GeneralTable table, @Nonnull ColumnDeclaration column, @Nonnull ReferenceOption deleteOption, @Nonnull ReferenceOption updateOption) {
         super(column, deleteOption, updateOption);
         
         this.table = table;
@@ -72,7 +72,7 @@ public final class GeneralReference extends Reference {
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull String get(@Nullable Site site) throws SQLException {
+    public final @Nonnull String get(@Nullable Site site) throws SQLException {
         return "REFERENCES " + table.getName() + " (" + getColumn().getName() + ") ON DELETE " + getDeleteOption() + " ON UPDATE " + getUpdateOption();
     }
     

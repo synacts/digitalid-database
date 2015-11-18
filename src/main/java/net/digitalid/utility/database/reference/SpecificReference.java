@@ -26,7 +26,7 @@ public final class SpecificReference extends Reference {
     
     @Pure
     @Override
-    public @Nonnull SpecificTable getTable() {
+    public final @Nonnull SpecificTable getTable() {
         return table;
     }
     
@@ -40,7 +40,7 @@ public final class SpecificReference extends Reference {
      * @param deleteOption the referential action triggered on deletion.
      * @param updateOption the referential action triggered on update.
      */
-    private SpecificReference(@Nonnull SpecificTable table, @Nonnull ColumnDeclaration column, @Nonnull ReferenceOption deleteOption, @Nonnull ReferenceOption updateOption) {
+    protected SpecificReference(@Nonnull SpecificTable table, @Nonnull ColumnDeclaration column, @Nonnull ReferenceOption deleteOption, @Nonnull ReferenceOption updateOption) {
         super(column, deleteOption, updateOption);
         
         this.table = table;
@@ -72,7 +72,7 @@ public final class SpecificReference extends Reference {
     @Locked
     @Override
     @NonCommitting
-    public @Nonnull String get(@Nullable Site site) throws SQLException {
+    public final @Nonnull String get(@Nullable Site site) throws SQLException {
         assert site != null : "The site is not null.";
         
         table.create(site);

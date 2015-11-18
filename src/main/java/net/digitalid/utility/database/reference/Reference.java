@@ -14,7 +14,8 @@ import net.digitalid.utility.database.table.Table;
 /**
  * This class models single-column foreign key references.
  * 
- * @see GeneralColumnReference
+ * @see GeneralReference
+ * @see SpecificReference
  */
 @Immutable
 public abstract class Reference {
