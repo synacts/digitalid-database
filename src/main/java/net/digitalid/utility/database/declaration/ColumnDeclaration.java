@@ -192,14 +192,14 @@ public class ColumnDeclaration extends Declaration {
     
     @Pure
     @Override
-    public final boolean isSiteSpecific() {
+    public boolean isSiteSpecific() {
         return reference == null ? false : reference.isSiteSpecific();
     }
     
     @Locked
     @Override
     @NonCommitting
-    protected final @Nonnull String getForeignKeys(@Nullable Site site, @Nullable @Validated String prefix) throws SQLException {
+    protected @Nonnull String getForeignKeys(@Nullable Site site, @Nullable @Validated String prefix) throws SQLException {
         if (reference != null) { return ", FOREIGN KEY (" + (reference.isSiteSpecific() ? "entity, " : "") + getName(prefix) + ") " + reference.get(site); }
         else { return ""; }
     }
