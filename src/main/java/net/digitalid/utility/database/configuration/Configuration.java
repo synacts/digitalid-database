@@ -284,7 +284,6 @@ public abstract class Configuration {
      * 
      * @require columns.length > 0 : "The columns are not empty.";
      */
-    @Locked
     @NonCommitting
     public abstract void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException;
     
@@ -310,7 +309,6 @@ public abstract class Configuration {
      * 
      * @return the key generated for the inserted entry.
      */
-    @Locked
     @NonCommitting
     protected long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
         statement.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
