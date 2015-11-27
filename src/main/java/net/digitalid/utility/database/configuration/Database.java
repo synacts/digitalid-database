@@ -20,6 +20,9 @@ import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.operation.FailedCommitException;
+import net.digitalid.utility.database.exceptions.operation.FailedConnectionException;
+import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
 import net.digitalid.utility.system.logger.Log;
 
 /**
@@ -144,6 +147,11 @@ public final class Database {
     
     /* -------------------------------------------------- Connection -------------------------------------------------- */
     
+    // TODO: Instead of a second thread local static field, make the other one a pair, where either the connection or the SQLException is set.
+    static final @Nonnull ThreadLocal<SQLException> problem = new ThreadLocal<SQLException>() {
+        @Override protected @Nullable SQLException initialValue() { return null; }
+    };
+    
     /**
      * Stores the open connection to the database that is associated with the current thread.
      */
@@ -153,6 +161,7 @@ public final class Database {
             try {
                 return configuration.getConnection();
             } catch (@Nonnull SQLException exception) {
+                problem.set(exception);
                 return null;
             }
         }
@@ -169,15 +178,15 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    static @Nonnull Connection getConnection() throws SQLException {
+    static @Nonnull Connection getConnection() throws FailedConnectionException {
         assert isLocked() : "The database is locked.";
         
         final @Nullable Connection connection = Database.connection.get();
-        if (connection != null) { return connection; }
-        else {
+        if (connection != null) {
+            return connection;
+        } else {
             Database.connection.remove();
-            Log.warning("Could not connect to the database.");
-            throw new SQLException("Could not connect to the database.");
+            throw FailedConnectionException.get(Database.problem.get());
         }
     }
     
@@ -190,10 +199,14 @@ public final class Database {
     @Locked
     @Committing
     @Initialized
-    public static void commit() throws SQLException {
+    public static void commit() throws FailedOperationException {
         assert isLocked() : "The database is locked.";
         
-        getConnection().commit();
+        try {
+            getConnection().commit();
+        } catch (@Nonnull SQLException exception) {
+            throw FailedCommitException.get(exception);
+        }
     }
     
     /**
@@ -208,8 +221,8 @@ public final class Database {
         
         try {
             getConnection().rollback();
-        } catch (@Nonnull SQLException exception) {
-            Log.error("Could not roll back.", exception);
+        } catch (@Nonnull FailedConnectionException | SQLException exception) {
+            Log.error("Could not roll back the transaction.", exception);
         }
     }
     
@@ -218,8 +231,12 @@ public final class Database {
      */
     @Committing
     @Initialized
-    static void close() throws SQLException {
-        getConnection().close();
+    static void close() throws FailedConnectionException {
+        try {
+            getConnection().close();
+        } catch (@Nonnull SQLException exception) {
+            throw FailedConnectionException.get(exception);
+        }
     }
     
     /* -------------------------------------------------- Savepoints -------------------------------------------------- */

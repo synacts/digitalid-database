@@ -1,0 +1,48 @@
+package net.digitalid.utility.database.exceptions.state.row;
+
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.annotation.Nonnull;
+import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.database.exceptions.operation.FailedUpdateException;
+
+/**
+ * This exception is thrown when the expected row count of an update is different than the encountered row count.
+ */
+@Immutable
+public class EntryNotUpdatedException extends CorruptRowCountException {
+    
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
+    
+    /**
+     * Creates a new entry not updated exception.
+     * 
+     * @param expectedRowCount the expected row count.
+     * @param encounteredRowCount the encountered row count.
+     */
+    protected EntryNotUpdatedException(int expectedRowCount, int encounteredRowCount) {
+        super(expectedRowCount, encounteredRowCount);
+    }
+    
+    /**
+     * Checks whether the number of rows updated by the statement equals the expected row count.
+     * 
+     * @param statement the (prepared) statement used execute the update.
+     * @param expectedRowCount the expected row count of the update.
+     * 
+     * @throws EntryNotUpdatedException if this is not the case.
+     */
+    @Pure
+    public static void check(@Nonnull Statement statement, int expectedRowCount) throws EntryNotUpdatedException, FailedUpdateException {
+        try {
+            final int encounteredRowCount = statement.getUpdateCount();
+            if (encounteredRowCount != expectedRowCount) {
+                throw new EntryNotUpdatedException(expectedRowCount, encounteredRowCount);
+            }
+        } catch (@Nonnull SQLException exception) {
+            throw FailedUpdateException.get(exception);
+        }
+    }
+    
+}
