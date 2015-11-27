@@ -20,8 +20,14 @@ import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.operation.FailedClosingException;
 import net.digitalid.utility.database.exceptions.operation.FailedCommitException;
 import net.digitalid.utility.database.exceptions.operation.FailedConnectionException;
+import net.digitalid.utility.database.exceptions.operation.FailedKeyGenerationException;
+import net.digitalid.utility.database.exceptions.operation.FailedPreparedStatementException;
+import net.digitalid.utility.database.exceptions.operation.FailedSavepointException;
+import net.digitalid.utility.database.exceptions.operation.FailedStatementException;
+import net.digitalid.utility.database.exceptions.operation.FailedUpdateException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.system.logger.Log;
 
@@ -230,7 +236,7 @@ public final class Database {
     @Locked
     @Committing
     @Initialized
-    public static void commit() throws FailedCommitException, FailedConnectionException {
+    public static void commit() throws FailedCommitException {
         assert Database.isLocked() : "The database is locked.";
         
         try {
@@ -252,7 +258,7 @@ public final class Database {
         
         try {
             getConnection().rollback();
-        } catch (@Nonnull FailedConnectionException | SQLException exception) {
+        } catch (@Nonnull SQLException exception) {
             Log.error("Could not roll back the transaction.", exception);
         }
     }
@@ -262,11 +268,11 @@ public final class Database {
      */
     @Committing
     @Initialized
-    static void close() throws FailedConnectionException {
+    static void close() throws FailedClosingException {
         try {
             getConnection().close();
         } catch (@Nonnull SQLException exception) {
-            throw FailedConnectionException.get(exception);
+            throw FailedClosingException.get(exception);
         }
     }
     
@@ -280,7 +286,7 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static @Nullable Savepoint setSavepoint() throws SQLException {
+    public static @Nullable Savepoint setSavepoint() throws FailedSavepointException {
         return getConfiguration().setSavepoint(getConnection());
     }
     
@@ -292,7 +298,7 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static void rollback(@Nullable Savepoint savepoint) throws SQLException {
+    public static void rollback(@Nullable Savepoint savepoint) throws FailedSavepointException {
         getConfiguration().rollback(getConnection(), savepoint);
     }
     
@@ -306,8 +312,12 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static @Nonnull Statement createStatement() throws SQLException {
-        return getConnection().createStatement();
+    public static @Nonnull Statement createStatement() throws FailedStatementException {
+        try {
+            return getConnection().createStatement();
+        } catch (@Nonnull SQLException exception) {
+            throw FailedStatementException.get(exception);
+        }
     }
     
     /**
@@ -320,8 +330,12 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static @Nonnull PreparedStatement prepareStatement(@Nonnull String SQL) throws SQLException {
-        return getConnection().prepareStatement(SQL);
+    public static @Nonnull PreparedStatement prepareStatement(@Nonnull String SQL) throws FailedPreparedStatementException {
+        try {
+            return getConnection().prepareStatement(SQL);
+        } catch (@Nonnull SQLException exception) {
+            throw FailedPreparedStatementException.get(exception);
+        }
     }
     
     /* -------------------------------------------------- Conversions -------------------------------------------------- */
@@ -352,7 +366,7 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
+    public static long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws FailedKeyGenerationException, FailedUpdateException {
         return getConfiguration().executeInsert(statement, SQL);
     }
     
@@ -366,8 +380,12 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static @Nonnull PreparedStatement prepareInsertStatement(@Nonnull String SQL) throws SQLException {
-        return getConnection().prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
+    public static @Nonnull PreparedStatement prepareInsertStatement(@Nonnull String SQL) throws FailedPreparedStatementException {
+        try {
+            return getConnection().prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
+        } catch (@Nonnull SQLException exception) {
+            throw FailedPreparedStatementException.get(exception);
+        }
     }
     
     /**
@@ -380,10 +398,12 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static long getGeneratedKey(@Nonnull PreparedStatement preparedStatement) throws SQLException {
+    public static long getGeneratedKey(@Nonnull PreparedStatement preparedStatement) throws FailedKeyGenerationException {
         try (@Nonnull ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
             if (resultSet.next()) { return resultSet.getLong(1); }
             else { throw new SQLException("The given SQL statement did not generate a key."); }
+        } catch (@Nonnull SQLException exception) {
+            throw FailedKeyGenerationException.get(exception);
         }
     }
     
@@ -538,7 +558,7 @@ public final class Database {
                     Database.unlock();
                 }
             }
-        }, 60000l, 3600000l);
+        }, 60_000l, 3_600_000l);
     }
     
     /**

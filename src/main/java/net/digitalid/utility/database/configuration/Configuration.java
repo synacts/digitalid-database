@@ -17,6 +17,9 @@ import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.exceptions.operation.FailedConnectionException;
+import net.digitalid.utility.database.exceptions.operation.FailedKeyGenerationException;
+import net.digitalid.utility.database.exceptions.operation.FailedSavepointException;
+import net.digitalid.utility.database.exceptions.operation.FailedUpdateException;
 import net.digitalid.utility.system.errors.InitializationError;
 
 /**
@@ -310,11 +313,18 @@ public abstract class Configuration {
      * @return the key generated for the inserted entry.
      */
     @NonCommitting
-    protected long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
-        statement.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+    protected long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws FailedKeyGenerationException, FailedUpdateException {
+        try {
+            statement.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
+        } catch (@Nonnull SQLException exception) {
+            throw FailedUpdateException.get(exception);
+        }
+        
         try (@Nonnull ResultSet resultSet = statement.getGeneratedKeys()) {
             if (resultSet.next()) { return resultSet.getLong(1); }
             else { throw new SQLException("The given SQL statement did not generate a key."); }
+        } catch (@Nonnull SQLException exception) {
+            throw FailedKeyGenerationException.get(exception);
         }
     }
     
@@ -329,7 +339,7 @@ public abstract class Configuration {
      */
     @Locked
     @NonCommitting
-    protected @Nullable Savepoint setSavepoint(@Nonnull Connection connection) throws SQLException {
+    protected @Nullable Savepoint setSavepoint(@Nonnull Connection connection) throws FailedSavepointException {
         return null;
     }
     
@@ -341,8 +351,7 @@ public abstract class Configuration {
      */
     @Locked
     @NonCommitting
-    protected void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws SQLException {}
-    
+    protected void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws FailedSavepointException {}
     
     /* -------------------------------------------------- Ignoring -------------------------------------------------- */
     
