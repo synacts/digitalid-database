@@ -22,6 +22,7 @@ import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
 import net.digitalid.utility.database.exceptions.operation.FailedSavepointException;
 import net.digitalid.utility.database.exceptions.operation.FailedUpdateException;
 import net.digitalid.utility.system.console.Console;
@@ -85,7 +86,7 @@ public final class PostgreSQLConfiguration extends Configuration {
      * @param reset whether the database is to be dropped first before creating it again.
      */
     @Committing
-    private PostgreSQLConfiguration(@Nonnull @Validated String name, boolean reset) throws SQLException, IOException {
+    private PostgreSQLConfiguration(@Nonnull @Validated String name, boolean reset) throws FailedUpdateException, IOException {
         super("org.postgresql.Driver");
         
         assert Configuration.isValidName(name) : "The name is valid for a database.";
@@ -128,6 +129,8 @@ public final class PostgreSQLConfiguration extends Configuration {
             if (reset) { statement.executeUpdate("DROP DATABASE IF EXISTS " + database); }
             final @Nonnull ResultSet resultSet = statement.executeQuery("SELECT EXISTS (SELECT * FROM pg_catalog.pg_database WHERE datname = '" + database + "')");
             if (resultSet.next() && !resultSet.getBoolean(1)) { statement.executeUpdate("CREATE DATABASE " + database); }
+        } catch (@Nonnull SQLException exception) {
+            throw FailedUpdateException.get(exception);
         }
     }
     
@@ -141,7 +144,7 @@ public final class PostgreSQLConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull PostgreSQLConfiguration get(@Nonnull @Validated String name, boolean reset) throws SQLException, IOException {
+    public static @Nonnull PostgreSQLConfiguration get(@Nonnull @Validated String name, boolean reset) throws FailedUpdateException, IOException {
         return new PostgreSQLConfiguration(name, reset);
     }
     
@@ -154,7 +157,7 @@ public final class PostgreSQLConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull PostgreSQLConfiguration get(@Nonnull @Validated String name) throws SQLException, IOException {
+    public static @Nonnull PostgreSQLConfiguration get(@Nonnull @Validated String name) throws FailedUpdateException, IOException {
         return new PostgreSQLConfiguration(name, false);
     }
     
@@ -167,7 +170,7 @@ public final class PostgreSQLConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull PostgreSQLConfiguration get(boolean reset) throws SQLException, IOException {
+    public static @Nonnull PostgreSQLConfiguration get(boolean reset) throws FailedUpdateException, IOException {
         return new PostgreSQLConfiguration("PostgreSQL", reset);
     }
     
@@ -178,7 +181,7 @@ public final class PostgreSQLConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull PostgreSQLConfiguration get() throws SQLException, IOException {
+    public static @Nonnull PostgreSQLConfiguration get() throws FailedUpdateException, IOException {
         return new PostgreSQLConfiguration("PostgreSQL", false);
     }
     
@@ -199,10 +202,12 @@ public final class PostgreSQLConfiguration extends Configuration {
     @Locked
     @Override
     @Committing
-    public void dropDatabase() throws SQLException {
+    public void dropDatabase() throws FailedOperationException {
         Database.close();
         try (@Nonnull Connection connection = DriverManager.getConnection("jdbc:postgresql://" + server + ":" + port + "/", properties); @Nonnull Statement statement = connection.createStatement()) {
             statement.executeUpdate("DROP DATABASE IF EXISTS " + database);
+        } catch (@Nonnull SQLException exception) {
+            throw FailedUpdateException.get(exception);
         }
         Database.commit();
     }
@@ -330,7 +335,7 @@ public final class PostgreSQLConfiguration extends Configuration {
     @Override
     @NonCommitting
     @SuppressWarnings("StringEquality")
-    public void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {
+    public void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateException {
         assert columns.length > 0 : "The columns are not empty.";
         
         final @Nonnull StringBuilder string = new StringBuilder("DO $$ DECLARE counter INTEGER; BEGIN ");
@@ -341,7 +346,7 @@ public final class PostgreSQLConfiguration extends Configuration {
             string.append(column);
         }
         string.append(")'; END IF; END; $$");
-        statement.execute(string.toString());
+        try { statement.execute(string.toString()); } catch (@Nonnull SQLException exception) { throw FailedUpdateException.get(exception); }
     }
     
     /* -------------------------------------------------- Savepoints -------------------------------------------------- */

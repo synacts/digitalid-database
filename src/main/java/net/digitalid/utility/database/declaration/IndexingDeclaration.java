@@ -1,6 +1,5 @@
 package net.digitalid.utility.database.declaration;
 
-import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -10,6 +9,8 @@ import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
+import net.digitalid.utility.database.exceptions.operation.FailedUpdateException;
 import net.digitalid.utility.database.site.Site;
 import net.digitalid.utility.database.table.Table;
 
@@ -47,7 +48,7 @@ public final class IndexingDeclaration extends ChainingDeclaration {
     @Locked
     @Override
     @NonCommitting
-    protected @Nonnull String getForeignKeys(@Nullable Site site, @Nullable @Validated String prefix) throws SQLException {
+    protected @Nonnull String getForeignKeys(@Nullable Site site, @Nullable @Validated String prefix) throws FailedOperationException {
         return super.getForeignKeys(site, prefix) + ", " + Database.getConfiguration().INDEX(getColumnNames().toArray());
     }
     
@@ -56,7 +57,7 @@ public final class IndexingDeclaration extends ChainingDeclaration {
     @Locked
     @Override
     @NonCommitting
-    public void executeAfterCreation(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws SQLException {
+    public void executeAfterCreation(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws FailedUpdateException {
         super.executeAfterCreation(statement, table, site, unique, prefix);
         Database.getConfiguration().createIndex(statement, table.getName(site), getColumnNames().toArray());
     }

@@ -18,6 +18,8 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
+import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
+import net.digitalid.utility.database.exceptions.operation.FailedUpdateException;
 import net.digitalid.utility.system.console.Console;
 import net.digitalid.utility.system.directory.Directory;
 
@@ -80,7 +82,7 @@ public final class MySQLConfiguration extends Configuration {
      * @param reset whether the database is to be dropped first before creating it again.
      */
     @Committing
-    private MySQLConfiguration(@Nonnull @Validated String name, boolean reset) throws SQLException, IOException {
+    private MySQLConfiguration(@Nonnull @Validated String name, boolean reset) throws FailedUpdateException, IOException {
         super("com.mysql.jdbc.Driver");
         
         assert Configuration.isValidName(name) : "The name is valid for a database.";
@@ -122,6 +124,8 @@ public final class MySQLConfiguration extends Configuration {
         try (@Nonnull Connection connection = DriverManager.getConnection("jdbc:mysql://" + server + ":" + port, properties); @Nonnull Statement statement = connection.createStatement()) {
             if (reset) { statement.executeUpdate("DROP DATABASE IF EXISTS " + database); }
             statement.executeUpdate("CREATE DATABASE IF NOT EXISTS " + database);
+        } catch (@Nonnull SQLException exception) {
+            throw FailedUpdateException.get(exception);
         }
     }
     
@@ -135,7 +139,7 @@ public final class MySQLConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull MySQLConfiguration get(@Nonnull @Validated String name, boolean reset) throws SQLException, IOException {
+    public static @Nonnull MySQLConfiguration get(@Nonnull @Validated String name, boolean reset) throws FailedUpdateException, IOException {
         return new MySQLConfiguration(name, reset);
     }
     
@@ -148,7 +152,7 @@ public final class MySQLConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull MySQLConfiguration get(@Nonnull @Validated String name) throws SQLException, IOException {
+    public static @Nonnull MySQLConfiguration get(@Nonnull @Validated String name) throws FailedUpdateException, IOException {
         return new MySQLConfiguration(name, false);
     }
     
@@ -161,7 +165,7 @@ public final class MySQLConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull MySQLConfiguration get(boolean reset) throws SQLException, IOException {
+    public static @Nonnull MySQLConfiguration get(boolean reset) throws FailedUpdateException, IOException {
         return new MySQLConfiguration("MySQL", reset);
     }
     
@@ -172,7 +176,7 @@ public final class MySQLConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull MySQLConfiguration get() throws SQLException, IOException {
+    public static @Nonnull MySQLConfiguration get() throws FailedUpdateException, IOException {
         return new MySQLConfiguration("MySQL", false);
     }
     
@@ -193,9 +197,11 @@ public final class MySQLConfiguration extends Configuration {
     @Locked
     @Override
     @Committing
-    public void dropDatabase() throws SQLException {
+    public void dropDatabase() throws FailedOperationException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("DROP DATABASE IF EXISTS " + database);
+        } catch (@Nonnull SQLException exception) {
+            throw FailedUpdateException.get(exception);
         }
         Database.commit();
     }

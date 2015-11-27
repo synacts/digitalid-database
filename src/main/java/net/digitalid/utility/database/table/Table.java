@@ -11,6 +11,8 @@ import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.declaration.Declaration;
+import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
+import net.digitalid.utility.database.exceptions.operation.FailedUpdateException;
 import net.digitalid.utility.database.site.Site;
 
 /**
@@ -120,11 +122,13 @@ public abstract class Table {
      */
     @Locked
     @NonCommitting
-    public final void create(@Nullable Site site) throws SQLException {
+    public final void create(@Nullable Site site) throws FailedOperationException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + getName(site) + " (" + declaration.toString() + ", PRIMARY KEY (" + declaration.getPrimaryKeySelection() + ")" + declaration.getForeignKeys(site) + ")");
             if (isSiteSpecific()) { Database.onInsertIgnore(statement, getName(site), declaration.getPrimaryKeyColumnNames().toArray()); }
             declaration.executeAfterCreation(statement, this, site, true, name);
+        } catch (@Nonnull SQLException exception) {
+            throw FailedUpdateException.get(exception);
         }
     }
     
@@ -137,11 +141,13 @@ public abstract class Table {
      */
     @Locked
     @NonCommitting
-    public final void delete(@Nullable Site site) throws SQLException {
+    public final void delete(@Nullable Site site) throws FailedOperationException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             declaration.executeBeforeDeletion(statement, this, site, true, name);
             if (isSiteSpecific()) { Database.onInsertNotIgnore(statement, getName(site)); }
             statement.executeUpdate("DROP TABLE IF EXISTS " + getName(site));
+        } catch (@Nonnull SQLException exception) {
+            throw FailedUpdateException.get(exception);
         }
     }
     

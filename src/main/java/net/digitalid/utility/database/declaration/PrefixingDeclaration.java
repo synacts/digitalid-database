@@ -1,6 +1,5 @@
 package net.digitalid.utility.database.declaration;
 
-import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -13,6 +12,7 @@ import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.operation.FailedUpdateException;
 import net.digitalid.utility.database.site.Site;
 import net.digitalid.utility.database.table.Table;
 
@@ -100,14 +100,14 @@ public final class PrefixingDeclaration extends ChainingDeclaration {
     @Locked
     @Override
     @NonCommitting
-    public void executeAfterCreation(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws SQLException {
+    public void executeAfterCreation(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws FailedUpdateException {
         getDeclaration().executeAfterCreation(statement, table, site, unique, getPrefix(prefix));
     }
     
     @Locked
     @Override
     @NonCommitting
-    public void executeBeforeDeletion(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws SQLException {
+    public void executeBeforeDeletion(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws FailedUpdateException {
         getDeclaration().executeBeforeDeletion(statement, table, site, unique, getPrefix(prefix));
     }
     

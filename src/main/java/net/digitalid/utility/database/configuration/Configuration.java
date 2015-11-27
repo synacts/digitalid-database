@@ -18,6 +18,7 @@ import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.exceptions.operation.FailedConnectionException;
 import net.digitalid.utility.database.exceptions.operation.FailedKeyGenerationException;
+import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
 import net.digitalid.utility.database.exceptions.operation.FailedSavepointException;
 import net.digitalid.utility.database.exceptions.operation.FailedUpdateException;
 import net.digitalid.utility.system.errors.InitializationError;
@@ -63,7 +64,7 @@ public abstract class Configuration {
      * @param driver the JDBC driver of this configuration.
      */
     @Committing
-    protected Configuration(@Nonnull String driver) throws SQLException {
+    protected Configuration(@Nonnull String driver) {
         try {
             Class.forName(driver);
         } catch (@Nonnull ClassNotFoundException exception) {
@@ -97,11 +98,15 @@ public abstract class Configuration {
      * @return a new connection to the database.
      */
     @Pure
-    protected @Nonnull Connection getConnection() throws SQLException {
-        final @Nonnull Connection connection = DriverManager.getConnection(getURL(), getProperties());
-        connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-        connection.setAutoCommit(false);
-        return connection;
+    protected @Nonnull Connection getConnection() throws FailedConnectionException {
+        try {
+            final @Nonnull Connection connection = DriverManager.getConnection(getURL(), getProperties());
+            connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            connection.setAutoCommit(false);
+            return connection;
+        } catch (@Nonnull SQLException exception) {
+            throw FailedConnectionException.get(exception);
+        }
     }
     
     /**
@@ -109,7 +114,7 @@ public abstract class Configuration {
      */
     @Locked
     @Committing
-    public abstract void dropDatabase() throws SQLException;
+    public abstract void dropDatabase() throws FailedOperationException;
     
     /**
      * Returns the open connection to the database that is associated with the current thread.
@@ -121,7 +126,7 @@ public abstract class Configuration {
     @Pure
     @Locked
     @NonCommitting
-    protected final static @Nonnull Connection getCurrentConnection() throws SQLException {
+    protected final static @Nonnull Connection getCurrentConnection() {
         return Database.getConnection();
     }
 
@@ -288,7 +293,7 @@ public abstract class Configuration {
      * @require columns.length > 0 : "The columns are not empty.";
      */
     @NonCommitting
-    public abstract void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException;
+    public abstract void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateException;
     
     /* -------------------------------------------------- Supports -------------------------------------------------- */
     

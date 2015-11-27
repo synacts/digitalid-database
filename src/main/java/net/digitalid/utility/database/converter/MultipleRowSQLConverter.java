@@ -2,13 +2,16 @@ package net.digitalid.utility.database.converter;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.declaration.Declaration;
+import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
+import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
+import net.digitalid.utility.database.exceptions.state.CorruptStateException;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * A multiple-row SQL converter allows to store and restore set- or map-based objects into and from the {@link Database database}.
@@ -43,7 +46,7 @@ public abstract class MultipleRowSQLConverter<O, E> extends AbstractSQLConverter
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
     @NonCommitting
-    public abstract void storeMultipleRows(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException;
+    public abstract void storeMultipleRows(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException;
     
     /* -------------------------------------------------- Multiple-Row Restoring -------------------------------------------------- */
     
@@ -60,6 +63,6 @@ public abstract class MultipleRowSQLConverter<O, E> extends AbstractSQLConverter
      */
     @Pure
     @NonCommitting
-    public abstract @Nonnull O restoreMultipleRows(@Nonnull E external, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException;
+    public abstract @Nonnull O restoreMultipleRows(@Nonnull E external, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException;
     
 }

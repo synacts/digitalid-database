@@ -157,8 +157,8 @@ public final class Database {
     /**
      * TODO: Instead of a second thread local static field, make the other one a pair, where either the connection or the SQLException is set.
      */
-    private static final @Nonnull ThreadLocal<SQLException> problem = new ThreadLocal<SQLException>() {
-        @Override protected @Nullable SQLException initialValue() { return null; }
+    private static final @Nonnull ThreadLocal<FailedConnectionException> problem = new ThreadLocal<FailedConnectionException>() {
+        @Override protected @Nullable FailedConnectionException initialValue() { return null; }
     };
     
     /**
@@ -169,7 +169,7 @@ public final class Database {
             assert configuration != null : "The database is initialized.";
             try {
                 return configuration.getConnection();
-            } catch (@Nonnull SQLException exception) {
+            } catch (@Nonnull FailedConnectionException exception) {
                 problem.set(exception);
                 return null;
             }
@@ -190,7 +190,7 @@ public final class Database {
         
         if (connection == null) {
             Database.connection.remove();
-            throw FailedConnectionException.get(Database.problem.get());
+            throw Database.problem.get();
         }
         
         try {

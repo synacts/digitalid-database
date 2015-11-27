@@ -15,6 +15,9 @@ import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
+import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
+import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
+import net.digitalid.utility.database.exceptions.operation.FailedUpdateException;
 import net.digitalid.utility.database.reference.Reference;
 import net.digitalid.utility.database.site.Site;
 import net.digitalid.utility.database.table.Table;
@@ -199,7 +202,7 @@ public class ColumnDeclaration extends Declaration {
     @Locked
     @Override
     @NonCommitting
-    protected @Nonnull String getForeignKeys(@Nullable Site site, @Nullable @Validated String prefix) throws SQLException {
+    protected @Nonnull String getForeignKeys(@Nullable Site site, @Nullable @Validated String prefix) throws FailedOperationException {
         if (reference != null) { return ", FOREIGN KEY (" + (reference.isSiteSpecific() ? "entity, " : "") + getName(prefix) + ") " + reference.get(site); }
         else { return ""; }
     }
@@ -209,14 +212,14 @@ public class ColumnDeclaration extends Declaration {
     @Locked
     @Override
     @NonCommitting
-    public void executeAfterCreation(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws SQLException {
+    public void executeAfterCreation(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws FailedUpdateException {
         assert prefix == null || isValidPrefix(prefix) : "The prefix is null or valid.";
     }
     
     @Locked
     @Override
     @NonCommitting
-    public void executeBeforeDeletion(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws SQLException {
+    public void executeBeforeDeletion(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws FailedUpdateException {
         assert prefix == null || isValidPrefix(prefix) : "The prefix is null or valid.";
     }
     
@@ -224,8 +227,12 @@ public class ColumnDeclaration extends Declaration {
     
     @Override
     @NonCommitting
-    public final void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
-        preparedStatement.setNull(parameterIndex.getAndIncrementValue(), getType().getCode());
+    public final void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+        try {
+            preparedStatement.setNull(parameterIndex.getAndIncrementValue(), getType().getCode());
+        } catch (@Nonnull SQLException exception) {
+            throw FailedStoringException.get(exception);
+        }
     }
     
     /* -------------------------------------------------- Renaming -------------------------------------------------- */

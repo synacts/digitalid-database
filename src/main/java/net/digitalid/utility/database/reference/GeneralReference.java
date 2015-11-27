@@ -1,6 +1,5 @@
 package net.digitalid.utility.database.reference;
 
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -8,6 +7,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.declaration.ColumnDeclaration;
+import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
 import net.digitalid.utility.database.site.Site;
 import net.digitalid.utility.database.table.GeneralTable;
 
@@ -72,7 +72,7 @@ public final class GeneralReference extends Reference {
     @Locked
     @Override
     @NonCommitting
-    public final @Nonnull String get(@Nullable Site site) throws SQLException {
+    public final @Nonnull String get(@Nullable Site site) throws FailedOperationException {
         return "REFERENCES " + table.getName() + " (" + getColumn().getName() + ") ON DELETE " + getDeleteOption() + " ON UPDATE " + getUpdateOption();
     }
     

@@ -2,7 +2,6 @@ package net.digitalid.utility.database.converter;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -18,6 +17,11 @@ import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.declaration.Declaration;
+import net.digitalid.utility.database.exceptions.operation.FailedRestoringException;
+import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
+import net.digitalid.utility.database.exceptions.state.CorruptNullValueException;
+import net.digitalid.utility.database.exceptions.state.CorruptStateException;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * An SQL converter allows to store and restore objects into and from the {@link Database database}.
@@ -188,7 +192,7 @@ public abstract class AbstractSQLConverter<O, E> {
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
     @NonCommitting
-    public abstract void storeNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException;
+    public abstract void storeNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException;
     
     /**
      * Sets the parameters starting from the given index of the prepared statement to the given nullable object.
@@ -199,7 +203,7 @@ public abstract class AbstractSQLConverter<O, E> {
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
     @NonCommitting
-    public final void storeNullable(@Nullable O object, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws SQLException {
+    public final void storeNullable(@Nullable O object, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
         if (object == null) { declaration.storeNull(preparedStatement, parameterIndex); }
         else { AbstractSQLConverter.this.storeNonNullable(object, preparedStatement, parameterIndex); }
     }
@@ -218,7 +222,7 @@ public abstract class AbstractSQLConverter<O, E> {
      */
     @Pure
     @NonCommitting
-    public abstract @Nullable O restoreNullable(@Nonnull E external, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException;
+    public abstract @Nullable O restoreNullable(@Nonnull E external, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException;
     
     /**
      * Returns a non-nullable object from the given columns of the result set.
@@ -232,9 +236,9 @@ public abstract class AbstractSQLConverter<O, E> {
      */
     @Pure
     @NonCommitting
-    public final @Nonnull O restoreNonNullable(@Nonnull E external, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws SQLException {
+    public final @Nonnull O restoreNonNullable(@Nonnull E external, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedRestoringException, CorruptStateException, InternalException {
         final @Nullable O object = restoreNullable(external, resultSet, columnIndex);
-        if (object == null) { throw new SQLException("An object which should not be null was null."); }
+        if (object == null) { throw CorruptNullValueException.get(); }
         return object;
     }
     

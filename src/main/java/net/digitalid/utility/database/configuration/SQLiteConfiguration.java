@@ -16,6 +16,9 @@ import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.operation.FailedConnectionException;
+import net.digitalid.utility.database.exceptions.operation.FailedKeyGenerationException;
+import net.digitalid.utility.database.exceptions.operation.FailedUpdateException;
 import net.digitalid.utility.system.directory.Directory;
 import net.digitalid.utility.system.logger.Log;
 
@@ -68,7 +71,7 @@ public final class SQLiteConfiguration extends Configuration {
      * @param reset whether the database is to be dropped first before creating it again.
      */
     @Committing
-    private SQLiteConfiguration(@Nonnull @Validated String name, boolean reset) throws SQLException {
+    private SQLiteConfiguration(@Nonnull @Validated String name, boolean reset) throws FailedConnectionException {
         super("org.sqlite.JDBC");
         
         assert Configuration.isValidName(name) : "The name is valid for a database.";
@@ -94,7 +97,7 @@ public final class SQLiteConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull SQLiteConfiguration get(@Nonnull @Validated String name, boolean reset) throws SQLException {
+    public static @Nonnull SQLiteConfiguration get(@Nonnull @Validated String name, boolean reset) throws FailedConnectionException {
         return new SQLiteConfiguration(name, reset);
     }
     
@@ -107,7 +110,7 @@ public final class SQLiteConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull SQLiteConfiguration get(@Nonnull @Validated String name) throws SQLException {
+    public static @Nonnull SQLiteConfiguration get(@Nonnull @Validated String name) throws FailedConnectionException {
         return new SQLiteConfiguration(name, false);
     }
     
@@ -120,7 +123,7 @@ public final class SQLiteConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull SQLiteConfiguration get(boolean reset) throws SQLException {
+    public static @Nonnull SQLiteConfiguration get(boolean reset) throws FailedConnectionException {
         return new SQLiteConfiguration("SQLite", reset);
     }
     
@@ -131,7 +134,7 @@ public final class SQLiteConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull SQLiteConfiguration get() throws SQLException {
+    public static @Nonnull SQLiteConfiguration get() throws FailedConnectionException {
         return new SQLiteConfiguration("SQLite", false);
     }
     
@@ -151,10 +154,14 @@ public final class SQLiteConfiguration extends Configuration {
     
     @Pure
     @Override
-    protected @Nonnull Connection getConnection() throws SQLException {
-        final @Nonnull Connection connection = DriverManager.getConnection(getURL(), getProperties());
-        connection.setAutoCommit(false);
-        return connection;
+    protected @Nonnull Connection getConnection() throws FailedConnectionException {
+        try {
+            final @Nonnull Connection connection = DriverManager.getConnection(getURL(), getProperties());
+            connection.setAutoCommit(false);
+            return connection;
+        } catch (@Nonnull SQLException exception) {
+            throw FailedConnectionException.get(exception);
+        }
     }
     
     @Locked
@@ -289,7 +296,7 @@ public final class SQLiteConfiguration extends Configuration {
     @Locked
     @Override
     @SuppressWarnings("StringEquality")
-    public void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {
+    public void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateException {
         assert columns.length > 0 : "The columns are not empty.";
         
         final @Nonnull StringBuilder string = new StringBuilder("CREATE INDEX IF NOT EXISTS ").append(table).append("_index ON ").append(table).append(" (");
@@ -297,7 +304,7 @@ public final class SQLiteConfiguration extends Configuration {
             if (column != columns[0]) { string.append(", "); }
             string.append(column);
         }
-        statement.executeUpdate(string.append(")").toString());
+        try { statement.executeUpdate(string.append(")").toString()); } catch (@Nonnull SQLException exception) { throw FailedUpdateException.get(exception); }
     }
     
     /* -------------------------------------------------- Supports -------------------------------------------------- */
@@ -313,11 +320,18 @@ public final class SQLiteConfiguration extends Configuration {
     @Locked
     @Override
     @NonCommitting
-    protected long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws SQLException {
-        statement.executeUpdate(SQL);
+    protected long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws FailedKeyGenerationException, FailedUpdateException {
+        try {
+            statement.executeUpdate(SQL);
+        } catch (@Nonnull SQLException exception) {
+            throw FailedUpdateException.get(exception);
+        }
+        
         try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT last_insert_rowid()")) {
             if (resultSet.next()) { return resultSet.getLong(1); }
             else { throw new SQLException("The given SQL statement did not generate any keys."); }
+        } catch (@Nonnull SQLException exception) {
+            throw FailedKeyGenerationException.get(exception);
         }
     }
     
