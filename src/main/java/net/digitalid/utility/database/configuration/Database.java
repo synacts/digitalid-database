@@ -22,7 +22,7 @@ import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.exceptions.operation.FailedCommitException;
 import net.digitalid.utility.database.exceptions.operation.FailedConnectionException;
-import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
+import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.system.logger.Log;
 
 /**
@@ -147,15 +147,17 @@ public final class Database {
     
     /* -------------------------------------------------- Connection -------------------------------------------------- */
     
-    // TODO: Instead of a second thread local static field, make the other one a pair, where either the connection or the SQLException is set.
-    static final @Nonnull ThreadLocal<SQLException> problem = new ThreadLocal<SQLException>() {
+    /**
+     * TODO: Instead of a second thread local static field, make the other one a pair, where either the connection or the SQLException is set.
+     */
+    private static final @Nonnull ThreadLocal<SQLException> problem = new ThreadLocal<SQLException>() {
         @Override protected @Nullable SQLException initialValue() { return null; }
     };
     
     /**
      * Stores the open connection to the database that is associated with the current thread.
      */
-    static final @Nonnull ThreadLocal<Connection> connection = new ThreadLocal<Connection>() {
+    private static final @Nonnull ThreadLocal<Connection> connection = new ThreadLocal<Connection>() {
         @Override protected @Nullable Connection initialValue() {
             assert configuration != null : "The database is initialized.";
             try {
@@ -168,6 +170,35 @@ public final class Database {
     };
     
     /**
+     * Checks that the connection to the database is still valid.
+     * 
+     * @param recurse whether the check is to be repeated or not.
+     */
+    @Pure
+    @Locked
+    @Initialized
+    @NonCommitting
+    static void checkConnection(boolean recurse) throws FailedConnectionException {
+        final @Nullable Connection connection = Database.connection.get();
+        
+        if (connection == null) {
+            Database.connection.remove();
+            throw FailedConnectionException.get(Database.problem.get());
+        }
+        
+        try {
+            if (!connection.isValid(1)) {
+                Log.information("The database connection is no longer valid and is thus replaced.");
+                Database.connection.remove();
+                if (recurse) { Database.checkConnection(false); }
+                else { throw new SQLException("The database connection remains invalid."); }
+            }
+        } catch (@Nonnull SQLException exception) {
+            throw FailedConnectionException.get(exception);
+        }
+    }
+    
+    /**
      * Returns the open connection to the database that is associated with the current thread.
      * <p>
      * <em>Important:</em> Do not commit or close the connection as it will be reused later on!
@@ -178,15 +209,15 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    static @Nonnull Connection getConnection() throws FailedConnectionException {
-        assert isLocked() : "The database is locked.";
+    static @Nonnull Connection getConnection() {
+        assert Database.isLocked() : "The database is locked.";
         
         final @Nullable Connection connection = Database.connection.get();
         if (connection != null) {
             return connection;
         } else {
             Database.connection.remove();
-            throw FailedConnectionException.get(Database.problem.get());
+            throw ShouldNeverHappenError.get("The connection should have been checked by the locking method.");
         }
     }
     
@@ -199,8 +230,8 @@ public final class Database {
     @Locked
     @Committing
     @Initialized
-    public static void commit() throws FailedOperationException {
-        assert isLocked() : "The database is locked.";
+    public static void commit() throws FailedCommitException, FailedConnectionException {
+        assert Database.isLocked() : "The database is locked.";
         
         try {
             getConnection().commit();
@@ -217,7 +248,7 @@ public final class Database {
     @Committing
     @Initialized
     public static void rollback() {
-        assert isLocked() : "The database is locked.";
+        assert Database.isLocked() : "The database is locked.";
         
         try {
             getConnection().rollback();

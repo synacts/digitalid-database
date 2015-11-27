@@ -16,8 +16,8 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.operation.FailedConnectionException;
 import net.digitalid.utility.system.errors.InitializationError;
-import net.digitalid.utility.system.logger.Log;
 
 /**
  * This class is used to configure various databases.
@@ -64,7 +64,7 @@ public abstract class Configuration {
         try {
             Class.forName(driver);
         } catch (@Nonnull ClassNotFoundException exception) {
-            throw new InitializationError("Could not load the database driver.", exception);
+            throw InitializationError.get("Could not load the database driver.", exception);
         }
     }
     
@@ -410,13 +410,9 @@ public abstract class Configuration {
     /**
      * Locks the database if its access should be serialized.
      */
-    protected void lock() throws SQLException {
+    protected void lock() throws FailedConnectionException {
         lockCounter.set(lockCounter.get() + 1);
-        
-        if (!Database.getConnection().isValid(1)) {
-            Log.warning("The connection is no longer valid and is thus replaced.");
-            Database.connection.remove();
-        }
+        Database.checkConnection(true);
     }
     
     /**
