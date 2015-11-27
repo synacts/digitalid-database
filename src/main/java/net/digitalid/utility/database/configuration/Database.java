@@ -24,6 +24,7 @@ import net.digitalid.utility.database.exceptions.operation.FailedClosingExceptio
 import net.digitalid.utility.database.exceptions.operation.FailedCommitException;
 import net.digitalid.utility.database.exceptions.operation.FailedConnectionException;
 import net.digitalid.utility.database.exceptions.operation.FailedKeyGenerationException;
+import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
 import net.digitalid.utility.database.exceptions.operation.FailedPreparedStatementException;
 import net.digitalid.utility.database.exceptions.operation.FailedSavepointException;
 import net.digitalid.utility.database.exceptions.operation.FailedStatementException;
@@ -421,7 +422,7 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {
+    public static void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateException {
         assert columns.length > 0 : "The columns are not empty.";
         
         getConfiguration().onInsertIgnore(statement, table, columns);
@@ -436,7 +437,7 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
+    public static void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws FailedUpdateException {
         getConfiguration().onInsertNotIgnore(statement, table);
     }
     
@@ -455,7 +456,7 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, @Positive int key, @Nonnull String... columns) throws SQLException {
+    public static void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, @Positive int key, @Nonnull String... columns) throws FailedUpdateException {
         getConfiguration().onInsertUpdate(statement, table, key, columns);
     }
     
@@ -468,7 +469,7 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
+    public static void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws FailedUpdateException {
         getConfiguration().onInsertNotUpdate(statement, table);
     }
     
@@ -478,7 +479,7 @@ public final class Database {
      * Locks the database if its access should be serialized.
      */
     @Initialized
-    public static void lock() throws SQLException {
+    public static void lock() throws FailedConnectionException {
         getConfiguration().lock();
     }
     
@@ -487,9 +488,6 @@ public final class Database {
      */
     @Initialized
     public static void unlock() {
-        if (getConfiguration() instanceof SQLiteConfiguration && ((SQLiteConfiguration) getConfiguration()).journalExists()) {
-            Log.warning("A database journal exists! The connection might not have been committed properly.", new Exception());
-        }
         getConfiguration().unlock();
     }
     
@@ -551,7 +549,7 @@ public final class Database {
                             commit();
                         }
                     }
-                } catch (@Nonnull SQLException exception) {
+                } catch (@Nonnull FailedOperationException | SQLException exception) {
                     Log.warning("Could not prune a table.", exception);
                     rollback();
                 } finally {

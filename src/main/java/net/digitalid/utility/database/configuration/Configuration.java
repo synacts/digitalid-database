@@ -366,7 +366,7 @@ public abstract class Configuration {
      */
     @Locked
     @NonCommitting
-    protected void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {}
+    protected void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateException {}
     
     /**
      * Drops the rule to ignore duplicate insertions.
@@ -376,7 +376,7 @@ public abstract class Configuration {
      */
     @Locked
     @NonCommitting
-    protected void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws SQLException {}
+    protected void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws FailedUpdateException {}
     
     
     /* -------------------------------------------------- Updating -------------------------------------------------- */
@@ -393,7 +393,7 @@ public abstract class Configuration {
      */
     @Locked
     @NonCommitting
-    protected void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, @Positive int key, @Nonnull String... columns) throws SQLException {}
+    protected void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, @Positive int key, @Nonnull String... columns) throws FailedUpdateException {}
     
     /**
      * Drops the rule to update duplicate insertions.
@@ -403,7 +403,7 @@ public abstract class Configuration {
      */
     @Locked
     @NonCommitting
-    protected void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws SQLException {}
+    protected void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws FailedUpdateException {}
     
     
     /* -------------------------------------------------- Locking -------------------------------------------------- */

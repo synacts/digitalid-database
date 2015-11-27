@@ -22,6 +22,8 @@ import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
+import net.digitalid.utility.database.exceptions.operation.FailedSavepointException;
+import net.digitalid.utility.database.exceptions.operation.FailedUpdateException;
 import net.digitalid.utility.system.console.Console;
 import net.digitalid.utility.system.directory.Directory;
 
@@ -347,16 +349,24 @@ public final class PostgreSQLConfiguration extends Configuration {
     @Locked
     @Override
     @NonCommitting
-    protected @Nonnull Savepoint setSavepoint(@Nonnull Connection connection) throws SQLException {
-        return connection.setSavepoint();
+    protected @Nonnull Savepoint setSavepoint(@Nonnull Connection connection) throws FailedSavepointException {
+        try {
+            return connection.setSavepoint();
+        } catch (@Nonnull SQLException exception) {
+            throw FailedSavepointException.get(exception);
+        }
     }
     
     @Locked
     @Override
     @NonCommitting
-    protected void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws SQLException {
-        connection.rollback(savepoint);
-        connection.releaseSavepoint(savepoint);
+    protected void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws FailedSavepointException {
+        try {
+            connection.rollback(savepoint);
+            connection.releaseSavepoint(savepoint);
+        } catch (@Nonnull SQLException exception) {
+            throw FailedSavepointException.get(exception);
+        }
     }
     
     /* -------------------------------------------------- Ignoring -------------------------------------------------- */
@@ -364,7 +374,7 @@ public final class PostgreSQLConfiguration extends Configuration {
     @Locked
     @Override
     @NonCommitting
-    protected void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws SQLException {
+    protected void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateException {
         assert columns.length > 0 : "The columns are not empty.";
         
         final @Nonnull StringBuilder string = new StringBuilder("CREATE OR REPLACE RULE ").append(table).append("_on_insert_ignore ");
@@ -383,14 +393,14 @@ public final class PostgreSQLConfiguration extends Configuration {
             string.append("NEW.").append(column);
         }
         string.append(")) DO INSTEAD NOTHING");
-        statement.executeUpdate(string.toString());
+        try { statement.executeUpdate(string.toString()); } catch (@Nonnull SQLException exception) { throw FailedUpdateException.get(exception); }
     }
     
     @Locked
     @Override
     @NonCommitting
-    protected void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
-        statement.executeUpdate("DROP RULE IF EXISTS " + table + "_on_insert_ignore ON " + table);
+    protected void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws FailedUpdateException {
+        try { statement.executeUpdate("DROP RULE IF EXISTS " + table + "_on_insert_ignore ON " + table); } catch (@Nonnull SQLException exception) { throw FailedUpdateException.get(exception); }
     }
     
     /* -------------------------------------------------- Updating -------------------------------------------------- */
@@ -398,7 +408,7 @@ public final class PostgreSQLConfiguration extends Configuration {
     @Locked
     @Override
     @NonCommitting
-    protected void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, int key, @Nonnull String... columns) throws SQLException {
+    protected void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, int key, @Nonnull String... columns) throws FailedUpdateException {
         assert key > 0 : "The number of columns in the primary key is positive.";
         assert columns.length >= key : "At least as many columns as in the primary key are provided.";
         
@@ -423,14 +433,14 @@ public final class PostgreSQLConfiguration extends Configuration {
             string.append(columns[i]).append(" = NEW.").append(columns[i]);
         }
         string.append(condition);
-        statement.executeUpdate(string.toString());
+        try { statement.executeUpdate(string.toString()); } catch (@Nonnull SQLException exception) { throw FailedUpdateException.get(exception); }
     }
     
     @Locked
     @Override
     @NonCommitting
-    protected void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws SQLException {
-        statement.executeUpdate("DROP RULE IF EXISTS " + table + "_on_insert_update ON " + table);
+    protected void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws FailedUpdateException {
+        try { statement.executeUpdate("DROP RULE IF EXISTS " + table + "_on_insert_update ON " + table); } catch (@Nonnull SQLException exception) { throw FailedUpdateException.get(exception); }
     }
     
 }

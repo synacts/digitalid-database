@@ -17,6 +17,7 @@ import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.system.directory.Directory;
+import net.digitalid.utility.system.logger.Log;
 
 /**
  * This class configures a SQLite database.
@@ -334,6 +335,9 @@ public final class SQLiteConfiguration extends Configuration {
     
     @Override
     protected void unlock() {
+        if (journalExists()) {
+            Log.warning("A database journal exists! The connection might not have been committed properly.", new Exception());
+        }
         lock.unlock();
     }
     
