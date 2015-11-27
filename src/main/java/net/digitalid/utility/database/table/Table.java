@@ -12,7 +12,7 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.declaration.Declaration;
 import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
-import net.digitalid.utility.database.exceptions.operation.FailedUpdateException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedUpdateExecutionException;
 import net.digitalid.utility.database.site.Site;
 
 /**
@@ -128,7 +128,7 @@ public abstract class Table {
             if (isSiteSpecific()) { Database.onInsertIgnore(statement, getName(site), declaration.getPrimaryKeyColumnNames().toArray()); }
             declaration.executeAfterCreation(statement, this, site, true, name);
         } catch (@Nonnull SQLException exception) {
-            throw FailedUpdateException.get(exception);
+            throw FailedUpdateExecutionException.get(exception);
         }
     }
     
@@ -147,7 +147,7 @@ public abstract class Table {
             if (isSiteSpecific()) { Database.onInsertNotIgnore(statement, getName(site)); }
             statement.executeUpdate("DROP TABLE IF EXISTS " + getName(site));
         } catch (@Nonnull SQLException exception) {
-            throw FailedUpdateException.get(exception);
+            throw FailedUpdateExecutionException.get(exception);
         }
     }
     

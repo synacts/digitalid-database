@@ -4,15 +4,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.database.exceptions.DatabaseException;
-import net.digitalid.utility.database.exceptions.state.row.CorruptRowCountException;
+import net.digitalid.utility.database.exceptions.state.row.WrongRowCountException;
 
 /**
  * This exception indicates a corrupt database state.
  * 
- * @see CorruptNullValueException
- * @see CorruptParameterValueCombinationException
- * @see CorruptParameterValueException
- * @see CorruptRowCountException
+ * @see CorruptValueException
+ * @see WrongRowCountException
  * @see MaskingCorruptStateException
  */
 @Immutable

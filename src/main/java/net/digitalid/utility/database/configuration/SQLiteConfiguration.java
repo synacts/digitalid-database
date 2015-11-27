@@ -17,8 +17,8 @@ import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.exceptions.operation.FailedConnectionException;
-import net.digitalid.utility.database.exceptions.operation.FailedKeyGenerationException;
-import net.digitalid.utility.database.exceptions.operation.FailedUpdateException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedKeyGenerationException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedUpdateExecutionException;
 import net.digitalid.utility.system.directory.Directory;
 import net.digitalid.utility.system.logger.Log;
 
@@ -296,7 +296,7 @@ public final class SQLiteConfiguration extends Configuration {
     @Locked
     @Override
     @SuppressWarnings("StringEquality")
-    public void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateException {
+    public void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateExecutionException {
         assert columns.length > 0 : "The columns are not empty.";
         
         final @Nonnull StringBuilder string = new StringBuilder("CREATE INDEX IF NOT EXISTS ").append(table).append("_index ON ").append(table).append(" (");
@@ -304,7 +304,7 @@ public final class SQLiteConfiguration extends Configuration {
             if (column != columns[0]) { string.append(", "); }
             string.append(column);
         }
-        try { statement.executeUpdate(string.append(")").toString()); } catch (@Nonnull SQLException exception) { throw FailedUpdateException.get(exception); }
+        try { statement.executeUpdate(string.append(")").toString()); } catch (@Nonnull SQLException exception) { throw FailedUpdateExecutionException.get(exception); }
     }
     
     /* -------------------------------------------------- Supports -------------------------------------------------- */
@@ -320,11 +320,11 @@ public final class SQLiteConfiguration extends Configuration {
     @Locked
     @Override
     @NonCommitting
-    protected long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws FailedKeyGenerationException, FailedUpdateException {
+    protected long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws FailedKeyGenerationException, FailedUpdateExecutionException {
         try {
             statement.executeUpdate(SQL);
         } catch (@Nonnull SQLException exception) {
-            throw FailedUpdateException.get(exception);
+            throw FailedUpdateExecutionException.get(exception);
         }
         
         try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT last_insert_rowid()")) {

@@ -17,10 +17,11 @@ import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.exceptions.operation.FailedConnectionException;
-import net.digitalid.utility.database.exceptions.operation.FailedKeyGenerationException;
 import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
-import net.digitalid.utility.database.exceptions.operation.FailedSavepointException;
-import net.digitalid.utility.database.exceptions.operation.FailedUpdateException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedKeyGenerationException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedSavepointCreationException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedSavepointRollbackException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedUpdateExecutionException;
 import net.digitalid.utility.system.errors.InitializationError;
 
 /**
@@ -293,7 +294,7 @@ public abstract class Configuration {
      * @require columns.length > 0 : "The columns are not empty.";
      */
     @NonCommitting
-    public abstract void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateException;
+    public abstract void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateExecutionException;
     
     /* -------------------------------------------------- Supports -------------------------------------------------- */
     
@@ -318,11 +319,11 @@ public abstract class Configuration {
      * @return the key generated for the inserted entry.
      */
     @NonCommitting
-    protected long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws FailedKeyGenerationException, FailedUpdateException {
+    protected long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws FailedKeyGenerationException, FailedUpdateExecutionException {
         try {
             statement.executeUpdate(SQL, Statement.RETURN_GENERATED_KEYS);
         } catch (@Nonnull SQLException exception) {
-            throw FailedUpdateException.get(exception);
+            throw FailedUpdateExecutionException.get(exception);
         }
         
         try (@Nonnull ResultSet resultSet = statement.getGeneratedKeys()) {
@@ -344,7 +345,7 @@ public abstract class Configuration {
      */
     @Locked
     @NonCommitting
-    protected @Nullable Savepoint setSavepoint(@Nonnull Connection connection) throws FailedSavepointException {
+    protected @Nullable Savepoint setSavepoint(@Nonnull Connection connection) throws FailedSavepointCreationException {
         return null;
     }
     
@@ -356,7 +357,7 @@ public abstract class Configuration {
      */
     @Locked
     @NonCommitting
-    protected void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws FailedSavepointException {}
+    protected void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws FailedSavepointRollbackException {}
     
     /* -------------------------------------------------- Ignoring -------------------------------------------------- */
     
@@ -371,7 +372,7 @@ public abstract class Configuration {
      */
     @Locked
     @NonCommitting
-    protected void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateException {}
+    protected void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateExecutionException {}
     
     /**
      * Drops the rule to ignore duplicate insertions.
@@ -381,7 +382,7 @@ public abstract class Configuration {
      */
     @Locked
     @NonCommitting
-    protected void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws FailedUpdateException {}
+    protected void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws FailedUpdateExecutionException {}
     
     
     /* -------------------------------------------------- Updating -------------------------------------------------- */
@@ -398,7 +399,7 @@ public abstract class Configuration {
      */
     @Locked
     @NonCommitting
-    protected void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, @Positive int key, @Nonnull String... columns) throws FailedUpdateException {}
+    protected void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, @Positive int key, @Nonnull String... columns) throws FailedUpdateExecutionException {}
     
     /**
      * Drops the rule to update duplicate insertions.
@@ -408,7 +409,7 @@ public abstract class Configuration {
      */
     @Locked
     @NonCommitting
-    protected void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws FailedUpdateException {}
+    protected void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws FailedUpdateExecutionException {}
     
     
     /* -------------------------------------------------- Locking -------------------------------------------------- */

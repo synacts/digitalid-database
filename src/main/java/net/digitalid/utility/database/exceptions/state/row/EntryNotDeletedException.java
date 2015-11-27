@@ -5,13 +5,13 @@ import java.sql.Statement;
 import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.exceptions.operation.FailedUpdateException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedUpdateExecutionException;
 
 /**
  * This exception is thrown when the expected row count of a deletion is different than the encountered row count.
  */
 @Immutable
-public class EntryNotDeletedException extends CorruptRowCountException {
+public class EntryNotDeletedException extends WrongRowCountException {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -34,14 +34,14 @@ public class EntryNotDeletedException extends CorruptRowCountException {
      * @throws EntryNotDeletedException if this is not the case.
      */
     @Pure
-    public static void check(@Nonnull Statement statement, int expectedRowCount) throws EntryNotDeletedException, FailedUpdateException {
+    public static void check(@Nonnull Statement statement, int expectedRowCount) throws EntryNotDeletedException, FailedUpdateExecutionException {
         try {
             final int encounteredRowCount = statement.getUpdateCount();
             if (encounteredRowCount != expectedRowCount) {
                 throw new EntryNotDeletedException(expectedRowCount, encounteredRowCount);
             }
         } catch (@Nonnull SQLException exception) {
-            throw FailedUpdateException.get(exception);
+            throw FailedUpdateExecutionException.get(exception);
         }
     }
     

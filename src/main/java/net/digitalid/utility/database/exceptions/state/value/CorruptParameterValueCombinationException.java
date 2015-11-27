@@ -1,4 +1,4 @@
-package net.digitalid.utility.database.exceptions.state;
+package net.digitalid.utility.database.exceptions.state.value;
 
 import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -8,7 +8,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * This exception is thrown when a combination of parameter values is invalid.
  */
 @Immutable
-public class CorruptParameterValueCombinationException extends CorruptStateException {
+public class CorruptParameterValueCombinationException extends CorruptValueException {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     

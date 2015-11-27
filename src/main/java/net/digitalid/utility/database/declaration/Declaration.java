@@ -18,8 +18,8 @@ import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.configuration.Database;
 import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
-import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
-import net.digitalid.utility.database.exceptions.operation.FailedUpdateException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedValueStoringException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedUpdateExecutionException;
 import net.digitalid.utility.database.site.Site;
 import net.digitalid.utility.database.table.Table;
 
@@ -320,7 +320,7 @@ public abstract class Declaration {
      */
     @Locked
     @NonCommitting
-    public abstract void executeAfterCreation(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws FailedUpdateException;
+    public abstract void executeAfterCreation(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws FailedUpdateExecutionException;
     
     /**
      * This method is called before the deletion of a table on its declaration.
@@ -336,7 +336,7 @@ public abstract class Declaration {
      */
     @Locked
     @NonCommitting
-    public abstract void executeBeforeDeletion(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws FailedUpdateException;
+    public abstract void executeBeforeDeletion(@Nonnull Statement statement, @Nonnull Table table, @Nullable Site site, boolean unique, @Nullable @Validated String prefix) throws FailedUpdateExecutionException;
     
     /* -------------------------------------------------- Storing (with PreparedStatement) -------------------------------------------------- */
     
@@ -410,7 +410,7 @@ public abstract class Declaration {
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
     @NonCommitting
-    public abstract void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException;
+    public abstract void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException;
     
     /* -------------------------------------------------- Extensions -------------------------------------------------- */
     

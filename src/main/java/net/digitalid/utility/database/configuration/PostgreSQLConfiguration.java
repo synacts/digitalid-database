@@ -23,8 +23,9 @@ import net.digitalid.utility.database.annotations.Committing;
 import net.digitalid.utility.database.annotations.Locked;
 import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
-import net.digitalid.utility.database.exceptions.operation.FailedSavepointException;
-import net.digitalid.utility.database.exceptions.operation.FailedUpdateException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedSavepointCreationException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedSavepointRollbackException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedUpdateExecutionException;
 import net.digitalid.utility.system.console.Console;
 import net.digitalid.utility.system.directory.Directory;
 
@@ -86,7 +87,7 @@ public final class PostgreSQLConfiguration extends Configuration {
      * @param reset whether the database is to be dropped first before creating it again.
      */
     @Committing
-    private PostgreSQLConfiguration(@Nonnull @Validated String name, boolean reset) throws FailedUpdateException, IOException {
+    private PostgreSQLConfiguration(@Nonnull @Validated String name, boolean reset) throws FailedUpdateExecutionException, IOException {
         super("org.postgresql.Driver");
         
         assert Configuration.isValidName(name) : "The name is valid for a database.";
@@ -130,7 +131,7 @@ public final class PostgreSQLConfiguration extends Configuration {
             final @Nonnull ResultSet resultSet = statement.executeQuery("SELECT EXISTS (SELECT * FROM pg_catalog.pg_database WHERE datname = '" + database + "')");
             if (resultSet.next() && !resultSet.getBoolean(1)) { statement.executeUpdate("CREATE DATABASE " + database); }
         } catch (@Nonnull SQLException exception) {
-            throw FailedUpdateException.get(exception);
+            throw FailedUpdateExecutionException.get(exception);
         }
     }
     
@@ -144,7 +145,7 @@ public final class PostgreSQLConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull PostgreSQLConfiguration get(@Nonnull @Validated String name, boolean reset) throws FailedUpdateException, IOException {
+    public static @Nonnull PostgreSQLConfiguration get(@Nonnull @Validated String name, boolean reset) throws FailedUpdateExecutionException, IOException {
         return new PostgreSQLConfiguration(name, reset);
     }
     
@@ -157,7 +158,7 @@ public final class PostgreSQLConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull PostgreSQLConfiguration get(@Nonnull @Validated String name) throws FailedUpdateException, IOException {
+    public static @Nonnull PostgreSQLConfiguration get(@Nonnull @Validated String name) throws FailedUpdateExecutionException, IOException {
         return new PostgreSQLConfiguration(name, false);
     }
     
@@ -170,7 +171,7 @@ public final class PostgreSQLConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull PostgreSQLConfiguration get(boolean reset) throws FailedUpdateException, IOException {
+    public static @Nonnull PostgreSQLConfiguration get(boolean reset) throws FailedUpdateExecutionException, IOException {
         return new PostgreSQLConfiguration("PostgreSQL", reset);
     }
     
@@ -181,7 +182,7 @@ public final class PostgreSQLConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull PostgreSQLConfiguration get() throws FailedUpdateException, IOException {
+    public static @Nonnull PostgreSQLConfiguration get() throws FailedUpdateExecutionException, IOException {
         return new PostgreSQLConfiguration("PostgreSQL", false);
     }
     
@@ -207,7 +208,7 @@ public final class PostgreSQLConfiguration extends Configuration {
         try (@Nonnull Connection connection = DriverManager.getConnection("jdbc:postgresql://" + server + ":" + port + "/", properties); @Nonnull Statement statement = connection.createStatement()) {
             statement.executeUpdate("DROP DATABASE IF EXISTS " + database);
         } catch (@Nonnull SQLException exception) {
-            throw FailedUpdateException.get(exception);
+            throw FailedUpdateExecutionException.get(exception);
         }
         Database.commit();
     }
@@ -335,7 +336,7 @@ public final class PostgreSQLConfiguration extends Configuration {
     @Override
     @NonCommitting
     @SuppressWarnings("StringEquality")
-    public void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateException {
+    public void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateExecutionException {
         assert columns.length > 0 : "The columns are not empty.";
         
         final @Nonnull StringBuilder string = new StringBuilder("DO $$ DECLARE counter INTEGER; BEGIN ");
@@ -346,7 +347,7 @@ public final class PostgreSQLConfiguration extends Configuration {
             string.append(column);
         }
         string.append(")'; END IF; END; $$");
-        try { statement.execute(string.toString()); } catch (@Nonnull SQLException exception) { throw FailedUpdateException.get(exception); }
+        try { statement.execute(string.toString()); } catch (@Nonnull SQLException exception) { throw FailedUpdateExecutionException.get(exception); }
     }
     
     /* -------------------------------------------------- Savepoints -------------------------------------------------- */
@@ -354,23 +355,23 @@ public final class PostgreSQLConfiguration extends Configuration {
     @Locked
     @Override
     @NonCommitting
-    protected @Nonnull Savepoint setSavepoint(@Nonnull Connection connection) throws FailedSavepointException {
+    protected @Nonnull Savepoint setSavepoint(@Nonnull Connection connection) throws FailedSavepointCreationException {
         try {
             return connection.setSavepoint();
         } catch (@Nonnull SQLException exception) {
-            throw FailedSavepointException.get(exception);
+            throw FailedSavepointCreationException.get(exception);
         }
     }
     
     @Locked
     @Override
     @NonCommitting
-    protected void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws FailedSavepointException {
+    protected void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws FailedSavepointRollbackException {
         try {
             connection.rollback(savepoint);
             connection.releaseSavepoint(savepoint);
         } catch (@Nonnull SQLException exception) {
-            throw FailedSavepointException.get(exception);
+            throw FailedSavepointRollbackException.get(exception);
         }
     }
     
@@ -379,7 +380,7 @@ public final class PostgreSQLConfiguration extends Configuration {
     @Locked
     @Override
     @NonCommitting
-    protected void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateException {
+    protected void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateExecutionException {
         assert columns.length > 0 : "The columns are not empty.";
         
         final @Nonnull StringBuilder string = new StringBuilder("CREATE OR REPLACE RULE ").append(table).append("_on_insert_ignore ");
@@ -398,14 +399,14 @@ public final class PostgreSQLConfiguration extends Configuration {
             string.append("NEW.").append(column);
         }
         string.append(")) DO INSTEAD NOTHING");
-        try { statement.executeUpdate(string.toString()); } catch (@Nonnull SQLException exception) { throw FailedUpdateException.get(exception); }
+        try { statement.executeUpdate(string.toString()); } catch (@Nonnull SQLException exception) { throw FailedUpdateExecutionException.get(exception); }
     }
     
     @Locked
     @Override
     @NonCommitting
-    protected void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws FailedUpdateException {
-        try { statement.executeUpdate("DROP RULE IF EXISTS " + table + "_on_insert_ignore ON " + table); } catch (@Nonnull SQLException exception) { throw FailedUpdateException.get(exception); }
+    protected void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws FailedUpdateExecutionException {
+        try { statement.executeUpdate("DROP RULE IF EXISTS " + table + "_on_insert_ignore ON " + table); } catch (@Nonnull SQLException exception) { throw FailedUpdateExecutionException.get(exception); }
     }
     
     /* -------------------------------------------------- Updating -------------------------------------------------- */
@@ -413,7 +414,7 @@ public final class PostgreSQLConfiguration extends Configuration {
     @Locked
     @Override
     @NonCommitting
-    protected void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, int key, @Nonnull String... columns) throws FailedUpdateException {
+    protected void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, int key, @Nonnull String... columns) throws FailedUpdateExecutionException {
         assert key > 0 : "The number of columns in the primary key is positive.";
         assert columns.length >= key : "At least as many columns as in the primary key are provided.";
         
@@ -438,14 +439,14 @@ public final class PostgreSQLConfiguration extends Configuration {
             string.append(columns[i]).append(" = NEW.").append(columns[i]);
         }
         string.append(condition);
-        try { statement.executeUpdate(string.toString()); } catch (@Nonnull SQLException exception) { throw FailedUpdateException.get(exception); }
+        try { statement.executeUpdate(string.toString()); } catch (@Nonnull SQLException exception) { throw FailedUpdateExecutionException.get(exception); }
     }
     
     @Locked
     @Override
     @NonCommitting
-    protected void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws FailedUpdateException {
-        try { statement.executeUpdate("DROP RULE IF EXISTS " + table + "_on_insert_update ON " + table); } catch (@Nonnull SQLException exception) { throw FailedUpdateException.get(exception); }
+    protected void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws FailedUpdateExecutionException {
+        try { statement.executeUpdate("DROP RULE IF EXISTS " + table + "_on_insert_update ON " + table); } catch (@Nonnull SQLException exception) { throw FailedUpdateExecutionException.get(exception); }
     }
     
 }

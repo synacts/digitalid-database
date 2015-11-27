@@ -5,15 +5,15 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.database.exceptions.DatabaseException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedNonCommittingOperationException;
 
 /**
  * This exception indicates a failed database operation.
  * 
+ * @see FailedClosingException
  * @see FailedCommitException
  * @see FailedConnectionException
- * @see FailedKeyGenerationException
- * @see FailedRestoringException
- * @see FailedStoringException
+ * @see FailedNonCommittingOperationException
  */
 @Immutable
 public abstract class FailedOperationException extends DatabaseException {

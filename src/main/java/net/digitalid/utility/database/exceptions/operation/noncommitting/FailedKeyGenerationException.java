@@ -1,4 +1,4 @@
-package net.digitalid.utility.database.exceptions.operation;
+package net.digitalid.utility.database.exceptions.operation.noncommitting;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -9,7 +9,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * This exception is thrown when the primary key could not be generated.
  */
 @Immutable
-public class FailedKeyGenerationException extends FailedOperationException {
+public class FailedKeyGenerationException extends FailedNonCommittingOperationException {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     

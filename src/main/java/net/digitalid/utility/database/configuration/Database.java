@@ -23,12 +23,13 @@ import net.digitalid.utility.database.annotations.NonCommitting;
 import net.digitalid.utility.database.exceptions.operation.FailedClosingException;
 import net.digitalid.utility.database.exceptions.operation.FailedCommitException;
 import net.digitalid.utility.database.exceptions.operation.FailedConnectionException;
-import net.digitalid.utility.database.exceptions.operation.FailedKeyGenerationException;
 import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
-import net.digitalid.utility.database.exceptions.operation.FailedPreparedStatementException;
-import net.digitalid.utility.database.exceptions.operation.FailedSavepointException;
-import net.digitalid.utility.database.exceptions.operation.FailedStatementException;
-import net.digitalid.utility.database.exceptions.operation.FailedUpdateException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedKeyGenerationException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedPreparedStatementCreationException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedSavepointCreationException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedSavepointRollbackException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedStatementCreationException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedUpdateExecutionException;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.system.logger.Log;
 
@@ -287,7 +288,7 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static @Nullable Savepoint setSavepoint() throws FailedSavepointException {
+    public static @Nullable Savepoint setSavepoint() throws FailedSavepointCreationException {
         return getConfiguration().setSavepoint(getConnection());
     }
     
@@ -299,7 +300,7 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static void rollback(@Nullable Savepoint savepoint) throws FailedSavepointException {
+    public static void rollback(@Nullable Savepoint savepoint) throws FailedSavepointRollbackException {
         getConfiguration().rollback(getConnection(), savepoint);
     }
     
@@ -313,11 +314,11 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static @Nonnull Statement createStatement() throws FailedStatementException {
+    public static @Nonnull Statement createStatement() throws FailedStatementCreationException {
         try {
             return getConnection().createStatement();
         } catch (@Nonnull SQLException exception) {
-            throw FailedStatementException.get(exception);
+            throw FailedStatementCreationException.get(exception);
         }
     }
     
@@ -331,11 +332,11 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static @Nonnull PreparedStatement prepareStatement(@Nonnull String SQL) throws FailedPreparedStatementException {
+    public static @Nonnull PreparedStatement prepareStatement(@Nonnull String SQL) throws FailedPreparedStatementCreationException {
         try {
             return getConnection().prepareStatement(SQL);
         } catch (@Nonnull SQLException exception) {
-            throw FailedPreparedStatementException.get(exception);
+            throw FailedPreparedStatementCreationException.get(exception);
         }
     }
     
@@ -367,7 +368,7 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws FailedKeyGenerationException, FailedUpdateException {
+    public static long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws FailedKeyGenerationException, FailedUpdateExecutionException {
         return getConfiguration().executeInsert(statement, SQL);
     }
     
@@ -381,11 +382,11 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static @Nonnull PreparedStatement prepareInsertStatement(@Nonnull String SQL) throws FailedPreparedStatementException {
+    public static @Nonnull PreparedStatement prepareInsertStatement(@Nonnull String SQL) throws FailedPreparedStatementCreationException {
         try {
             return getConnection().prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
         } catch (@Nonnull SQLException exception) {
-            throw FailedPreparedStatementException.get(exception);
+            throw FailedPreparedStatementCreationException.get(exception);
         }
     }
     
@@ -422,7 +423,7 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateException {
+    public static void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateExecutionException {
         assert columns.length > 0 : "The columns are not empty.";
         
         getConfiguration().onInsertIgnore(statement, table, columns);
@@ -437,7 +438,7 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws FailedUpdateException {
+    public static void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws FailedUpdateExecutionException {
         getConfiguration().onInsertNotIgnore(statement, table);
     }
     
@@ -456,7 +457,7 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, @Positive int key, @Nonnull String... columns) throws FailedUpdateException {
+    public static void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, @Positive int key, @Nonnull String... columns) throws FailedUpdateExecutionException {
         getConfiguration().onInsertUpdate(statement, table, key, columns);
     }
     
@@ -469,7 +470,7 @@ public final class Database {
     @Locked
     @Initialized
     @NonCommitting
-    public static void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws FailedUpdateException {
+    public static void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws FailedUpdateExecutionException {
         getConfiguration().onInsertNotUpdate(statement, table);
     }
     

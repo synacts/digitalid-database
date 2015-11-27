@@ -12,7 +12,7 @@ import net.digitalid.utility.database.exceptions.state.CorruptStateException;
  * @see EntryNotUpdatedException
  */
 @Immutable
-public abstract class CorruptRowCountException extends CorruptStateException {
+public abstract class WrongRowCountException extends CorruptStateException {
     
     /* -------------------------------------------------- Expected Row Count -------------------------------------------------- */
     
@@ -56,7 +56,7 @@ public abstract class CorruptRowCountException extends CorruptStateException {
      * @param expectedRowCount the expected row count.
      * @param encounteredRowCount the encountered row count.
      */
-    protected CorruptRowCountException(int expectedRowCount, int encounteredRowCount) {
+    protected WrongRowCountException(int expectedRowCount, int encounteredRowCount) {
         super("A row count of " + expectedRowCount + " was expected but a row count of " + encounteredRowCount + " was encountered.");
         
         this.expectedRowCount = expectedRowCount;

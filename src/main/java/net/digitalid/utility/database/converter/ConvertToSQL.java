@@ -12,7 +12,7 @@ import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.exceptions.operation.FailedStoringException;
+import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedValueStoringException;
 
 /**
  * This is a utility class to store objects that implement {@link SQL} in the {@link Database}.
@@ -90,7 +90,7 @@ public final class ConvertToSQL {
      * @param preparedStatement the prepared statement whose parameters are to be set.
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
-    public static <O extends SQL<O, ?>> void nonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedStoringException {
+    public static <O extends SQL<O, ?>> void nonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
         object.getSQLConverter().storeNonNullable(object, preparedStatement, parameterIndex);
     }
     
