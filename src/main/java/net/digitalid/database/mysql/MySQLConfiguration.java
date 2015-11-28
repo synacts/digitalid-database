@@ -13,13 +13,13 @@ import java.sql.Statement;
 import java.util.Properties;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.exceptions.operation.FailedOperationException;
+import net.digitalid.database.core.exceptions.operation.noncommitting.FailedUpdateExecutionException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.database.annotations.Committing;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
-import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedUpdateExecutionException;
 import net.digitalid.utility.system.console.Console;
 import net.digitalid.utility.system.directory.Directory;
 
