@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.digitalid</groupId>
-    <artifactId>digitalid-utility-database</artifactId>
+    <artifactId>digitalid-database-core</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
     <properties>
@@ -43,7 +43,7 @@
                 <configuration>
                     <quiet>true</quiet>
                     <linksource>false</linksource>
-                    <doctitle>Digital ID Database</doctitle>
+                    <doctitle>Digital ID Database Core</doctitle>
                     <additionalparam>-Xdoclint:none</additionalparam>
                     <links>
                         <link>https://docs.digitalid.net/utility/annotations/1.0.0/</link>
