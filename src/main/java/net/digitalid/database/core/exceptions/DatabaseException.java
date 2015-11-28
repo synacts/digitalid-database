@@ -1,10 +1,10 @@
-package net.digitalid.utility.database.exceptions;
+package net.digitalid.database.core.exceptions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.exceptions.operation.FailedOperationException;
+import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
-import net.digitalid.utility.database.exceptions.state.CorruptStateException;
 import net.digitalid.utility.system.logger.Log;
 
 /**

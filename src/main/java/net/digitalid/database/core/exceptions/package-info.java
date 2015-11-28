@@ -1,4 +1,4 @@
 /**
  * Provides exceptions that indicate database problems.
  */
-package net.digitalid.utility.database.exceptions;
+package net.digitalid.database.core.exceptions;

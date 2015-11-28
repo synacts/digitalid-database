@@ -1,4 +1,4 @@
-package net.digitalid.utility.database.declaration;
+package net.digitalid.database.core.declaration;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

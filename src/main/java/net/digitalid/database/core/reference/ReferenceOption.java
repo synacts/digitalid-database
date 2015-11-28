@@ -1,4 +1,4 @@
-package net.digitalid.utility.database.reference;
+package net.digitalid.database.core.reference;
 
 import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.state.Immutable;

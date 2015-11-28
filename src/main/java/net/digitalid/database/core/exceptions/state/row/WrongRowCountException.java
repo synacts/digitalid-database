@@ -1,8 +1,8 @@
-package net.digitalid.utility.database.exceptions.state.row;
+package net.digitalid.database.core.exceptions.state.row;
 
+import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.exceptions.state.CorruptStateException;
 
 /**
  * This exception is thrown when the expected row count of an update is different than the encountered row count.

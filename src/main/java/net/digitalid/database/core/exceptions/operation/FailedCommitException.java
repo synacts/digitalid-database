@@ -1,4 +1,4 @@
-package net.digitalid.utility.database.exceptions.operation;
+package net.digitalid.database.core.exceptions.operation;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;

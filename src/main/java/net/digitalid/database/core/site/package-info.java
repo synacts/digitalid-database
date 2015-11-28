@@ -1,4 +1,4 @@
 /**
  * Provides classes so that the same code works on both hosts and clients.
  */
-package net.digitalid.utility.database.site;
+package net.digitalid.database.core.site;

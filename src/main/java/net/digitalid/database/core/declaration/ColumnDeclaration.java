@@ -1,10 +1,19 @@
-package net.digitalid.utility.database.declaration;
+package net.digitalid.database.core.declaration;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.exceptions.operation.FailedOperationException;
+import net.digitalid.database.core.exceptions.operation.noncommitting.FailedUpdateExecutionException;
+import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueStoringException;
+import net.digitalid.database.core.reference.Reference;
+import net.digitalid.database.core.site.Site;
+import net.digitalid.database.core.table.Table;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
@@ -12,15 +21,6 @@ import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.index.MutableIndex;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.configuration.Database;
-import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
-import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedValueStoringException;
-import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedUpdateExecutionException;
-import net.digitalid.utility.database.reference.Reference;
-import net.digitalid.utility.database.site.Site;
-import net.digitalid.utility.database.table.Table;
 
 /**
  * This class implements the declaration of a single column.

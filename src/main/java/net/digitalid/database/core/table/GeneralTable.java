@@ -1,11 +1,11 @@
-package net.digitalid.utility.database.table;
+package net.digitalid.database.core.table;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.declaration.Declaration;
+import net.digitalid.database.core.site.Site;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.database.declaration.Declaration;
-import net.digitalid.utility.database.site.Site;
 
 /**
  * This class models a database table that is {@link Site site}-independent.

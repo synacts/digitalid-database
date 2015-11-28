@@ -1,15 +1,15 @@
-package net.digitalid.utility.database.reference;
+package net.digitalid.database.core.reference;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.declaration.ColumnDeclaration;
+import net.digitalid.database.core.exceptions.operation.FailedOperationException;
+import net.digitalid.database.core.site.Site;
+import net.digitalid.database.core.table.Table;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.annotations.Locked;
-import net.digitalid.utility.database.annotations.NonCommitting;
-import net.digitalid.utility.database.declaration.ColumnDeclaration;
-import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
-import net.digitalid.utility.database.site.Site;
-import net.digitalid.utility.database.table.Table;
 
 /**
  * This class models single-column foreign key references.

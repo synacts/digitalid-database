@@ -1,4 +1,4 @@
-package net.digitalid.utility.database.annotations;
+package net.digitalid.database.core.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

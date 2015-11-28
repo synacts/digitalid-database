@@ -1,4 +1,4 @@
 /**
  * Provides exceptions that indicate a corrupt value.
  */
-package net.digitalid.utility.database.exceptions.state.value;
+package net.digitalid.database.core.exceptions.state.value;

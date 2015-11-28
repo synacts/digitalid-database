@@ -1,9 +1,9 @@
-package net.digitalid.utility.database.exceptions.operation.noncommitting;
+package net.digitalid.database.core.exceptions.operation.noncommitting;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.exceptions.operation.FailedOperationException;
 import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.database.exceptions.operation.FailedOperationException;
 
 /**
  * This exception indicates a failed database operation.

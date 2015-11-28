@@ -1,4 +1,4 @@
-package net.digitalid.utility.database.exceptions.state;
+package net.digitalid.database.core.exceptions.state;
 
 import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.state.Immutable;

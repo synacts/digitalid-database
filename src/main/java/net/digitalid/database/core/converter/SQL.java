@@ -1,8 +1,8 @@
-package net.digitalid.utility.database.converter;
+package net.digitalid.database.core.converter;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.configuration.Database;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.configuration.Database;
 
 /**
  * Objects of classes that implement this interface can be stored in the {@link Database database}.

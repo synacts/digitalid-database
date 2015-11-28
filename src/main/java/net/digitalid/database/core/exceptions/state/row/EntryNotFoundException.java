@@ -1,11 +1,11 @@
-package net.digitalid.utility.database.exceptions.state.row;
+package net.digitalid.database.core.exceptions.state.row;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.exceptions.operation.noncommitting.FailedQueryExecutionException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedQueryExecutionException;
 
 /**
  * This exception is thrown when a query has not found the desired entry.

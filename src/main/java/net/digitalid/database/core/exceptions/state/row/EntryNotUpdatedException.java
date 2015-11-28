@@ -1,11 +1,11 @@
-package net.digitalid.utility.database.exceptions.state.row;
+package net.digitalid.database.core.exceptions.state.row;
 
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.exceptions.operation.noncommitting.FailedUpdateExecutionException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.database.exceptions.operation.noncommitting.FailedUpdateExecutionException;
 
 /**
  * This exception is thrown when the expected row count of an update is different than the encountered row count.
