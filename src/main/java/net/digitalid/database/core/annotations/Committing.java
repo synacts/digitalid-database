@@ -5,7 +5,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.Database;
 
 /**
  * This annotation indicates that a method ends in a {@link Database#commit() committed} state if no exception is thrown.

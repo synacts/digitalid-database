@@ -3,7 +3,7 @@ package net.digitalid.database.core.converter;
 import java.sql.PreparedStatement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueStoringException;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.state.Pure;

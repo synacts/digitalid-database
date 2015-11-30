@@ -1,4 +1,4 @@
-package net.digitalid.database.core.configuration;
+package net.digitalid.database.core;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
