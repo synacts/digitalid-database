@@ -19,6 +19,9 @@ import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.configuration.Configuration;
+import net.digitalid.database.core.configuration.Database;
+import net.digitalid.database.core.exceptions.operation.FailedClosingException;
 import net.digitalid.database.core.exceptions.operation.FailedOperationException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedSavepointCreationException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedSavepointRollbackException;
@@ -204,7 +207,11 @@ public final class PostgreSQLConfiguration extends Configuration {
     @Override
     @Committing
     public void dropDatabase() throws FailedOperationException {
-        Database.close();
+        try {
+            Configuration.getCurrentConnection().close();
+        } catch (@Nonnull SQLException exception) {
+            throw FailedClosingException.get(exception);
+        }
         try (@Nonnull Connection connection = DriverManager.getConnection("jdbc:postgresql://" + server + ":" + port + "/", properties); @Nonnull Statement statement = connection.createStatement()) {
             statement.executeUpdate("DROP DATABASE IF EXISTS " + database);
         } catch (@Nonnull SQLException exception) {
