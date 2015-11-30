@@ -13,10 +13,10 @@ import java.sql.Statement;
 import java.util.Properties;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.Configuration;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.Locked;
-import net.digitalid.database.core.configuration.Configuration;
-import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.exceptions.operation.FailedOperationException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedUpdateExecutionException;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -220,7 +220,7 @@ public final class MySQLConfiguration extends Configuration {
      * The pattern that valid database identifiers have to match.
      * Identifiers may in principle begin with a digit but unless quoted may not consist solely of digits.
      */
-    private static final @Nonnull Pattern PATTERN = Pattern.compile("[a-z_][a-z0-9_$]*", Pattern.CASE_INSENSITIVE);
+    private static final @Nonnull Pattern PATTERN = Pattern.compile("[a-z_][a-z0-9_$]*");
     
     @Pure
     @Override
