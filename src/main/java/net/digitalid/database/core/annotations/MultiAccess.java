@@ -8,11 +8,11 @@ import java.lang.annotation.Target;
 import net.digitalid.database.core.configuration.Database;
 
 /**
- * This annotation indicates that a method should only be called if the {@link Database database} is in {@link Database#isSingleAccess() single-access} mode.
+ * This annotation indicates that a method should only be called if the {@link Database database} is in {@link Database#isMultiAccess() multi-access} mode.
  * 
- * @see OnlyForMultiAccess
+ * @see OnlyForSingleAccess
  */
 @Documented
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
-public @interface OnlyForSingleAccess {}
+public @interface MultiAccess {}

@@ -32,6 +32,7 @@ import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.system.errors.ShouldNeverHappenError;
 import net.digitalid.utility.system.logger.Log;
+import net.digitalid.utility.system.thread.Threading;
 
 /**
  * This class provides connections to the database.
@@ -98,27 +99,6 @@ public final class Database {
         return !singleAccess;
     }
     
-    /* -------------------------------------------------- Main Thread -------------------------------------------------- */
-    
-    /**
-     * Stores whether the current thread is the main thread used for initializations.
-     */
-    private static final @Nonnull ThreadLocal<Boolean> mainThread = new ThreadLocal<Boolean>() {
-        @Override protected @Nonnull Boolean initialValue() {
-            return false;
-        }
-    };
-    
-    /**
-     * Returns whether the current thread is the main thread used for initializations.
-     * 
-     * @return whether the current thread is the main thread used for initializations.
-     */
-    @Pure
-    public static boolean isMainThread() {
-        return mainThread.get();
-    }
-    
     /* -------------------------------------------------- Initialization -------------------------------------------------- */
     
     /**
@@ -130,7 +110,6 @@ public final class Database {
     public static void initialize(@Nonnull Configuration configuration, boolean singleAccess) {
         Database.configuration = configuration;
         Database.singleAccess = singleAccess;
-        mainThread.set(true);
         connection.remove();
         
         Log.information("The database has been initialized for " + (singleAccess ? "single" : "multi") + "-access with a " + configuration.getClass().getSimpleName() + ".");
@@ -494,9 +473,12 @@ public final class Database {
     
     /**
      * Returns whether the database is locked by the current thread.
+     * It is safe to assume that the database is locked for methods
+     * that run on the {@link Threading#isMainThread() main thread}.
      * 
      * @return whether the database is locked by the current thread.
      */
+    @Pure
     @Initialized
     public static boolean isLocked() {
         return getConfiguration().isLocked();

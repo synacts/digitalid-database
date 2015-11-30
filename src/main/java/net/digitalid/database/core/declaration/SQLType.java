@@ -57,7 +57,7 @@ public enum SQLType {
     /**
      * The SQL type for booleans.
      */
-    BOOLEAN(Types.TINYINT, "BOOLEAN"),
+    BOOLEAN(Types.BOOLEAN, "BOOLEAN"),
     
     /**
      * The SQL type for strings.
