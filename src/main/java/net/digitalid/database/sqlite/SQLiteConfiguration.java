@@ -13,6 +13,8 @@ import javax.annotation.Nonnull;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.core.configuration.Configuration;
+import net.digitalid.database.core.configuration.Database;
 import net.digitalid.database.core.exceptions.operation.FailedConnectionException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedKeyGenerationException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedUpdateExecutionException;
