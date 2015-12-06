@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedUpdateExecutionException;
-import net.digitalid.database.core.site.Site;
+import net.digitalid.database.core.table.Site;
 import net.digitalid.database.core.table.Table;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;

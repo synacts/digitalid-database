@@ -11,8 +11,9 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.operation.FailedOperationException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedUpdateExecutionException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueStoringException;
-import net.digitalid.database.core.reference.Reference;
-import net.digitalid.database.core.site.Site;
+import net.digitalid.database.core.sql.statement.table.create.SQLReference;
+import net.digitalid.database.core.sql.statement.table.create.SQLType;
+import net.digitalid.database.core.table.Site;
 import net.digitalid.database.core.table.Table;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -95,7 +96,7 @@ public class ColumnDeclaration extends Declaration {
     /**
      * Stores the foreign key reference of this column declaration or null if there is none.
      */
-    private final @Nullable Reference reference;
+    private final @Nullable SQLReference reference;
     
     /**
      * Returns the foreign key reference of this column declaration or null if there is none.
@@ -103,7 +104,7 @@ public class ColumnDeclaration extends Declaration {
      * @return the foreign key reference of this column declaration or null if there is none.
      */
     @Pure
-    public final @Nullable Reference getReference() {
+    public final @Nullable SQLReference getReference() {
         return reference;
     }
     
@@ -118,7 +119,7 @@ public class ColumnDeclaration extends Declaration {
      * 
      * @require reference == null || reference.getColumn().getType() == type : "If the reference is not null, the type of its column is the same as the given type.";
      */
-    protected ColumnDeclaration(@Nonnull @Validated String name, @Nonnull SQLType type, @Nullable Reference reference) {
+    protected ColumnDeclaration(@Nonnull @Validated String name, @Nonnull SQLType type, @Nullable SQLReference reference) {
         assert isValidName(name) : "The name is valid.";
         assert reference == null || reference.getColumn().getType() == type : "If the reference is not null, the type of its column is the same as the given type.";
         
@@ -149,7 +150,7 @@ public class ColumnDeclaration extends Declaration {
      * @return a new column declaration with the given parameters.
      */
     @Pure
-    public static @Nonnull ColumnDeclaration get(@Nonnull @Validated String name, @Nonnull Reference reference) {
+    public static @Nonnull ColumnDeclaration get(@Nonnull @Validated String name, @Nonnull SQLReference reference) {
         return new ColumnDeclaration(name, reference.getColumn().getType(), reference);
     }
     

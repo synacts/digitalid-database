@@ -3,42 +3,28 @@ package net.digitalid.database.core.table;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.Declaration;
 import net.digitalid.database.core.exceptions.operation.FailedOperationException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedUpdateExecutionException;
-import net.digitalid.database.core.site.Site;
+import net.digitalid.database.core.sql.identifier.SQLName;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.annotations.state.Validated;
 
 /**
  * This class models a database table.
  */
 @Immutable
-public abstract class Table {
+public class Table {
     
     /* -------------------------------------------------- Name -------------------------------------------------- */
     
     /**
-     * Returns whether the given name is valid.
-     * 
-     * @param name the name to be checked.
-     * 
-     * @return whether the given name is valid.
-     */
-    @Pure
-    public static boolean isValidName(@Nonnull String name) {
-        return name.length() <= 22 && name.startsWith("_") && name.length() > 1 && Database.getConfiguration().isValidIdentifier(name);
-    }
-    
-    /**
      * Stores the name of this table.
      */
-    private final @Nonnull @Validated String name;
+    private final @Nonnull SQLName name;
     
     /**
      * Returns the name of this table.
@@ -46,7 +32,7 @@ public abstract class Table {
      * @return the name of this table.
      */
     @Pure
-    public final @Nonnull @Validated String getName() {
+    public final @Nonnull SQLName getName() {
         return name;
     }
     
@@ -74,26 +60,26 @@ public abstract class Table {
      * 
      * @param name the name of the new table.
      * @param declaration the declaration of the new table.
-     * 
-     * @require isSiteSpecific() || !declaration.isSiteSpecific() : "If this table is not site-specific, the declaration is neither.";
      */
-    protected Table(@Nonnull @Validated String name, @Nonnull Declaration declaration) {
-        assert isValidName(name) : "The name is valid.";
-        assert isSiteSpecific() || !declaration.isSiteSpecific() : "If this table is not site-specific, the declaration is neither.";
-        
+    protected Table(@Nonnull SQLName name, @Nonnull Declaration declaration) {
         this.name = name;
         this.declaration = declaration;
     }
     
-    /* -------------------------------------------------- Site-Specific Name -------------------------------------------------- */
-    
     /**
-     * Returns whether this table is {@link Site site}-specific.
+     * Returns a new table with the given name and declaration.
      * 
-     * @return whether this table is {@link Site site}-specific.
+     * @param name the name of the new table.
+     * @param declaration the declaration of the new table.
+     * 
+     * @return a new table with the given name and declaration.
      */
     @Pure
-    public abstract boolean isSiteSpecific();
+    public static @Nonnull Table get(@Nonnull SQLName name, @Nonnull Declaration declaration) {
+        return new Table(name, declaration);
+    }
+    
+    /* -------------------------------------------------- Name -------------------------------------------------- */
     
     /**
      * Returns the name of this table with the prefix of the given site.
@@ -101,14 +87,10 @@ public abstract class Table {
      * @param site the site whose prefix is to be used for the returned name.
      * 
      * @return the name of this table with the prefix of the given site.
-     * 
-     * @require !isSiteSpecific() || site != null : "If this table is site-specific, the site may not be null.";
      */
     @Pure
-    public final @Nonnull @Validated String getName(@Nullable Site site) {
-        assert !isSiteSpecific() || site != null : "If this table is site-specific, the site may not be null.";
-        
-        return (site == null ? "" : site) + name;
+    public final @Nonnull SQLName getName(@Nonnull Site site) {
+        return site + name;
     }
     
     /* -------------------------------------------------- Creation and Deletion -------------------------------------------------- */
@@ -122,7 +104,7 @@ public abstract class Table {
      */
     @Locked
     @NonCommitting
-    public final void create(@Nullable Site site) throws FailedOperationException {
+    public final void create(@Nonnull Site site) throws FailedOperationException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + getName(site) + " (" + declaration.toString() + ", PRIMARY KEY (" + declaration.getPrimaryKeySelection() + ")" + declaration.getForeignKeys(site) + ")");
             if (isSiteSpecific()) { Database.onInsertIgnore(statement, getName(site), declaration.getPrimaryKeyColumnNames().toArray()); }
@@ -141,7 +123,7 @@ public abstract class Table {
      */
     @Locked
     @NonCommitting
-    public final void delete(@Nullable Site site) throws FailedOperationException {
+    public final void delete(@Nonnull Site site) throws FailedOperationException {
         try (@Nonnull Statement statement = Database.createStatement()) {
             declaration.executeBeforeDeletion(statement, this, site, true, name);
             if (isSiteSpecific()) { Database.onInsertNotIgnore(statement, getName(site)); }

@@ -8,7 +8,7 @@ import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.operation.FailedOperationException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedUpdateExecutionException;
-import net.digitalid.database.core.site.Site;
+import net.digitalid.database.core.table.Site;
 import net.digitalid.database.core.table.Table;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;

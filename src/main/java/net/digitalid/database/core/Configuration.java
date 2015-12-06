@@ -36,6 +36,7 @@ import net.digitalid.utility.system.errors.InitializationError;
  * @see Database
  */
 @Immutable
+@Deprecated // The dialect class might be enough.
 public abstract class Configuration {
     
     /* -------------------------------------------------- Validity -------------------------------------------------- */
