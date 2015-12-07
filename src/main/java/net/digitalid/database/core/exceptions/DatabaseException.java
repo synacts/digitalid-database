@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import net.digitalid.database.core.exceptions.operation.FailedOperationException;
 import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.system.logger.Log;
+import net.digitalid.utility.system.exceptions.CustomException;
 
 /**
  * This exception indicates a database problem.
@@ -14,7 +14,7 @@ import net.digitalid.utility.system.logger.Log;
  * @see FailedOperationException
  */
 @Immutable
-public abstract class DatabaseException extends Exception {
+public abstract class DatabaseException extends CustomException {
     
     /**
      * Creates a new database exception with the given message and cause.
@@ -24,8 +24,6 @@ public abstract class DatabaseException extends Exception {
      */
     protected DatabaseException(@Nonnull String message, @Nullable Exception cause) {
         super(message, cause);
-        
-        Log.warning("A database exception occurred.", this);
     }
     
     /**
@@ -34,7 +32,7 @@ public abstract class DatabaseException extends Exception {
      * @param message a string explaining the problem which has occurred.
      */
     protected DatabaseException(@Nonnull String message) {
-        this(message, null);
+        super(message);
     }
     
 }
