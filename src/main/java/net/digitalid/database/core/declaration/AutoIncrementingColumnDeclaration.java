@@ -22,7 +22,7 @@ public final class AutoIncrementingColumnDeclaration extends ColumnDeclaration {
      * @param name the name of the new auto-incrementing column declaration.
      */
     protected AutoIncrementingColumnDeclaration(@Nonnull @Validated String name) {
-        super(name, SQLType.BIGINT, null);
+        super(name, SQLType.INTEGER64, null);
     }
     
     /**
