@@ -12,17 +12,23 @@ import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
- * Description.
+ * A dialect implements a particular version of the structured query language (SQL).
  */
 @Immutable
 public abstract class Dialect {
     
-    /* -------------------------------------------------- Visits -------------------------------------------------- */
+    /* -------------------------------------------------- Transcriptions -------------------------------------------------- */
     
+    /**
+     * Transcribes the given node to this dialect at the given site.
+     */
     public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLIdentifier identifier) throws InternalException {
-        
+        string.append("\"").append(identifier.getValue()).append("\"");
     }
     
+    /**
+     * Transcribes the given node to this dialect at the given site.
+     */
     public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLType type) throws InternalException {
         switch (type) {
             case EMPTY: string.append("BOOLEAN"); break;
@@ -47,7 +53,7 @@ public abstract class Dialect {
     /* -------------------------------------------------- Executions -------------------------------------------------- */
     
     public @Nonnull SelectionResult execute(@Nonnull Site site, @Nonnull SQLSelectStatement statement) throws InternalException {
-        return new JDBCSelectionResult();
+        return JDBCSelectionResult.get(null);
     }
     
 }
