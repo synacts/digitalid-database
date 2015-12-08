@@ -13,12 +13,12 @@ import java.sql.Statement;
 import java.util.Properties;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.Configuration;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.database.core.annotations.Locked;
+import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.operation.FailedOperationException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedUpdateExecutionException;
+import net.digitalid.database.core.interfaces.jdbc.JDBCDatabaseInstance;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
@@ -29,7 +29,7 @@ import net.digitalid.utility.system.directory.Directory;
  * This class configures a MySQL database.
  */
 @Immutable
-public final class MySQLConfiguration extends Configuration {
+public final class MySQLDatabaseInstance extends JDBCDatabaseInstance {
     
     /* -------------------------------------------------- Existence -------------------------------------------------- */
     
@@ -84,8 +84,8 @@ public final class MySQLConfiguration extends Configuration {
      * @param reset whether the database is to be dropped first before creating it again.
      */
     @Committing
-    private MySQLConfiguration(@Nonnull @Validated String name, boolean reset) throws FailedUpdateExecutionException, IOException {
-        super("com.mysql.jdbc.Driver");
+    private MySQLDatabaseInstance(@Nonnull @Validated String name, boolean reset) throws FailedUpdateExecutionException, IOException {
+        super(new com.mysql.jdbc.Driver());
         
         assert Configuration.isValidName(name) : "The name is valid for a database.";
         
@@ -141,8 +141,8 @@ public final class MySQLConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull MySQLConfiguration get(@Nonnull @Validated String name, boolean reset) throws FailedUpdateExecutionException, IOException {
-        return new MySQLConfiguration(name, reset);
+    public static @Nonnull MySQLDatabaseInstance get(@Nonnull @Validated String name, boolean reset) throws FailedUpdateExecutionException, IOException {
+        return new MySQLDatabaseInstance(name, reset);
     }
     
     /**
@@ -154,8 +154,8 @@ public final class MySQLConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull MySQLConfiguration get(@Nonnull @Validated String name) throws FailedUpdateExecutionException, IOException {
-        return new MySQLConfiguration(name, false);
+    public static @Nonnull MySQLDatabaseInstance get(@Nonnull @Validated String name) throws FailedUpdateExecutionException, IOException {
+        return new MySQLDatabaseInstance(name, false);
     }
     
     /**
@@ -167,8 +167,8 @@ public final class MySQLConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull MySQLConfiguration get(boolean reset) throws FailedUpdateExecutionException, IOException {
-        return new MySQLConfiguration("MySQL", reset);
+    public static @Nonnull MySQLDatabaseInstance get(boolean reset) throws FailedUpdateExecutionException, IOException {
+        return new MySQLDatabaseInstance("MySQL", reset);
     }
     
     /**
@@ -178,8 +178,8 @@ public final class MySQLConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull MySQLConfiguration get() throws FailedUpdateExecutionException, IOException {
-        return new MySQLConfiguration("MySQL", false);
+    public static @Nonnull MySQLDatabaseInstance get() throws FailedUpdateExecutionException, IOException {
+        return new MySQLDatabaseInstance("MySQL", false);
     }
     
     /* -------------------------------------------------- Database -------------------------------------------------- */
@@ -206,12 +206,6 @@ public final class MySQLConfiguration extends Configuration {
             throw FailedUpdateExecutionException.get(exception);
         }
         Database.commit();
-    }
-
-    @Pure
-    @Override
-    public int getMaximumIdentifierLength() {
-        return 64;
     }
     
     /* -------------------------------------------------- Syntax -------------------------------------------------- */
@@ -320,8 +314,16 @@ public final class MySQLConfiguration extends Configuration {
     
     /* -------------------------------------------------- Index -------------------------------------------------- */
     
+    /**
+     * Returns the syntax for creating an index inside a table declaration.
+     * 
+     * @param columns the columns for which the index is to be created.
+     * 
+     * @return the syntax for creating an index inside a table declaration.
+     * 
+     * @require columns.length > 0 : "The columns are not empty.";
+     */
     @Pure
-    @Override
     public @Nonnull String INDEX(@Nonnull String... columns) {
         assert columns.length > 0 : "The columns are not empty.";
         
@@ -333,8 +335,16 @@ public final class MySQLConfiguration extends Configuration {
         return string.append(")").toString();
     }
     
-    @Pure
-    @Override
+    /**
+     * Creates an index outside a table declaration or does nothing.
+     * 
+     * @param statement the statement on which the creation is executed.
+     * @param table the table on whose columns the index is to be created.
+     * @param columns the columns for which the index is to be created.
+     * 
+     * @require columns.length > 0 : "The columns are not empty.";
+     */
+    @NonCommitting
     public void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) {
         assert columns.length > 0 : "The columns are not empty.";
     }
