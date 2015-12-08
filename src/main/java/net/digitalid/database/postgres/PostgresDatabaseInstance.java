@@ -10,22 +10,17 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Savepoint;
 import java.sql.Statement;
 import java.util.Properties;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import net.digitalid.database.core.Configuration;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.operation.FailedClosingException;
 import net.digitalid.database.core.exceptions.operation.FailedOperationException;
-import net.digitalid.database.core.exceptions.operation.noncommitting.FailedSavepointCreationException;
-import net.digitalid.database.core.exceptions.operation.noncommitting.FailedSavepointRollbackException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedUpdateExecutionException;
+import net.digitalid.database.core.interfaces.jdbc.JDBCDatabaseInstance;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
@@ -36,7 +31,7 @@ import net.digitalid.utility.system.directory.Directory;
  * This class configures a PostgreSQL database.
  */
 @Immutable
-public final class PostgreSQLConfiguration extends Configuration {
+public final class PostgresDatabaseInstance extends JDBCDatabaseInstance {
     
     /* -------------------------------------------------- Existence -------------------------------------------------- */
     
@@ -90,8 +85,8 @@ public final class PostgreSQLConfiguration extends Configuration {
      * @param reset whether the database is to be dropped first before creating it again.
      */
     @Committing
-    private PostgreSQLConfiguration(@Nonnull @Validated String name, boolean reset) throws FailedUpdateExecutionException, IOException {
-        super("org.postgresql.Driver");
+    private PostgresDatabaseInstance(@Nonnull @Validated String name, boolean reset) throws FailedUpdateExecutionException, IOException {
+        super(new org.postgresql.Driver());
         
         assert Configuration.isValidName(name) : "The name is valid for a database.";
         
@@ -148,8 +143,8 @@ public final class PostgreSQLConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull PostgreSQLConfiguration get(@Nonnull @Validated String name, boolean reset) throws FailedUpdateExecutionException, IOException {
-        return new PostgreSQLConfiguration(name, reset);
+    public static @Nonnull PostgresDatabaseInstance get(@Nonnull @Validated String name, boolean reset) throws FailedUpdateExecutionException, IOException {
+        return new PostgresDatabaseInstance(name, reset);
     }
     
     /**
@@ -161,8 +156,8 @@ public final class PostgreSQLConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull PostgreSQLConfiguration get(@Nonnull @Validated String name) throws FailedUpdateExecutionException, IOException {
-        return new PostgreSQLConfiguration(name, false);
+    public static @Nonnull PostgresDatabaseInstance get(@Nonnull @Validated String name) throws FailedUpdateExecutionException, IOException {
+        return new PostgresDatabaseInstance(name, false);
     }
     
     /**
@@ -174,8 +169,8 @@ public final class PostgreSQLConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull PostgreSQLConfiguration get(boolean reset) throws FailedUpdateExecutionException, IOException {
-        return new PostgreSQLConfiguration("PostgreSQL", reset);
+    public static @Nonnull PostgresDatabaseInstance get(boolean reset) throws FailedUpdateExecutionException, IOException {
+        return new PostgresDatabaseInstance("PostgreSQL", reset);
     }
     
     /**
@@ -185,8 +180,8 @@ public final class PostgreSQLConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull PostgreSQLConfiguration get() throws FailedUpdateExecutionException, IOException {
-        return new PostgreSQLConfiguration("PostgreSQL", false);
+    public static @Nonnull PostgresDatabaseInstance get() throws FailedUpdateExecutionException, IOException {
+        return new PostgresDatabaseInstance("PostgreSQL", false);
     }
     
     /* -------------------------------------------------- Database -------------------------------------------------- */
@@ -203,12 +198,11 @@ public final class PostgreSQLConfiguration extends Configuration {
         return properties;
     }
     
-    @Locked
     @Override
     @Committing
     public void dropDatabase() throws FailedOperationException {
         try {
-            Configuration.getCurrentConnection().close();
+            getConnection().close();
         } catch (@Nonnull SQLException exception) {
             throw FailedClosingException.get(exception);
         }
@@ -218,12 +212,6 @@ public final class PostgreSQLConfiguration extends Configuration {
             throw FailedUpdateExecutionException.get(exception);
         }
         Database.commit();
-    }
-
-    @Pure
-    @Override
-    public int getMaximumIdentifierLength() {
-        return 63;
     }
     
     /* -------------------------------------------------- Syntax -------------------------------------------------- */
@@ -357,35 +345,17 @@ public final class PostgreSQLConfiguration extends Configuration {
         try { statement.execute(string.toString()); } catch (@Nonnull SQLException exception) { throw FailedUpdateExecutionException.get(exception); }
     }
     
-    /* -------------------------------------------------- Savepoints -------------------------------------------------- */
-    
-    @Locked
-    @Override
-    @NonCommitting
-    protected @Nonnull Savepoint setSavepoint(@Nonnull Connection connection) throws FailedSavepointCreationException {
-        try {
-            return connection.setSavepoint();
-        } catch (@Nonnull SQLException exception) {
-            throw FailedSavepointCreationException.get(exception);
-        }
-    }
-    
-    @Locked
-    @Override
-    @NonCommitting
-    protected void rollback(@Nonnull Connection connection, @Nullable Savepoint savepoint) throws FailedSavepointRollbackException {
-        try {
-            connection.rollback(savepoint);
-            connection.releaseSavepoint(savepoint);
-        } catch (@Nonnull SQLException exception) {
-            throw FailedSavepointRollbackException.get(exception);
-        }
-    }
-    
     /* -------------------------------------------------- Ignoring -------------------------------------------------- */
     
-    @Locked
-    @Override
+    /**
+     * Creates a rule to ignore duplicate insertions.
+     * 
+     * @param statement a statement to create the rule with.
+     * @param table the table to which the rule is applied.
+     * @param columns the columns of the primary key.
+     * 
+     * @require columns.length > 0 : "The columns are not empty.";
+     */
     @NonCommitting
     protected void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateExecutionException {
         assert columns.length > 0 : "The columns are not empty.";
@@ -409,8 +379,12 @@ public final class PostgreSQLConfiguration extends Configuration {
         try { statement.executeUpdate(string.toString()); } catch (@Nonnull SQLException exception) { throw FailedUpdateExecutionException.get(exception); }
     }
     
-    @Locked
-    @Override
+    /**
+     * Drops the rule to ignore duplicate insertions.
+     * 
+     * @param statement a statement to drop the rule with.
+     * @param table the table from which the rule is dropped.
+     */
     @NonCommitting
     protected void onInsertNotIgnore(@Nonnull Statement statement, @Nonnull String table) throws FailedUpdateExecutionException {
         try { statement.executeUpdate("DROP RULE IF EXISTS " + table + "_on_insert_ignore ON " + table); } catch (@Nonnull SQLException exception) { throw FailedUpdateExecutionException.get(exception); }
@@ -418,8 +392,16 @@ public final class PostgreSQLConfiguration extends Configuration {
     
     /* -------------------------------------------------- Updating -------------------------------------------------- */
     
-    @Locked
-    @Override
+    /**
+     * Creates a rule to update duplicate insertions.
+     * 
+     * @param statement a statement to create the rule with.
+     * @param table the table to which the rule is applied.
+     * @param key the number of columns in the primary key.
+     * @param columns the columns which are inserted starting with the columns of the primary key.
+     * 
+     * @require columns.length >= key : "At least as many columns as in the primary key are provided.";
+     */
     @NonCommitting
     protected void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, int key, @Nonnull String... columns) throws FailedUpdateExecutionException {
         assert key > 0 : "The number of columns in the primary key is positive.";
@@ -449,8 +431,12 @@ public final class PostgreSQLConfiguration extends Configuration {
         try { statement.executeUpdate(string.toString()); } catch (@Nonnull SQLException exception) { throw FailedUpdateExecutionException.get(exception); }
     }
     
-    @Locked
-    @Override
+    /**
+     * Drops the rule to update duplicate insertions.
+     * 
+     * @param statement a statement to drop the rule with.
+     * @param table the table from which the rule is dropped.
+     */
     @NonCommitting
     protected void onInsertNotUpdate(@Nonnull Statement statement, @Nonnull String table) throws FailedUpdateExecutionException {
         try { statement.executeUpdate("DROP RULE IF EXISTS " + table + "_on_insert_update ON " + table); } catch (@Nonnull SQLException exception) { throw FailedUpdateExecutionException.get(exception); }
