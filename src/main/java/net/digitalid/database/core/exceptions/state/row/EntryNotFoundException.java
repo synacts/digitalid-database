@@ -1,9 +1,6 @@
 package net.digitalid.database.core.exceptions.state.row;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.exceptions.operation.noncommitting.FailedQueryExecutionException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 
@@ -23,21 +20,11 @@ public class EntryNotFoundException extends WrongRowCountException {
     }
     
     /**
-     * Checks whether the result set contains the queried entry.
-     * 
-     * @param resultSet the result set that should contain the entry.
-     * 
-     * @throws EntryNotFoundException if the entry could not be found.
+     * Creates a new entry not found exception.
      */
     @Pure
-    public static void check(@Nonnull ResultSet resultSet) throws EntryNotFoundException, FailedQueryExecutionException {
-        try {
-            if (!resultSet.next()) {
-                throw new EntryNotFoundException();
-            }
-        } catch (@Nonnull SQLException exception) {
-            throw FailedQueryExecutionException.get(exception);
-        }
+    public static @Nonnull EntryNotFoundException get() {
+        return new EntryNotFoundException();
     }
     
 }

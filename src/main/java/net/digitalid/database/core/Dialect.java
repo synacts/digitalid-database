@@ -1,8 +1,8 @@
 package net.digitalid.database.core;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.interfaces.Selection;
-import net.digitalid.database.core.interfaces.jdbc.JDBCSelection;
+import net.digitalid.database.core.interfaces.SelectionResult;
+import net.digitalid.database.core.interfaces.jdbc.JDBCSelectionResult;
 import net.digitalid.database.core.sql.identifier.SQLIdentifier;
 import net.digitalid.database.core.sql.statement.select.SQLSelectStatement;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
@@ -46,8 +46,8 @@ public abstract class Dialect {
     
     /* -------------------------------------------------- Executions -------------------------------------------------- */
     
-    public @Nonnull Selection execute(@Nonnull Site site, @Nonnull SQLSelectStatement statement) throws InternalException {
-        return new JDBCSelection();
+    public @Nonnull SelectionResult execute(@Nonnull Site site, @Nonnull SQLSelectStatement statement) throws InternalException {
+        return new JDBCSelectionResult();
     }
     
 }

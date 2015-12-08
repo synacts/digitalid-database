@@ -2,16 +2,19 @@ package net.digitalid.database.core.interfaces;
 
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.exceptions.operation.noncommitting.FailedResourceClosingException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueStoringException;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
-import net.digitalid.utility.collections.annotations.size.SizeAtMost;
 import net.digitalid.utility.collections.annotations.size.Size;
+import net.digitalid.utility.collections.annotations.size.SizeAtMost;
 
 /**
  * This interface allows to set the values of an SQL statement.
  * Advancing the parameter index is left to the implementation.
  */
-public interface Values {
+public interface ValueCollector extends AutoCloseable {
+    
+    /* -------------------------------------------------- Setters -------------------------------------------------- */
     
     /**
      * Sets the next parameter to empty.
@@ -116,11 +119,25 @@ public interface Values {
      */
     public void setBinary(@Nonnull byte[] value) throws FailedValueStoringException;
     
+    /* -------------------------------------------------- Null -------------------------------------------------- */
+    
     /**
      * Sets the next parameter of the given SQL type to null.
      * 
      * @param type the SQL type of the next parameter which is to be set to null.
      */
     public void setNull(@Nonnull SQLType type) throws FailedValueStoringException;
+    
+    /* -------------------------------------------------- Batching -------------------------------------------------- */
+    
+    /**
+     * Adds the current values to the batch of commands which are to be executed.
+     */
+    public void addBatch() throws FailedValueStoringException;
+    
+    /* -------------------------------------------------- Closing -------------------------------------------------- */
+    
+    @Override
+    public void close() throws FailedResourceClosingException;
     
 }
