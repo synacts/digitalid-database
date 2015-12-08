@@ -10,14 +10,13 @@ import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.Configuration;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.operation.FailedConnectionException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedKeyGenerationException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedUpdateExecutionException;
+import net.digitalid.database.core.interfaces.jdbc.JDBCDatabaseInstance;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
@@ -28,7 +27,7 @@ import net.digitalid.utility.system.logger.Log;
  * This class configures a SQLite database.
  */
 @Immutable
-public final class SQLiteConfiguration extends Configuration {
+public final class SQLiteDatabaseInstance extends JDBCDatabaseInstance {
     
     /* -------------------------------------------------- Existence -------------------------------------------------- */
     
@@ -73,8 +72,8 @@ public final class SQLiteConfiguration extends Configuration {
      * @param reset whether the database is to be dropped first before creating it again.
      */
     @Committing
-    private SQLiteConfiguration(@Nonnull @Validated String name, boolean reset) throws FailedConnectionException {
-        super("org.sqlite.JDBC");
+    private SQLiteDatabaseInstance(@Nonnull @Validated String name, boolean reset) throws FailedConnectionException {
+        super(new org.sqlite.JDBC());
         
         assert Configuration.isValidName(name) : "The name is valid for a database.";
         
@@ -99,8 +98,8 @@ public final class SQLiteConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull SQLiteConfiguration get(@Nonnull @Validated String name, boolean reset) throws FailedConnectionException {
-        return new SQLiteConfiguration(name, reset);
+    public static @Nonnull SQLiteDatabaseInstance get(@Nonnull @Validated String name, boolean reset) throws FailedConnectionException {
+        return new SQLiteDatabaseInstance(name, reset);
     }
     
     /**
@@ -112,8 +111,8 @@ public final class SQLiteConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull SQLiteConfiguration get(@Nonnull @Validated String name) throws FailedConnectionException {
-        return new SQLiteConfiguration(name, false);
+    public static @Nonnull SQLiteDatabaseInstance get(@Nonnull @Validated String name) throws FailedConnectionException {
+        return new SQLiteDatabaseInstance(name, false);
     }
     
     /**
@@ -125,8 +124,8 @@ public final class SQLiteConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull SQLiteConfiguration get(boolean reset) throws FailedConnectionException {
-        return new SQLiteConfiguration("SQLite", reset);
+    public static @Nonnull SQLiteDatabaseInstance get(boolean reset) throws FailedConnectionException {
+        return new SQLiteDatabaseInstance("SQLite", reset);
     }
     
     /**
@@ -136,8 +135,8 @@ public final class SQLiteConfiguration extends Configuration {
      */
     @Pure
     @Committing
-    public static @Nonnull SQLiteConfiguration get() throws FailedConnectionException {
-        return new SQLiteConfiguration("SQLite", false);
+    public static @Nonnull SQLiteDatabaseInstance get() throws FailedConnectionException {
+        return new SQLiteDatabaseInstance("SQLite", false);
     }
     
     /* -------------------------------------------------- Database -------------------------------------------------- */
