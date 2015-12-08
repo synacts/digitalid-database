@@ -2,7 +2,7 @@ package net.digitalid.database.core.sql.statement.table.create;
 
 import java.sql.Types;
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.Dialect;
+import net.digitalid.database.core.SQLDialect;
 import net.digitalid.database.core.sql.SQLNode;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.utility.annotations.reference.NonCapturable;
@@ -124,7 +124,7 @@ public enum SQLType implements SQLNode {
     /* -------------------------------------------------- SQLNode -------------------------------------------------- */
     
     @Override
-    public void transcribe(@Nonnull Dialect dialect, @Nonnull Site site, @NonCapturable @Nonnull StringBuilder string) throws InternalException {
+    public void transcribe(@Nonnull SQLDialect dialect, @Nonnull Site site, @NonCapturable @Nonnull StringBuilder string) throws InternalException {
         dialect.transcribe(site, string, this);
     }
     

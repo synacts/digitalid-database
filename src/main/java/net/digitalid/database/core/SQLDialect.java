@@ -1,8 +1,6 @@
 package net.digitalid.database.core;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.interfaces.SelectionResult;
-import net.digitalid.database.core.interfaces.jdbc.JDBCSelectionResult;
 import net.digitalid.database.core.sql.identifier.SQLIdentifier;
 import net.digitalid.database.core.sql.statement.select.SQLSelectStatement;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
@@ -15,7 +13,7 @@ import net.digitalid.utility.system.exceptions.InternalException;
  * A dialect implements a particular version of the structured query language (SQL).
  */
 @Immutable
-public abstract class Dialect {
+public abstract class SQLDialect {
     
     /* -------------------------------------------------- Transcriptions -------------------------------------------------- */
     
@@ -50,10 +48,11 @@ public abstract class Dialect {
         }
     }
     
-    /* -------------------------------------------------- Executions -------------------------------------------------- */
-    
-    public @Nonnull SelectionResult execute(@Nonnull Site site, @Nonnull SQLSelectStatement statement) throws InternalException {
-        return JDBCSelectionResult.get(null);
+    /**
+     * Transcribes the given node to this dialect at the given site.
+     */
+    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLSelectStatement selectStatement) throws InternalException {
+        // TODO
     }
     
 }

@@ -1,9 +1,11 @@
 package net.digitalid.database.core.interfaces.jdbc;
 
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedResourceClosingException;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueStoringException;
 import net.digitalid.database.core.interfaces.ValueCollector;
@@ -212,6 +214,17 @@ public class JDBCValueCollector implements ValueCollector {
     public void setBinary(@Nonnull byte[] value) throws FailedValueStoringException {
         try {
             preparedStatement.setBytes(parameterIndex++, value);
+        } catch (@Nonnull SQLException exception) {
+            throw FailedValueStoringException.get(exception);
+        }
+    }
+    
+    @Override
+    public void setBinaryStream(@Nonnull InputStream stream) throws FailedValueStoringException {
+        assert Database.getInstance().supportsBinaryStreams() : "The database supports binary streams.";
+        
+        try {
+            preparedStatement.setBinaryStream(parameterIndex++, stream);
         } catch (@Nonnull SQLException exception) {
             throw FailedValueStoringException.get(exception);
         }

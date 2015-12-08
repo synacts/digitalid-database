@@ -1,7 +1,7 @@
 package net.digitalid.database.core.sql;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.Dialect;
+import net.digitalid.database.core.SQLDialect;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.system.exceptions.InternalException;
@@ -18,6 +18,6 @@ public interface SQLNode {
      * @param site the site at which the SQL statement gets encoded and then executed.
      * @param string the string builder used to encode the SQL statement of this node.
      */
-    public abstract void transcribe(@Nonnull Dialect dialect, @Nonnull Site site, @NonCapturable @Nonnull StringBuilder string) throws InternalException;
+    public void transcribe(@Nonnull SQLDialect dialect, @Nonnull Site site, @NonCapturable @Nonnull StringBuilder string) throws InternalException;
     
 }

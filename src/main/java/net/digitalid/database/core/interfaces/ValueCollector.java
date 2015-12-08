@@ -1,5 +1,6 @@
 package net.digitalid.database.core.interfaces;
 
+import java.io.InputStream;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.exceptions.operation.noncommitting.FailedResourceClosingException;
@@ -118,6 +119,15 @@ public interface ValueCollector extends AutoCloseable {
      * @param value the binary value which is to be set.
      */
     public void setBinary(@Nonnull byte[] value) throws FailedValueStoringException;
+    
+    /**
+     * Sets the next parameter to the given binary stream.
+     * 
+     * @param stream the binary stream which is to be set.
+     * 
+     * @require Database.getInstance().supportsBinaryStreams() : "The database supports binary streams.";
+     */
+    public void setBinaryStream(@Nonnull InputStream stream) throws FailedValueStoringException;
     
     /* -------------------------------------------------- Null -------------------------------------------------- */
     
