@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.exceptions.operation.FailedCommitException;
+import net.digitalid.database.core.exceptions.operation.FailedConnectionException;
 import net.digitalid.database.core.interfaces.DatabaseInstance;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Initialized;
@@ -141,7 +142,7 @@ public final class Database {
      */
     @Committing
     @Initialized
-    public static void commit() throws FailedCommitException {
+    public static void commit() throws FailedCommitException, FailedConnectionException {
         getInstance().commit();
     }
     

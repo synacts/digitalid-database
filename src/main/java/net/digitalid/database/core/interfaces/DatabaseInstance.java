@@ -3,7 +3,8 @@ package net.digitalid.database.core.interfaces;
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.exceptions.operation.FailedCommitException;
-import net.digitalid.database.core.exceptions.operation.noncommitting.FailedNonCommittingOperationException;
+import net.digitalid.database.core.exceptions.operation.FailedConnectionException;
+import net.digitalid.database.core.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.core.sql.statement.delete.SQLDeleteStatement;
 import net.digitalid.database.core.sql.statement.insert.SQLInsertStatement;
 import net.digitalid.database.core.sql.statement.select.SQLSelectStatement;
@@ -36,7 +37,7 @@ public interface DatabaseInstance extends AutoCloseable {
      * (On the server, this method should only be called by the worker.)
      */
     @Committing
-    public void commit() throws FailedCommitException;
+    public void commit() throws FailedCommitException, FailedConnectionException;
     
     /**
      * Rolls back all changes of the current thread since the last commit or rollback.
@@ -48,38 +49,67 @@ public interface DatabaseInstance extends AutoCloseable {
     /* -------------------------------------------------- Executions -------------------------------------------------- */
     
     /**
-     * Executes the given statement at the given site.
+     * Executes the given create table statement at the given site.
+     * 
+     * @param site the site at which the statement is to be executed.
+     * @param createTableStatement the create table statement to execute.
      */
-    public @Nonnull void execute(@Nonnull Site site, @Nonnull SQLCreateTableStatement createTableStatement) throws FailedNonCommittingOperationException, InternalException;
+    public void execute(@Nonnull Site site, @Nonnull SQLCreateTableStatement createTableStatement) throws FailedNonCommittingOperationException, InternalException;
     
     /**
-     * Executes the given statement at the given site.
+     * Executes the given drop table statement at the given site.
+     * 
+     * @param site the site at which the statement is to be executed.
+     * @param dropTableStatement the drop table statement to execute.
      */
-    public @Nonnull void execute(@Nonnull Site site, @Nonnull SQLDropTableStatement dropTableStatement) throws FailedNonCommittingOperationException, InternalException;
+    public void execute(@Nonnull Site site, @Nonnull SQLDropTableStatement dropTableStatement) throws FailedNonCommittingOperationException, InternalException;
     
     /**
-     * Executes the given statement at the given site.
+     * Executes the given insert statement at the given site.
+     * 
+     * @param site the site at which the statement is executed.
+     * @param insertStatement the insert statement to execute.
      */
-    public @Nonnull void execute(@Nonnull Site site, @Nonnull SQLInsertStatement insertStatement) throws FailedNonCommittingOperationException, InternalException;
+    public void execute(@Nonnull Site site, @Nonnull SQLInsertStatement insertStatement) throws FailedNonCommittingOperationException, InternalException;
     
     /**
-     * Executes the given statement at the given site.
+     * Executes the given update statement at the given site.
+     * 
+     * @param site the site at which the statement is executed.
+     * @param updateStatement the update statement to execute.
+     * 
+     * @return the number of rows updated by the given statement.
      */
-    public @Nonnull int executeAndReturnGeneratedKey(@Nonnull Site site, @Nonnull SQLInsertStatement insertStatement) throws FailedNonCommittingOperationException, InternalException;
+    public int execute(@Nonnull Site site, @Nonnull SQLUpdateStatement updateStatement) throws FailedNonCommittingOperationException, InternalException;
     
     /**
-     * Executes the given statement at the given site.
+     * Executes the given delete statement at the given site.
+     * 
+     * @param site the site at which the statement is executed.
+     * @param deleteStatement the delete statement to execute.
+     * 
+     * @return the number of rows deleted by the given statement.
      */
-    public @Nonnull int execute(@Nonnull Site site, @Nonnull SQLUpdateStatement updateStatement) throws FailedNonCommittingOperationException, InternalException;
+    public int execute(@Nonnull Site site, @Nonnull SQLDeleteStatement deleteStatement) throws FailedNonCommittingOperationException, InternalException;
     
     /**
-     * Executes the given statement at the given site.
-     */
-    public @Nonnull int execute(@Nonnull Site site, @Nonnull SQLDeleteStatement deleteStatement) throws FailedNonCommittingOperationException, InternalException;
-    
-    /**
-     * Executes the given statement at the given site.
+     * Executes the given select statement at the given site.
+     * 
+     * @param site the site at which the statement is executed.
+     * @param selectStatement the select statement to execute.
+     * 
+     * @return the rows that were selected by the given statement.
      */
     public @Nonnull SelectionResult execute(@Nonnull Site site, @Nonnull SQLSelectStatement selectStatement) throws FailedNonCommittingOperationException, InternalException;
+    
+    /**
+     * Executes the given insert statement at the given site.
+     * 
+     * @param site the site at which the statement is executed.
+     * @param insertStatement the insert statement to execute.
+     * 
+     * @return the key that was generated by the given statement.
+     */
+    public long executeAndReturnGeneratedKey(@Nonnull Site site, @Nonnull SQLInsertStatement insertStatement) throws FailedNonCommittingOperationException, InternalException;
     
 }

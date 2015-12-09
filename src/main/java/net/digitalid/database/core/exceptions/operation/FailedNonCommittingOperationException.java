@@ -1,4 +1,4 @@
-package net.digitalid.database.core.exceptions.operation.noncommitting;
+package net.digitalid.database.core.exceptions.operation;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
@@ -8,6 +8,7 @@ import net.digitalid.utility.annotations.state.Immutable;
 /**
  * This exception indicates a failed database operation.
  * 
+ * @see FailedConnectionException
  * @see FailedKeyGenerationException
  * @see FailedPreparedStatementCreationException
  * @see FailedQueryExecutionException

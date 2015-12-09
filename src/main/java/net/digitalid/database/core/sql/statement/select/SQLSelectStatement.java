@@ -2,7 +2,7 @@ package net.digitalid.database.core.sql.statement.select;
 
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.SQLDialect;
-import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueStoringException;
+import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.sql.SQLParameterizableNode;
 import net.digitalid.database.core.table.Site;

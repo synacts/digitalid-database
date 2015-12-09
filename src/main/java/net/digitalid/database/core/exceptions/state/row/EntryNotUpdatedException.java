@@ -3,7 +3,7 @@ package net.digitalid.database.core.exceptions.state.row;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.exceptions.operation.noncommitting.FailedUpdateExecutionException;
+import net.digitalid.database.core.exceptions.operation.FailedUpdateExecutionException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 

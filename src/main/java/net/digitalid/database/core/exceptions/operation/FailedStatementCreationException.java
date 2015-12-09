@@ -1,4 +1,4 @@
-package net.digitalid.database.core.exceptions.operation.noncommitting;
+package net.digitalid.database.core.exceptions.operation;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;

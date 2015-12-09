@@ -9,7 +9,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * This exception is thrown when no connection to the database could be established.
  */
 @Immutable
-public class FailedConnectionException extends FailedOperationException {
+public class FailedConnectionException extends FailedNonCommittingOperationException {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     

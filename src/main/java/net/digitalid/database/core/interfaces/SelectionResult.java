@@ -2,8 +2,8 @@ package net.digitalid.database.core.interfaces;
 
 import java.math.BigInteger;
 import javax.annotation.Nullable;
-import net.digitalid.database.core.exceptions.operation.noncommitting.FailedResourceClosingException;
-import net.digitalid.database.core.exceptions.operation.noncommitting.FailedValueRestoringException;
+import net.digitalid.database.core.exceptions.operation.FailedResourceClosingException;
+import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.state.row.EntryNotFoundException;
 import net.digitalid.database.core.exceptions.state.value.CorruptNullValueException;
 import net.digitalid.database.core.exceptions.state.value.CorruptParameterValueException;
