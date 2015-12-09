@@ -1,7 +1,9 @@
 package net.digitalid.database.core;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.sql.expression.SQLBinaryExpression;
 import net.digitalid.database.core.sql.expression.SQLExpression;
+import net.digitalid.database.core.sql.expression.SQLUnaryExpression;
 import net.digitalid.database.core.sql.expression.SQLVariadicExpression;
 import net.digitalid.database.core.sql.expression.bool.SQLBinaryBooleanOperator;
 import net.digitalid.database.core.sql.expression.bool.SQLBooleanLiteral;
@@ -55,6 +57,16 @@ public abstract class SQLDialect {
     /**
      * Transcribes the given node to this dialect at the given site.
      */
+    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLUnaryExpression<?, ?> unaryExpression) throws InternalException {
+        unaryExpression.getOperator().transcribe(this, site, string);
+        string.append("(");
+        unaryExpression.getExpression().transcribe(this, site, string);
+        string.append(")");
+    }
+    
+    /**
+     * Transcribes the given node to this dialect at the given site.
+     */
     public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLUnaryBooleanOperator operator) throws InternalException {
         switch (operator) {
             case NOT: string.append("NOT"); break;
@@ -79,6 +91,19 @@ public abstract class SQLDialect {
     }
     
     /* -------------------------------------------------- Binary Expressions -------------------------------------------------- */
+    
+    /**
+     * Transcribes the given node to this dialect at the given site.
+     */
+    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLBinaryExpression<?, ?> binaryExpression) throws InternalException {
+        string.append("(");
+        binaryExpression.getLeftExpression().transcribe(this, site, string);
+        string.append(") ");
+        binaryExpression.getOperator().transcribe(this, site, string);
+        string.append(" (");
+        binaryExpression.getRightExpression().transcribe(this, site, string);
+        string.append(")");
+    }
     
     /**
      * Transcribes the given node to this dialect at the given site.

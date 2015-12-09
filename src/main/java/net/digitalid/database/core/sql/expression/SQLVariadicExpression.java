@@ -46,14 +46,14 @@ public abstract class SQLVariadicExpression<O extends SQLVariadicOperator, E ext
     /* -------------------------------------------------- Expressions -------------------------------------------------- */
     
     /**
-     * Stores the expressions of this variadic expression.
+     * Stores the child expressions of this variadic expression.
      */
     private final @Nonnull @NonNullableElements @Frozen ReadOnlyArray<E> expressions;
     
     /**
-     * Returns the expressions of this variadic expression.
+     * Returns the child expressions of this variadic expression.
      * 
-     * @return the expressions of this variadic expression.
+     * @return the child expressions of this variadic expression.
      */
     @Pure
     public final @Nonnull @NonNullableElements @Frozen ReadOnlyArray<E> getExpressions() {
@@ -66,7 +66,7 @@ public abstract class SQLVariadicExpression<O extends SQLVariadicOperator, E ext
      * Creates a new variadic expression with the given parameters.
      * 
      * @param operator the operator of the new variadic expression.
-     * @param expressions the expressions of the new variadic expression.
+     * @param expressions the child expressions of the new variadic expression.
      */
     @SafeVarargs
     protected SQLVariadicExpression(@Nonnull O operator, @Captured @Nonnull E... expressions) {
