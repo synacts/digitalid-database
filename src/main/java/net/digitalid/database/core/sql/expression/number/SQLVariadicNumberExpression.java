@@ -10,7 +10,7 @@ import net.digitalid.utility.annotations.state.Pure;
  * This class implements a variadic number expression.
  */
 @Immutable
-public class SQLVariadicNumberExpression extends SQLVariadicExpression<SQLVariadicNumberOperator, SQLNumberExpression> {
+public class SQLVariadicNumberExpression extends SQLVariadicExpression<SQLVariadicNumberOperator, SQLNumberExpression> implements SQLNumberExpression {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     

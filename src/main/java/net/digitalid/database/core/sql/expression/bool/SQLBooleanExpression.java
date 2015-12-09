@@ -3,6 +3,6 @@ package net.digitalid.database.core.sql.expression.bool;
 import net.digitalid.database.core.sql.expression.SQLExpression;
 
 /**
- * Description.
+ * All boolean expressions implement this interface.
  */
 public interface SQLBooleanExpression extends SQLExpression {}

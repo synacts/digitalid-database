@@ -3,7 +3,10 @@ package net.digitalid.database.core;
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.sql.expression.SQLExpression;
 import net.digitalid.database.core.sql.expression.SQLVariadicExpression;
+import net.digitalid.database.core.sql.expression.bool.SQLBooleanLiteral;
+import net.digitalid.database.core.sql.expression.number.SQLNumberLiteral;
 import net.digitalid.database.core.sql.expression.number.SQLVariadicNumberOperator;
+import net.digitalid.database.core.sql.expression.string.SQLStringLiteral;
 import net.digitalid.database.core.sql.expression.string.SQLVariadicStringOperator;
 import net.digitalid.database.core.sql.identifier.SQLIdentifier;
 import net.digitalid.database.core.sql.statement.select.SQLSelectStatement;
@@ -19,7 +22,30 @@ import net.digitalid.utility.system.exceptions.InternalException;
 @Immutable
 public abstract class SQLDialect {
     
-    /* -------------------------------------------------- Expression -------------------------------------------------- */
+    /* -------------------------------------------------- Literals -------------------------------------------------- */
+    
+    /**
+     * Transcribes the given node to this dialect at the given site.
+     */
+    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLBooleanLiteral literal) throws InternalException {
+        string.append(literal.getValue() ? "TRUE" : "FALSE");
+    }
+    
+    /**
+     * Transcribes the given node to this dialect at the given site.
+     */
+    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLNumberLiteral literal) throws InternalException {
+        string.append(literal.getValue());
+    }
+    
+    /**
+     * Transcribes the given node to this dialect at the given site.
+     */
+    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLStringLiteral literal) throws InternalException {
+        string.append("\"").append(literal.getValue()).append("\"");
+    }
+    
+    /* -------------------------------------------------- Variadic Expressions -------------------------------------------------- */
     
     /**
      * Transcribes the given node to this dialect at the given site.
@@ -58,7 +84,7 @@ public abstract class SQLDialect {
         }
     }
     
-    /* -------------------------------------------------- Identifier -------------------------------------------------- */
+    /* -------------------------------------------------- Identifiers -------------------------------------------------- */
     
     /**
      * Transcribes the given node to this dialect at the given site.
