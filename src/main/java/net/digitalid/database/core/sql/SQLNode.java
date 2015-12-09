@@ -7,7 +7,7 @@ import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
- * This is the interface that all SQL syntax tree nodes have to implement.
+ * All SQL syntax tree nodes implement this interface.
  */
 public interface SQLNode {
     

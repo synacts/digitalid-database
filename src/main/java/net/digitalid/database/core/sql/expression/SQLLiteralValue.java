@@ -3,6 +3,6 @@ package net.digitalid.database.core.sql.expression;
 /**
  * Description.
  */
-public interface SQLLiteralValue {
+public interface SQLLiteralValue extends SQLExpression {
 
 }

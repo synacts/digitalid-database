@@ -1,6 +1,10 @@
 package net.digitalid.database.core;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.sql.expression.SQLExpression;
+import net.digitalid.database.core.sql.expression.SQLVariadicExpression;
+import net.digitalid.database.core.sql.expression.number.SQLVariadicNumberOperator;
+import net.digitalid.database.core.sql.expression.string.SQLVariadicStringOperator;
 import net.digitalid.database.core.sql.identifier.SQLIdentifier;
 import net.digitalid.database.core.sql.statement.select.SQLSelectStatement;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
@@ -15,7 +19,46 @@ import net.digitalid.utility.system.exceptions.InternalException;
 @Immutable
 public abstract class SQLDialect {
     
-    /* -------------------------------------------------- Transcriptions -------------------------------------------------- */
+    /* -------------------------------------------------- Expression -------------------------------------------------- */
+    
+    /**
+     * Transcribes the given node to this dialect at the given site.
+     */
+    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLVariadicExpression<?, ?> variadicExpression) throws InternalException {
+        variadicExpression.getOperator().transcribe(this, site, string);
+        string.append("(");
+        boolean first = true;
+        for (final @Nonnull SQLExpression expression : variadicExpression.getExpressions()) {
+            if (!first) { string.append(", "); } else { first = false; }
+            expression.transcribe(this, site, string);
+        }
+        string.append(")");
+    }
+    
+    /**
+     * Transcribes the given node to this dialect at the given site.
+     */
+    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLVariadicNumberOperator operator) throws InternalException {
+        switch (operator) {
+            case GREATEST: string.append("GREATEST"); break;
+            case COALESCE: string.append("COALESCE"); break;
+            default: throw InternalException.get(operator.name() + " not implemented.");
+        }
+    }
+    
+    /**
+     * Transcribes the given node to this dialect at the given site.
+     */
+    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLVariadicStringOperator operator) throws InternalException {
+        switch (operator) {
+            case CONCAT: string.append("CONCAT"); break;
+            case GREATEST: string.append("GREATEST"); break;
+            case COALESCE: string.append("COALESCE"); break;
+            default: throw InternalException.get(operator.name() + " not implemented.");
+        }
+    }
+    
+    /* -------------------------------------------------- Identifier -------------------------------------------------- */
     
     /**
      * Transcribes the given node to this dialect at the given site.
@@ -23,6 +66,8 @@ public abstract class SQLDialect {
     public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLIdentifier identifier) throws InternalException {
         string.append("\"").append(identifier.getValue()).append("\"");
     }
+    
+    /* -------------------------------------------------- Statements -------------------------------------------------- */
     
     /**
      * Transcribes the given node to this dialect at the given site.
@@ -44,7 +89,7 @@ public abstract class SQLDialect {
             case BINARY128: string.append("BINARY(16)"); break;
             case BINARY256: string.append("BINARY(32)"); break;
             case BINARY: string.append("MEDIUMBLOB"); break;
-            default: throw InternalException.get(type + " not implemented.");
+            default: throw InternalException.get(type.name() + " not implemented.");
         }
     }
     
