@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.exceptions.operation.FailedResourceClosingException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
+import net.digitalid.database.core.interfaces.jdbc.JDBCValueCollector;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.utility.collections.annotations.size.Size;
 import net.digitalid.utility.collections.annotations.size.SizeAtMost;
@@ -12,6 +13,8 @@ import net.digitalid.utility.collections.annotations.size.SizeAtMost;
 /**
  * This interface allows to set the values of an SQL statement.
  * Advancing the parameter index is left to the implementation.
+ * 
+ * @see JDBCValueCollector
  */
 public interface ValueCollector extends AutoCloseable {
     

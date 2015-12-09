@@ -164,10 +164,12 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
     
     @Override
     @Committing
-    public void commit() throws FailedCommitException, FailedConnectionException {
+    public void commit() throws FailedCommitException {
         try {
             getConnection().commit();
             transaction.set(Boolean.FALSE);
+        } catch (@Nonnull FailedConnectionException exception) {
+            throw FailedCommitException.get(new SQLException("This should never happen because the connection is checked when the transaction is started.", exception));
         } catch (@Nonnull SQLException exception) {
             throw FailedCommitException.get(exception);
         }

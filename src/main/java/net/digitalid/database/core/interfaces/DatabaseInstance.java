@@ -3,8 +3,8 @@ package net.digitalid.database.core.interfaces;
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.exceptions.operation.FailedCommitException;
-import net.digitalid.database.core.exceptions.operation.FailedConnectionException;
 import net.digitalid.database.core.exceptions.operation.FailedNonCommittingOperationException;
+import net.digitalid.database.core.interfaces.jdbc.JDBCDatabaseInstance;
 import net.digitalid.database.core.sql.statement.delete.SQLDeleteStatement;
 import net.digitalid.database.core.sql.statement.insert.SQLInsertStatement;
 import net.digitalid.database.core.sql.statement.select.SQLSelectStatement;
@@ -17,6 +17,8 @@ import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This interface allows to execute SQL statements.
+ * 
+ * @see JDBCDatabaseInstance
  */
 public interface DatabaseInstance extends AutoCloseable {
     
@@ -37,7 +39,7 @@ public interface DatabaseInstance extends AutoCloseable {
      * (On the server, this method should only be called by the worker.)
      */
     @Committing
-    public void commit() throws FailedCommitException, FailedConnectionException;
+    public void commit() throws FailedCommitException;
     
     /**
      * Rolls back all changes of the current thread since the last commit or rollback.
