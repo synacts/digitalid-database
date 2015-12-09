@@ -3,8 +3,13 @@ package net.digitalid.database.core;
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.sql.expression.SQLExpression;
 import net.digitalid.database.core.sql.expression.SQLVariadicExpression;
+import net.digitalid.database.core.sql.expression.bool.SQLBinaryBooleanOperator;
 import net.digitalid.database.core.sql.expression.bool.SQLBooleanLiteral;
+import net.digitalid.database.core.sql.expression.bool.SQLComparisonOperator;
+import net.digitalid.database.core.sql.expression.bool.SQLUnaryBooleanOperator;
+import net.digitalid.database.core.sql.expression.number.SQLBinaryNumberOperator;
 import net.digitalid.database.core.sql.expression.number.SQLNumberLiteral;
+import net.digitalid.database.core.sql.expression.number.SQLUnaryNumberOperator;
 import net.digitalid.database.core.sql.expression.number.SQLVariadicNumberOperator;
 import net.digitalid.database.core.sql.expression.string.SQLStringLiteral;
 import net.digitalid.database.core.sql.expression.string.SQLVariadicStringOperator;
@@ -45,6 +50,65 @@ public abstract class SQLDialect {
         string.append("\"").append(literal.getValue()).append("\"");
     }
     
+    /* -------------------------------------------------- Unary Expressions -------------------------------------------------- */
+    
+    /**
+     * Transcribes the given node to this dialect at the given site.
+     */
+    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLUnaryBooleanOperator operator) throws InternalException {
+        switch (operator) {
+            case NOT: string.append("NOT"); break;
+            default: throw InternalException.get(operator.name() + " not implemented.");
+        }
+    }
+    
+    /**
+     * Transcribes the given node to this dialect at the given site.
+     */
+    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLUnaryNumberOperator operator) throws InternalException {
+        switch (operator) {
+            case INVERT: string.append("-"); break;
+            case ABS: string.append("ABS"); break;
+            case SIGN: string.append("SIGN"); break;
+            case ROUND: string.append("ROUND"); break;
+            case FLOOR: string.append("FLOOR"); break;
+            case CEIL: string.append("CEIL"); break;
+            case SQRT: string.append("SQRT"); break;
+            default: throw InternalException.get(operator.name() + " not implemented.");
+        }
+    }
+    
+    /* -------------------------------------------------- Binary Expressions -------------------------------------------------- */
+    
+    /**
+     * Transcribes the given node to this dialect at the given site.
+     */
+    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLBinaryBooleanOperator operator) throws InternalException {
+        switch (operator) {
+            case AND: string.append("AND"); break;
+            case OR: string.append("OR"); break;
+            case XOR: string.append("XOR"); break;
+            case EQUAL: string.append("="); break;
+            case UNEQUAL: string.append("!="); break;
+            default: throw InternalException.get(operator.name() + " not implemented.");
+        }
+    }
+    
+    /**
+     * Transcribes the given node to this dialect at the given site.
+     */
+    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLBinaryNumberOperator operator) throws InternalException {
+        switch (operator) {
+            case ADDITION: string.append("+"); break;
+            case SUBTRACTION: string.append("-"); break;
+            case MULTIPLICATION: string.append("*"); break;
+            case DIVISION: string.append("/"); break;
+            case INTEGER_DIVISION: string.append("DIV"); break;
+            case MODULO: string.append("%"); break;
+            default: throw InternalException.get(operator.name() + " not implemented.");
+        }
+    }
+    
     /* -------------------------------------------------- Variadic Expressions -------------------------------------------------- */
     
     /**
@@ -80,6 +144,23 @@ public abstract class SQLDialect {
             case CONCAT: string.append("CONCAT"); break;
             case GREATEST: string.append("GREATEST"); break;
             case COALESCE: string.append("COALESCE"); break;
+            default: throw InternalException.get(operator.name() + " not implemented.");
+        }
+    }
+    
+    /* -------------------------------------------------- Boolean Expressions -------------------------------------------------- */
+    
+    /**
+     * Transcribes the given node to this dialect at the given site.
+     */
+    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLComparisonOperator operator) throws InternalException {
+        switch (operator) {
+            case EQUAL: string.append("="); break;
+            case UNEQUAL: string.append("!="); break;
+            case GREATER_OR_EQUAL: string.append(">="); break;
+            case GREATER: string.append(">"); break;
+            case LESS_OR_EQUAL: string.append("<="); break;
+            case LESS: string.append("<"); break;
             default: throw InternalException.get(operator.name() + " not implemented.");
         }
     }
