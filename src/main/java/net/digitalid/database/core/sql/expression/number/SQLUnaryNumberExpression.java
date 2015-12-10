@@ -1,15 +1,47 @@
 package net.digitalid.database.core.sql.expression.number;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.SQLDialect;
+import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
+import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.sql.expression.SQLUnaryExpression;
+import net.digitalid.database.core.table.Site;
+import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class implements a unary number expression.
  */
 @Immutable
-public class SQLUnaryNumberExpression extends SQLUnaryExpression<SQLUnaryNumberOperator, SQLNumberExpression> implements SQLNumberExpression {
+public class SQLUnaryNumberExpression extends SQLNumberExpression implements SQLUnaryExpression<SQLUnaryNumberOperator, SQLNumberExpression> {
+    
+    /* -------------------------------------------------- Operator -------------------------------------------------- */
+    
+    /**
+     * Stores the operator of this unary expression.
+     */
+    private final @Nonnull SQLUnaryNumberOperator operator;
+    
+    @Pure
+    @Override
+    public final @Nonnull SQLUnaryNumberOperator getOperator() {
+        return operator;
+    }
+    
+    /* -------------------------------------------------- Expression -------------------------------------------------- */
+    
+    /**
+     * Stores the child expression of this unary expression.
+     */
+    private final @Nonnull SQLNumberExpression expression;
+    
+    @Pure
+    @Override
+    public final @Nonnull SQLNumberExpression getExpression() {
+        return expression;
+    }
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -20,7 +52,8 @@ public class SQLUnaryNumberExpression extends SQLUnaryExpression<SQLUnaryNumberO
      * @param expression the child expression of this unary number expression.
      */
     protected SQLUnaryNumberExpression(@Nonnull SQLUnaryNumberOperator operator, @Nonnull SQLNumberExpression expression) {
-        super(operator, expression);
+        this.operator = operator;
+        this.expression = expression;
     }
     
     /**
@@ -34,6 +67,20 @@ public class SQLUnaryNumberExpression extends SQLUnaryExpression<SQLUnaryNumberO
     @Pure
     public static @Nonnull SQLUnaryNumberExpression get(@Nonnull SQLUnaryNumberOperator operator, @Nonnull SQLNumberExpression expression) {
         return new SQLUnaryNumberExpression(operator, expression);
+    }
+    
+    /* -------------------------------------------------- SQLNode -------------------------------------------------- */
+    
+    @Override
+    public final void transcribe(@Nonnull SQLDialect dialect, @Nonnull Site site, @NonCapturable @Nonnull StringBuilder string) throws InternalException {
+        dialect.transcribe(site, string, this);
+    }
+    
+    /* -------------------------------------------------- SQLParameterizableNode -------------------------------------------------- */
+    
+    @Override
+    public final void storeValues(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+        expression.storeValues(collector);
     }
     
 }

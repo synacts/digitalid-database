@@ -1,7 +1,5 @@
 package net.digitalid.database.core.converter;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.Database;
@@ -11,6 +9,8 @@ import net.digitalid.database.core.exceptions.operation.FailedValueRestoringExce
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.database.core.exceptions.state.value.CorruptNullValueException;
+import net.digitalid.database.core.interfaces.SelectionResult;
+import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -20,7 +20,6 @@ import net.digitalid.utility.collections.annotations.elements.NonNullableElement
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.converter.IterableConverter;
 import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
@@ -192,7 +191,7 @@ public abstract class AbstractSQLConverter<O, E> {
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
     @NonCommitting
-    public abstract void storeNonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException;
+    public abstract void storeNonNullable(@Nonnull O object, @Nonnull ValueCollector collector) throws FailedValueStoringException;
     
     /**
      * Sets the parameters starting from the given index of the prepared statement to the given nullable object.
@@ -203,9 +202,9 @@ public abstract class AbstractSQLConverter<O, E> {
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
     @NonCommitting
-    public final void storeNullable(@Nullable O object, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
-        if (object == null) { declaration.storeNull(preparedStatement, parameterIndex); }
-        else { AbstractSQLConverter.this.storeNonNullable(object, preparedStatement, parameterIndex); }
+    public final void storeNullable(@Nullable O object, @Nonnull ValueCollector collector) throws FailedValueStoringException {
+        if (object == null) { declaration.storeNull(collector); }
+        else { AbstractSQLConverter.this.storeNonNullable(object, collector); }
     }
     
     /* -------------------------------------------------- Restoring -------------------------------------------------- */
@@ -222,7 +221,7 @@ public abstract class AbstractSQLConverter<O, E> {
      */
     @Pure
     @NonCommitting
-    public abstract @Nullable O restoreNullable(@Nonnull E external, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException;
+    public abstract @Nullable O restoreNullable(@Nonnull E external, @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptStateException, InternalException;
     
     /**
      * Returns a non-nullable object from the given columns of the result set.
@@ -236,8 +235,8 @@ public abstract class AbstractSQLConverter<O, E> {
      */
     @Pure
     @NonCommitting
-    public final @Nonnull O restoreNonNullable(@Nonnull E external, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException {
-        final @Nullable O object = restoreNullable(external, resultSet, columnIndex);
+    public final @Nonnull O restoreNonNullable(@Nonnull E external, @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptStateException, InternalException {
+        final @Nullable O object = restoreNullable(external, result);
         if (object == null) { throw CorruptNullValueException.get(); }
         return object;
     }

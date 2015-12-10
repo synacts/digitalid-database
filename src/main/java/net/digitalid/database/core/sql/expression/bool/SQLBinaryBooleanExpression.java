@@ -1,15 +1,60 @@
 package net.digitalid.database.core.sql.expression.bool;
 
 import javax.annotation.Nonnull;
+import net.digitalid.database.core.SQLDialect;
+import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
+import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.sql.expression.SQLBinaryExpression;
+import net.digitalid.database.core.table.Site;
+import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.system.exceptions.InternalException;
 
 /**
  * This class implements a binary boolean expression.
  */
 @Immutable
-public class SQLBinaryBooleanExpression extends SQLBinaryExpression<SQLBinaryBooleanOperator, SQLBooleanExpression> implements SQLBooleanExpression {
+public class SQLBinaryBooleanExpression extends SQLBooleanExpression implements SQLBinaryExpression<SQLBinaryBooleanOperator, SQLBooleanExpression> {
+    
+    /* -------------------------------------------------- Operator -------------------------------------------------- */
+    
+    /**
+     * Stores the operator of this binary expression.
+     */
+    private final @Nonnull SQLBinaryBooleanOperator operator;
+    
+    @Pure
+    @Override
+    public final @Nonnull SQLBinaryBooleanOperator getOperator() {
+        return operator;
+    }
+    
+    /* -------------------------------------------------- Left Expression -------------------------------------------------- */
+    
+    /**
+     * Stores the left child expression of this binary expression.
+     */
+    private final @Nonnull SQLBooleanExpression leftExpression;
+    
+    @Pure
+    @Override
+    public final @Nonnull SQLBooleanExpression getLeftExpression() {
+        return leftExpression;
+    }
+    
+    /* -------------------------------------------------- Right Expression -------------------------------------------------- */
+    
+    /**
+     * Stores the right child expression of this binary expression.
+     */
+    private final @Nonnull SQLBooleanExpression rightExpression;
+    
+    @Pure
+    @Override
+    public final @Nonnull SQLBooleanExpression getRightExpression() {
+        return rightExpression;
+    }
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -21,7 +66,9 @@ public class SQLBinaryBooleanExpression extends SQLBinaryExpression<SQLBinaryBoo
      * @param rightExpression the right child expression of the new binary boolean expression.
      */
     protected SQLBinaryBooleanExpression(@Nonnull SQLBinaryBooleanOperator operator, @Nonnull SQLBooleanExpression leftExpression, @Nonnull SQLBooleanExpression rightExpression) {
-        super(operator, leftExpression, rightExpression);
+        this.operator = operator;
+        this.leftExpression = leftExpression;
+        this.rightExpression = rightExpression;
     }
     
     /**
@@ -36,6 +83,21 @@ public class SQLBinaryBooleanExpression extends SQLBinaryExpression<SQLBinaryBoo
     @Pure
     public static @Nonnull SQLBinaryBooleanExpression get(@Nonnull SQLBinaryBooleanOperator operator, @Nonnull SQLBooleanExpression leftExpression, @Nonnull SQLBooleanExpression rightExpression) {
         return new SQLBinaryBooleanExpression(operator, leftExpression, rightExpression);
+    }
+    
+    /* -------------------------------------------------- SQLNode -------------------------------------------------- */
+    
+    @Override
+    public final void transcribe(@Nonnull SQLDialect dialect, @Nonnull Site site, @NonCapturable @Nonnull StringBuilder string) throws InternalException {
+        dialect.transcribe(site, string, this);
+    }
+    
+    /* -------------------------------------------------- SQLParameterizableNode -------------------------------------------------- */
+    
+    @Override
+    public final void storeValues(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+        leftExpression.storeValues(collector);
+        rightExpression.storeValues(collector);
     }
     
 }

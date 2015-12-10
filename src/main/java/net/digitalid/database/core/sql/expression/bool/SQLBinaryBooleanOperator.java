@@ -17,27 +17,28 @@ public enum SQLBinaryBooleanOperator implements SQLBinaryOperator {
     /* -------------------------------------------------- Constants -------------------------------------------------- */
     
     /**
-     * The {@code AND} operator.
+     * The logical conjunction.
      */
     AND(),
     
     /**
-     * The {@code OR} operator.
+     * The inclusive disjunction.
      */
     OR(),
     
     /**
-     * The {@code XOR} operator.
+     * The exclusive disjunction.
      */
     XOR(),
     
     /**
-     * The {@code =} operator.
+     * The logical equality.
      */
     EQUAL(),
     
     /**
-     * The {@code !=} operator.
+     * The logical inequality.
+     * The same as {@link #XOR}.
      */
     UNEQUAL();
     

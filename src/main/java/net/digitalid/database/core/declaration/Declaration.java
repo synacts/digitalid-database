@@ -1,15 +1,14 @@
 package net.digitalid.database.core.declaration;
 
-import java.sql.PreparedStatement;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.Database;
-import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.operation.FailedOperationException;
 import net.digitalid.database.core.exceptions.operation.FailedUpdateExecutionException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
+import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.core.table.Table;
@@ -411,7 +410,7 @@ public abstract class Declaration {
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
     @NonCommitting
-    public abstract void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException;
+    public abstract void storeNull(@Nonnull ValueCollector collector) throws FailedValueStoringException;
     
     /* -------------------------------------------------- Extensions -------------------------------------------------- */
     

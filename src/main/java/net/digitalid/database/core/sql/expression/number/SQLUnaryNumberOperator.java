@@ -17,39 +17,19 @@ public enum SQLUnaryNumberOperator implements SQLUnaryOperator {
     /* -------------------------------------------------- Constants -------------------------------------------------- */
     
     /**
-     * This operator inverts the value.
-     */
-    INVERT(),
-    
-    /**
-     * This operator returns the absolute value.
-     */
-    ABS(),
-    
-    /**
-     * This operator returns the sign of the value.
-     */
-    SIGN(),
-    
-    /**
-     * This operator rounds the value.
+     * This operator returns the rounded value.
      */
     ROUND(),
     
     /**
-     * This operator rounds the value down.
+     * This operator returns the negated value.
      */
-    FLOOR(),
+    NEGATE(),
     
     /**
-     * This operator rounds the value up.
+     * This operator returns the absolute value.
      */
-    CEIL(),
-    
-    /**
-     * This operator returns the square root of the value.
-     */
-    SQRT();
+    ABSOLUTE();
     
     /* -------------------------------------------------- SQLNode -------------------------------------------------- */
     

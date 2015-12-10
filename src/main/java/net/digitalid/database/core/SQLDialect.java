@@ -79,13 +79,9 @@ public abstract class SQLDialect {
      */
     public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLUnaryNumberOperator operator) throws InternalException {
         switch (operator) {
-            case INVERT: string.append("-"); break;
-            case ABS: string.append("ABS"); break;
-            case SIGN: string.append("SIGN"); break;
             case ROUND: string.append("ROUND"); break;
-            case FLOOR: string.append("FLOOR"); break;
-            case CEIL: string.append("CEIL"); break;
-            case SQRT: string.append("SQRT"); break;
+            case NEGATE: string.append("-"); break;
+            case ABSOLUTE: string.append("ABS"); break;
             default: throw InternalException.get(operator.name() + " not implemented.");
         }
     }
