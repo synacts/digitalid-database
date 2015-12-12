@@ -15,7 +15,7 @@ import net.digitalid.utility.collections.annotations.elements.NonNullableElement
 import net.digitalid.utility.collections.annotations.freezable.Frozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.system.exceptions.InternalException;
+import net.digitalid.utility.system.exceptions.internal.InternalException;
 
 /**
  * This class implements a variadic string expression.

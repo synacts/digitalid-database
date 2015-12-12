@@ -7,7 +7,7 @@ import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.sql.SQLParameterizableNode;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.utility.annotations.reference.NonCapturable;
-import net.digitalid.utility.system.exceptions.InternalException;
+import net.digitalid.utility.system.exceptions.internal.InternalException;
 
 /**
  * Description.

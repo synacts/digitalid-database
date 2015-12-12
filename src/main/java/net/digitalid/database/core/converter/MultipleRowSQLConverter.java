@@ -11,7 +11,7 @@ import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.index.MutableIndex;
-import net.digitalid.utility.system.exceptions.InternalException;
+import net.digitalid.utility.system.exceptions.internal.InternalException;
 
 /**
  * A multiple-row SQL converter allows to store and restore set- or map-based objects into and from the {@link Database database}.

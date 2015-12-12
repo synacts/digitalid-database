@@ -7,8 +7,8 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.Declaration;
 import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
-import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.database.core.exceptions.state.value.CorruptNullValueException;
+import net.digitalid.database.core.exceptions.state.value.CorruptValueException;
 import net.digitalid.database.core.interfaces.SelectionResult;
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.utility.annotations.reference.Capturable;
@@ -20,7 +20,7 @@ import net.digitalid.utility.collections.annotations.elements.NonNullableElement
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.converter.IterableConverter;
 import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.system.exceptions.InternalException;
+import net.digitalid.utility.system.exceptions.internal.InternalException;
 
 /**
  * An SQL converter allows to store and restore objects into and from the {@link Database database}.
@@ -180,7 +180,7 @@ public abstract class AbstractSQLConverter<O, E> {
         return getConditionForStatement(object, null);
     }
     
-    /* -------------------------------------------------- Storing (with PreparedStatement) -------------------------------------------------- */
+    /* -------------------------------------------------- Storing -------------------------------------------------- */
     
     /**
      * Sets the parameters starting from the given index of the prepared statement to the given non-nullable object.
@@ -210,32 +210,26 @@ public abstract class AbstractSQLConverter<O, E> {
     /* -------------------------------------------------- Restoring -------------------------------------------------- */
     
     /**
-     * Returns a nullable object from the given columns of the result set.
-     * The number of columns that are read is given by {@link Declaration#getNumberOfColumns()}.
+     * Returns a nullable object from the external object and selection result.
      * 
      * @param external the external object which is needed to recover the object.
-     * @param resultSet the result set from which the data is to be retrieved.
-     * @param columnIndex the starting index of the columns containing the data.
+     * @param result the selection result from which the data is to be retrieved.
      * 
-     * @return a nullable object from the given columns of the result set.
+     * @return a nullable object from the external object and selection result.
      */
-    @Pure
     @NonCommitting
-    public abstract @Nullable O restoreNullable(@Nonnull E external, @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptStateException, InternalException;
+    public abstract @Nullable O restoreNullable(@Nonnull E external, @NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException;
     
     /**
-     * Returns a non-nullable object from the given columns of the result set.
-     * The number of columns that are read is given by {@link Declaration#getNumberOfColumns()}.
+     * Returns a non-nullable object from the external object and selection result.
      * 
      * @param external the external object which is needed to recover the object.
-     * @param resultSet the result set from which the data is to be retrieved.
-     * @param columnIndex the starting index of the columns containing the data.
+     * @param result the selection result from which the data is to be retrieved.
      * 
-     * @return a non-nullable object from the given columns of the result set.
+     * @return a non-nullable object from the external object and selection result.
      */
-    @Pure
     @NonCommitting
-    public final @Nonnull O restoreNonNullable(@Nonnull E external, @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptStateException, InternalException {
+    public final @Nonnull O restoreNonNullable(@Nonnull E external, @NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException {
         final @Nullable O object = restoreNullable(external, result);
         if (object == null) { throw CorruptNullValueException.get(); }
         return object;
