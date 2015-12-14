@@ -1,6 +1,5 @@
 package net.digitalid.database.core.declaration;
 
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
@@ -228,7 +227,7 @@ public class ColumnDeclaration extends Declaration {
     
     @Override
     @NonCommitting
-    public final void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+    public final void storeNull(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
         try {
             preparedStatement.setNull(parameterIndex.getAndIncrementValue(), getType().getCode());
         } catch (@Nonnull SQLException exception) {

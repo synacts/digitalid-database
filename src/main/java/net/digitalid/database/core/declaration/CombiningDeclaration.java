@@ -1,6 +1,5 @@
 package net.digitalid.database.core.declaration;
 
-import java.sql.PreparedStatement;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -173,7 +172,7 @@ public final class CombiningDeclaration extends Declaration {
     
     @Override
     @NonCommitting
-    public void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+    public void storeNull(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
         for (final @Nonnull Declaration declaration : declarations) {
             declaration.storeNull(preparedStatement, parameterIndex);
         }

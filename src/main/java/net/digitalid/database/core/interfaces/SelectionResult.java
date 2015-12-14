@@ -12,7 +12,7 @@ import net.digitalid.utility.collections.annotations.size.Size;
 import net.digitalid.utility.collections.annotations.size.SizeAtMost;
 
 /**
- * This interface allows to get the values of an SQL result set.
+ * This interface allows to get the values of an SQL result.
  * Advancing the column index is left to the implementation.
  * 
  * @see JDBCSelectionResult

@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.operation.FailedUpdateExecutionException;
+import net.digitalid.database.core.sql.identifier.SQLPrefix;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.core.table.Table;
 import net.digitalid.utility.annotations.reference.NonCapturable;
@@ -27,7 +28,7 @@ public final class PrefixingDeclaration extends ChainingDeclaration {
     /**
      * Stores the prefix that is prepended to all column names.
      */
-    private final @Nonnull @Validated String prefix;
+    private final @Nonnull SQLPrefix prefix;
     
     /**
      * Returns the prefix that is prepended to all column names.
@@ -35,7 +36,7 @@ public final class PrefixingDeclaration extends ChainingDeclaration {
      * @return the prefix that is prepended to all column names.
      */
     @Pure
-    public final @Nonnull @Validated String getPrefix() {
+    public final @Nonnull SQLPrefix getPrefix() {
         return prefix;
     }
     
@@ -47,7 +48,7 @@ public final class PrefixingDeclaration extends ChainingDeclaration {
      * @return the prefix that is prepended to all column names.
      */
     @Pure
-    private @Nonnull @Validated String getPrefix(@Nullable @Validated String prefix) {
+    private @Nonnull SQLPrefix getPrefix(@Nullable SQLPrefix prefix) {
         return (prefix == null ? "" : prefix + "_") + this.prefix;
     }
     
@@ -59,10 +60,8 @@ public final class PrefixingDeclaration extends ChainingDeclaration {
      * @param declaration declaration on which the new declaration is based.
      * @param prefix the prefix that is to be prepended to all column names.
      */
-    private PrefixingDeclaration(@Nonnull Declaration declaration, @Nonnull @Validated String prefix) {
+    private PrefixingDeclaration(@Nonnull Declaration declaration, @Nonnull SQLPrefix prefix) {
         super(declaration);
-        
-        assert isValidPrefix(prefix) : "The prefix is valid.";
         
         this.prefix = prefix;
     }
@@ -76,7 +75,7 @@ public final class PrefixingDeclaration extends ChainingDeclaration {
      * @return a new prefixing declaration with the given declaration and prefix.
      */
     @Pure
-    public static @Nonnull PrefixingDeclaration get(@Nonnull Declaration declaration, @Nonnull @Validated String prefix) {
+    public static @Nonnull PrefixingDeclaration get(@Nonnull Declaration declaration, @Nonnull SQLPrefix prefix) {
         return new PrefixingDeclaration(declaration, prefix);
     }
     

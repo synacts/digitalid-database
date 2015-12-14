@@ -1,6 +1,5 @@
-package net.digitalid.database.core.converter;
+package net.digitalid.database.core.converter.sql;
 
-import java.sql.PreparedStatement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.Database;
@@ -12,13 +11,12 @@ import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.collections.index.MutableIndex;
 
 /**
  * This is a utility class to store objects that implement {@link SQL} in the {@link Database}.
  */
 @Stateless
-public final class ConvertToSQL {
+public final class Store {
     
     /**
      * Returns the value of the given object for each column.
@@ -90,7 +88,7 @@ public final class ConvertToSQL {
      * @param preparedStatement the prepared statement whose parameters are to be set.
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
-    public static <O extends SQL<O, ?>> void nonNullable(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+    public static <O extends SQL<O, ?>> void nonNullable(@Nonnull O object, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
         object.getSQLConverter().storeNonNullable(object, preparedStatement, parameterIndex);
     }
     

@@ -11,6 +11,7 @@ import net.digitalid.utility.annotations.state.Immutable;
  * @see CorruptNullValueException
  * @see CorruptParameterValueCombinationException
  * @see CorruptParameterValueException
+ * @see MaskingCorruptValueException
  */
 @Immutable
 public abstract class CorruptValueException extends CorruptStateException {
