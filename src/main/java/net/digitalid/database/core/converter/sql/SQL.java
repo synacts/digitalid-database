@@ -1,4 +1,4 @@
-package net.digitalid.database.core.converter;
+package net.digitalid.database.core.converter.sql;
 
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.Database;
@@ -19,6 +19,6 @@ public interface SQL<O, E> {
      * @return the converter to store and restore objects of this class.
      */
     @Pure
-    public @Nonnull AbstractSQLConverter<O, E> getSQLConverter();
+    public @Nonnull SQLConverter<O, E> getSQLConverter();
     
 }

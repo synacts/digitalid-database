@@ -124,13 +124,14 @@ public interface ValueCollector extends AutoCloseable {
     public void setBinary(@Nonnull byte[] value) throws FailedValueStoringException;
     
     /**
-     * Sets the next parameter to the given binary stream.
+     * Sets the next parameter to the given input stream.
      * 
-     * @param stream the binary stream which is to be set.
+     * @param stream the input stream which is to be set.
+     * @param length the number of bytes in the input stream.
      * 
      * @require Database.getInstance().supportsBinaryStreams() : "The database supports binary streams.";
      */
-    public void setBinaryStream(@Nonnull InputStream stream) throws FailedValueStoringException;
+    public void setBinaryStream(@Nonnull InputStream stream, int length) throws FailedValueStoringException;
     
     /* -------------------------------------------------- Null -------------------------------------------------- */
     

@@ -9,6 +9,7 @@ import net.digitalid.database.core.exceptions.operation.FailedOperationException
 import net.digitalid.database.core.exceptions.operation.FailedUpdateExecutionException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.core.interfaces.ValueCollector;
+import net.digitalid.database.core.sql.identifier.SQLPrefix;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.core.table.Table;
@@ -452,7 +453,7 @@ public abstract class Declaration {
      * @return this declaration prefixed with the given string.
      */
     @Pure
-    public final @Nonnull PrefixingDeclaration prefixedWith(@Nonnull @Validated String prefix) {
+    public final @Nonnull PrefixingDeclaration prefixedWith(@Nonnull SQLPrefix prefix) {
         return PrefixingDeclaration.get(this, prefix);
     }
     

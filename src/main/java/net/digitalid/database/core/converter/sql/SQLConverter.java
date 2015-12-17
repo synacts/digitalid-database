@@ -1,4 +1,4 @@
-package net.digitalid.database.core.converter;
+package net.digitalid.database.core.converter.sql;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -11,9 +11,11 @@ import net.digitalid.database.core.exceptions.state.value.CorruptNullValueExcept
 import net.digitalid.database.core.exceptions.state.value.CorruptValueException;
 import net.digitalid.database.core.interfaces.SelectionResult;
 import net.digitalid.database.core.interfaces.ValueCollector;
+import net.digitalid.database.core.sql.identifier.SQLPrefix;
 import net.digitalid.utility.annotations.reference.Capturable;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.annotations.state.Matching;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
@@ -30,9 +32,10 @@ import net.digitalid.utility.system.exceptions.internal.InternalException;
  *            In case no external information is needed for the restoration of an object, declare it as an {@link Object}.
  * 
  * @see SQL
+ * @see ChainingSQLConverter
  */
 @Immutable
-public abstract class AbstractSQLConverter<O, E> {
+public abstract class SQLConverter<O, E> {
     
     /* -------------------------------------------------- Declaration -------------------------------------------------- */
     
@@ -51,6 +54,30 @@ public abstract class AbstractSQLConverter<O, E> {
         return declaration;
     }
     
+    /**
+     * Returns this SQL converter redeclared with the given declaration.
+     * 
+     * @param declaration the declaration that replaces the declaration.
+     * 
+     * @return this SQL converter redeclared with the given declaration.
+     */
+    @Pure
+    public final @Nonnull SQLConverter<O, E> redeclaredWith(@Nonnull @Matching Declaration declaration) {
+        return RedeclaringSQLConverter.get(declaration, this);
+    }
+    
+    /**
+     * Returns this SQL converter redeclared with a prefixed declaration.
+     * 
+     * @param prefix the prefix used to prefix the existing declaration.
+     * 
+     * @return this SQL converter redeclared with a prefixed declaration.
+     */
+    @Pure
+    public final @Nonnull SQLConverter<O, E> prefixedWith(@Nonnull SQLPrefix prefix) {
+        return RedeclaringSQLConverter.get(declaration.prefixedWith(prefix), this);
+    }
+    
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
@@ -58,40 +85,11 @@ public abstract class AbstractSQLConverter<O, E> {
      * 
      * @param declaration the declaration of the new SQL converter.
      */
-    protected AbstractSQLConverter(@Nonnull Declaration declaration) {
+    protected SQLConverter(@Nonnull Declaration declaration) {
         this.declaration = declaration;
     }
     
     /* -------------------------------------------------- Storing (with Statement) -------------------------------------------------- */
-    
-    /**
-     * Stores the value of the given non-nullable object for each column in the given array.
-     * 
-     * @param object the object whose values are to be stored in the values array.
-     * @param values a mutable array which stores the value of the object for each column.
-     * @param index the current index into the values array.
-     * 
-     * @require values.size() >= index.getValue() + getDeclaration().getNumberOfColumns() : "The array has enough space for each column.";
-     */
-    public abstract void storeNonNullable(@Nonnull O object, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index);
-    
-    /**
-     * Stores the value of the given nullable object for each column in the given array.
-     * 
-     * @param object the object whose values are to be stored in the values array.
-     * @param values a mutable array which stores the value of the object for each column.
-     * @param index the current index into the values array.
-     * 
-     * @require values.size() >= index.getValue() + getDeclaration().getNumberOfColumns() : "The array has enough space for each column.";
-     */
-    public final void storeNullable(@Nullable O object, @NonCapturable @Nonnull @NonFrozen FreezableArray<String> values, @Nonnull MutableIndex index) {
-        if (object == null) {
-            final int limit = index.getValue() + declaration.getNumberOfColumns();
-            while (index.getValue() < limit) { values.set(index.getAndIncrementValue(), "NULL"); }
-        } else {
-            storeNonNullable(object, values, index);
-        }
-    }
     
     /**
      * Returns the value of the given object or 'NULL' for each column.
@@ -105,7 +103,7 @@ public abstract class AbstractSQLConverter<O, E> {
     @Pure
     public final @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableArray<String> getValues(@Nullable O object) {
         final @Nonnull FreezableArray<String> values = FreezableArray.get(declaration.getNumberOfColumns());
-        storeNullable(object, values, MutableIndex.get());
+        // TODO: The necessary methods no longer exist.
         return values;
     }
     
@@ -187,24 +185,22 @@ public abstract class AbstractSQLConverter<O, E> {
      * The number of parameters that are set is given by {@link Declaration#getNumberOfColumns()}.
      * 
      * @param object the non-nullable object which is to be stored in the database.
-     * @param preparedStatement the prepared statement whose parameters are to be set.
-     * @param parameterIndex the starting index of the parameters which are to be set.
+     * @param collector the value collector used to store the values of the object.
      */
     @NonCommitting
-    public abstract void storeNonNullable(@Nonnull O object, @Nonnull ValueCollector collector) throws FailedValueStoringException;
+    public abstract void storeNonNullable(@Nonnull O object, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException;
     
     /**
      * Sets the parameters starting from the given index of the prepared statement to the given nullable object.
      * The number of parameters that are set is given by {@link Declaration#getNumberOfColumns()}.
      * 
      * @param object the nullable object which is to be stored in the database.
-     * @param preparedStatement the prepared statement whose parameters are to be set.
-     * @param parameterIndex the starting index of the parameters which are to be set.
+     * @param collector the value collector used to store the values of the object.
      */
     @NonCommitting
-    public final void storeNullable(@Nullable O object, @Nonnull ValueCollector collector) throws FailedValueStoringException {
+    public final void storeNullable(@Nullable O object, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
         if (object == null) { declaration.storeNull(collector); }
-        else { AbstractSQLConverter.this.storeNonNullable(object, collector); }
+        else { SQLConverter.this.storeNonNullable(object, collector); }
     }
     
     /* -------------------------------------------------- Restoring -------------------------------------------------- */
@@ -213,7 +209,7 @@ public abstract class AbstractSQLConverter<O, E> {
      * Returns a nullable object from the external object and selection result.
      * 
      * @param external the external object which is needed to recover the object.
-     * @param result the selection result from which the data is to be retrieved.
+     * @param result the selection result used to restore the values of the object.
      * 
      * @return a nullable object from the external object and selection result.
      */
@@ -224,7 +220,7 @@ public abstract class AbstractSQLConverter<O, E> {
      * Returns a non-nullable object from the external object and selection result.
      * 
      * @param external the external object which is needed to recover the object.
-     * @param result the selection result from which the data is to be retrieved.
+     * @param result the selection result used to restore the values of the object.
      * 
      * @return a non-nullable object from the external object and selection result.
      */

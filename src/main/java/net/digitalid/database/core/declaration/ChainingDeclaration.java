@@ -1,6 +1,5 @@
 package net.digitalid.database.core.declaration;
 
-import java.sql.PreparedStatement;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -130,7 +129,7 @@ public abstract class ChainingDeclaration extends Declaration {
     
     @Override
     @NonCommitting
-    public final void storeNull(@Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException {
+    public final void storeNull(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
         declaration.storeNull(preparedStatement, parameterIndex);
     }
     

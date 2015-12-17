@@ -1,4 +1,4 @@
-package net.digitalid.database.core.converter;
+package net.digitalid.database.core.converter.sql;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,10 +7,8 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.Declaration;
 import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
-import net.digitalid.database.core.exceptions.state.CorruptStateException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.collections.index.MutableIndex;
 import net.digitalid.utility.system.exceptions.internal.InternalException;
 
 /**
@@ -21,7 +19,7 @@ import net.digitalid.utility.system.exceptions.internal.InternalException;
  *            In case no external information is needed for the restoration of an object, declare it as an {@link Object}.
  */
 @Immutable
-public abstract class MultipleRowSQLConverter<O, E> extends AbstractSQLConverter<O, E> {
+public abstract class MultipleRowSQLConverter<O, E> extends SQLConverter<O, E> {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -46,7 +44,7 @@ public abstract class MultipleRowSQLConverter<O, E> extends AbstractSQLConverter
      * @param parameterIndex the starting index of the parameters which are to be set.
      */
     @NonCommitting
-    public abstract void storeMultipleRows(@Nonnull O object, @Nonnull PreparedStatement preparedStatement, @Nonnull MutableIndex parameterIndex) throws FailedValueStoringException;
+    public abstract void storeMultipleRows(@Nonnull O object, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException;
     
     /* -------------------------------------------------- Multiple-Row Restoring -------------------------------------------------- */
     
@@ -63,6 +61,6 @@ public abstract class MultipleRowSQLConverter<O, E> extends AbstractSQLConverter
      */
     @Pure
     @NonCommitting
-    public abstract @Nonnull O restoreMultipleRows(@Nonnull E external, @Nonnull ResultSet resultSet, @Nonnull MutableIndex columnIndex) throws FailedValueRestoringException, CorruptStateException, InternalException;
+    public abstract @Nonnull O restoreMultipleRows(@Nonnull E external, @NonCapturable @Nonnull SelectionResult result) throws FailedValueRestoringException, CorruptValueException, InternalException;
     
 }

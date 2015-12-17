@@ -220,11 +220,11 @@ public class JDBCValueCollector implements ValueCollector {
     }
     
     @Override
-    public void setBinaryStream(@Nonnull InputStream stream) throws FailedValueStoringException {
+    public void setBinaryStream(@Nonnull InputStream stream, int length) throws FailedValueStoringException {
         assert Database.getInstance().supportsBinaryStreams() : "The database supports binary streams.";
         
         try {
-            preparedStatement.setBinaryStream(parameterIndex++, stream);
+            preparedStatement.setBinaryStream(parameterIndex++, stream, length);
         } catch (@Nonnull SQLException exception) {
             throw FailedValueStoringException.get(exception);
         }
