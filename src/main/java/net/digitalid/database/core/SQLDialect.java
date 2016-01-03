@@ -21,7 +21,7 @@ import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * A dialect implements a particular version of the structured query language (SQL).

@@ -9,7 +9,7 @@ import net.digitalid.database.core.exceptions.operation.FailedValueRestoringExce
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * A multiple-row SQL converter allows to store and restore set- or map-based objects into and from the {@link Database database}.

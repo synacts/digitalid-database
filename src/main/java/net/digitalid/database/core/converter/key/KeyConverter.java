@@ -3,8 +3,8 @@ package net.digitalid.database.core.converter.key;
 import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.system.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This interface allows to convert an object to its key and recover it again given its key (and an external object).

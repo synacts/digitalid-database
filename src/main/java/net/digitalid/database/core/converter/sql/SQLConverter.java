@@ -22,7 +22,7 @@ import net.digitalid.utility.collections.annotations.elements.NonNullableElement
 import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
 import net.digitalid.utility.collections.converter.IterableConverter;
 import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * An SQL converter allows to store and restore objects into and from the {@link Database database}.
@@ -200,7 +200,7 @@ public abstract class SQLConverter<O, E> {
     @NonCommitting
     public final void storeNullable(@Nullable O object, @NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
         if (object == null) { declaration.storeNull(collector); }
-        else { SQLConverter.this.storeNonNullable(object, collector); }
+        else { storeNonNullable(object, collector); }
     }
     
     /* -------------------------------------------------- Restoring -------------------------------------------------- */
