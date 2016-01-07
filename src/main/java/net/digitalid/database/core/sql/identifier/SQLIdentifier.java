@@ -7,8 +7,8 @@ import net.digitalid.database.core.table.Site;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.collections.annotations.size.SizeAtMost;
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.collections.annotations.size.MaxSize;
+import net.digitalid.utility.system.exceptions.internal.InternalException;
 
 /**
  * This class represents an SQL identifier.
@@ -26,7 +26,7 @@ public abstract class SQLIdentifier implements SQLNode {
     /**
      * Stores the value of this SQL identifier.
      */
-    private final @Nonnull @SizeAtMost(63) String value;
+    private final @Nonnull @MaxSize(63) String value;
     
     /**
      * Returns the value of this SQL identifier.
@@ -34,7 +34,7 @@ public abstract class SQLIdentifier implements SQLNode {
      * @return the value of this SQL identifier.
      */
     @Pure
-    public final @Nonnull @SizeAtMost(63) String getValue() {
+    public final @Nonnull @MaxSize(63) String getValue() {
         return value;
     }
     
@@ -45,7 +45,7 @@ public abstract class SQLIdentifier implements SQLNode {
      * 
      * @param value the value of the new SQL identifier.
      */
-    protected SQLIdentifier(@Nonnull @SizeAtMost(63) String value) {
+    protected SQLIdentifier(@Nonnull @MaxSize(63) String value) {
         assert value.length() <= 63 : "The length of the value is at most 63.";
         
         this.value = value;

@@ -3,7 +3,7 @@ package net.digitalid.database.core.sql.identifier;
 import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.collections.annotations.size.SizeAtMost;
+import net.digitalid.utility.collections.annotations.size.MaxSize;
 
 /**
  * This class represents an SQL name.
@@ -18,7 +18,7 @@ public final class SQLName extends SQLIdentifier {
      * 
      * @param value the value of the new SQL name.
      */
-    protected SQLName(@Nonnull @SizeAtMost(63) String value) {
+    protected SQLName(@Nonnull @MaxSize(63) String value) {
         super(value);
     }
     
@@ -30,7 +30,7 @@ public final class SQLName extends SQLIdentifier {
      * @return a new SQL name with the given value.
      */
     @Pure
-    public static @Nonnull SQLName get(@Nonnull @SizeAtMost(63) String value) {
+    public static @Nonnull SQLName get(@Nonnull @MaxSize(63) String value) {
         return new SQLName(value);
     }
     

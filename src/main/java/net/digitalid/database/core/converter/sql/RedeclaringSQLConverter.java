@@ -27,7 +27,7 @@ public final class RedeclaringSQLConverter<O, E> extends ChainingSQLConverter<O,
      * @param declaration the declaration that replaces the existing declaration.
      * @param SQLConverter the SQL converter used to store and restore the objects.
      */
-    private RedeclaringSQLConverter(@Nonnull @Matching Declaration declaration, @Nonnull SQLConverter<O, E> SQLConverter) {
+    private RedeclaringSQLConverter(@Nonnull @Matching Declaration declaration, @Nonnull SQLConverterOld<O, E> SQLConverter) {
         super(declaration, NonConvertingKeyConverter.<O, E>get(), SQLConverter);
     }
     
@@ -40,7 +40,7 @@ public final class RedeclaringSQLConverter<O, E> extends ChainingSQLConverter<O,
      * @return a new redeclaring SQL converter with the given parameters.
      */
     @Pure
-    public static @Nonnull <O, E> RedeclaringSQLConverter<O, E> get(@Nonnull @Matching Declaration declaration, @Nonnull SQLConverter<O, E> SQLConverter) {
+    public static @Nonnull <O, E> RedeclaringSQLConverter<O, E> get(@Nonnull @Matching Declaration declaration, @Nonnull SQLConverterOld<O, E> SQLConverter) {
         return new RedeclaringSQLConverter<>(declaration, SQLConverter);
     }
     

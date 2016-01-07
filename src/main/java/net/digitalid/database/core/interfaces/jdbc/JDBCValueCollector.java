@@ -12,7 +12,7 @@ import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.size.Size;
-import net.digitalid.utility.collections.annotations.size.SizeAtMost;
+import net.digitalid.utility.collections.annotations.size.MaxSize;
 
 /**
  * This classes uses the JDBC prepared statement to collect the values.
@@ -169,7 +169,7 @@ public class JDBCValueCollector implements ValueCollector {
     }
     
     @Override
-    public void setString64(@Nonnull @SizeAtMost(64) String value) throws FailedValueStoringException {
+    public void setString64(@Nonnull @MaxSize(64) String value) throws FailedValueStoringException {
         assert value.length() <= 64 : "The length of the string is at most 64.";
         
         try {

@@ -9,7 +9,7 @@ import net.digitalid.database.core.exceptions.state.value.CorruptNullValueExcept
 import net.digitalid.database.core.exceptions.state.value.CorruptParameterValueException;
 import net.digitalid.database.core.interfaces.jdbc.JDBCSelectionResult;
 import net.digitalid.utility.collections.annotations.size.Size;
-import net.digitalid.utility.collections.annotations.size.SizeAtMost;
+import net.digitalid.utility.collections.annotations.size.MaxSize;
 
 /**
  * This interface allows to get the values of an SQL result.
@@ -110,7 +110,7 @@ public interface SelectionResult extends AutoCloseable {
      * 
      * @return the string value of the next column.
      */
-    public @Nullable @SizeAtMost(64) String getString64() throws FailedValueRestoringException, CorruptParameterValueException;
+    public @Nullable @MaxSize(64) String getString64() throws FailedValueRestoringException, CorruptParameterValueException;
     
     /**
      * Returns the string value of the next column.

@@ -8,7 +8,7 @@ import net.digitalid.database.core.exceptions.operation.FailedValueStoringExcept
 import net.digitalid.database.core.interfaces.jdbc.JDBCValueCollector;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.utility.collections.annotations.size.Size;
-import net.digitalid.utility.collections.annotations.size.SizeAtMost;
+import net.digitalid.utility.collections.annotations.size.MaxSize;
 
 /**
  * This interface allows to set the values of an SQL statement.
@@ -93,7 +93,7 @@ public interface ValueCollector extends AutoCloseable {
      * 
      * @param value the string value which is to be set.
      */
-    public void setString64(@Nonnull @SizeAtMost(64) String value) throws FailedValueStoringException;
+    public void setString64(@Nonnull @MaxSize(64) String value) throws FailedValueStoringException;
     
     /**
      * Sets the next parameter to the given string value.

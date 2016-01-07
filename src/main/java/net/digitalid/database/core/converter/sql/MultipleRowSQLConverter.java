@@ -19,7 +19,7 @@ import net.digitalid.utility.exceptions.internal.InternalException;
  *            In case no external information is needed for the restoration of an object, declare it as an {@link Object}.
  */
 @Immutable
-public abstract class MultipleRowSQLConverter<O, E> extends SQLConverter<O, E> {
+public abstract class MultipleRowSQLConverter<O, E> extends SQLConverterOld<O, E> {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     

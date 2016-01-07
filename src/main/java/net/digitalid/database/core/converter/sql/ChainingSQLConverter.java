@@ -32,7 +32,7 @@ import net.digitalid.utility.exceptions.internal.InternalException;
  * @see RedeclaringSQLConverter
  */
 @Immutable
-public class ChainingSQLConverter<O, E, K, D> extends SQLConverter<O, E> {
+public class ChainingSQLConverter<O, E, K, D> extends SQLConverterOld<O, E> {
     
     /* -------------------------------------------------- Key Converter -------------------------------------------------- */
     
@@ -56,7 +56,8 @@ public class ChainingSQLConverter<O, E, K, D> extends SQLConverter<O, E> {
     /**
      * Stores the SQL converter used to store and restore the object's key.
      */
-    private final @Nonnull SQLConverter<K, ? super D> SQLConverter;
+    private final @Nonnull
+    SQLConverterOld<K, ? super D> SQLConverter;
     
     /**
      * Returns the SQL converter used to store and restore the object's key.
@@ -64,7 +65,8 @@ public class ChainingSQLConverter<O, E, K, D> extends SQLConverter<O, E> {
      * @return the SQL converter used to store and restore the object's key.
      */
     @Pure
-    public final @Nonnull SQLConverter<K, ? super D> getSQLConverter() {
+    public final @Nonnull
+    SQLConverterOld<K, ? super D> getSQLConverter() {
         return SQLConverter;
     }
     
@@ -77,7 +79,7 @@ public class ChainingSQLConverter<O, E, K, D> extends SQLConverter<O, E> {
      * @param keyConverter the key converter used to convert and recover the object.
      * @param SQLConverter the SQL converter used to store and restore the object's key.
      */
-    protected ChainingSQLConverter(@Nonnull @Matching Declaration declaration, @Nonnull KeyConverter<O, ? super E, K, D> keyConverter, @Nonnull SQLConverter<K, ? super D> SQLConverter) {
+    protected ChainingSQLConverter(@Nonnull @Matching Declaration declaration, @Nonnull KeyConverter<O, ? super E, K, D> keyConverter, @Nonnull SQLConverterOld<K, ? super D> SQLConverter) {
         super(declaration);
         
         assert declaration.matches(SQLConverter.getDeclaration()) : "The declaration matches the declaration of the SQL converter.";
@@ -96,7 +98,7 @@ public class ChainingSQLConverter<O, E, K, D> extends SQLConverter<O, E> {
      * @return a new chaining SQL converter with the given converters.
      */
     @Pure
-    public static @Nonnull <O, E, K, D> ChainingSQLConverter<O, E, K, D> get(@Nonnull @Matching Declaration declaration, @Nonnull KeyConverter<O, ? super E, K, D> keyConverter, @Nonnull SQLConverter<K, ? super D> SQLConverter) {
+    public static @Nonnull <O, E, K, D> ChainingSQLConverter<O, E, K, D> get(@Nonnull @Matching Declaration declaration, @Nonnull KeyConverter<O, ? super E, K, D> keyConverter, @Nonnull SQLConverterOld<K, ? super D> SQLConverter) {
         return new ChainingSQLConverter<>(declaration, keyConverter, SQLConverter);
     }
     
@@ -109,7 +111,7 @@ public class ChainingSQLConverter<O, E, K, D> extends SQLConverter<O, E> {
      * @return a new chaining SQL converter with the given converters.
      */
     @Pure
-    public static @Nonnull <O, E, K, D> ChainingSQLConverter<O, E, K, D> get(@Nonnull KeyConverter<O, ? super E, K, D> keyConverter, @Nonnull SQLConverter<K, ? super D> SQLConverter) {
+    public static @Nonnull <O, E, K, D> ChainingSQLConverter<O, E, K, D> get(@Nonnull KeyConverter<O, ? super E, K, D> keyConverter, @Nonnull SQLConverterOld<K, ? super D> SQLConverter) {
         return new ChainingSQLConverter<>(SQLConverter.getDeclaration(), keyConverter, SQLConverter);
     }
     

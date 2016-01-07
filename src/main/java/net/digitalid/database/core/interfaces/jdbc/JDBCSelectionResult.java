@@ -13,7 +13,7 @@ import net.digitalid.database.core.exceptions.state.value.CorruptParameterValueE
 import net.digitalid.database.core.interfaces.SelectionResult;
 import net.digitalid.utility.annotations.state.Pure;
 import net.digitalid.utility.collections.annotations.size.Size;
-import net.digitalid.utility.collections.annotations.size.SizeAtMost;
+import net.digitalid.utility.collections.annotations.size.MaxSize;
 
 /**
  * This classes uses the JDBC result set to retrieve the values.
@@ -195,7 +195,7 @@ public class JDBCSelectionResult implements SelectionResult {
     }
     
     @Override
-    public @Nullable @SizeAtMost(64) String getString64() throws FailedValueRestoringException, CorruptParameterValueException {
+    public @Nullable @MaxSize(64) String getString64() throws FailedValueRestoringException, CorruptParameterValueException {
         try {
             final @Nullable String value = resultSet.getString(columnIndex++);
             if (value != null && value.length() > 64) { throw CorruptParameterValueException.get("string length", value.length()); }

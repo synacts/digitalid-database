@@ -98,5 +98,10 @@
             <artifactId>digitalid-utility-system</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>net.digitalid</groupId>
+            <artifactId>digitalid-utility-conversion</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 </project>
