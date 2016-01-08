@@ -16,8 +16,10 @@ import net.digitalid.database.core.sql.expression.number.SQLVariadicNumberOperat
 import net.digitalid.database.core.sql.expression.string.SQLStringLiteral;
 import net.digitalid.database.core.sql.expression.string.SQLVariadicStringOperator;
 import net.digitalid.database.core.sql.identifier.SQLIdentifier;
+import net.digitalid.database.core.sql.statement.insert.SQLInsertStatement;
 import net.digitalid.database.core.sql.statement.select.SQLSelectStatement;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
+import net.digitalid.database.core.sql.SQLNode;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Immutable;
@@ -221,11 +223,8 @@ public abstract class SQLDialect {
         }
     }
     
-    /**
-     * Transcribes the given node to this dialect at the given site.
-     */
-    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLSelectStatement selectStatement) throws InternalException {
-        // TODO
+    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLNode<?> node) throws InternalException {
+        node.transcribe(this, site, string);
     }
     
 }

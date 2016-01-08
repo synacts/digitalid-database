@@ -5,6 +5,7 @@ import net.digitalid.database.core.SQLDialect;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.sql.SQLParameterizableNode;
+import net.digitalid.database.core.sql.statement.insert.SQLValuesOrStatement;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.exceptions.internal.InternalException;
@@ -12,7 +13,7 @@ import net.digitalid.utility.exceptions.internal.InternalException;
 /**
  * Description.
  */
-public class SQLSelectStatement implements SQLParameterizableNode {
+public class SQLSelectStatement implements SQLParameterizableNode, SQLValuesOrStatement {
     
     public SQLSelectStatement() {
         
