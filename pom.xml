@@ -115,5 +115,10 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>net.digitalid</groupId>
+            <artifactId>digitalid-utility-exceptions</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 </project>
