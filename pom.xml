@@ -5,10 +5,16 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.digitalid</groupId>
-    <artifactId>database</artifactId>
+    <artifactId>digitalid-database-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0</version>
+    <version>${digitalid.database.version}</version>
     <name>Provides projects that interact with the database</name>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <digitalid.database.version>1.0.0</digitalid.database.version>
+    </properties>
 
     <modules>
         <module>core</module>
@@ -17,6 +23,31 @@
         <module>sqlite</module>
     </modules>
 
+    <distributionManagement>
+        <repository>
+            <id>digitalid-deployment</id>
+            <name>Final Releases</name>
+            <url>https://repo.digitalid.net/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>digitalid-deployment</id>
+            <name>Snapshot Releases</name>
+            <url>https://repo.digitalid.net/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+    <repositories>
+        <repository>
+            <id>digitalid-releases</id>
+            <name>Digital ID Releases</name>
+            <url>https://repo.digitalid.net/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>digitalid-snapshots</id>
+            <name>Digital ID Snapshots</name>
+            <url>https://repo.digitalid.net/content/repositories/snapshots/</url>
+        </repository>
+    </repositories>
+ 
     <build>
         <pluginManagement>
             <plugins>
@@ -24,8 +55,8 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>
-                        <source>1.5</source>
-                        <target>1.5</target>
+                        <source>1.7</source>
+                        <target>1.7</target>
                     </configuration>
                 </plugin>
             </plugins>
