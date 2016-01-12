@@ -10,6 +10,7 @@ import net.digitalid.database.core.declaration.Declaration;
 import net.digitalid.database.core.exceptions.operation.FailedOperationException;
 import net.digitalid.database.core.exceptions.operation.FailedUpdateExecutionException;
 import net.digitalid.database.core.sql.identifier.SQLName;
+import net.digitalid.database.core.sql.identifier.SQLQualifiedTableName;
 import net.digitalid.utility.annotations.state.Immutable;
 import net.digitalid.utility.annotations.state.Pure;
 
@@ -24,7 +25,7 @@ public class Table {
     /**
      * Stores the name of this table.
      */
-    private final @Nonnull SQLName name;
+    private final @Nonnull SQLQualifiedTableName name;
     
     /**
      * Returns the name of this table.
@@ -32,7 +33,7 @@ public class Table {
      * @return the name of this table.
      */
     @Pure
-    public final @Nonnull SQLName getName() {
+    public final @Nonnull SQLQualifiedTableName getName() {
         return name;
     }
     
@@ -58,11 +59,10 @@ public class Table {
     /**
      * Creates a new table with the given name and declaration.
      * 
-     * @param name the name of the new table.
+     * @param tableName the name of the new table.
      * @param declaration the declaration of the new table.
      */
-    protected Table(@Nonnull SQLName name, @Nonnull Declaration declaration) {
-        this.name = name;
+    protected Table(@Nonnull SQLQualifiedTableName tableName, @Nonnull Declaration declaration) {
         this.declaration = declaration;
     }
     

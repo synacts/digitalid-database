@@ -188,15 +188,6 @@ public abstract class SQLDialect {
         }
     }
     
-    /* -------------------------------------------------- Identifiers -------------------------------------------------- */
-    
-    /**
-     * Transcribes the given node to this dialect at the given site.
-     */
-    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLIdentifier identifier) throws InternalException {
-        string.append("\"").append(identifier.getValue()).append("\"");
-    }
-    
     /* -------------------------------------------------- Statements -------------------------------------------------- */
     
     /**

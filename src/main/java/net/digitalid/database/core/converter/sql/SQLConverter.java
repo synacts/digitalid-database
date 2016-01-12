@@ -11,6 +11,8 @@ import net.digitalid.database.core.sql.statement.insert.SQLInsertStatement;
 import net.digitalid.utility.annotations.reference.NonCapturable;
 import net.digitalid.utility.annotations.state.Stateless;
 import net.digitalid.utility.conversion.Converter;
+import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
+import net.digitalid.utility.conversion.exceptions.StoringException;
 
 /**
  */
@@ -30,7 +32,7 @@ public abstract class SQLConverter<T> extends Converter {
         }
     }
     
-    protected abstract void convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @NonCapturable @Nonnull SQLInsertStatement sqlInsertStatement) throws FailedValueStoringException;
+    protected abstract void convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @NonCapturable @Nonnull SQLInsertStatement sqlInsertStatement) throws FailedValueStoringException, ConverterNotFoundException, StoringException;
     
     /* -------------------------------------------------- Recovery -------------------------------------------------- */
     

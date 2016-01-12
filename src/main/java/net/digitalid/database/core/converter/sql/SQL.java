@@ -1,23 +1,26 @@
 package net.digitalid.database.core.converter.sql;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
+import java.lang.reflect.Field;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.core.Database;
 import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.state.value.CorruptNullValueException;
 import net.digitalid.database.core.interfaces.SelectionResult;
-import net.digitalid.database.core.interfaces.ValueCollector;
-import net.digitalid.database.core.interfaces.jdbc.JDBCValueCollector;
 import net.digitalid.database.core.sql.identifier.SQLName;
+import net.digitalid.database.core.sql.identifier.SQLQualifiedTableName;
 import net.digitalid.database.core.sql.statement.insert.SQLInsertStatement;
+import net.digitalid.database.core.sql.statement.insert.SQLQualifiedColumnName;
+import net.digitalid.database.core.sql.statement.table.create.SQLCreateTableStatement;
+import net.digitalid.database.core.sql.statement.table.create.SQLReference;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.core.table.Table;
 import net.digitalid.utility.annotations.state.Stateless;
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.annotations.elements.NullableElements;
 import net.digitalid.utility.conversion.Converter;
 import net.digitalid.utility.conversion.ConverterAnnotations;
 import net.digitalid.utility.conversion.Convertible;
+import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
 import net.digitalid.utility.exceptions.internal.InternalException;
@@ -63,15 +66,40 @@ public final class SQL {
     }
     
     /* -------------------------------------------------- Converting -------------------------------------------------- */
-
+    
+    public static Table create(@Nonnull String tableName, @Nonnull @NonNullableElements Class<? extends Convertible>[] columnGroups, @Nonnull Site site) {
+        return create(tableName, columnGroups, new SQLReference[0], site);
+    }
+    
+    public static Table create(@Nonnull String tableName, @Nonnull @NonNullableElements Class<? extends Convertible>[] columnGroups, @Nonnull SQLReference[] references, @Nonnull Site site) throws ConverterNotFoundException {
+        final @Nonnull SQLQualifiedTableName qualifiedTableName = SQLQualifiedTableName.get(tableName, site);
+        final @Nonnull SQLCreateTableStatement createTableStatement = SQLCreateTableStatement.get(qualifiedTableName);
+        for (@Nonnull Class<? extends Convertible> columnGroup : columnGroups) {
+            for (@Nonnull Field field : columnGroup.getFields()) {
+                @Nonnull SQLConverter<?> sqlConverter = FORMAT.getConverter(field);
+                @Nonnull SQLColumnDeclaration columnDeclaration = sqlConverter.createColumnDeclaration(field);
+                createTableStatement.addColumnDeclaration(columnDeclaration);
+            }
+        }
+    }
+    
     /**
      * Stores a nullable object into a SQL table.
      */
     // TODO: do we even care about nullable / non-nullable??
-    public static void insert(@Nullable Convertible convertible, @Nonnull Class<? extends Convertible> type) throws StoringException, InternalException {
-
-        SQLInsertStatement insertStatement = new SQLInsertStatement();
+    public static void insert(@Nonnull Table table, @Nullable @NullableElements Convertible[] convertibles, @Nonnull Site site) throws StoringException, InternalException {
+        // TODO: cache AST for convertible
+        // TODO: if cached AST is retrieved, the value in site must be changed so that we can update the schema without re-generating the AST.
+        final @Nonnull SQLInsertStatement insertStatement = SQLInsertStatement.get(table.getName());
         
+        Class<? extends Convertible>[] columnGroups = table.getColumnGroups();
+        
+        for (@Nonnull Class<? extends Convertible> columnGroup : columnGroups) {
+            for (@Nonnull Field field : columnGroup.getFields()) {
+                final @Nonnull SQLQualifiedColumnName qualifiedColumnName = SQLQualifiedColumnName.get(field.getName(), table.getName().tableName);
+                FORMAT.getConverter(field);
+            }
+        }
     }
     
 }

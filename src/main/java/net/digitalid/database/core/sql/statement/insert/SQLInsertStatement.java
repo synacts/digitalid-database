@@ -33,6 +33,10 @@ public class SQLInsertStatement extends SQLParameterizableNode<SQLInsertStatemen
         this.qualifiedTableName = qualifiedTableName;
     }
     
+    public static @Nonnull SQLInsertStatement get(@Nonnull SQLQualifiedTableName qualifiedTableName) {
+        return new SQLInsertStatement(qualifiedTableName);
+    }
+    
     /* -------------------------------------------------- Column Names -------------------------------------------------- */
     
     private final @Nonnull @NonNullableElements FreezableArrayList<SQLQualifiedColumnName> qualifiedColumnNames;
@@ -68,9 +72,9 @@ public class SQLInsertStatement extends SQLParameterizableNode<SQLInsertStatemen
         string.append("(");
         for (SQLQualifiedColumnName qualifiedColumnName : qualifiedColumnNames) {
             dialect.transcribe(site, string, qualifiedColumnName);
+            string.append(",");
         }
         string.append(")");
-        
     }
 
     /* -------------------------------------------------- Value Collector -------------------------------------------------- */
