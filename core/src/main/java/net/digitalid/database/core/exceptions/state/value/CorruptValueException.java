@@ -3,7 +3,7 @@ package net.digitalid.database.core.exceptions.state.value;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.exceptions.state.CorruptStateException;
-import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.validation.state.Immutable;
 
 /**
  * This exception indicates a corrupt value.

@@ -14,7 +14,7 @@ import net.digitalid.database.core.sql.statement.table.create.SQLCreateTableStat
 import net.digitalid.database.core.sql.statement.table.create.SQLReference;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.core.table.Table;
-import net.digitalid.utility.annotations.state.Stateless;
+import net.digitalid.utility.validation.state.Stateless;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.annotations.elements.NullableElements;
 import net.digitalid.utility.conversion.Converter;

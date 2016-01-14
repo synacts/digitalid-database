@@ -11,7 +11,7 @@ import net.digitalid.database.core.exceptions.state.row.EntryNotFoundException;
 import net.digitalid.database.core.exceptions.state.value.CorruptNullValueException;
 import net.digitalid.database.core.exceptions.state.value.CorruptParameterValueException;
 import net.digitalid.database.core.interfaces.SelectionResult;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.collections.annotations.size.Size;
 import net.digitalid.utility.collections.annotations.size.MaxSize;
 

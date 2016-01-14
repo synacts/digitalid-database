@@ -6,10 +6,9 @@ import net.digitalid.database.core.exceptions.operation.FailedValueRestoringExce
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.core.exceptions.state.value.CorruptNullValueException;
 import net.digitalid.database.core.interfaces.SelectionResult;
-import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.sql.statement.insert.SQLInsertStatement;
-import net.digitalid.utility.annotations.reference.NonCapturable;
-import net.digitalid.utility.annotations.state.Stateless;
+import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.state.Stateless;
 import net.digitalid.utility.conversion.Converter;
 import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
 import net.digitalid.utility.conversion.exceptions.StoringException;

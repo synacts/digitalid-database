@@ -5,10 +5,10 @@ import javax.annotation.Nullable;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.exceptions.operation.FailedCommitException;
 import net.digitalid.database.core.interfaces.DatabaseInstance;
-import net.digitalid.utility.annotations.reference.NonCapturable;
-import net.digitalid.utility.annotations.state.Initialized;
-import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.annotations.state.Stateless;
+import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.state.Initialized;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Stateless;
 import net.digitalid.utility.system.logger.Log;
 
 /**

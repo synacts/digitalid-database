@@ -3,7 +3,7 @@ package net.digitalid.database.core.sql;
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.core.interfaces.ValueCollector;
-import net.digitalid.utility.annotations.reference.NonCapturable;
+import net.digitalid.utility.validation.reference.NonCapturable;
 
 /**
  * This is the abstract class that all parameterizable SQL syntax tree nodes have to implement.

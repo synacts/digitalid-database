@@ -2,8 +2,8 @@ package net.digitalid.database.core.exceptions.operation;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
 
 /**
  * This exception is thrown when an update could not be executed in the database.

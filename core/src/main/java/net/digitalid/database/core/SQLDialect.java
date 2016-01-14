@@ -15,14 +15,11 @@ import net.digitalid.database.core.sql.expression.number.SQLUnaryNumberOperator;
 import net.digitalid.database.core.sql.expression.number.SQLVariadicNumberOperator;
 import net.digitalid.database.core.sql.expression.string.SQLStringLiteral;
 import net.digitalid.database.core.sql.expression.string.SQLVariadicStringOperator;
-import net.digitalid.database.core.sql.identifier.SQLIdentifier;
-import net.digitalid.database.core.sql.statement.insert.SQLInsertStatement;
-import net.digitalid.database.core.sql.statement.select.SQLSelectStatement;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.database.core.sql.SQLNode;
 import net.digitalid.database.core.table.Site;
-import net.digitalid.utility.annotations.reference.NonCapturable;
-import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**

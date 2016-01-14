@@ -10,7 +10,7 @@ import net.digitalid.database.core.exceptions.operation.FailedResourceClosingExc
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.collections.annotations.size.Size;
 import net.digitalid.utility.collections.annotations.size.MaxSize;
 

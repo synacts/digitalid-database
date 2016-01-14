@@ -1,8 +1,8 @@
 package net.digitalid.database.core.converter.key;
 
 import javax.annotation.Nonnull;
-import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.annotations.state.Validated;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Validated;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.internal.InternalException;
 

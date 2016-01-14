@@ -4,12 +4,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
-import net.digitalid.utility.annotations.reference.Capturable;
-import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.annotations.state.Stateless;
-import net.digitalid.utility.annotations.state.Validated;
+import net.digitalid.utility.validation.reference.Capturable;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Stateless;
+import net.digitalid.utility.validation.state.Validated;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
-import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 
 /**

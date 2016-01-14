@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.digitalid.database.core.exceptions.operation.FailedOperationException;
 import net.digitalid.database.core.exceptions.state.CorruptStateException;
-import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.exceptions.DigitalIDException;
 
 /**

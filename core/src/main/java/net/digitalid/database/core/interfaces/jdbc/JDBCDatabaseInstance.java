@@ -33,8 +33,8 @@ import net.digitalid.database.core.sql.statement.table.create.SQLCreateTableStat
 import net.digitalid.database.core.sql.statement.table.drop.SQLDropTableStatement;
 import net.digitalid.database.core.sql.statement.update.SQLUpdateStatement;
 import net.digitalid.database.core.table.Site;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.exceptions.internal.InternalException;
 import net.digitalid.utility.system.logger.Log;
 

@@ -2,7 +2,7 @@ package net.digitalid.database.core.exceptions.operation;
 
 import java.sql.SQLException;
 import javax.annotation.Nonnull;
-import net.digitalid.utility.annotations.state.Immutable;
+import net.digitalid.utility.validation.state.Immutable;
 
 /**
  * This exception indicates a failed database operation.

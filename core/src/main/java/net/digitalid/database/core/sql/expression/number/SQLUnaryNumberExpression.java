@@ -6,9 +6,9 @@ import net.digitalid.database.core.exceptions.operation.FailedValueStoringExcept
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.sql.expression.SQLUnaryExpression;
 import net.digitalid.database.core.table.Site;
-import net.digitalid.utility.annotations.reference.NonCapturable;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**

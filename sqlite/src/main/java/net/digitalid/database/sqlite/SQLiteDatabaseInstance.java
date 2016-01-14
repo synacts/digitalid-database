@@ -17,10 +17,10 @@ import net.digitalid.database.core.exceptions.operation.FailedConnectionExceptio
 import net.digitalid.database.core.exceptions.operation.FailedKeyGenerationException;
 import net.digitalid.database.core.exceptions.operation.FailedUpdateExecutionException;
 import net.digitalid.database.core.interfaces.jdbc.JDBCDatabaseInstance;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.system.directory.Directory;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Validated;
+import net.digitalid.utility.directory.Directory;
 import net.digitalid.utility.system.logger.Log;
 
 /**

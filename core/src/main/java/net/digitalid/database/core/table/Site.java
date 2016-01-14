@@ -2,8 +2,8 @@ package net.digitalid.database.core.table;
 
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.Database;
-import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.annotations.state.Validated;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Validated;
 
 /**
  * This class provides an interface so that the same code works on both hosts and clients.

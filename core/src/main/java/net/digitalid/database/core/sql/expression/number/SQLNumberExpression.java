@@ -2,8 +2,8 @@ package net.digitalid.database.core.sql.expression.number;
 
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.sql.expression.SQLExpression;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
 
 /**
  * This class implements an expression that evaluates to a number.

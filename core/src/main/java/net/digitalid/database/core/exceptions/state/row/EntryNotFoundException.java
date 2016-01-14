@@ -1,8 +1,8 @@
 package net.digitalid.database.core.exceptions.state.row;
 
 import javax.annotation.Nonnull;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
 
 /**
  * This exception is thrown when a query has not found the desired entry.

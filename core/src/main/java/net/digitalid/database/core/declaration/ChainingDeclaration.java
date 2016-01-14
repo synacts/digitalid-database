@@ -11,11 +11,11 @@ import net.digitalid.database.core.exceptions.operation.FailedValueStoringExcept
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.core.table.Table;
-import net.digitalid.utility.annotations.reference.NonCapturable;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Pure;
-import net.digitalid.utility.annotations.state.Validated;
-import net.digitalid.utility.collections.annotations.freezable.NonFrozen;
+import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Validated;
+import net.digitalid.utility.freezable.NonFrozen;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.index.MutableIndex;
 

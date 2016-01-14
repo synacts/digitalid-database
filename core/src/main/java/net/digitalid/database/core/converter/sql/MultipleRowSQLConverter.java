@@ -7,8 +7,8 @@ import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.Declaration;
 import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**

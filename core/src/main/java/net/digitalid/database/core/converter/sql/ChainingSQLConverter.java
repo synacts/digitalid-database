@@ -12,10 +12,10 @@ import net.digitalid.database.core.exceptions.state.value.CorruptValueException;
 import net.digitalid.database.core.exceptions.state.value.MaskingCorruptValueException;
 import net.digitalid.database.core.interfaces.SelectionResult;
 import net.digitalid.database.core.interfaces.ValueCollector;
-import net.digitalid.utility.annotations.reference.NonCapturable;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Matching;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Matching;
+import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.internal.InternalException;
 

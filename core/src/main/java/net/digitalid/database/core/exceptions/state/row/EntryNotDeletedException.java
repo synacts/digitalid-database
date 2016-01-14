@@ -4,8 +4,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.exceptions.operation.FailedUpdateExecutionException;
-import net.digitalid.utility.annotations.state.Immutable;
-import net.digitalid.utility.annotations.state.Pure;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
 
 /**
  * This exception is thrown when the expected row count of a deletion is different than the encountered row count.

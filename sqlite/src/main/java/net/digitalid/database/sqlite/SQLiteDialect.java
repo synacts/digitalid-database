@@ -6,9 +6,8 @@ import net.digitalid.database.core.SQLDialect;
 import net.digitalid.database.core.sql.SQLNode;
 import net.digitalid.database.core.sql.Transcriber;
 import net.digitalid.database.core.sql.expression.bool.SQLBooleanLiteral;
-import net.digitalid.database.core.sql.statement.insert.SQLInsertStatement;
 import net.digitalid.database.core.table.Site;
-import net.digitalid.utility.annotations.reference.NonCapturable;
+import net.digitalid.utility.validation.reference.NonCapturable;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.exceptions.internal.InternalException;
 
