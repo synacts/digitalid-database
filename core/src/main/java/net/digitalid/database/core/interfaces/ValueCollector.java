@@ -2,13 +2,16 @@ package net.digitalid.database.core.interfaces;
 
 import java.io.InputStream;
 import java.math.BigInteger;
+
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.collections.annotations.size.MaxSize;
+import net.digitalid.utility.collections.annotations.size.Size;
+
 import net.digitalid.database.core.exceptions.operation.FailedResourceClosingException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.core.interfaces.jdbc.JDBCValueCollector;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
-import net.digitalid.utility.collections.annotations.size.Size;
-import net.digitalid.utility.collections.annotations.size.MaxSize;
 
 /**
  * This interface allows to set the values of an SQL statement.

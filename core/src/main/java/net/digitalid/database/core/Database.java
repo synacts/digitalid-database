@@ -2,14 +2,16 @@ package net.digitalid.database.core;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.database.core.exceptions.operation.FailedCommitException;
-import net.digitalid.database.core.interfaces.DatabaseInstance;
+
+import net.digitalid.utility.system.logger.Log;
 import net.digitalid.utility.validation.reference.NonCapturable;
 import net.digitalid.utility.validation.state.Initialized;
 import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.validation.state.Stateless;
-import net.digitalid.utility.system.logger.Log;
+
+import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.core.exceptions.operation.FailedCommitException;
+import net.digitalid.database.core.interfaces.DatabaseInstance;
 
 /**
  * This class provides connections to the database.

@@ -1,10 +1,12 @@
 package net.digitalid.database.core.sql;
 
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.validation.reference.NonCapturable;
+
 import net.digitalid.database.core.SQLDialect;
 import net.digitalid.database.core.table.Site;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * All SQL syntax tree nodes implement this interface.

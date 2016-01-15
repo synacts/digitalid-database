@@ -1,14 +1,16 @@
 package net.digitalid.database.core.sql.statement.select;
 
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.validation.reference.NonCapturable;
+
 import net.digitalid.database.core.SQLDialect;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.sql.SQLParameterizableNode;
 import net.digitalid.database.core.sql.statement.insert.SQLValuesOrStatement;
 import net.digitalid.database.core.table.Site;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * Description.

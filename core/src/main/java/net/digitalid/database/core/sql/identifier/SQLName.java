@@ -1,9 +1,10 @@
 package net.digitalid.database.core.sql.identifier;
 
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.collections.annotations.size.MaxSize;
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.collections.annotations.size.MaxSize;
 
 /**
  * This class represents an SQL name.

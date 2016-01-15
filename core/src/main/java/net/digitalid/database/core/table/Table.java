@@ -2,7 +2,12 @@ package net.digitalid.database.core.table;
 
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
@@ -11,8 +16,6 @@ import net.digitalid.database.core.exceptions.operation.FailedOperationException
 import net.digitalid.database.core.exceptions.operation.FailedUpdateExecutionException;
 import net.digitalid.database.core.sql.identifier.SQLName;
 import net.digitalid.database.core.sql.identifier.SQLQualifiedTableName;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
 
 /**
  * This class models a database table.

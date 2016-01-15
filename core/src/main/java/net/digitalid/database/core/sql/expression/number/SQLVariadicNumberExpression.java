@@ -1,21 +1,23 @@
 package net.digitalid.database.core.sql.expression.number;
 
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.freezable.Frozen;
+import net.digitalid.utility.validation.reference.Captured;
+import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.SQLDialect;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.sql.expression.SQLExpression;
 import net.digitalid.database.core.sql.expression.SQLVariadicExpression;
 import net.digitalid.database.core.table.Site;
-import net.digitalid.utility.validation.reference.Captured;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
-import net.digitalid.utility.freezable.Frozen;
-import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.collections.readonly.ReadOnlyArray;
-import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This class implements a variadic number expression.

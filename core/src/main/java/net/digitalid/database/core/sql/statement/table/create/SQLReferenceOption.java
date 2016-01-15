@@ -1,6 +1,7 @@
 package net.digitalid.database.core.sql.statement.table.create;
 
 import javax.annotation.Nonnull;
+
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;
 

@@ -1,9 +1,11 @@
 package net.digitalid.database.core.sql.expression;
 
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.sql.expression.bool.SQLUnaryBooleanExpression;
 import net.digitalid.database.core.sql.expression.number.SQLUnaryNumberExpression;
-import net.digitalid.utility.validation.state.Pure;
 
 /**
  * All variadic expressions implement this interface.

@@ -1,0 +1,50 @@
+package net.digitalid.database.core.converter.sql;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import net.digitalid.utility.conversion.Converter;
+import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
+import net.digitalid.utility.conversion.exceptions.StoringException;
+import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.state.Stateless;
+
+import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
+import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
+import net.digitalid.database.core.exceptions.state.value.CorruptNullValueException;
+import net.digitalid.database.core.interfaces.SelectionResult;
+import net.digitalid.database.core.sql.statement.insert.SQLInsertStatement;
+
+/**
+ */
+@Stateless
+public abstract class SQLConverter<T> extends Converter {
+    
+    /* -------------------------------------------------- Converting -------------------------------------------------- */
+    
+    protected void convertNullable(@Nullable Object object, @Nonnull Class<?> type, @NonCapturable @Nonnull SQLInsertStatement sqlInsertStatement) throws FailedValueStoringException {
+       if (object == null) {
+           // TODO: what about prefixes?!
+           // TODO: move to SQLNullConverter
+           sqlInsertStatement.setColumnName(type.getSimpleName());
+           sqlInsertStatement.setColumnValue(null);
+        } else {
+            convertNonNullable(object, type, sqlInsertStatement);
+        }
+    }
+    
+    protected abstract void convertNonNullable(@Nonnull Object object, @Nonnull Class<?> type, @NonCapturable @Nonnull SQLInsertStatement sqlInsertStatement) throws FailedValueStoringException, ConverterNotFoundException, StoringException;
+    
+    /* -------------------------------------------------- Recovery -------------------------------------------------- */
+    
+    protected @Nonnull Object recoverNonNullable(@Nonnull Class<?> type, @NonCapturable @Nonnull SelectionResult result) throws CorruptNullValueException, FailedValueRestoringException {
+        @Nullable Object object = recoverNullable(type, result);
+        if (object == null) {
+            throw CorruptNullValueException.get();
+        }
+        return object;
+    }
+    
+    protected abstract @Nullable Object recoverNullable(@Nonnull Class<?> type, @NonCapturable @Nonnull SelectionResult result) throws CorruptNullValueException, FailedValueRestoringException;
+    
+}

@@ -1,15 +1,18 @@
 package net.digitalid.database.core.interfaces;
 
 import java.math.BigInteger;
+
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.collections.annotations.size.MaxSize;
+import net.digitalid.utility.collections.annotations.size.Size;
+
 import net.digitalid.database.core.exceptions.operation.FailedResourceClosingException;
 import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.state.row.EntryNotFoundException;
 import net.digitalid.database.core.exceptions.state.value.CorruptNullValueException;
 import net.digitalid.database.core.exceptions.state.value.CorruptParameterValueException;
 import net.digitalid.database.core.interfaces.jdbc.JDBCSelectionResult;
-import net.digitalid.utility.collections.annotations.size.Size;
-import net.digitalid.utility.collections.annotations.size.MaxSize;
 
 /**
  * This interface allows to get the values of an SQL result.

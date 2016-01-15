@@ -1,9 +1,11 @@
 package net.digitalid.database.core.sql.expression.string;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.sql.expression.SQLExpression;
+
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;
+
+import net.digitalid.database.core.sql.expression.SQLExpression;
 
 /**
  * This class implements an expression that evaluates to a string.

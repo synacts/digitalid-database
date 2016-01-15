@@ -4,15 +4,18 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.collections.annotations.size.MaxSize;
+import net.digitalid.utility.collections.annotations.size.Size;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.exceptions.operation.FailedResourceClosingException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.collections.annotations.size.Size;
-import net.digitalid.utility.collections.annotations.size.MaxSize;
 
 /**
  * This classes uses the JDBC prepared statement to collect the values.

@@ -1,14 +1,16 @@
 package net.digitalid.database.core.sql.expression.bool;
 
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.SQLDialect;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.sql.expression.SQLLiteral;
 import net.digitalid.database.core.table.Site;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This class implements a boolean literal.

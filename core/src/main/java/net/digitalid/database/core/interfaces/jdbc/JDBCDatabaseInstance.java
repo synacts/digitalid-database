@@ -8,8 +8,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.system.logger.Log;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.NonCommitting;
@@ -33,10 +40,6 @@ import net.digitalid.database.core.sql.statement.table.create.SQLCreateTableStat
 import net.digitalid.database.core.sql.statement.table.drop.SQLDropTableStatement;
 import net.digitalid.database.core.sql.statement.update.SQLUpdateStatement;
 import net.digitalid.database.core.table.Site;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.exceptions.internal.InternalException;
-import net.digitalid.utility.system.logger.Log;
 
 /**
  * This classes uses the JDBC connection to execute the statements.

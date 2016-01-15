@@ -1,6 +1,12 @@
 package net.digitalid.database.core;
 
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.state.Immutable;
+
+import net.digitalid.database.core.sql.SQLNode;
 import net.digitalid.database.core.sql.expression.SQLBinaryExpression;
 import net.digitalid.database.core.sql.expression.SQLExpression;
 import net.digitalid.database.core.sql.expression.SQLUnaryExpression;
@@ -16,11 +22,7 @@ import net.digitalid.database.core.sql.expression.number.SQLVariadicNumberOperat
 import net.digitalid.database.core.sql.expression.string.SQLStringLiteral;
 import net.digitalid.database.core.sql.expression.string.SQLVariadicStringOperator;
 import net.digitalid.database.core.sql.statement.table.create.SQLType;
-import net.digitalid.database.core.sql.SQLNode;
 import net.digitalid.database.core.table.Site;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * A dialect implements a particular version of the structured query language (SQL).

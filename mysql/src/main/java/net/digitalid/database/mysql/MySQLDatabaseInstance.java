@@ -12,18 +12,21 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 import java.util.regex.Pattern;
+
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.console.Console;
+import net.digitalid.utility.directory.Directory;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Validated;
+
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.operation.FailedOperationException;
 import net.digitalid.database.core.exceptions.operation.FailedUpdateExecutionException;
 import net.digitalid.database.core.interfaces.jdbc.JDBCDatabaseInstance;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.validation.state.Validated;
-import net.digitalid.utility.console.Console;
-import net.digitalid.utility.directory.Directory;
 
 /**
  * This class configures a MySQL database.

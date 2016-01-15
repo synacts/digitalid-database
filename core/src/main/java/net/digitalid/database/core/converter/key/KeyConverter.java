@@ -1,10 +1,11 @@
 package net.digitalid.database.core.converter.key;
 
 import javax.annotation.Nonnull;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.validation.state.Validated;
+
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
 import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Validated;
 
 /**
  * This interface allows to convert an object to its key and recover it again given its key (and an external object).

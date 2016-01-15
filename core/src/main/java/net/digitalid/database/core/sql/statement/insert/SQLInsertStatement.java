@@ -1,19 +1,21 @@
 package net.digitalid.database.core.sql.statement.insert;
 
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.freezable.Frozen;
+import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.SQLDialect;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.sql.SQLParameterizableNode;
 import net.digitalid.database.core.sql.identifier.SQLQualifiedTableName;
 import net.digitalid.database.core.table.Site;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
-import net.digitalid.utility.freezable.Frozen;
-import net.digitalid.utility.collections.freezable.FreezableArrayList;
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
-import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * An AST node holding information about nodes relevant to the SQL insert statement, such as

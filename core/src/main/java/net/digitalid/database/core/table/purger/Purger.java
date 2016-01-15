@@ -7,10 +7,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.exceptions.operation.FailedOperationException;
-import net.digitalid.utility.validation.state.Stateless;
+
 import net.digitalid.utility.system.logger.Log;
+import net.digitalid.utility.validation.state.Stateless;
+
+import net.digitalid.database.core.exceptions.operation.FailedOperationException;
 
 /**
  * Description.

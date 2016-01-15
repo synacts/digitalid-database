@@ -9,7 +9,15 @@ import java.sql.Statement;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
+
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.directory.Directory;
+import net.digitalid.utility.system.logger.Log;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Validated;
+
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.NonCommitting;
@@ -17,11 +25,6 @@ import net.digitalid.database.core.exceptions.operation.FailedConnectionExceptio
 import net.digitalid.database.core.exceptions.operation.FailedKeyGenerationException;
 import net.digitalid.database.core.exceptions.operation.FailedUpdateExecutionException;
 import net.digitalid.database.core.interfaces.jdbc.JDBCDatabaseInstance;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.validation.state.Validated;
-import net.digitalid.utility.directory.Directory;
-import net.digitalid.utility.system.logger.Log;
 
 /**
  * This class configures a SQLite database.

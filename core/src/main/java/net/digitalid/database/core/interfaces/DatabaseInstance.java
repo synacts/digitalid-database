@@ -1,6 +1,10 @@
 package net.digitalid.database.core.interfaces;
 
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.exceptions.operation.FailedCommitException;
 import net.digitalid.database.core.exceptions.operation.FailedNonCommittingOperationException;
@@ -12,8 +16,6 @@ import net.digitalid.database.core.sql.statement.table.create.SQLCreateTableStat
 import net.digitalid.database.core.sql.statement.table.drop.SQLDropTableStatement;
 import net.digitalid.database.core.sql.statement.update.SQLUpdateStatement;
 import net.digitalid.database.core.table.Site;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This interface allows to execute SQL statements.

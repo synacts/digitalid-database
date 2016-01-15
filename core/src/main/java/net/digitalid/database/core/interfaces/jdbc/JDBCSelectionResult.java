@@ -3,17 +3,20 @@ package net.digitalid.database.core.interfaces.jdbc;
 import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.collections.annotations.size.MaxSize;
+import net.digitalid.utility.collections.annotations.size.Size;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.exceptions.operation.FailedResourceClosingException;
 import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.state.row.EntryNotFoundException;
 import net.digitalid.database.core.exceptions.state.value.CorruptNullValueException;
 import net.digitalid.database.core.exceptions.state.value.CorruptParameterValueException;
 import net.digitalid.database.core.interfaces.SelectionResult;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.collections.annotations.size.Size;
-import net.digitalid.utility.collections.annotations.size.MaxSize;
 
 /**
  * This classes uses the JDBC result set to retrieve the values.

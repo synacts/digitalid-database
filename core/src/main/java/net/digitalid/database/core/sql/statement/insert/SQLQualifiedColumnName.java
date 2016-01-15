@@ -2,8 +2,10 @@ package net.digitalid.database.core.sql.statement.insert;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.digitalid.database.core.sql.identifier.SQLIdentifier;
+
 import net.digitalid.utility.collections.annotations.size.MaxSize;
+
+import net.digitalid.database.core.sql.identifier.SQLIdentifier;
 
 /**
  *

@@ -2,9 +2,11 @@ package net.digitalid.database.core.exceptions.state;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.validation.state.Immutable;
+
 import net.digitalid.database.core.exceptions.DatabaseException;
 import net.digitalid.database.core.exceptions.state.row.WrongRowCountException;
-import net.digitalid.utility.validation.state.Immutable;
 
 /**
  * This exception indicates a corrupt database state.

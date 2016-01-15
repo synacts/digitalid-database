@@ -1,7 +1,9 @@
 package net.digitalid.database.core.exceptions.operation;
 
 import java.sql.SQLException;
+
 import javax.annotation.Nonnull;
+
 import net.digitalid.utility.validation.state.Immutable;
 
 /**
