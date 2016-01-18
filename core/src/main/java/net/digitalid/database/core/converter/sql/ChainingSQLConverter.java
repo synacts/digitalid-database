@@ -2,6 +2,14 @@ package net.digitalid.database.core.converter.sql;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.exceptions.external.InvalidEncodingException;
+import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Matching;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.converter.key.KeyConverter;
 import net.digitalid.database.core.declaration.Declaration;
@@ -12,12 +20,6 @@ import net.digitalid.database.core.exceptions.state.value.CorruptValueException;
 import net.digitalid.database.core.exceptions.state.value.MaskingCorruptValueException;
 import net.digitalid.database.core.interfaces.SelectionResult;
 import net.digitalid.database.core.interfaces.ValueCollector;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Matching;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * This class implements an SQL converter that is based on another SQL converter.

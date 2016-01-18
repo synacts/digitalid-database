@@ -1,84 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.digitalid</groupId>
-    <artifactId>digitalid-database-postgres</artifactId>
-    <version>${digitalid.database.version}</version>
+    
+    <groupId>net.digitalid.database</groupId>
+    <artifactId>database-postgres</artifactId>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
+    
     <parent>
-        <groupId>net.digitalid</groupId>
-        <artifactId>digitalid-database-parent</artifactId>
-        <version>${digitalid.database.version}</version>
+        <groupId>net.digitalid.database</groupId>
+        <artifactId>database</artifactId>
+        <version>1.0.0</version>
     </parent>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.3</version>
-                <configuration>
-                    <quiet>true</quiet>
-                    <linksource>false</linksource>
-                    <doctitle>Digital ID Database Postgres</doctitle>
-                    <additionalparam>-Xdoclint:none</additionalparam>
-                    <links>
-                        <link>https://docs.digitalid.net/utility/annotations/1.0.0/</link>
-                        <link>https://docs.digitalid.net/utility/system/1.0.0/</link>
-                        <link>https://docs.digitalid.net/database/core/1.0.0/</link>
-                        <link>http://docs.oracle.com/javase/7/docs/api/</link>
-                    </links>
-                    <tagletArtifacts>
-                        <tagletArtifact>
-                            <groupId>net.digitalid</groupId>
-                            <artifactId>digitalid-utility-taglets</artifactId>
-                            <version>1.0.0</version>
-                        </tagletArtifact>
-                    </tagletArtifacts>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.4</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+    
     <dependencies>
         <dependency>
-            <groupId>net.digitalid</groupId>
-            <artifactId>digitalid-utility-annotations</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.digitalid</groupId>
-            <artifactId>digitalid-utility-collections</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.digitalid</groupId>
-            <artifactId>digitalid-utility-system</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.digitalid</groupId>
-            <artifactId>digitalid-database-core</artifactId>
-            <version>1.0.0</version>
+            <groupId>net.digitalid.database</groupId>
+            <artifactId>database-dialect</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -86,4 +27,5 @@
             <version>9.4-1206-jdbc42</version>
         </dependency>
     </dependencies>
+    
 </project>

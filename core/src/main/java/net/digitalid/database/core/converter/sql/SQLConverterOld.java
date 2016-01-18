@@ -2,6 +2,19 @@ package net.digitalid.database.core.converter.sql;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.converter.IterableConverter;
+import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.freezable.NonFrozen;
+import net.digitalid.utility.system.exceptions.internal.InternalException;
+import net.digitalid.utility.validation.reference.Capturable;
+import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Matching;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Validated;
+
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.Declaration;
@@ -12,17 +25,6 @@ import net.digitalid.database.core.exceptions.state.value.CorruptValueException;
 import net.digitalid.database.core.interfaces.SelectionResult;
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.sql.identifier.SQLPrefix;
-import net.digitalid.utility.validation.reference.Capturable;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Matching;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.validation.state.Validated;
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
-import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.collections.converter.IterableConverter;
-import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.system.exceptions.internal.InternalException;
 
 /**
  * An SQL converter allows to store and restore objects into and from the {@link Database database}.

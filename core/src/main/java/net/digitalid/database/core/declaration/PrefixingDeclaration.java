@@ -1,21 +1,24 @@
 package net.digitalid.database.core.declaration;
 
 import java.sql.Statement;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.collections.index.MutableIndex;
+import net.digitalid.utility.freezable.NonFrozen;
+import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Validated;
+
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.exceptions.operation.FailedUpdateExecutionException;
 import net.digitalid.database.core.sql.identifier.SQLPrefix;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.core.table.Table;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.validation.state.Validated;
-import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.collections.index.MutableIndex;
 
 /**
  * This class implements a prefixing version of another declaration.

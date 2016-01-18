@@ -2,14 +2,17 @@ package net.digitalid.database.core.converter.sql;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.declaration.Declaration;
 import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.exceptions.internal.InternalException;
 
 /**
  * A multiple-row SQL converter allows to store and restore set- or map-based objects into and from the {@link Database database}.

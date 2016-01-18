@@ -2,13 +2,14 @@ package net.digitalid.database.core.declaration;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.collections.freezable.FreezableArray;
+import net.digitalid.utility.collections.index.MutableIndex;
+import net.digitalid.utility.freezable.NonFrozen;
 import net.digitalid.utility.validation.reference.NonCapturable;
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.validation.state.Validated;
-import net.digitalid.utility.freezable.NonFrozen;
-import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.collections.index.MutableIndex;
 
 /**
  * This class implements a non-unique version of another declaration.

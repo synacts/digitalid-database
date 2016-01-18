@@ -2,6 +2,7 @@ package net.digitalid.database.core.declaration;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.validation.state.Validated;

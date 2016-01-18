@@ -1,8 +1,14 @@
 package net.digitalid.database.core.declaration;
 
 import java.sql.Statement;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.state.Validated;
+
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Locked;
 import net.digitalid.database.core.annotations.NonCommitting;
@@ -10,9 +16,6 @@ import net.digitalid.database.core.exceptions.operation.FailedOperationException
 import net.digitalid.database.core.exceptions.operation.FailedUpdateExecutionException;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.core.table.Table;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.validation.state.Validated;
 
 /**
  * This class implements an indexing version of another declaration.

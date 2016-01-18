@@ -2,10 +2,12 @@ package net.digitalid.database.core.exceptions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.exceptions.DigitalIDException;
+import net.digitalid.utility.validation.state.Immutable;
+
 import net.digitalid.database.core.exceptions.operation.FailedOperationException;
 import net.digitalid.database.core.exceptions.state.CorruptStateException;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.exceptions.DigitalIDException;
 
 /**
  * This exception indicates a database problem.

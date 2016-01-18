@@ -1,18 +1,21 @@
 package net.digitalid.database.core.converter.sql;
 
 import java.lang.reflect.Field;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.digitalid.utility.collections.annotations.size.MinSize;
+import net.digitalid.utility.conversion.Convertible;
+import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
+import net.digitalid.utility.conversion.exceptions.StoringException;
+import net.digitalid.utility.validation.reference.NonCapturable;
+
 import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.core.exceptions.state.value.CorruptNullValueException;
 import net.digitalid.database.core.interfaces.SelectionResult;
 import net.digitalid.database.core.sql.statement.insert.SQLInsertStatement;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.collections.annotations.size.MinSize;
-import net.digitalid.utility.conversion.Convertible;
-import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
-import net.digitalid.utility.conversion.exceptions.StoringException;
 
 /**
  *

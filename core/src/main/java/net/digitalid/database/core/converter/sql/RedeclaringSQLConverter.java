@@ -1,11 +1,13 @@
 package net.digitalid.database.core.converter.sql;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.converter.key.NonConvertingKeyConverter;
-import net.digitalid.database.core.declaration.Declaration;
+
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Matching;
 import net.digitalid.utility.validation.state.Pure;
+
+import net.digitalid.database.core.converter.key.NonConvertingKeyConverter;
+import net.digitalid.database.core.declaration.Declaration;
 
 /**
  * This class implements an SQL converter that redeclares another SQL converter.

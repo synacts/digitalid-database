@@ -1,9 +1,11 @@
 package net.digitalid.database.core.converter.key;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.converter.sql.RedeclaringSQLConverter;
+
 import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.validation.state.Stateless;
+
+import net.digitalid.database.core.converter.sql.RedeclaringSQLConverter;
 
 /**
  * This class implements a key converter that uses the object itself as its key.

@@ -1,11 +1,13 @@
 package net.digitalid.database.core.converter.sql;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.converter.sql.serializer.SQLBooleanConverter;
-import net.digitalid.database.core.converter.sql.serializer.SQLConvertibleConverter;
+
 import net.digitalid.utility.conversion.Convertible;
 import net.digitalid.utility.conversion.Format;
 import net.digitalid.utility.conversion.TypeMapper;
+
+import net.digitalid.database.core.converter.sql.serializer.SQLBooleanConverter;
+import net.digitalid.database.core.converter.sql.serializer.SQLConvertibleConverter;
 
 public class SQLFormat extends Format<SQLConverter> {
 
