@@ -3,14 +3,14 @@ package net.digitalid.database.core;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.system.logger.Log;
+import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.reference.NonCapturable;
 import net.digitalid.utility.validation.state.Initialized;
 import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.validation.state.Stateless;
 
 import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.database.core.exceptions.operation.FailedCommitException;
+import net.digitalid.database.exceptions.operation.FailedCommitException;
 import net.digitalid.database.core.interfaces.DatabaseInstance;
 
 /**
@@ -41,30 +41,6 @@ public final class Database {
         assert instance != null : "The database is initialized.";
         
         return instance;
-    }
-    
-    /* -------------------------------------------------- Dialect -------------------------------------------------- */
-    
-    /**
-     * Stores the SQL dialect.
-     */
-    private static @Nullable SQLDialect dialect;
-    
-    /**
-     * Returns the SQL dialect.
-     * <p>
-     * <em>Important:</em> Do not store
-     * the dialect permanently because
-     * it may change during testing!
-     * 
-     * @return the SQL dialect.
-     */
-    @Pure
-    @Initialized
-    public static @NonCapturable @Nonnull SQLDialect getDialect() {
-        assert dialect != null : "The database is initialized.";
-        
-        return dialect;
     }
     
     /* -------------------------------------------------- Single-Access -------------------------------------------------- */
@@ -104,25 +80,22 @@ public final class Database {
      * Initializes the database with the given instance and dialect.
      * 
      * @param instance the instance with which the database is configured.
-     * @param dialect the SQL dialect with which the database is configured.
      * @param singleAccess whether the database is accessed by a single process.
      */
-    public static void initialize(@Nonnull DatabaseInstance instance, @Nonnull SQLDialect dialect, boolean singleAccess) {
+    public static void initialize(@Nonnull DatabaseInstance instance, boolean singleAccess) {
         Database.instance = instance;
-        Database.dialect = dialect;
         Database.singleAccess = singleAccess;
         
-        Log.information("The database has been initialized for " + (singleAccess ? "single" : "multi") + "-access with a " + dialect.getClass().getSimpleName() + ".");
+        Log.information("The database has been initialized for " + (singleAccess ? "single" : "multi") + "-access.");
     }
     
     /**
      * Initializes the database with the given instance and dialect.
      * 
      * @param instance the instance with which the database is configured.
-     * @param dialect the SQL dialect with which the database is configured.
      */
-    public static void initialize(@Nonnull DatabaseInstance instance, @Nonnull SQLDialect dialect) {
-        initialize(instance, dialect, true);
+    public static void initialize(@Nonnull DatabaseInstance instance) {
+        initialize(instance, true);
     }
     
     /**

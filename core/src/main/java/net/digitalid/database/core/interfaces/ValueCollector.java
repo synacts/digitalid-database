@@ -8,16 +8,12 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.collections.annotations.size.MaxSize;
 import net.digitalid.utility.collections.annotations.size.Size;
 
-import net.digitalid.database.core.exceptions.operation.FailedResourceClosingException;
-import net.digitalid.database.core.exceptions.operation.FailedValueStoringException;
-import net.digitalid.database.core.interfaces.jdbc.JDBCValueCollector;
-import net.digitalid.database.core.sql.statement.table.create.SQLType;
+import net.digitalid.database.exceptions.operation.FailedResourceClosingException;
+import net.digitalid.database.exceptions.operation.FailedValueStoringException;
 
 /**
  * This interface allows to set the values of an SQL statement.
  * Advancing the parameter index is left to the implementation.
- * 
- * @see JDBCValueCollector
  */
 public interface ValueCollector extends AutoCloseable {
     
@@ -141,9 +137,9 @@ public interface ValueCollector extends AutoCloseable {
     /**
      * Sets the next parameter of the given SQL type to null.
      * 
-     * @param type the SQL type of the next parameter which is to be set to null.
+     * @param typeCode the SQL type of the next parameter which is to be set to null.
      */
-    public void setNull(@Nonnull SQLType type) throws FailedValueStoringException;
+    public void setNull(@Nonnull int typeCode) throws FailedValueStoringException;
     
     /* -------------------------------------------------- Batching -------------------------------------------------- */
     

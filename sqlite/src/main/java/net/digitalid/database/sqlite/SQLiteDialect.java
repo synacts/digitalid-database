@@ -8,10 +8,10 @@ import net.digitalid.utility.collections.annotations.elements.NonNullableElement
 import net.digitalid.utility.exceptions.internal.InternalException;
 import net.digitalid.utility.validation.reference.NonCapturable;
 
-import net.digitalid.database.core.SQLDialect;
-import net.digitalid.database.core.sql.SQLNode;
-import net.digitalid.database.core.sql.Transcriber;
-import net.digitalid.database.core.sql.expression.bool.SQLBooleanLiteral;
+import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.ast.SQLNode;
+import net.digitalid.database.dialect.ast.Transcriber;
+import net.digitalid.database.dialect.ast.expression.bool.SQLBooleanLiteral;
 import net.digitalid.database.core.table.Site;
 
 /**

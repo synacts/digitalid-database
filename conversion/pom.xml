@@ -21,6 +21,33 @@
             <artifactId>database-dialect</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>net.digitalid.testing</groupId>
+            <artifactId>testing-base</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.digitalid.testing</groupId>
+            <artifactId>testing-conversion</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <!-- TODO: move the following dependencies to the testing/database package. -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.190</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.digitalid.database</groupId>
+            <artifactId>database-jdbc</artifactId>
+            <version>1.0.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     
 </project>

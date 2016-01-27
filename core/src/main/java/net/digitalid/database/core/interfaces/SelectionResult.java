@@ -7,18 +7,15 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.collections.annotations.size.MaxSize;
 import net.digitalid.utility.collections.annotations.size.Size;
 
-import net.digitalid.database.core.exceptions.operation.FailedResourceClosingException;
-import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
-import net.digitalid.database.core.exceptions.state.row.EntryNotFoundException;
-import net.digitalid.database.core.exceptions.state.value.CorruptNullValueException;
-import net.digitalid.database.core.exceptions.state.value.CorruptParameterValueException;
-import net.digitalid.database.core.interfaces.jdbc.JDBCSelectionResult;
+import net.digitalid.database.exceptions.operation.FailedResourceClosingException;
+import net.digitalid.database.exceptions.operation.FailedValueRestoringException;
+import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
+import net.digitalid.database.exceptions.state.value.CorruptNullValueException;
+import net.digitalid.database.exceptions.state.value.CorruptParameterValueException;
 
 /**
  * This interface allows to get the values of an SQL result.
  * Advancing the column index is left to the implementation.
- * 
- * @see JDBCSelectionResult
  */
 public interface SelectionResult extends AutoCloseable {
     

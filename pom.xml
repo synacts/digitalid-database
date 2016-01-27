@@ -48,7 +48,7 @@
     <dependencies>
         <dependency>
             <groupId>net.digitalid.utility</groupId>
-            <artifactId>utility</artifactId>
+            <artifactId>utility-time</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>

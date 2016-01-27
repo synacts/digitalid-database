@@ -14,17 +14,18 @@ public abstract class Site {
     
     /* -------------------------------------------------- Prefix -------------------------------------------------- */
     
-    /**
-     * Returns whether the given prefix is valid.
-     * 
-     * @param prefix the prefix to be checked.
-     * 
-     * @return whether the given prefix is valid.
-     */
-    @Pure
-    public static boolean isValidPrefix(@Nonnull String prefix) {
-        return prefix.length() <= 40 && Database.getConfiguration().isValidIdentifier(prefix);
-    }
+    // TODO: should be checked otherwise using an Annotation.
+//    /**
+//     * Returns whether the given prefix is valid.
+//     * 
+//     * @param prefix the prefix to be checked.
+//     * 
+//     * @return whether the given prefix is valid.
+//     */
+//    @Pure
+//    public static boolean isValidPrefix(@Nonnull String prefix) {
+//        return prefix.length() <= 40 && Database.getConfiguration().isValidIdentifier(prefix);
+//    }
     
     /**
      * Stores the prefix of the site-specific database tables.
@@ -50,7 +51,7 @@ public abstract class Site {
      * @param prefix the prefix of the site-specific database tables.
      */
     protected Site(@Nonnull @Validated String prefix) {
-        assert isValidPrefix(prefix) : "The prefix is valid.";
+//        assert isValidPrefix(prefix) : "The prefix is valid.";
         
         this.prefix = prefix;
     }

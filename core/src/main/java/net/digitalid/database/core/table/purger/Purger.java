@@ -10,10 +10,10 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.system.logger.Log;
+import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.state.Stateless;
 
-import net.digitalid.database.core.exceptions.operation.FailedOperationException;
+import net.digitalid.database.exceptions.operation.FailedOperationException;
 
 /**
  * Description.
@@ -60,7 +60,8 @@ public final class Purger {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                try {
+                // TODO: reimplement in Converter.
+/*                try {
                     try (@Nonnull Statement statement = createStatement()) {
                         final long time = System.currentTimeMillis();
                         for (final @Nonnull Map.Entry<String, Long> entry : tables.entrySet()) {
@@ -72,6 +73,7 @@ public final class Purger {
                     Log.warning("Could not prune a table.", exception);
                     rollback();
                 }
+*/
             }
         }, 60_000l, 3_600_000l);
     }
