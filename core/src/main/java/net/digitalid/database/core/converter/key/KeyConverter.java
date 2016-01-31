@@ -3,7 +3,7 @@ package net.digitalid.database.core.converter.key;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.external.InvalidEncodingException;
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.validation.state.Validated;
 

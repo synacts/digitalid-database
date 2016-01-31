@@ -43,7 +43,7 @@ public final class MySQLDatabaseInstance extends JDBCDatabaseInstance {
      */
     @Pure
     public static boolean exists() {
-        return new File(Directory.getDataDirectory().getPath() + File.separator + "MySQL.conf").exists();
+        return new File(Directory.getDataDirectory().getPath() + "/MySQL.conf").exists();
     }
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
@@ -92,7 +92,7 @@ public final class MySQLDatabaseInstance extends JDBCDatabaseInstance {
         
         assert Configuration.isValidName(name) : "The name is valid for a database.";
         
-        final @Nonnull File file = new File(Directory.getDataDirectory().getPath() + File.separator + name + ".conf");
+        final @Nonnull File file = new File(Directory.getDataDirectory().getPath() + "/" + name + ".conf");
         if (file.exists()) {
             try (@Nonnull FileInputStream stream = new FileInputStream(file); @Nonnull InputStreamReader reader = new InputStreamReader(stream, "UTF-8")) {
                 properties.load(reader);

@@ -13,7 +13,7 @@ import net.digitalid.utility.conversion.Convertible;
 import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.state.Stateless;
 
 import net.digitalid.database.core.exceptions.operation.FailedValueRestoringException;
