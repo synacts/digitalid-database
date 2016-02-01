@@ -1,37 +1,23 @@
 package net.digitalid.database.conversion;
 
-import java.lang.reflect.Field;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.annotations.elements.NullableElements;
-import net.digitalid.utility.conversion.Converter;
-import net.digitalid.utility.conversion.ConverterAnnotations;
 import net.digitalid.utility.conversion.Convertible;
-import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.state.Stateless;
 
-import net.digitalid.database.core.Database;
-import net.digitalid.database.dialect.SQLDialect;
-import net.digitalid.database.dialect.ast.identifier.SQLName;
-import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
-import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
-import net.digitalid.database.dialect.ast.statement.insert.SQLInsertStatement;
+import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.statement.select.SQLWhereClause;
-import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDeclaration;
-import net.digitalid.database.dialect.ast.statement.table.create.SQLCreateTableStatement;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLReference;
+import net.digitalid.database.dialect.table.Table;
 import net.digitalid.database.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.exceptions.state.value.CorruptNullValueException;
-import net.digitalid.database.core.interfaces.SelectionResult;
-import net.digitalid.database.core.table.Site;
-import net.digitalid.database.dialect.table.Table;
 
 /**
  */

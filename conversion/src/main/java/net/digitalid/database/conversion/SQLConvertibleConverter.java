@@ -34,7 +34,7 @@ public class SQLConvertibleConverter<C extends Convertible> extends SQLConverter
             } catch (IllegalAccessException e) {
                 throw StoringException.get(type, e);
             }
-            converter.convertNullable(fieldValue, field.getType(), sqlInsertStatement);
+            converter.collectValues(fieldValue, field.getType(), sqlInsertStatement);
         } else {
             
         }

@@ -1,19 +1,24 @@
 package net.digitalid.database.dialect.ast.expression.string;
 
 import javax.annotation.Nonnull;
-import net.digitalid.database.core.interfaces.ValueCollector;
-import net.digitalid.database.dialect.ast.Transcriber;
-import net.digitalid.database.dialect.ast.expression.SQLExpression;
-import net.digitalid.database.dialect.ast.expression.SQLVariadicExpression;
-import net.digitalid.database.exceptions.operation.FailedValueStoringException;
+
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.freezable.FreezableArray;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.validation.reference.Captured;
 import net.digitalid.utility.validation.reference.NonCapturable;
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;
+
+import net.digitalid.database.core.interfaces.ValueCollector;
+import net.digitalid.database.core.table.Site;
+import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.ast.Transcriber;
+import net.digitalid.database.dialect.ast.expression.SQLExpression;
+import net.digitalid.database.dialect.ast.expression.SQLVariadicExpression;
+import net.digitalid.database.exceptions.operation.FailedValueStoringException;
 
 /**
  * This class implements a variadic string expression.

@@ -3,7 +3,7 @@ package net.digitalid.database.dialect.ast.statement.insert;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
-import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.annotations.elements.NullableElements;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
@@ -26,48 +26,39 @@ import net.digitalid.database.exceptions.operation.FailedValueStoringException;
  */
 public class SQLInsertStatement implements SQLParameterizableNode<SQLInsertStatement> {
     
-    /* -------------------------------------------------- Public Final Fields  -------------------------------------------------- */
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
+    
+    private SQLInsertStatement(@Nonnull SQLQualifiedTableName qualifiedTableName, @Nonnull @NonNullableElements @Frozen ReadOnlyList<SQLQualifiedColumnName> qualifiedColumnNames, @Nonnull @NullableElements SQLValuesOrStatement<?> valuesOrStatement) {
+        this.qualifiedTableName = qualifiedTableName;
+        this.qualifiedColumnNames = qualifiedColumnNames;
+        this.valuesOrStatement = valuesOrStatement;
+    }
+    
+    public static @Nonnull SQLInsertStatement get(@Nonnull SQLQualifiedTableName qualifiedTableName, @Nonnull @NonNullableElements @Frozen ReadOnlyList<SQLQualifiedColumnName> qualifiedColumnNames, @Nonnull @NullableElements SQLValuesOrStatement<?> valuesOrStatement) {
+        return new SQLInsertStatement(qualifiedTableName, qualifiedColumnNames, valuesOrStatement);
+    }
+    
+    /* -------------------------------------------------- Table name -------------------------------------------------- */
     
     public final @Nonnull SQLQualifiedTableName qualifiedTableName;
     
-    /* -------------------------------------------------- Constructor -------------------------------------------------- */
-    
-    private SQLInsertStatement(@Nonnull SQLQualifiedTableName qualifiedTableName) {
-        this.qualifiedColumnNames = FreezableArrayList.get();
-        this.qualifiedTableName = qualifiedTableName;
-    }
-    
-    public static @Nonnull SQLInsertStatement get(@Nonnull SQLQualifiedTableName qualifiedTableName) {
-        return new SQLInsertStatement(qualifiedTableName);
-    }
-    
     /* -------------------------------------------------- Column Names -------------------------------------------------- */
     
-    private final @Nonnull @NonNullableElements FreezableArrayList<SQLQualifiedColumnName> qualifiedColumnNames;
+    private final @Nonnull @NonNullableElements @Frozen ReadOnlyList<SQLQualifiedColumnName> qualifiedColumnNames;
     
     @Pure
     public @Nonnull @Frozen ReadOnlyList<SQLQualifiedColumnName> getQualifiedColumnNames() {
-        return qualifiedColumnNames.freeze();
-    }
-    
-    public void addQualifiedColumnName(@Nonnull SQLQualifiedColumnName qualifiedColumnName) {
-        qualifiedColumnNames.add(qualifiedColumnName);
+        return qualifiedColumnNames;
     }
     
     /* -------------------------------------------------- Values Or SelectStatement -------------------------------------------------- */
     
-    private @Nonnull SQLValuesOrStatement valuesOrStatement;
+    public final @Nonnull SQLValuesOrStatement<?> valuesOrStatement;
     
     @Pure
-    public @Nonnull SQLValuesOrStatement getValuesOrStatement() {
+    public @Nonnull SQLValuesOrStatement<?> getValuesOrStatement() {
         return valuesOrStatement;
     }
-    
-    public void setValuesOrStatement(@Nonnull SQLValuesOrStatement valuesOrStatement) {
-        this.valuesOrStatement = valuesOrStatement;
-    }
-    
-    /* -------------------------------------------------- Value Collector -------------------------------------------------- */
     
     @Override
     public void storeValues(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
