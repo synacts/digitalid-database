@@ -12,12 +12,13 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="database-dialect" />
-    <orderEntry type="module" module-name="database-core" />
+    <orderEntry type="module" module-name="digitalid-database-core" />
     <orderEntry type="module" module-name="database-exceptions" />
-    <orderEntry type="module" module-name="testing-base" />
+    <orderEntry type="module" module-name="utility-testing" />
     <orderEntry type="module" module-name="digitalid-utility-logging" />
+    <orderEntry type="module" module-name="utility-configuration" />
+    <orderEntry type="module" module-name="digitalid-utility-errors" />
     <orderEntry type="module" module-name="digitalid-utility-taglets" />
-    <orderEntry type="module" module-name="testing-conversion" />
     <orderEntry type="library" scope="TEST" name="Maven: com.h2database:h2:1.4.190" level="project" />
     <orderEntry type="module" module-name="database-jdbc" scope="TEST" />
     <orderEntry type="module" module-name="digitalid-utility-time" />
@@ -26,6 +27,7 @@
     <orderEntry type="module" module-name="digitalid-utility-casting" />
     <orderEntry type="module" module-name="digitalid-utility-validation" />
     <orderEntry type="module" module-name="digitalid-utility-exceptions" />
+    <orderEntry type="module" module-name="utility-processor" />
     <orderEntry type="module" module-name="digitalid-utility-collections" />
     <orderEntry type="module" module-name="digitalid-utility-string" />
     <orderEntry type="module" module-name="digitalid-utility-freezable" />

@@ -2,7 +2,7 @@ package net.digitalid.database.dialect.ast;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.reference.NonCapturable;
 
 import net.digitalid.database.core.table.Site;
@@ -30,7 +30,7 @@ public abstract class Transcriber<N> {
         if (type.isInstance(node)) {
             transcribe(dialect, type.cast(node), site, string);
         } else {
-            throw InternalException.get("Cannot transcribe node of type '" + node.getClass() + "' with transcriber for type '" + type + "'.");
+            throw InternalException.of("Cannot transcribe node of type '" + node.getClass() + "' with transcriber for type '" + type + "'.");
         }
     }
     

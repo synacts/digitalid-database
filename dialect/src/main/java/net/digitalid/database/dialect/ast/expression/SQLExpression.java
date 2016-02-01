@@ -13,4 +13,4 @@ import net.digitalid.database.dialect.ast.expression.string.SQLStringExpression;
  * @see SQLStringExpression
  * @see SQLVariadicExpression
  */
-public interface SQLExpression extends SQLParameterizableNode {}
+public interface SQLExpression<T> extends SQLParameterizableNode<T> {}

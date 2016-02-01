@@ -10,4 +10,4 @@ import net.digitalid.database.dialect.ast.expression.number.SQLBinaryNumberOpera
  * @see SQLBinaryBooleanOperator
  * @see SQLBinaryNumberOperator
  */
-public interface SQLBinaryOperator extends SQLNode {}
+public interface SQLBinaryOperator<T> extends SQLNode<T> {}

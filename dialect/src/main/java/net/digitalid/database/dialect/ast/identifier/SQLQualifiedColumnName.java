@@ -10,7 +10,7 @@ import net.digitalid.database.dialect.ast.Transcriber;
 /**
  *
  */
-public class SQLQualifiedColumnName extends SQLIdentifier<SQLQualifiedColumnName> {
+public class SQLQualifiedColumnName implements SQLIdentifier<SQLQualifiedColumnName> {
     
     /* -------------------------------------------------- Final Fields -------------------------------------------------- */
     
@@ -20,7 +20,7 @@ public class SQLQualifiedColumnName extends SQLIdentifier<SQLQualifiedColumnName
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
-    private SQLQualifiedColumnName(@Nonnull String columnName, @Nullable String tableName) {
+    protected SQLQualifiedColumnName(@Nonnull String columnName, @Nullable String tableName) {
         this.columnName = columnName;
         this.tableName = tableName;
     }

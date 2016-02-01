@@ -65,7 +65,7 @@ public class Table {
      */
     @Pure
     public final @Nonnull String getName(@Nonnull Site site) {
-        return site + name.tableName;
+        return name.getValue();
     }
     
     /* -------------------------------------------------- Creation and Deletion -------------------------------------------------- */

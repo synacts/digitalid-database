@@ -2,7 +2,7 @@ package net.digitalid.database.dialect.ast.expression.number;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.reference.NonCapturable;
 import net.digitalid.utility.validation.state.Immutable;
 
@@ -65,7 +65,7 @@ public enum SQLBinaryNumberOperator implements SQLBinaryOperator {
             case DIVISION: string.append("/"); break;
             case INTEGER_DIVISION: string.append("DIV"); break;
             case MODULO: string.append("%"); break;
-            default: throw InternalException.get(node.name() + " not implemented.");
+            default: throw InternalException.of(node.name() + " not implemented.");
         }
         }
         

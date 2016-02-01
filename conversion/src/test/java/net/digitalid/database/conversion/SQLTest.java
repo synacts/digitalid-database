@@ -1,14 +1,14 @@
 package net.digitalid.database.conversion;
 
-import java.sql.ResultSet;
-
 import net.digitalid.database.conversion.h2.H2JDBCDatabaseInstance;
+import net.digitalid.database.conversion.testenvironment.AnotherClass;
+import net.digitalid.database.conversion.testenvironment.SubClass;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.interfaces.DatabaseInstance;
 import net.digitalid.database.core.interfaces.SelectionResult;
-import net.digitalid.database.jdbc.JDBCSelectionResult;
-
-import net.digitalid.testing.base.TestBase;
+import net.digitalid.database.core.table.Site;
+import net.digitalid.database.dialect.table.Table;
+import net.digitalid.utility.testing.TestingBase;
 import org.h2.tools.Server;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -20,7 +20,7 @@ import org.junit.Test;
  * SQLTestBase establishes a connection to a database and provides assert statements for checking
  * whether DDL and DML statements where successful.
  */
-public class SQLTest extends TestBase {
+public class SQLTest extends TestingBase {
     
     private static Server server;
     
@@ -28,8 +28,8 @@ public class SQLTest extends TestBase {
     public static void setUpSQL() throws Exception {
         server = Server.createTcpServer();
         server.start();
-        H2JDBCDatabaseInstance h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:tcp://localhost:9092/mem:test;DB_CLOSE_DELAY=-1;");
-        //H2JDBCDatabaseInstance h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:mem:test");
+        //H2JDBCDatabaseInstance h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:tcp://localhost:9092/mem:test;DB_CLOSE_DELAY=-1;");
+        H2JDBCDatabaseInstance h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:mem:test");
         Database.initialize(h2Database);
     }
     
@@ -38,27 +38,30 @@ public class SQLTest extends TestBase {
         server.shutdown();
     }
     
+    /**
+     * A generic test that verifies that a connection to the database could be established, and that a table could be created by issuing an SQL statement.
+     */
     @Test
     public void shouldConnectToDatabase() throws Exception {
         DatabaseInstance instance = Database.getInstance();
         instance.execute("CREATE TABLE blubb");
-        JDBCSelectionResult showTablesQuery = (JDBCSelectionResult) instance.executeSelect("SELECT table_name FROM information_schema.tables");
-        ResultSet resultSet = showTablesQuery.getResultSet();
-        if (resultSet.next()) {
-            System.out.println("available tables:");
-            System.out.println(resultSet.getString("table_name"));
-        } else {
-            System.out.println("no table created :_(");
-        }
-        SelectionResult tableExistsQuery = instance.executeSelect("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = \"blubb\"");
-        long count = tableExistsQuery.getInteger64();
-        Assert.assertSame(1, count);
+        // TODO: implement h2 with transcriber
+        SelectionResult tableExistsQuery = instance.executeSelect("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'BLUBB'");
+        tableExistsQuery.moveToFirstRow();
+        Assert.assertSame(1, tableExistsQuery.getInteger32());
     }
     
     @Test
     public void shouldCreateTable() throws Exception {
-        /*Site site = new TestHost();
+        Site site = new TestHost();
         // Takes name from table name, schema from site and columns from convertible classes.
-        SQL.create("tablename", site, Subclass.class, AnotherClass.class);*/
+        Table table = SQL.create("tablename", site, SubClass.class, AnotherClass.class);
+        Assert.assertEquals(site.toString() + ".tablename", table.getName(site));
+        
+        DatabaseInstance instance = Database.getInstance();
+        SelectionResult tableExistsQuery = instance.executeSelect("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'TABLENAME' and table_schema = '" + site.toString() + "'");
+        tableExistsQuery.moveToFirstRow();
+        Assert.assertSame(1, tableExistsQuery.getInteger32());
     }
+    
 }

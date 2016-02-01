@@ -1,21 +1,19 @@
 package net.digitalid.database.dialect.ast.expression.bool;
 
 import javax.annotation.Nonnull;
-
-import net.digitalid.utility.exceptions.internal.InternalException;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.validation.state.Immutable;
-
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.SQLDialect;
-import net.digitalid.database.dialect.ast.SQLNode;
 import net.digitalid.database.dialect.ast.Transcriber;
+import net.digitalid.database.dialect.ast.expression.SQLBinaryOperator;
+import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.state.Immutable;
 
 /**
  * This class enumerates the supported comparison operators.
  */
 @Immutable
-public enum SQLComparisonOperator implements SQLNode {
+public enum SQLComparisonOperator implements SQLBinaryOperator<SQLComparisonOperator> {
     
     /* -------------------------------------------------- Constants -------------------------------------------------- */
     
@@ -65,7 +63,7 @@ public enum SQLComparisonOperator implements SQLNode {
             case GREATER: string.append(">"); break;
             case LESS_OR_EQUAL: string.append("<="); break;
             case LESS: string.append("<"); break;
-            default: throw InternalException.get(node.name() + " not implemented.");
+            default: throw InternalException.of(node.name() + " not implemented.");
         }
         }
         

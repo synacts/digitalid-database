@@ -2,7 +2,7 @@ package net.digitalid.database.dialect.ast.expression.number;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.reference.NonCapturable;
 import net.digitalid.utility.validation.state.Pure;
 
@@ -16,7 +16,7 @@ import net.digitalid.database.core.table.Site;
 /**
  * This class implements a number literal.
  */
-public class SQLNumberLiteral extends SQLNumberExpression implements SQLLiteral {
+public final class SQLNumberLiteral extends SQLNumberExpression<SQLNumberLiteral> implements SQLLiteral<SQLNumberLiteral> {
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
     

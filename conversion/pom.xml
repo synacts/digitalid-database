@@ -23,17 +23,11 @@
         </dependency>
 
         <dependency>
-            <groupId>net.digitalid.testing</groupId>
-            <artifactId>testing-base</artifactId>
+            <groupId>net.digitalid.utility</groupId>
+            <artifactId>utility-testing</artifactId>
             <version>${project.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>net.digitalid.testing</groupId>
-            <artifactId>testing-conversion</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
         <!-- TODO: move the following dependencies to the testing/database package. -->
         <dependency>
             <groupId>com.h2database</groupId>

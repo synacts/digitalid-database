@@ -2,7 +2,7 @@ package net.digitalid.database.dialect.ast.expression.string;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.reference.NonCapturable;
 import net.digitalid.utility.validation.state.Immutable;
 
@@ -54,7 +54,7 @@ public enum SQLVariadicStringOperator implements SQLVariadicOperator {
                     string.append("COALESCE");
                     break;
                 default:
-                    throw InternalException.get(node.name() + " not implemented.");
+                    throw InternalException.of(node.name() + " not implemented.");
             }
         }
         

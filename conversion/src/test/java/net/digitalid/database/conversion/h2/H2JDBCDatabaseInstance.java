@@ -4,7 +4,7 @@ import java.util.Properties;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.InternalException;
 
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.operation.FailedOperationException;
@@ -36,7 +36,7 @@ public class H2JDBCDatabaseInstance extends JDBCDatabaseInstance {
     @Override
     protected @Nonnull Properties getProperties() {
         final @Nonnull Properties properties = new Properties();
-        properties.setProperty("username", "sa");
+        properties.setProperty("user", "sa");
         properties.setProperty("password", "");
         return properties;
     }

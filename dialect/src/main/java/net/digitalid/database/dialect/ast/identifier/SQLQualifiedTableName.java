@@ -28,7 +28,7 @@ public class SQLQualifiedTableName extends SQLIdentifier<SQLQualifiedTableName> 
 
     @Override
     public @Nonnull @MaxSize(63) String getValue() {
-        String qualifiedTableName = tableName + "." + site.toString();
+        @Nonnull String qualifiedTableName = site.toString() + "." + tableName;
         assert qualifiedTableName.length() <= 63;
         return qualifiedTableName;
     }
@@ -42,4 +42,5 @@ public class SQLQualifiedTableName extends SQLIdentifier<SQLQualifiedTableName> 
     Transcriber<SQLQualifiedTableName> getTranscriber() {
         return transcriber;
     }
+    
 }

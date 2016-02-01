@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.annotations.elements.NullableElements;
 import net.digitalid.utility.conversion.Converter;
@@ -13,7 +14,7 @@ import net.digitalid.utility.conversion.Convertible;
 import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.state.Stateless;
 
 import net.digitalid.database.core.Database;
@@ -76,7 +77,7 @@ public final class SQL {
     
     /* -------------------------------------------------- Converting -------------------------------------------------- */
     
-    public static Table create(@Nonnull String tableName, @Nonnull Site site, @Nonnull @NonNullableElements Class<? extends Convertible>... columnGroups) throws InternalException {
+    public static @Nonnull Table create(@Nonnull String tableName, @Nonnull Site site, @Nonnull @NonNullableElements Class<? extends Convertible>... columnGroups) throws InternalException, FailedNonCommittingOperationException {
         return create(tableName, site, columnGroups, new SQLReference[0]);
     }
     
@@ -89,20 +90,19 @@ public final class SQL {
      * the database instance, which executes the statement. Upon successful execution, a table object is 
      * returned. It may be used for other calls to the SQL class as a reference.
      */
-    public static Table create(@Nonnull String tableName, @Nonnull Site site, @Nonnull @NonNullableElements Class<? extends Convertible>[] columnGroups, @Nonnull SQLReference[] references) throws InternalException {
-/*        final @Nonnull SQLQualifiedTableName qualifiedTableName = SQLQualifiedTableName.get(tableName, site);
-        final @Nonnull SQLCreateTableStatement createTableStatement = SQLCreateTableStatement.get(qualifiedTableName);
+    public static @Nonnull Table create(@Nonnull String tableName, @Nonnull Site site, @Nonnull @NonNullableElements Class<? extends Convertible>[] columnGroups, @Nonnull SQLReference[] references) throws InternalException, FailedNonCommittingOperationException {
+        final @Nonnull SQLQualifiedTableName qualifiedTableName = SQLQualifiedTableName.get(tableName, site);
+        final @Nonnull SQLCreateTableStatement createTableStatement = SQLCreateTableStatement.with(qualifiedTableName);
         for (@Nonnull Class<? extends Convertible> columnGroup : columnGroups) {
             for (@Nonnull Field field : columnGroup.getFields()) {
                 @Nonnull SQLConverter<?> sqlConverter = FORMAT.getConverter(field);
-                @Nonnull SQLColumnDeclaration columnDeclaration = sqlConverter.createColumnDeclaration(field);
+                @Nonnull SQLColumnDeclaration columnDeclaration = sqlConverter.createColumnDeclaration(tableName, field);
                 createTableStatement.addColumnDeclaration(columnDeclaration);
             }
         }
         final @Nonnull String createTableStatementString = createTableStatement.toSQL(SQLDialect.getDialect(), site);
         Database.getInstance().execute(createTableStatementString);
-        return Table.get(qualifiedTableName);*/
-        return null;
+        return Table.get(qualifiedTableName);
     }
     
     /**

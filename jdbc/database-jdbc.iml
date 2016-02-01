@@ -9,7 +9,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="database-core" />
+    <orderEntry type="module" module-name="digitalid-database-core" />
     <orderEntry type="module" module-name="database-exceptions" />
     <orderEntry type="module" module-name="digitalid-utility-time" />
     <orderEntry type="module" module-name="digitalid-utility-rootclass" />
@@ -18,7 +18,10 @@
     <orderEntry type="module" module-name="digitalid-utility-validation" />
     <orderEntry type="module" module-name="digitalid-utility-exceptions" />
     <orderEntry type="module" module-name="digitalid-utility-logging" />
+    <orderEntry type="module" module-name="utility-configuration" />
+    <orderEntry type="module" module-name="digitalid-utility-errors" />
     <orderEntry type="module" module-name="digitalid-utility-taglets" />
+    <orderEntry type="module" module-name="utility-processor" />
     <orderEntry type="module" module-name="digitalid-utility-collections" />
     <orderEntry type="module" module-name="digitalid-utility-string" />
     <orderEntry type="module" module-name="digitalid-utility-freezable" />
