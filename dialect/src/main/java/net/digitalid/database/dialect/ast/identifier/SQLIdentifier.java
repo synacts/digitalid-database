@@ -3,7 +3,7 @@ package net.digitalid.database.dialect.ast.identifier;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.collections.annotations.size.MaxSize;
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.reference.NonCapturable;
 import net.digitalid.utility.validation.state.Immutable;
 

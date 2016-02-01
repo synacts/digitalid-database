@@ -2,7 +2,7 @@ package net.digitalid.database.dialect.ast.expression.bool;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.reference.NonCapturable;
 import net.digitalid.utility.validation.state.Pure;
 
@@ -23,7 +23,7 @@ public class SQLBooleanLiteral extends SQLBooleanExpression implements SQLLitera
     /**
      * Stores the value of this boolean literal.
      */
-    public final boolean value;
+    public final Boolean value;
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -32,7 +32,7 @@ public class SQLBooleanLiteral extends SQLBooleanExpression implements SQLLitera
      * 
      * @param value the value of the new boolean literal.
      */
-    protected SQLBooleanLiteral(boolean value) {
+    protected SQLBooleanLiteral(Boolean value) {
         this.value = value;
     }
     
@@ -44,7 +44,7 @@ public class SQLBooleanLiteral extends SQLBooleanExpression implements SQLLitera
      * @return a new boolean literal with the given value.
      */
     @Pure
-    public static @Nonnull SQLBooleanLiteral get(boolean value) {
+    public static @Nonnull SQLBooleanLiteral get(Boolean value) {
         return new SQLBooleanLiteral(value);
     }
     
@@ -57,7 +57,11 @@ public class SQLBooleanLiteral extends SQLBooleanExpression implements SQLLitera
         
         @Override
         protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBooleanLiteral node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string) throws InternalException {
-        string.append(node.value ? "TRUE" : "FALSE");
+            if (node.value != null) {
+                string.append(node.value ? "TRUE" : "FALSE");
+            } else {
+                string.append("NULL");
+            }
         }
         
     };
@@ -70,6 +74,8 @@ public class SQLBooleanLiteral extends SQLBooleanExpression implements SQLLitera
     /* -------------------------------------------------- SQLParameterizableNode -------------------------------------------------- */
     
     @Override
-    public final void storeValues(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {}
+    public final void storeValues(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+        collector.setBoolean(value);
+    }
     
 }

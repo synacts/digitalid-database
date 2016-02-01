@@ -50,7 +50,7 @@ public class SQLTest extends TestBase {
         } else {
             System.out.println("no table created :_(");
         }
-        SelectionResult tableExistsQuery = instance.executeSelect("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = \"blubb\"");
+        SelectionResult tableExistsQuery = instance.executeSelect("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'BLUBB'");
         long count = tableExistsQuery.getInteger64();
         Assert.assertSame(1, count);
     }

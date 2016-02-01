@@ -6,7 +6,7 @@ import java.util.ServiceLoader;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.reference.NonCapturable;
 import net.digitalid.utility.validation.state.Immutable;
 

@@ -12,7 +12,7 @@ import java.util.Properties;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;

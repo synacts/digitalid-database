@@ -2,9 +2,11 @@ package net.digitalid.database.dialect.ast.statement.insert;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.castable.exceptions.InvalidClassCastException;
 import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.collections.annotations.elements.NullableElements;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
-import net.digitalid.utility.exceptions.internal.InternalException;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.reference.NonCapturable;
 
 import net.digitalid.database.dialect.SQLDialect;
@@ -26,12 +28,20 @@ public class SQLValues implements SQLParameterizableNode<SQLValues>, SQLValuesOr
         this.values = FreezableArrayList.get();
     }
     
+    public static @Nonnull @NullableElements SQLValues get() {
+        return new SQLValues();
+    }
+    
     @Override
     public void storeValues(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
         for (@Nonnull SQLExpression sqlExpression : values) {
             // in the simplest case, the sqlExpression is a literal.
             sqlExpression.storeValues(collector);
         }
+    }
+    
+    public void addValue(SQLExpression value) {
+        values.add(value);
     }
     
     /* -------------------------------------------------- SQL Node -------------------------------------------------- */
@@ -59,4 +69,10 @@ public class SQLValues implements SQLParameterizableNode<SQLValues>, SQLValuesOr
         return transcriber;
     }
     
+    @Nonnull
+    @Override
+    public <T> T castTo(@Nonnull Class<T> targetClass) throws InvalidClassCastException {
+        assert targetClass.isInstance(this) : "This object can only be casted to SQLValues";
+        return (T) this;
+    }
 }
