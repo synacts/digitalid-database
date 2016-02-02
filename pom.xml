@@ -36,16 +36,21 @@
         <module>exceptions</module>
         <module>core</module>
         <module>jdbc</module>
-        <module>apple</module>
-        <module>android</module>
+<!--        <module>apple</module>
+        <module>android</module>-->
         <module>dialect</module>
-        <module>mysql</module>
+<!--        <module>mysql</module>
         <module>sqlite</module>
-        <module>postgres</module>
+        <module>postgres</module>-->
         <module>conversion</module>
     </modules>
     
     <dependencies>
+        <dependency>
+            <groupId>net.digitalid.utility</groupId>
+            <artifactId>utility-collections</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <dependency>
             <groupId>net.digitalid.utility</groupId>
             <artifactId>utility-time</artifactId>

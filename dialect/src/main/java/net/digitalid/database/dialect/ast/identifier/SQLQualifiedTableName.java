@@ -2,8 +2,8 @@ package net.digitalid.database.dialect.ast.identifier;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.collections.annotations.size.MaxSize;
-import net.digitalid.utility.collections.annotations.size.MinSize;
+import net.digitalid.utility.validation.annotations.size.MaxSize;
+import net.digitalid.utility.validation.annotations.size.MinSize;
 
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.Transcriber;
@@ -11,7 +11,7 @@ import net.digitalid.database.dialect.ast.Transcriber;
 /**
  *
  */
-public class SQLQualifiedTableName extends SQLIdentifier<SQLQualifiedTableName> {
+public class SQLQualifiedTableName implements SQLIdentifier<SQLQualifiedTableName> {
     
     public final @Nonnull @MinSize(1) String tableName;
     

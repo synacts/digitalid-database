@@ -4,10 +4,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.logging.Log;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.validation.state.Initialized;
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.validation.state.Stateless;
+import net.digitalid.utility.validation.annotations.reference.NonCapturable;
+import net.digitalid.utility.validation.annotations.type.Stateless;
+import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.exceptions.operation.FailedCommitException;
@@ -36,7 +35,6 @@ public final class Database {
      * @return the database instance.
      */
     @Pure
-    @Initialized
     public static @NonCapturable @Nonnull DatabaseInstance getInstance() {
         assert instance != null : "The database is initialized.";
         
@@ -115,7 +113,6 @@ public final class Database {
      * (On the server, this method should only be called by the worker.)
      */
     @Committing
-    @Initialized
     public static void commit() throws FailedCommitException {
         getInstance().commit();
     }
@@ -125,7 +122,6 @@ public final class Database {
      * (On the server, this method should only be called by the worker.)
      */
     @Committing
-    @Initialized
     public static void rollback() {
         getInstance().rollback();
     }

@@ -3,8 +3,9 @@ package net.digitalid.database.dialect.ast.expression.bool;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.exceptions.internal.UncoveredCaseException;
+import net.digitalid.utility.validation.annotations.reference.NonCapturable;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
@@ -60,7 +61,7 @@ public enum SQLBinaryBooleanOperator implements SQLBinaryOperator {
             case XOR: string.append("XOR"); break;
             case EQUAL: string.append("="); break;
             case UNEQUAL: string.append("!="); break;
-            default: throw InternalException.of(node.name() + " not implemented.");
+            default: throw UncoveredCaseException.with(node.name() + " not implemented.");
         }           
         }
         

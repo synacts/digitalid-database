@@ -2,9 +2,11 @@ package net.digitalid.database.conversion;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.conversion.Convertible;
+import net.digitalid.utility.generator.conversion.Convertible;
 import net.digitalid.utility.conversion.Format;
 import net.digitalid.utility.conversion.TypeMapper;
+
+import net.digitalid.database.conversion.value.SQLObjectConverter;
 
 public class SQLFormat extends Format<SQLConverter> {
 
@@ -16,7 +18,7 @@ public class SQLFormat extends Format<SQLConverter> {
     /**
      * Creates a new converter which converts convertible objects to SQL.
      */
-    final static @Nonnull SQLConverter<? extends Convertible> CONVERTIBLE_CONVERTER = new SQLConvertibleConverter();
+    final static @Nonnull SQLConverter<? extends Convertible> CONVERTIBLE_CONVERTER = new SQLObjectConverter<>();
     
     @Override
     protected @Nonnull SQLConverter getBooleanConverter() {

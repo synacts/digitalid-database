@@ -10,7 +10,7 @@ import net.digitalid.database.dialect.ast.expression.number.SQLNumberExpression;
 import net.digitalid.database.dialect.ast.utility.binary.SQLBinaryExpressionTranscriber;
 import net.digitalid.database.exceptions.operation.FailedValueStoringException;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 /**
  * Description.

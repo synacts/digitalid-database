@@ -2,8 +2,8 @@ package net.digitalid.database.dialect.ast.expression.string;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.dialect.ast.expression.SQLExpression;
 

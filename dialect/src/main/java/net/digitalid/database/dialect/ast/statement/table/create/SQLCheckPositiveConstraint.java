@@ -7,7 +7,7 @@ import net.digitalid.database.dialect.ast.expression.bool.SQLComparisonOperator;
 import net.digitalid.database.dialect.ast.expression.bool.SQLNumberComparisonBooleanExpression;
 import net.digitalid.database.dialect.ast.expression.number.SQLNumberLiteral;
 import net.digitalid.database.dialect.ast.expression.number.SQLNumberReference;
-import net.digitalid.utility.validation.math.Positive;
+import net.digitalid.utility.validation.annotations.math.Positive;
 
 /**
  *

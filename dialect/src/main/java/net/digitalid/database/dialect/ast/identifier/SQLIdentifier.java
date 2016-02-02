@@ -2,10 +2,10 @@ package net.digitalid.database.dialect.ast.identifier;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.collections.annotations.size.MaxSize;
+import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.annotations.reference.NonCapturable;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLNode;

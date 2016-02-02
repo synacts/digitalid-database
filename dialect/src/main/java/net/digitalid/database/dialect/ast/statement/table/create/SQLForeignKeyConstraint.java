@@ -8,7 +8,7 @@ import net.digitalid.database.dialect.annotations.References;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.string.iterable.Brackets;
 import net.digitalid.utility.string.iterable.IterableConverter;
-import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 /**
  *

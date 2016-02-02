@@ -9,20 +9,20 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="digitalid-utility-time" />
+    <orderEntry type="module" module-name="digitalid-utility-collections" />
+    <orderEntry type="module" module-name="utility-generator" />
     <orderEntry type="module" module-name="digitalid-utility-rootclass" />
-    <orderEntry type="module" module-name="digitalid-utility-conversion" />
     <orderEntry type="module" module-name="digitalid-utility-casting" />
+    <orderEntry type="module" module-name="utility-processor" />
+    <orderEntry type="module" module-name="digitalid-utility-string" />
+    <orderEntry type="module" module-name="digitalid-utility-freezable" />
     <orderEntry type="module" module-name="digitalid-utility-validation" />
     <orderEntry type="module" module-name="digitalid-utility-exceptions" />
     <orderEntry type="module" module-name="digitalid-utility-logging" />
     <orderEntry type="module" module-name="utility-configuration" />
     <orderEntry type="module" module-name="digitalid-utility-errors" />
     <orderEntry type="module" module-name="digitalid-utility-taglets" />
-    <orderEntry type="module" module-name="utility-processor" />
-    <orderEntry type="module" module-name="digitalid-utility-collections" />
-    <orderEntry type="module" module-name="digitalid-utility-string" />
-    <orderEntry type="module" module-name="digitalid-utility-freezable" />
+    <orderEntry type="module" module-name="digitalid-utility-time" />
     <orderEntry type="library" name="Maven: com.google.j2objc:j2objc-annotations:0.9.8" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />

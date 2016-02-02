@@ -4,8 +4,8 @@ import java.math.BigInteger;
 
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.annotations.size.MaxSize;
-import net.digitalid.utility.collections.annotations.size.Size;
+import net.digitalid.utility.validation.annotations.size.MaxSize;
+import net.digitalid.utility.validation.annotations.size.Size;
 
 import net.digitalid.database.exceptions.operation.FailedResourceClosingException;
 import net.digitalid.database.exceptions.operation.FailedValueRestoringException;

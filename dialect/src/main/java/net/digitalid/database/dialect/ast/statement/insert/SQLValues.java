@@ -3,11 +3,11 @@ package net.digitalid.database.dialect.ast.statement.insert;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.castable.exceptions.InvalidClassCastException;
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
-import net.digitalid.utility.collections.annotations.elements.NullableElements;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.elements.NullableElements;
+import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLParameterizableNode;
@@ -28,7 +28,8 @@ public class SQLValues implements SQLParameterizableNode<SQLValues>, SQLValuesOr
         this.values = FreezableArrayList.get();
     }
     
-    public static @Nonnull @NullableElements SQLValues get() {
+    public static @Nonnull @NullableElements
+    SQLValues get() {
         return new SQLValues();
     }
     

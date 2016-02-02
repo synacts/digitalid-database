@@ -3,7 +3,7 @@ package net.digitalid.database.core.interfaces;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.exceptions.operation.FailedCommitException;

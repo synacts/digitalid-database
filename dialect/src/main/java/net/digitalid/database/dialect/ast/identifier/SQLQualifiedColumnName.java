@@ -3,7 +3,7 @@ package net.digitalid.database.dialect.ast.identifier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.annotations.size.MaxSize;
+import net.digitalid.utility.validation.annotations.size.MaxSize;
 
 import net.digitalid.database.dialect.ast.Transcriber;
 
@@ -23,6 +23,10 @@ public class SQLQualifiedColumnName implements SQLIdentifier<SQLQualifiedColumnN
     protected SQLQualifiedColumnName(@Nonnull String columnName, @Nullable String tableName) {
         this.columnName = columnName;
         this.tableName = tableName;
+    }
+    
+    public static SQLQualifiedColumnName get(@Nonnull String columnName) {
+        return new SQLQualifiedColumnName(columnName, null);
     }
     
     public static SQLQualifiedColumnName get(@Nonnull String columnName, @Nullable String tableName) {

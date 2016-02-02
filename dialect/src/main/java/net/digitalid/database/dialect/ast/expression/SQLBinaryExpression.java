@@ -2,7 +2,7 @@ package net.digitalid.database.dialect.ast.expression;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.dialect.ast.expression.bool.SQLBinaryBooleanExpression;
 import net.digitalid.database.dialect.ast.expression.number.SQLBinaryNumberExpression;

@@ -6,9 +6,10 @@ import java.sql.Types;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.exceptions.internal.UncoveredCaseException;
+import net.digitalid.utility.validation.annotations.reference.NonCapturable;
+import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.SQLDialect;
@@ -126,35 +127,6 @@ public enum SQLType implements SQLNode {
         this.code = code;
     }
     
-    // TODO: probably move to SQL converter
-    public static @Nonnull SQLType of(@Nonnull Class<?> type) throws InternalException {
-        if (boolean.class.isAssignableFrom(type) || Boolean.class.isAssignableFrom(type)) {
-            return SQLType.BOOLEAN;
-        } else if (byte.class.isAssignableFrom(type) || Byte.class.isAssignableFrom(type)) {
-            return SQLType.INTEGER08;
-        } else if (short.class.isAssignableFrom(type) || Short.class.isAssignableFrom(type)) {
-            return SQLType.INTEGER16;
-        } else if (int.class.isAssignableFrom(type) || Integer.class.isAssignableFrom(type)) {
-            return SQLType.INTEGER32;
-        } else if (long.class.isAssignableFrom(type) || Long.class.isAssignableFrom(type)) {
-            return SQLType.INTEGER64;
-        } else if (BigInteger.class.isAssignableFrom(type)) {
-            return SQLType.INTEGER;
-        } else if (float.class.isAssignableFrom(type) || Float.class.isAssignableFrom(type)) {
-            return SQLType.DECIMAL32;
-        } else if (double.class.isAssignableFrom(type) || Double.class.isAssignableFrom(type)) {
-            return SQLType.DECIMAL64;
-        } else if (char.class.isAssignableFrom(type) || Character.class.isAssignableFrom(type)) {
-            return SQLType.STRING01;
-        } else if (String.class.isAssignableFrom(type)) {
-            return SQLType.STRING;
-        } else if (byte[].class.isAssignableFrom(type) || Byte[].class.isAssignableFrom(type)) {
-            return SQLType.BINARY;
-        } else {
-            throw InternalException.of(type.getSimpleName() + " not implemented.");
-        }
-    }
-    
     /* -------------------------------------------------- SQLNode -------------------------------------------------- */
     
     /**
@@ -180,7 +152,7 @@ public enum SQLType implements SQLNode {
                 case BINARY128: string.append("BINARY(16)"); break;
                 case BINARY256: string.append("BINARY(32)"); break;
                 case BINARY: string.append("MEDIUMBLOB"); break;
-                default: throw InternalException.of(type.name() + " not implemented.");
+                default: throw UncoveredCaseException.with(type.name() + " not implemented.");
             }
         }
         

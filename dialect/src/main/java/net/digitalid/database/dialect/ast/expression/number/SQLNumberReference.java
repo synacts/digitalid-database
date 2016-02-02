@@ -8,9 +8,8 @@ import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.identifier.SQLIdentifier;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
 import net.digitalid.database.exceptions.operation.FailedValueStoringException;
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.validation.validator.Validator;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 /**
  *
@@ -26,7 +25,7 @@ public class SQLNumberReference extends SQLNumberExpression<SQLNumberReference> 
     }
     
     public static @Nonnull SQLNumberReference get(@Nonnull Field field) {
-        Validator.checkType(field, acceptedTypes);
+        //Validator.checkType(field, acceptedTypes);
         final @Nonnull SQLQualifiedColumnName qualifiedColumnName = SQLQualifiedColumnName.get(field.getName(), null);
         return new SQLNumberReference(qualifiedColumnName);
     }

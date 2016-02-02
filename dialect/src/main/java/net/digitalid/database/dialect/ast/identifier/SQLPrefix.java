@@ -2,9 +2,9 @@ package net.digitalid.database.dialect.ast.identifier;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.collections.annotations.size.MaxSize;
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.annotations.size.MaxSize;
+import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.dialect.ast.Transcriber;
 
@@ -12,7 +12,7 @@ import net.digitalid.database.dialect.ast.Transcriber;
  * This class represents an SQL prefix.
  */
 @Immutable
-public final class SQLPrefix extends SQLIdentifier<SQLPrefix> {
+public final class SQLPrefix implements SQLIdentifier<SQLPrefix> {
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
     

@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 /**
  *

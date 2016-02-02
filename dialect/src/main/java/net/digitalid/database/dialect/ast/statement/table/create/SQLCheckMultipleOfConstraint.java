@@ -9,7 +9,7 @@ import net.digitalid.database.dialect.ast.expression.number.SQLBinaryNumberExpre
 import net.digitalid.database.dialect.ast.expression.number.SQLBinaryNumberOperator;
 import net.digitalid.database.dialect.ast.expression.number.SQLNumberLiteral;
 import net.digitalid.database.dialect.ast.expression.number.SQLNumberReference;
-import net.digitalid.utility.validation.math.MultipleOf;
+import net.digitalid.utility.validation.annotations.math.MultipleOf;
 
 /**
  *

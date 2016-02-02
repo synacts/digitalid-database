@@ -6,8 +6,9 @@ import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLBinaryOperator;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.exceptions.internal.UncoveredCaseException;
+import net.digitalid.utility.validation.annotations.reference.NonCapturable;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 /**
  * This class enumerates the supported comparison operators.
@@ -63,7 +64,7 @@ public enum SQLComparisonOperator implements SQLBinaryOperator<SQLComparisonOper
             case GREATER: string.append(">"); break;
             case LESS_OR_EQUAL: string.append("<="); break;
             case LESS: string.append("<"); break;
-            default: throw InternalException.of(node.name() + " not implemented.");
+            default: throw UncoveredCaseException.with(node.name() + " not implemented.");
         }
         }
         

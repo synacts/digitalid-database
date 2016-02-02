@@ -7,10 +7,10 @@ import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLNode;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.readonly.ReadOnlySet;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 /**
  *
@@ -29,11 +29,11 @@ public class SQLColumnDeclaration implements SQLNode<SQLColumnDeclaration> {
         this.columnConstraint = columnConstraint;
     }
     
-    public static @Nonnull SQLColumnDeclaration with(@Nonnull SQLQualifiedColumnName qualifiedColumnName, @Nonnull SQLType type) {
+    public static @Nonnull SQLColumnDeclaration of(@Nonnull SQLQualifiedColumnName qualifiedColumnName, @Nonnull SQLType type) {
         return new SQLColumnDeclaration(qualifiedColumnName, type, null);
     }
     
-    public static @Nonnull SQLColumnDeclaration with(@Nonnull SQLQualifiedColumnName qualifiedColumnName, @Nonnull SQLType type, @Nullable @NonNullableElements ReadOnlySet<SQLColumnConstraint> columnConstraints) {
+    public static @Nonnull SQLColumnDeclaration of(@Nonnull SQLQualifiedColumnName qualifiedColumnName, @Nonnull SQLType type, @Nullable @NonNullableElements ReadOnlySet<SQLColumnConstraint> columnConstraints) {
         return new SQLColumnDeclaration(qualifiedColumnName, type, columnConstraints);
     }
     

@@ -3,8 +3,9 @@ package net.digitalid.database.dialect.ast.expression.string;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.exceptions.internal.UncoveredCaseException;
+import net.digitalid.utility.validation.annotations.reference.NonCapturable;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.SQLDialect;
@@ -54,7 +55,7 @@ public enum SQLVariadicStringOperator implements SQLVariadicOperator {
                     string.append("COALESCE");
                     break;
                 default:
-                    throw InternalException.of(node.name() + " not implemented.");
+                    throw UncoveredCaseException.with(node.name() + " not implemented.");
             }
         }
         

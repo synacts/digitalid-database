@@ -4,8 +4,8 @@ import java.sql.SQLException;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.state.Immutable;
-import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.method.Pure;
 
 /**
  * This exception is thrown when a query could not be executed in the database.

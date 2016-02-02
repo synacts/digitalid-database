@@ -2,13 +2,13 @@ package net.digitalid.database.dialect.ast.statement.insert;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
-import net.digitalid.utility.collections.annotations.elements.NullableElements;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.elements.NullableElements;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.annotations.reference.NonCapturable;
+import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.table.Site;
@@ -89,6 +89,14 @@ public class SQLInsertStatement implements SQLParameterizableNode<SQLInsertState
     @Override
     public @Nonnull Transcriber<SQLInsertStatement> getTranscriber() {
         return transcriber;
+    }
+    
+    /* -------------------------------------------------- to SQL -------------------------------------------------- */
+    
+    public String toSQL(@Nonnull SQLDialect dialect, @Nonnull Site site) throws InternalException {
+        final @Nonnull StringBuilder stringBuilder = new StringBuilder();
+        getTranscriber().transcribeNode(dialect, this, site, stringBuilder);
+        return stringBuilder.toString();
     }
     
 }

@@ -1,8 +1,5 @@
 package net.digitalid.database.core.table.purger;
 
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,10 +7,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.logging.Log;
-import net.digitalid.utility.validation.state.Stateless;
-
-import net.digitalid.database.exceptions.operation.FailedOperationException;
+import net.digitalid.utility.validation.annotations.type.Stateless;
 
 /**
  * Description.

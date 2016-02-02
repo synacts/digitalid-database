@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 /**
  * This exception indicates a failed database operation.

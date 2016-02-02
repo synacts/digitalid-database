@@ -7,8 +7,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.exceptions.internal.InitializationException;
+import net.digitalid.utility.validation.annotations.reference.NonCapturable;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLNode;
@@ -39,7 +40,7 @@ public abstract class SQLDialect {
                     final @Nonnull SQLDialectServiceProviderInterface serviceProviderInterface = iterator.next();
                     instance = serviceProviderInterface.getSQLDialect();
                 } else {
-                    throw InternalException.of("Failed to initialize SQL dialect.");
+                    throw InitializationException.with("Failed to initialize SQL dialect.");
                 }
             }
         }

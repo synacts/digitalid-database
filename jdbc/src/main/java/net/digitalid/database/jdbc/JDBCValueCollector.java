@@ -7,9 +7,10 @@ import java.sql.SQLException;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.collections.annotations.size.MaxSize;
-import net.digitalid.utility.collections.annotations.size.Size;
-import net.digitalid.utility.validation.state.Pure;
+
+import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.size.MaxSize;
+import net.digitalid.utility.validation.annotations.size.Size;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.exceptions.operation.FailedResourceClosingException;

@@ -1,6 +1,6 @@
 package net.digitalid.database.dialect;
 
-import net.digitalid.utility.validation.state.Pure;
+import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.annotations.Committing;

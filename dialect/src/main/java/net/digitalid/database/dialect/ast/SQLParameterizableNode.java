@@ -2,7 +2,7 @@ package net.digitalid.database.dialect.ast;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.reference.NonCapturable;
+import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 import net.digitalid.database.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.core.interfaces.ValueCollector;

@@ -3,8 +3,9 @@ package net.digitalid.database.dialect.ast.expression.number;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.reference.NonCapturable;
-import net.digitalid.utility.validation.state.Immutable;
+import net.digitalid.utility.exceptions.internal.UncoveredCaseException;
+import net.digitalid.utility.validation.annotations.reference.NonCapturable;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
@@ -47,7 +48,7 @@ public enum SQLUnaryNumberOperator implements SQLUnaryOperator {
                 case ROUND: string.append("ROUND"); break;
                 case NEGATE: string.append("-"); break;
                 case ABSOLUTE: string.append("ABS"); break;
-                default: throw InternalException.of(node.name() + " not implemented.");
+                default: throw UncoveredCaseException.with(node.name() + " not implemented.");
             }
         }
         

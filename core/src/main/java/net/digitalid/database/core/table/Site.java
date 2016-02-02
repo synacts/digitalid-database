@@ -2,10 +2,7 @@ package net.digitalid.database.core.table;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.state.Pure;
-import net.digitalid.utility.validation.state.Validated;
-
-import net.digitalid.database.core.Database;
+import net.digitalid.utility.validation.annotations.method.Pure;
 
 /**
  * This class provides an interface so that the same code works on both hosts and clients.
@@ -30,7 +27,7 @@ public abstract class Site {
     /**
      * Stores the prefix of the site-specific database tables.
      */
-    private final @Nonnull @Validated String prefix;
+    private final @Nonnull String prefix;
     
     /**
      * Returns the prefix of the site-specific database tables.
@@ -39,7 +36,7 @@ public abstract class Site {
      */
     @Pure
     @Override
-    public final @Nonnull @Validated String toString() {
+    public final @Nonnull String toString() {
         return prefix;
     }
     
@@ -50,9 +47,7 @@ public abstract class Site {
      * 
      * @param prefix the prefix of the site-specific database tables.
      */
-    protected Site(@Nonnull @Validated String prefix) {
-//        assert isValidPrefix(prefix) : "The prefix is valid.";
-        
+    protected Site(@Nonnull String prefix) {
         this.prefix = prefix;
     }
     

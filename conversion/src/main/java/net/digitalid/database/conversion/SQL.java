@@ -1,22 +1,40 @@
 package net.digitalid.database.conversion;
 
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
-import net.digitalid.utility.collections.annotations.elements.NonNullableElements;
-import net.digitalid.utility.collections.annotations.elements.NullableElements;
-import net.digitalid.utility.conversion.Convertible;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.elements.NullableElements;
+import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.generator.conversion.Convertible;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.state.Stateless;
+import net.digitalid.utility.freezable.annotations.NonFrozen;
+import net.digitalid.utility.reflection.exceptions.StructureException;
+import net.digitalid.utility.validation.annotations.type.Stateless;
 
+import net.digitalid.database.conversion.exceptions.ConformityViolation;
+import net.digitalid.database.core.Database;
 import net.digitalid.database.core.table.Site;
+import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
+import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
+import net.digitalid.database.dialect.ast.statement.insert.SQLInsertStatement;
+import net.digitalid.database.dialect.ast.statement.insert.SQLValues;
 import net.digitalid.database.dialect.ast.statement.select.SQLWhereClause;
+import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDeclaration;
+import net.digitalid.database.dialect.ast.statement.table.create.SQLCreateTableStatement;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLReference;
 import net.digitalid.database.dialect.table.Table;
+import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.operation.FailedValueRestoringException;
+import net.digitalid.database.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.exceptions.state.value.CorruptNullValueException;
 
 /**
@@ -78,36 +96,94 @@ public final class SQL {
      */
     public static @Nonnull Table create(@Nonnull String tableName, @Nonnull Site site, @Nonnull @NonNullableElements Class<? extends Convertible>[] columnGroups, @Nonnull SQLReference[] references) throws InternalException, FailedNonCommittingOperationException {
         final @Nonnull SQLQualifiedTableName qualifiedTableName = SQLQualifiedTableName.get(tableName, site);
-        final @Nonnull SQLCreateTableStatement createTableStatement = SQLCreateTableStatement.with(qualifiedTableName);
+        @Nonnull @NonNullableElements FreezableArrayList<SQLColumnDeclaration> columnDeclarations = FreezableArrayList.get();
         for (@Nonnull Class<? extends Convertible> columnGroup : columnGroups) {
             for (@Nonnull Field field : columnGroup.getFields()) {
                 @Nonnull SQLConverter<?> sqlConverter = FORMAT.getConverter(field);
-                @Nonnull SQLColumnDeclaration columnDeclaration = sqlConverter.createColumnDeclaration(tableName, field);
-                createTableStatement.addColumnDeclaration(columnDeclaration);
+                try {
+                    sqlConverter.putColumnDeclarations(field, columnDeclarations);
+                } catch (StructureException | NoSuchFieldException e) {
+                    throw ConformityViolation.with("Failed to convert the field '" + field.getName() + "' due to conformity problems.", e);
+                }
             }
         }
+        final @Nonnull SQLCreateTableStatement createTableStatement = SQLCreateTableStatement.with(qualifiedTableName, columnDeclarations);
         final @Nonnull String createTableStatementString = createTableStatement.toSQL(SQLDialect.getDialect(), site);
         Database.getInstance().execute(createTableStatementString);
         return Table.get(qualifiedTableName);
     }
     
-    /**
-     * Stores a nullable object into a SQL table.
-     */
-    // TODO: do we even care about nullable / non-nullable??
-    public static void insert(@Nonnull Table table, @Nullable @NullableElements Convertible[] convertibles, @Nonnull Site site) throws StoringException, InternalException {
-/*        // TODO: cache AST for convertible
-        // TODO: if cached AST is retrieved, the value in site must be changed so that we can update the schema without re-generating the AST.
-        final @Nonnull SQLInsertStatement insertStatement = SQLInsertStatement.get(table.getName());
+    /* -------------------------------------------------- Insert -------------------------------------------------- */
+    
+    private static class Cache {
+        private static final @Nonnull @NonNullableElements Map<Class<?>, FreezableList<SQLQualifiedColumnName>> qualifiedColumnNamesCache = new HashMap<>();
+    
+        public static boolean containsQualifiedColumnNames(@Nonnull Class<?> type) {
+            return qualifiedColumnNamesCache.containsKey(type);
+        }
+    
+        public static @Nonnull @NonNullableElements FreezableList<SQLQualifiedColumnName> getQualifiedColumnNames(@Nonnull Class<?> type) {
+            return qualifiedColumnNamesCache.get(type);
+        }
         
-        Class<? extends Convertible>[] columnGroups = table.getColumnGroups();
-        
-        for (@Nonnull Class<? extends Convertible> columnGroup : columnGroups) {
-            for (@Nonnull Field field : columnGroup.getFields()) {
-                final @Nonnull SQLQualifiedColumnName qualifiedColumnName = SQLQualifiedColumnName.get(field.getName(), table.getName().tableName);
-                FORMAT.getConverter(field);
+        public static void setQualifiedColumnNames(@Nonnull Class<?> type, @Nonnull @NonNullableElements FreezableList<SQLQualifiedColumnName> qualifiedColumnNames) {
+            qualifiedColumnNamesCache.put(type, qualifiedColumnNames);
+        }
+    }
+    
+    private static @Nonnull @NullableElements SQLValues getSQLValues(@Nullable Convertible object, @Nonnull @NonNullableElements Field[] fields) throws InternalException, FailedValueStoringException, StoringException {
+        final @Nonnull @NullableElements SQLValues values = SQLValues.get();
+        for (@Nonnull Field field : fields) {
+            final @Nonnull SQLConverter<?> sqlFieldConverter = FORMAT.getConverter(field);
+            final @Nullable Object value;
+            if (object == null) {
+                value = null;
+            } else {
+                try {
+                    value = field.get(object);
+                } catch (IllegalAccessException e) {
+                    throw StoringException.get(field.getType(), e);
+                }
             }
-        }*/
+            try {
+                sqlFieldConverter.collectValues(value, field.getType(), values);
+            } catch (StructureException | NoSuchFieldException e) {
+                throw ConformityViolation.with("Failed to convert the field '" + field.getName() + "' due to conformity problems.", e);
+            }
+        }
+        return values;
+    }
+    
+    public static void insert(@Nullable Convertible object, @Nonnull Class<? extends Convertible> type, @Nonnull String tableName, @Nonnull Site site) throws FailedNonCommittingOperationException, InternalException, StoringException {
+        // TODO: what about prefixes?!
+        
+        final @Nonnull @NonNullableElements Field[] fields = type.getFields();
+        final @Nullable @NonNullableElements @NonFrozen FreezableList<SQLQualifiedColumnName> qualifiedColumnNames;
+        
+        if (Cache.containsQualifiedColumnNames(type)) {
+            qualifiedColumnNames = Cache.getQualifiedColumnNames(type);
+        } else {
+            qualifiedColumnNames = FreezableArrayList.get();
+            for (@Nonnull Field field : fields) {
+                final @Nonnull SQLConverter<?> sqlFieldConverter = FORMAT.getConverter(field);
+                try {
+                    sqlFieldConverter.putColumnNames(field, tableName, qualifiedColumnNames);
+                } catch (StructureException e) {
+                    throw ConformityViolation.with("Failed to convert the field '" + field.getName() + "' due to conformity problems.", e);
+                }
+                final Class<?> fieldType = field.getType();
+                if (Cache.containsQualifiedColumnNames(fieldType)) {
+                    qualifiedColumnNames.addAll(Cache.getQualifiedColumnNames(fieldType));
+                } else {
+                    Cache.setQualifiedColumnNames(fieldType, qualifiedColumnNames);
+                }
+            }
+        }
+        final @Nonnull @NullableElements SQLValues values = getSQLValues(object, fields);
+        SQLInsertStatement sqlInsertStatement = SQLInsertStatement.get(SQLQualifiedTableName.get(tableName, site), qualifiedColumnNames, values);
+        
+        final @Nonnull String createTableStatementString = sqlInsertStatement.toSQL(SQLDialect.getDialect(), site);
+        Database.getInstance().execute(createTableStatementString);
     }
     
 }
