@@ -1,4 +1,4 @@
-package net.digitalid.database.conversion;
+package net.digitalid.database.testing;
 
 import javax.annotation.Nonnull;
 
@@ -9,8 +9,10 @@ import net.digitalid.database.core.table.Site;
  */
 public class TestHost extends Site {
     
+    public static final @Nonnull String SCHEMA_NAME = "test_host";
+    
     public TestHost() {
-        super("test_host");
+        super(SCHEMA_NAME);
     }
     
     // TODO: refactor in the future. References, if needed, should be included using the SQL AST.

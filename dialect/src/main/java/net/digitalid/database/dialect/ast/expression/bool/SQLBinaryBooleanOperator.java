@@ -7,7 +7,7 @@ import net.digitalid.utility.exceptions.internal.UncoveredCaseException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLBinaryOperator;
 import net.digitalid.database.core.table.Site;
@@ -54,7 +54,7 @@ public enum SQLBinaryBooleanOperator implements SQLBinaryOperator {
     private static final @Nonnull Transcriber<SQLBinaryBooleanOperator> transcriber = new Transcriber<SQLBinaryBooleanOperator>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBinaryBooleanOperator node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string) throws InternalException {
+        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBinaryBooleanOperator node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
         switch (node) {
             case AND: string.append("AND"); break;
             case OR: string.append("OR"); break;

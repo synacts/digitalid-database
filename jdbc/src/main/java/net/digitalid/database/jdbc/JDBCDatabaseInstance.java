@@ -21,6 +21,7 @@ import net.digitalid.database.core.annotations.Committing;
 import net.digitalid.database.core.annotations.NonCommitting;
 import net.digitalid.database.core.interfaces.DatabaseInstance;
 import net.digitalid.database.core.interfaces.SelectionResult;
+import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.exceptions.operation.FailedCommitException;
 import net.digitalid.database.exceptions.operation.FailedConnectionException;
 import net.digitalid.database.exceptions.operation.FailedKeyGenerationException;
@@ -232,6 +233,14 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
     protected int executeUpdate(@Nonnull String statement) throws FailedNonCommittingOperationException, InternalException {
         try {
             return prepare(statement, false).executeUpdate();
+        } catch (@Nonnull SQLException exception) {
+            throw FailedUpdateExecutionException.get(exception);
+        }
+    }
+    
+    protected int executeUpdate(@Nonnull JDBCValueCollector valueCollector) throws FailedNonCommittingOperationException, InternalException {
+        try {
+            return valueCollector.getPreparedStatement().executeUpdate();
         } catch (@Nonnull SQLException exception) {
             throw FailedUpdateExecutionException.get(exception);
         }

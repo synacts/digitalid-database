@@ -1,6 +1,6 @@
 package net.digitalid.database.dialect.spi;
 
-import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.ast.SQLDialect;
 
 /**
  *

@@ -1,8 +1,8 @@
-package net.digitalid.database.conversion.h2;
+package net.digitalid.database.testing.h2;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.spi.SQLDialectServiceProviderInterface;
 
 /**

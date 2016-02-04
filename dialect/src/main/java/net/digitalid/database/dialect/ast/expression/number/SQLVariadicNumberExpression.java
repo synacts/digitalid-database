@@ -12,7 +12,7 @@ import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
-import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.core.interfaces.ValueCollector;
@@ -87,7 +87,7 @@ public class SQLVariadicNumberExpression extends SQLNumberExpression implements 
     private static final @Nonnull Transcriber<SQLVariadicNumberExpression> transcriber = new Transcriber<SQLVariadicNumberExpression>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLVariadicNumberExpression node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string) throws InternalException {
+        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLVariadicNumberExpression node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
 
         }
         

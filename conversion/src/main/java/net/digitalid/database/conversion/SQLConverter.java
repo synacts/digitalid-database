@@ -17,6 +17,7 @@ import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.core.interfaces.SelectionResult;
+import net.digitalid.database.dialect.ast.identifier.SQLColumnName;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
 import net.digitalid.database.dialect.ast.statement.insert.SQLValues;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDeclaration;
@@ -32,13 +33,17 @@ public abstract class SQLConverter<T> extends Converter {
     
     /* -------------------------------------------------- SQL Type -------------------------------------------------- */
     
-    public abstract SQLType getSQLType();
+    public abstract SQLType getSQLType(Field field);
     
     /* -------------------------------------------------- Converting -------------------------------------------------- */
     
     public abstract void collectValues(@Nullable Object object, Class<?> type, @NonCapturable @Nonnull SQLValues values) throws StoringException, ConverterNotFoundException, FailedValueStoringException, InternalException, StructureException, NoSuchFieldException;
     
-    public abstract void putColumnNames(@Nonnull Field field, @Nullable String tableName, @NonCapturable @Nonnull FreezableList<SQLQualifiedColumnName> qualifiedColumnNames) throws StructureException, ConverterNotFoundException;
+    public abstract void putColumnNames(@Nonnull Field field, @Nullable String tableName, @NonCapturable @Nonnull FreezableList<? super SQLQualifiedColumnName> qualifiedColumnNames) throws StructureException, ConverterNotFoundException;
+    
+    public void putColumnNames(@Nonnull Field field, @NonCapturable @Nonnull FreezableList<SQLColumnName> columnNames) throws StructureException, ConverterNotFoundException {
+        putColumnNames(field, null, columnNames);
+    }
     
     // TODO: Cache column declarations in caller.
     public abstract void putColumnDeclarations(@Nonnull Field field, @NonCapturable @Nonnull FreezableArrayList<SQLColumnDeclaration> columnDeclarations) throws ConverterNotFoundException, StructureException, NoSuchFieldException;

@@ -7,7 +7,7 @@ import net.digitalid.utility.exceptions.internal.UncoveredCaseException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLUnaryOperator;
 import net.digitalid.database.core.table.Site;
@@ -43,7 +43,7 @@ public enum SQLUnaryNumberOperator implements SQLUnaryOperator {
     private static final @Nonnull Transcriber<SQLUnaryNumberOperator> transcriber = new Transcriber<SQLUnaryNumberOperator>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLUnaryNumberOperator node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string) throws InternalException {
+        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLUnaryNumberOperator node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
             switch (node) {
                 case ROUND: string.append("ROUND"); break;
                 case NEGATE: string.append("-"); break;

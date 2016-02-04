@@ -2,7 +2,7 @@ package net.digitalid.database.dialect.ast.expression.bool;
 
 import javax.annotation.Nonnull;
 import net.digitalid.database.core.table.Site;
-import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLBinaryOperator;
 import net.digitalid.utility.exceptions.InternalException;
@@ -56,7 +56,7 @@ public enum SQLComparisonOperator implements SQLBinaryOperator<SQLComparisonOper
     private static final @Nonnull Transcriber<SQLComparisonOperator> transcriber = new Transcriber<SQLComparisonOperator>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLComparisonOperator node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string) throws InternalException {
+        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLComparisonOperator node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
         switch (node) {
             case EQUAL: string.append("="); break;
             case UNEQUAL: string.append("!="); break;

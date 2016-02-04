@@ -1,4 +1,4 @@
-package net.digitalid.database.dialect;
+package net.digitalid.database.dialect.ast;
 
 import java.util.Iterator;
 import java.util.ServiceLoader;
@@ -12,7 +12,6 @@ import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.table.Site;
-import net.digitalid.database.dialect.ast.SQLNode;
 import net.digitalid.database.dialect.spi.SQLDialectServiceProviderInterface;
 
 /**
@@ -23,11 +22,12 @@ import net.digitalid.database.dialect.spi.SQLDialectServiceProviderInterface;
 public abstract class SQLDialect {
     
     private static @Nullable SQLDialect instance;
+    
     /**
      * Transcribes an SQL node by calling the default transcriber of the node which stores the SQL statement as a string in the string builder.
      */
-    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLNode<?> node) throws InternalException {
-        node.getTranscriber().transcribeNode(this, node, site, string);
+    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLNode<?> node, boolean parameterizable) throws InternalException {
+        node.getTranscriber().transcribeNode(this, node, site, string, parameterizable);
     }
     
     // TODO: Should throw InitializationError instead.

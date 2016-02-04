@@ -44,6 +44,10 @@ public interface DatabaseInstance extends AutoCloseable {
     
     public abstract void execute(@Nonnull String sqlStatement) throws InternalException, FailedNonCommittingOperationException;
     
+    public abstract void execute(@Nonnull ValueCollector valueCollector) throws InternalException, FailedNonCommittingOperationException;
+    
+    public abstract @Nonnull ValueCollector getValueCollector(@Nonnull String preparedStatement) throws FailedNonCommittingOperationException;
+    
     public @Nonnull SelectionResult executeSelect(@Nonnull String selectStatement) throws FailedNonCommittingOperationException, InternalException;
     
 //    /**

@@ -17,7 +17,7 @@ public @interface References {
     
     @Nonnull String foreignTable();
     
-    @Nonnull @NonNullableElements String[] columnNames();
+    @Nonnull @NonNullableElements String columnName();
     
     enum Action {
         RESTRICT("RESTRICT"), 

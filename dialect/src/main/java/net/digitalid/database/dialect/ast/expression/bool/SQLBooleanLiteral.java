@@ -6,7 +6,7 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
-import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLLiteral;
 import net.digitalid.database.exceptions.operation.FailedValueStoringException;
@@ -56,11 +56,11 @@ public class SQLBooleanLiteral extends SQLBooleanExpression implements SQLLitera
     private static final @Nonnull Transcriber<SQLBooleanLiteral> transcriber = new Transcriber<SQLBooleanLiteral>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBooleanLiteral node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string) throws InternalException {
-            if (node.value != null) {
-                string.append(node.value ? "TRUE" : "FALSE");
+        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBooleanLiteral node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
+            if (parameterizable) {
+                string.append("?");
             } else {
-                string.append("NULL");
+                string.append(Boolean.toString(node.value).toUpperCase());
             }
         }
         

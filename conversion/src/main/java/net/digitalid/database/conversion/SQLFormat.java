@@ -5,16 +5,24 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.generator.conversion.Convertible;
 import net.digitalid.utility.conversion.Format;
 import net.digitalid.utility.conversion.TypeMapper;
+import net.digitalid.utility.property.ReadOnlyProperty;
 
+import net.digitalid.database.conversion.value.SQLBooleanConverter;
 import net.digitalid.database.conversion.value.SQLObjectConverter;
+import net.digitalid.database.conversion.value.integer.SQLInteger32Converter;
+import net.digitalid.database.conversion.value.property.SQLPropertyConverter;
 
 public class SQLFormat extends Format<SQLConverter> {
 
     /**
      * Creates a new converter which converts boolean to SQL.
      */
-    private final static @Nonnull SQLConverter<Boolean> BOOLEAN_CONVERTER = null;//new SQLBooleanConverter();
-
+    private final static @Nonnull SQLConverter<Boolean> BOOLEAN_CONVERTER = new SQLBooleanConverter();
+    
+    private final static @Nonnull SQLConverter<Integer> INTEGER32_CONVERTER = new SQLInteger32Converter();
+    
+    private final static @Nonnull SQLConverter<ReadOnlyProperty<?, ?>> PROPERTY_CONVERTER = new SQLPropertyConverter();
+    
     /**
      * Creates a new converter which converts convertible objects to SQL.
      */
@@ -37,7 +45,7 @@ public class SQLFormat extends Format<SQLConverter> {
     
     @Override
     protected @Nonnull SQLConverter getInteger32Converter() {
-        return null;
+        return INTEGER32_CONVERTER;
     }
     
     @Override
@@ -68,6 +76,11 @@ public class SQLFormat extends Format<SQLConverter> {
     @Override
     protected @Nonnull SQLConverter getConvertibleConverter() {
         return CONVERTIBLE_CONVERTER;
+    }
+    
+    @Override
+    protected @Nonnull SQLConverter getPropertyConverter() {
+        return PROPERTY_CONVERTER;
     }
     
     @Override

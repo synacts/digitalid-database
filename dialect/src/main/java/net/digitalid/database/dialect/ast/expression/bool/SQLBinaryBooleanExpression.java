@@ -7,7 +7,7 @@ import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
-import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLBinaryExpression;
 import net.digitalid.database.dialect.ast.utility.binary.SQLBinaryExpressionTranscriber;
@@ -97,7 +97,7 @@ public class SQLBinaryBooleanExpression extends SQLBooleanExpression implements 
     private static final @Nonnull Transcriber<SQLBinaryBooleanExpression> transcriber = new Transcriber<SQLBinaryBooleanExpression>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBinaryBooleanExpression node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string) throws InternalException {
+        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBinaryBooleanExpression node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
             SQLBinaryExpressionTranscriber.transcribeNode(node, dialect, site, string);
         }
         

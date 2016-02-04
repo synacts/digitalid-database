@@ -34,18 +34,10 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- TODO: move the following dependencies to the testing/database package. -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.4.190</version>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>net.digitalid.database</groupId>
-            <artifactId>database-jdbc</artifactId>
-            <version>1.0.0</version>
+            <artifactId>database-testing</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -8,7 +8,7 @@ import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.table.Site;
-import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLParameterizableNode;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.statement.insert.SQLValuesOrStatement;
@@ -36,7 +36,7 @@ public class SQLSelectStatement implements SQLParameterizableNode<SQLSelectState
     private static final @Nonnull Transcriber<SQLSelectStatement> transcriber = new Transcriber<SQLSelectStatement>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLSelectStatement node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string) throws InternalException {
+        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLSelectStatement node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
             // TODO: transcribe!
         }
         

@@ -2,17 +2,17 @@ package net.digitalid.database.dialect.ast.statement.table.create;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.string.iterable.Brackets;
 import net.digitalid.utility.string.iterable.IterableConverter;
 import net.digitalid.utility.string.iterable.NonNullableElementConverter;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 import net.digitalid.database.core.table.Site;
-import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLNode;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
@@ -37,7 +37,7 @@ public class SQLCreateTableStatement implements SQLNode<SQLCreateTableStatement>
     
     public String toSQL(@Nonnull SQLDialect dialect, @Nonnull Site site) throws InternalException {
         final @Nonnull StringBuilder stringBuilder = new StringBuilder();
-        getTranscriber().transcribeNode(dialect, this, site, stringBuilder);
+        dialect.transcribe(site, stringBuilder, this, false);
         return stringBuilder.toString();
     }
     
@@ -58,7 +58,7 @@ public class SQLCreateTableStatement implements SQLNode<SQLCreateTableStatement>
         public @Nonnull String toString(@Nonnull SQLColumnDeclaration element) {
             StringBuilder string = new StringBuilder();
             try {
-                element.getTranscriber().transcribeNode(dialect, element, site, string);
+                dialect.transcribe(site, string, element, false);
             } catch (InternalException e) {
                 e.printStackTrace();
             }
@@ -73,13 +73,13 @@ public class SQLCreateTableStatement implements SQLNode<SQLCreateTableStatement>
     private static final @Nonnull Transcriber<SQLCreateTableStatement> transcriber = new Transcriber<SQLCreateTableStatement>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLCreateTableStatement node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string) throws InternalException {
+        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLCreateTableStatement node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
             string.append("CREATE TABLE ");
-            string.append(node.qualifiedTableName);
+            string.append(node.qualifiedTableName.getValue());
             string.append(" ");
-            string.append(IterableConverter.toString(node.columnDeclarations, new SQLColumnDeclarationsConverter(dialect, site), Brackets.ROUND, ","));
-            string.append("(");
-            string.append(")");
+            if (node.columnDeclarations.size() > 0) {
+                string.append(IterableConverter.toString(node.columnDeclarations, new SQLColumnDeclarationsConverter(dialect, site), Brackets.ROUND, ","));
+            }
         }
         
     };

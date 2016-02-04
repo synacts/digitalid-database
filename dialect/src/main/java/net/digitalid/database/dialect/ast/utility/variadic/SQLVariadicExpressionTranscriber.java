@@ -6,7 +6,7 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 import net.digitalid.database.core.table.Site;
-import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.expression.SQLExpression;
 import net.digitalid.database.dialect.ast.expression.SQLVariadicExpression;
 import net.digitalid.database.dialect.ast.expression.SQLVariadicOperator;
@@ -21,12 +21,12 @@ public final class SQLVariadicExpressionTranscriber {
      */
     public static void transcribeNode(@Nonnull SQLVariadicExpression<?, ?> node, @Nonnull SQLDialect dialect, @Nonnull Site site, @NonCapturable @Nonnull StringBuilder string) throws InternalException {
         final @Nonnull SQLVariadicOperator operator = node.getOperator();
-        operator.getTranscriber().transcribeNode(dialect, operator, site, string);
+        dialect.transcribe(site, string, operator, true);
         string.append("(");
         boolean first = true;
         for (final @Nonnull SQLExpression expression : node.getExpressions()) {
             if (!first) { string.append(", "); } else { first = false; }
-            expression.getTranscriber().transcribeNode(dialect, expression, site, string);
+            dialect.transcribe(site, string, expression, true);
         }
         string.append(")");
     }

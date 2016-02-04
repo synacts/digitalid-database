@@ -1,4 +1,4 @@
-package net.digitalid.database.conversion.h2;
+package net.digitalid.database.testing.h2;
 
 import java.util.Properties;
 
@@ -6,9 +6,11 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
 
+import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.operation.FailedOperationException;
 import net.digitalid.database.jdbc.JDBCDatabaseInstance;
+import net.digitalid.database.jdbc.JDBCValueCollector;
 
 import org.h2.Driver;
 
@@ -55,4 +57,15 @@ public class H2JDBCDatabaseInstance extends JDBCDatabaseInstance {
     public void execute(@Nonnull String sqlStatement) throws InternalException, FailedNonCommittingOperationException {
         executeUpdate(sqlStatement);
     }
+    
+    @Override
+    public void execute(@Nonnull ValueCollector valueCollector) throws InternalException, FailedNonCommittingOperationException {
+        executeUpdate((JDBCValueCollector) valueCollector);
+    }
+    
+    @Override
+    public @Nonnull ValueCollector getValueCollector(@Nonnull String preparedStatement) throws FailedNonCommittingOperationException {
+        return JDBCValueCollector.get(prepare(preparedStatement, false));
+    }
+    
 }

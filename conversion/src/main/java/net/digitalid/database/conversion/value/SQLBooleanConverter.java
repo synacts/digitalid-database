@@ -5,11 +5,9 @@ import java.lang.reflect.Field;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.elements.NullableElements;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.collections.freezable.FreezableSet;
 import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
 import net.digitalid.utility.reflection.exceptions.StructureException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
@@ -17,10 +15,12 @@ import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.database.conversion.SQLConverter;
 import net.digitalid.database.core.interfaces.SelectionResult;
 import net.digitalid.database.dialect.ast.expression.bool.SQLBooleanLiteral;
+import net.digitalid.database.dialect.ast.identifier.SQLColumnName;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
 import net.digitalid.database.dialect.ast.statement.insert.SQLValues;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnConstraint;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDeclaration;
+import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDefinition;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLType;
 import net.digitalid.database.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.exceptions.operation.FailedValueStoringException;
@@ -34,7 +34,7 @@ public class SQLBooleanConverter extends SQLConverter<Boolean> {
     /* -------------------------------------------------- SQL Type -------------------------------------------------- */
     
     @Override
-    public SQLType getSQLType() {
+    public SQLType getSQLType(Field field) {
         return SQLType.BOOLEAN;
     }
     
@@ -51,17 +51,16 @@ public class SQLBooleanConverter extends SQLConverter<Boolean> {
     /* -------------------------------------------------- Column Names -------------------------------------------------- */
     
     @Override
-    public void putColumnNames(@Nonnull Field field, @Nullable String tableName, @NonCapturable @Nonnull FreezableList<SQLQualifiedColumnName> qualifiedColumnNames) throws StructureException, ConverterNotFoundException {
+    public void putColumnNames(@Nonnull Field field, @Nullable String tableName, @NonCapturable @Nonnull FreezableList<? super SQLQualifiedColumnName> qualifiedColumnNames) throws StructureException, ConverterNotFoundException {
         final @Nonnull SQLQualifiedColumnName qualifiedColumnName = SQLQualifiedColumnName.get(field.getName(), tableName);
         qualifiedColumnNames.add(qualifiedColumnName);
     }
     
     @Override
     public void putColumnDeclarations(@Nonnull Field field, @NonCapturable @Nonnull FreezableArrayList<SQLColumnDeclaration> columnDeclarations) {
-        assert Boolean.class.isAssignableFrom(field.getType()) : "The field has the type 'Boolean'";
+        assert boolean.class.isAssignableFrom(field.getType()) || Boolean.class.isAssignableFrom(field.getType()) : "The field has the type 'Boolean'";
         // TODO: column-prefixes?
-        final @Nonnull @NonNullableElements FreezableSet<SQLColumnConstraint> columnConstraints = SQLColumnConstraint.of(field);
-        final @Nonnull SQLColumnDeclaration columnDeclaration = SQLColumnDeclaration.of(SQLQualifiedColumnName.get(field.getName()), SQLType.BOOLEAN, columnConstraints);
+        final @Nonnull SQLColumnDeclaration columnDeclaration = SQLColumnDeclaration.of(SQLColumnName.get(field.getName()), SQLType.BOOLEAN, SQLColumnDefinition.of(field), SQLColumnConstraint.of(field));
         columnDeclarations.add(columnDeclaration);
     }
     

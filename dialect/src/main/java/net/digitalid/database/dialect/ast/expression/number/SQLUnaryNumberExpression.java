@@ -7,7 +7,7 @@ import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
-import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.core.interfaces.ValueCollector;
@@ -80,10 +80,10 @@ public class SQLUnaryNumberExpression extends SQLNumberExpression implements SQL
     private static final @Nonnull Transcriber<SQLUnaryNumberExpression> transcriber = new Transcriber<SQLUnaryNumberExpression>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLUnaryNumberExpression node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string) throws InternalException {
-            dialect.transcribe(site, string, node.operator);
+        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLUnaryNumberExpression node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
+            dialect.transcribe(site, string, node.operator, false);
             string.append("(");
-            dialect.transcribe(site, string, node.expression);
+            dialect.transcribe(site, string, node.expression, false);
             string.append(")");
         }
         

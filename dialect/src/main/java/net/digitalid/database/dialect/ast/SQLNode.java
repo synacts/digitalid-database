@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
  */
 public interface SQLNode<N> {
     
-    public @Nonnull Transcriber<N> getTranscriber();
+    @Nonnull Transcriber<N> getTranscriber();
     // TODO: remove the following.
 //    /**
 //     * Transcribes this node to the given dialect at the given site into the given string.

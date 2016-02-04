@@ -6,7 +6,7 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
-import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLLiteral;
 import net.digitalid.database.exceptions.operation.FailedValueStoringException;
@@ -56,8 +56,12 @@ public final class SQLNumberLiteral extends SQLNumberExpression<SQLNumberLiteral
     private static final @Nonnull Transcriber<SQLNumberLiteral> transcriber = new Transcriber<SQLNumberLiteral>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLNumberLiteral node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string) throws InternalException {
-            string.append(node.value);
+        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLNumberLiteral node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
+            if (parameterizable) {
+                string.append("?");
+            } else {
+                string.append(node.value);
+            }
         }
         
     };
@@ -67,9 +71,9 @@ public final class SQLNumberLiteral extends SQLNumberExpression<SQLNumberLiteral
         return transcriber;
     }
     
-    /* -------------------------------------------------- SQLParameterizableNode -------------------------------------------------- */
-    
     @Override
-    public final void storeValues(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {}
+    public void storeValues(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+        collector.setInteger64(value);
+    }
     
 }

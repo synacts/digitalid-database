@@ -7,7 +7,7 @@ import net.digitalid.utility.exceptions.internal.UncoveredCaseException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLUnaryOperator;
 import net.digitalid.database.core.table.Site;
@@ -33,7 +33,7 @@ public enum SQLUnaryBooleanOperator implements SQLUnaryOperator {
     private static final @Nonnull Transcriber<SQLUnaryBooleanOperator> transcriber = new Transcriber<SQLUnaryBooleanOperator>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLUnaryBooleanOperator node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string) throws InternalException {
+        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLUnaryBooleanOperator node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
             switch (node) {
                 case NOT: string.append("NOT"); break;
                 default: throw UncoveredCaseException.with(node.name() + " not implemented.");

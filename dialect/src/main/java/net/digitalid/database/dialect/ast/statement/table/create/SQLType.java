@@ -1,6 +1,5 @@
 package net.digitalid.database.dialect.ast.statement.table.create;
 
-import java.math.BigInteger;
 import java.sql.Types;
 
 import javax.annotation.Nonnull;
@@ -12,7 +11,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.core.table.Site;
-import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLNode;
 import net.digitalid.database.dialect.ast.Transcriber;
 
@@ -135,7 +134,7 @@ public enum SQLType implements SQLNode {
     private static final @Nonnull Transcriber<SQLType> transcriber = new Transcriber<SQLType>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLType type, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string) throws InternalException {
+        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLType type, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
             switch (type) {
                 case EMPTY: string.append("BOOLEAN"); break;
                 case BOOLEAN: string.append("BOOLEAN"); break;

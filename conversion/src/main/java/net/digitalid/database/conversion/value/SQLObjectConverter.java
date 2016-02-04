@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.collections.freezable.FreezableSet;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.conversion.Converter;
 import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
@@ -31,6 +30,7 @@ import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
 import net.digitalid.database.dialect.ast.statement.insert.SQLValues;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnConstraint;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDeclaration;
+import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDefinition;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLType;
 import net.digitalid.database.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.exceptions.operation.FailedValueStoringException;
@@ -44,7 +44,7 @@ public class SQLObjectConverter<T extends Convertible> extends SQLConverter<T> {
     /* -------------------------------------------------- SQL Type -------------------------------------------------- */
     
     @Override
-    public @Nonnull SQLType getSQLType() {
+    public @Nonnull SQLType getSQLType(Field field) {
         throw new UnsupportedOperationException("Only simple types can be converted to SQL types.");
     }
     
@@ -75,13 +75,13 @@ public class SQLObjectConverter<T extends Convertible> extends SQLConverter<T> {
      */
     private @Nonnull Field retrieveReferencedField(@Nonnull Field field) throws NoSuchFieldException, InternalException {
         final @Nonnull References references = field.getAnnotation(References.class);
-        final @Nonnull Field referencedField = field.getType().getField(references.columnNames()[0]);
+        final @Nonnull Field referencedField = field.getType().getField(references.columnName());
         return referencedField;
     }
     
     @Override
     public void collectValues(@Nullable Object object, @Nonnull Class<?> type, @NonCapturable @Nonnull SQLValues values) throws FailedValueStoringException, InternalException, StoringException, StructureException, NoSuchFieldException {
-        assert object == null ||object instanceof Convertible: "The object is of type Convertible.";
+        assert object == null || object instanceof Convertible: "The object is of type Convertible.";
         
         final @Nonnull @NonNullableElements @Frozen ReadOnlyList<Field> fields = ReflectionUtility.getReconstructionFields(type);
         for (@Nonnull Field field : fields) {
@@ -118,17 +118,25 @@ public class SQLObjectConverter<T extends Convertible> extends SQLConverter<T> {
     
     /* -------------------------------------------------- Column Names -------------------------------------------------- */
     
+    private void putColumnNamesOfEmbeddedType(@Nonnull Class<?> type, @Nonnull String tableName, @NonCapturable @Nonnull @NonNullableElements FreezableList<? super SQLQualifiedColumnName> columnNames) throws ConverterNotFoundException, StructureException {
+        final @Nonnull @NonNullableElements @Frozen ReadOnlyList<Field> fields = ReflectionUtility.getReconstructionFields(type);
+        for (@Nonnull Field embeddedField : fields) {
+            final @Nonnull SQLConverter<?> sqlConverter = SQL.FORMAT.getConverter(embeddedField);
+            sqlConverter.putColumnNames(embeddedField, tableName, columnNames);
+        }
+    }
+    
     @Override
-    public void putColumnNames(@Nonnull Field field, @Nullable String tableName, @NonCapturable @Nonnull FreezableList<SQLQualifiedColumnName> qualifiedColumnNames) throws StructureException, ConverterNotFoundException {
+    public void putColumnNames(@Nonnull Field field, @Nullable String tableName, @NonCapturable @Nonnull @NonNullableElements FreezableList<? super SQLQualifiedColumnName> qualifiedColumnNames) throws StructureException, ConverterNotFoundException {
+        final @Nonnull Class<?> type = field.getType();
         if (field.isAnnotationPresent(References.class)) {
-            final @Nonnull Class<?> type = field.getType();
             final @Nonnull @NonNullableElements @Frozen ReadOnlyList<Field> fields = ReflectionUtility.getReconstructionFields(type);
             for (@Nonnull Field embeddedField : fields) {
                 final @Nonnull SQLConverter<?> sqlConverter = SQL.FORMAT.getConverter(embeddedField);
                 sqlConverter.putColumnNames(embeddedField, tableName, qualifiedColumnNames);
             }
         } else {
-            qualifiedColumnNames.add(SQLQualifiedColumnName.get(field.getName(), tableName));
+            putColumnNamesOfEmbeddedType(type, tableName, qualifiedColumnNames);
         }
     }
     
@@ -144,13 +152,11 @@ public class SQLObjectConverter<T extends Convertible> extends SQLConverter<T> {
     
     private void putColumnDeclarationsOfReferencedType(@Nonnull Field field, @NonCapturable @Nonnull @NonNullableElements FreezableArrayList<SQLColumnDeclaration> columnDeclarations) throws NoSuchFieldException, ConverterNotFoundException {
         final @Nonnull References references = field.getAnnotation(References.class);
-        final @Nonnull Field referencedField = field.getType().getField(references.columnNames()[0]);
-        
-        final @Nonnull @NonNullableElements FreezableSet<SQLColumnConstraint> columnConstraints = SQLColumnConstraint.of(field);
+        final @Nonnull Field referencedField = field.getType().getField(references.columnName());
         
         final @Nonnull SQLConverter<?> referencedFieldConverter = SQL.FORMAT.getConverter(referencedField);
-        final @Nonnull SQLType sqlType = referencedFieldConverter.getSQLType();
-        final @Nonnull SQLColumnDeclaration columnDeclaration = SQLColumnDeclaration.of(SQLQualifiedColumnName.get(field.getName()), sqlType, columnConstraints);
+        final @Nonnull SQLType sqlType = referencedFieldConverter.getSQLType(referencedField);
+        final @Nonnull SQLColumnDeclaration columnDeclaration = SQLColumnDeclaration.of(SQLQualifiedColumnName.get(field.getName()), sqlType, SQLColumnDefinition.of(field), SQLColumnConstraint.of(field));
         columnDeclarations.add(columnDeclaration);
     }
     
