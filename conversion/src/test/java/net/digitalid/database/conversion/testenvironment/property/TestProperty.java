@@ -27,9 +27,8 @@ public class TestProperty extends WritableNonNullableProperty<Boolean> {
         this.flag = newValue;
     }
     
-    @Nonnull
     @Override
-    public Boolean get() {
+    public @Nonnull Boolean get() {
         return flag;
     }
     

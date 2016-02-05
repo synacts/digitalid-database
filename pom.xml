@@ -42,6 +42,7 @@
 <!--        <module>mysql</module>
         <module>sqlite</module>
         <module>postgres</module>-->
+        <module>testing</module>
         <module>conversion</module>
     </modules>
     

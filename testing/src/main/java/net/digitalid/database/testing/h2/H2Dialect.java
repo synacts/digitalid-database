@@ -25,7 +25,7 @@ public class H2Dialect extends SQLDialect {
     
     private final @Nonnull @NonNullableElements FreezableHashMap<Class<?>, Transcriber<?>> transcribers = FreezableHashMap.get();
     
-    H2Dialect() {
+    public H2Dialect() {
         transcribers.put(SQLIdentifier.class, new H2SQLIdentifierTranscriber<>(SQLIdentifier.class));
         transcribers.put(SQLQualifiedTableName.class, new H2SQLIdentifierTranscriber<>(SQLQualifiedTableName.class));
         transcribers.put(SQLQualifiedColumnName.class, new H2SQLIdentifierTranscriber<>(SQLQualifiedColumnName.class));

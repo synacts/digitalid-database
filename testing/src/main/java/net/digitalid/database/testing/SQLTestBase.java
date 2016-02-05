@@ -18,9 +18,11 @@ import net.digitalid.utility.validation.annotations.elements.NonNullableElements
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.interfaces.DatabaseInstance;
 import net.digitalid.database.core.interfaces.SelectionResult;
+import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.table.Table;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
+import net.digitalid.database.testing.h2.H2Dialect;
 import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
 
 /**
@@ -32,6 +34,7 @@ public class SQLTestBase extends TestingBase {
     
     @BeforeClass
     public static void setUpSQL() throws Exception {
+        SQLDialect.dialect.set(new H2Dialect());
         server = Server.createTcpServer();
         server.start();
         H2JDBCDatabaseInstance h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:tcp://localhost:9092/mem:test;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS " + TestHost.SCHEMA_NAME + ";mode=MySQL;");

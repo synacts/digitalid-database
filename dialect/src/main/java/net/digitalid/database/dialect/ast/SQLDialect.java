@@ -6,6 +6,8 @@ import java.util.ServiceLoader;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.configuration.Configuration;
+import net.digitalid.utility.configuration.InitializationError;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.internal.InitializationException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
@@ -21,7 +23,8 @@ import net.digitalid.database.dialect.spi.SQLDialectServiceProviderInterface;
 @Immutable
 public abstract class SQLDialect {
     
-    private static @Nullable SQLDialect instance;
+    public static final @Nonnull Configuration<SQLDialect> dialect = Configuration.withUnknownProvider();
+    //private static @Nullable SQLDialect instance;
     
     /**
      * Transcribes an SQL node by calling the default transcriber of the node which stores the SQL statement as a string in the string builder.
@@ -31,7 +34,7 @@ public abstract class SQLDialect {
     }
     
     // TODO: Should throw InitializationError instead.
-    public static @Nonnull SQLDialect getDialect() throws InternalException {
+   /* public static @Nonnull SQLDialect getDialect() throws InternalException {
         if (instance == null) {
             synchronized (SQLDialect.class) {
                 final @Nonnull ServiceLoader<SQLDialectServiceProviderInterface> serviceLoader = ServiceLoader.load(SQLDialectServiceProviderInterface.class);
@@ -45,6 +48,10 @@ public abstract class SQLDialect {
             }
         }
         return instance;
+    }*/
+    
+    public static @Nonnull SQLDialect getDialect() throws InitializationError {
+        return dialect.get();
     }
     
 }
