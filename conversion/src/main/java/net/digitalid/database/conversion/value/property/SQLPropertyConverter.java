@@ -16,6 +16,7 @@ import net.digitalid.utility.errors.ShouldNeverHappenError;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.property.ReadOnlyProperty;
 import net.digitalid.utility.reflection.exceptions.StructureException;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 import net.digitalid.database.conversion.SQL;
@@ -66,7 +67,7 @@ public class SQLPropertyConverter extends SQLConverter<ReadOnlyProperty<?, ?>> {
     }
     
     @Override
-    public void collectValues(@Nullable Object object, Class<?> type, @NonCapturable @Nonnull SQLValues values) throws StoringException, ConverterNotFoundException, FailedValueStoringException, InternalException, StructureException, NoSuchFieldException {
+    public void collectValues(@Nullable Object object, Class<?> type, @NonCapturable @Nonnull @NonNullableElements FreezableArrayList<SQLValues> values) throws StoringException, ConverterNotFoundException, FailedValueStoringException, InternalException, StructureException, NoSuchFieldException {
         final @Nonnull Method getMethod = getGetMethod(type);
         final @Nonnull Class<?> returnType = getMethod.getReturnType();
         final @Nullable Object propertyObject;

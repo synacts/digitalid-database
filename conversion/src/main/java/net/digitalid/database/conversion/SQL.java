@@ -139,8 +139,8 @@ public final class SQL {
         }
     }
     
-    private static @Nonnull @NullableElements SQLValues getSQLValues(@Nullable Convertible object, @Nonnull @NonNullableElements ReadOnlyList<Field> fields) throws InternalException, FailedValueStoringException, StoringException {
-        final @Nonnull @NullableElements SQLValues values = SQLValues.get();
+    private static @Frozen @Nonnull @NonNullableElements ReadOnlyList<SQLValues> getSQLValues(@Nullable Convertible object, @Nonnull @NonNullableElements ReadOnlyList<Field> fields) throws InternalException, FailedValueStoringException, StoringException {
+        final @NonFrozen @Nonnull @NonNullableElements FreezableArrayList<SQLValues> sqlValues = FreezableArrayList.get();
         for (@Nonnull Field field : fields) {
             final @Nonnull SQLConverter<?> sqlFieldConverter = FORMAT.getConverter(field);
             final @Nullable Object value;
@@ -154,12 +154,12 @@ public final class SQL {
                 }
             }
             try {
-                sqlFieldConverter.collectValues(value, field.getType(), values);
+                sqlFieldConverter.collectValues(value, field.getType(), sqlValues);
             } catch (StructureException | NoSuchFieldException e) {
                 throw ConformityViolation.with("Failed to convert the field '" + field.getName() + "' due to conformity problems.", e);
             }
         }
-        return values;
+        return sqlValues.freeze();
     }
     
     // TODO: what if multiple convertible objects should be inserted?
@@ -187,13 +187,16 @@ public final class SQL {
                 Cache.setColumnNames(fieldType, columnNames);
             }
         }
-        final @Nonnull @NullableElements SQLValues values = getSQLValues(object, fields);
-        final @Nonnull SQLInsertStatement sqlInsertStatement = SQLInsertStatement.get(SQLQualifiedTableName.get(tableName, site), columnNames, values);
+        // TODO: Explicit transaction definition?
+        final @Nonnull @NonNullableElements ReadOnlyList<SQLValues> valuesList = getSQLValues(object, fields);
+        for (@Nonnull @NullableElements SQLValues values : valuesList) {
+            final @Nonnull SQLInsertStatement sqlInsertStatement = SQLInsertStatement.get(SQLQualifiedTableName.get(tableName, site), columnNames, values);
+            final @Nonnull String insertIntoTableStatementString = sqlInsertStatement.toPreparedStatement(SQLDialect.getDialect(), site);
+            @Nonnull ValueCollector valueCollector = Database.getInstance().getValueCollector(insertIntoTableStatementString);
+            sqlInsertStatement.storeValues(valueCollector);
+            Database.getInstance().execute(valueCollector);
+        }
         
-        final @Nonnull String insertIntoTableStatementString = sqlInsertStatement.toPreparedStatement(SQLDialect.getDialect(), site);
-        @Nonnull ValueCollector valueCollector = Database.getInstance().getValueCollector(insertIntoTableStatementString);
-        sqlInsertStatement.storeValues(valueCollector);
-        Database.getInstance().execute(valueCollector);
         Database.getInstance().commit();
     }
     
