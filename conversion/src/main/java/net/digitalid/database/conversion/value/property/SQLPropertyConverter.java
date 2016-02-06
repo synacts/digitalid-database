@@ -12,8 +12,8 @@ import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
-import net.digitalid.utility.errors.ShouldNeverHappenError;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.exceptions.UnexpectedFailureException;
 import net.digitalid.utility.property.ReadOnlyProperty;
 import net.digitalid.utility.reflection.exceptions.StructureException;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
@@ -42,8 +42,8 @@ public class SQLPropertyConverter extends SQLConverter<ReadOnlyProperty<?, ?>> {
         try {
             final @Nonnull Method method = propertyClass.getMethod("get");
             return method;
-        } catch (NoSuchMethodException e) {
-            throw ShouldNeverHappenError.with(e);
+        } catch (@Nonnull NoSuchMethodException exception) {
+            throw UnexpectedFailureException.with(exception);
         }
     }
     
@@ -74,8 +74,8 @@ public class SQLPropertyConverter extends SQLConverter<ReadOnlyProperty<?, ?>> {
         if (object != null) {
             try {
                 propertyObject = getMethod.invoke(object);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                throw ShouldNeverHappenError.with(e);
+            } catch (@Nonnull IllegalAccessException | InvocationTargetException exception) {
+                throw UnexpectedFailureException.with(exception);
             }
         } else {
             propertyObject = null;
@@ -109,8 +109,8 @@ public class SQLPropertyConverter extends SQLConverter<ReadOnlyProperty<?, ?>> {
                 final @Nonnull Method setter = type.getMethod("set");
                 setter.invoke(property, recoveredObject);
                 return property;
-            } catch (NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e) {
-                throw ShouldNeverHappenError.with("Failed to reconstruct property: " + e);
+            } catch (@Nonnull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception) {
+                throw UnexpectedFailureException.with("Failed to reconstruct property:", exception);
             }
         } else {
             return null;

@@ -5,11 +5,11 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.castable.exceptions.InvalidClassCastException;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.string.iterable.Brackets;
 import net.digitalid.utility.string.iterable.IterableConverter;
 import net.digitalid.utility.string.iterable.NonNullableElementConverter;
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.elements.NullableElements;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 

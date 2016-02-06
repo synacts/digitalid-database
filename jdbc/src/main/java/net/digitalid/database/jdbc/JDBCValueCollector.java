@@ -7,15 +7,15 @@ import java.sql.SQLException;
 
 import javax.annotation.Nonnull;
 
-
+import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;
 
 import net.digitalid.database.core.Database;
+import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.exceptions.operation.FailedResourceClosingException;
 import net.digitalid.database.exceptions.operation.FailedValueStoringException;
-import net.digitalid.database.core.interfaces.ValueCollector;
 
 /**
  * This classes uses the JDBC prepared statement to collect the values.

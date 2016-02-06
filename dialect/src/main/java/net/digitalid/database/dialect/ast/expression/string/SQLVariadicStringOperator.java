@@ -55,7 +55,7 @@ public enum SQLVariadicStringOperator implements SQLVariadicOperator {
                     string.append("COALESCE");
                     break;
                 default:
-                    throw UnexpectedValueException.with(node.name() + " not implemented.");
+                    throw UnexpectedValueException.with("node", node);
             }
         }
         

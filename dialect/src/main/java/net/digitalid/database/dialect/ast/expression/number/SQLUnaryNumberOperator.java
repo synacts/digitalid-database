@@ -7,10 +7,10 @@ import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLUnaryOperator;
-import net.digitalid.database.core.table.Site;
 
 /**
  * This class enumerates the supported unary number operators.
@@ -48,7 +48,7 @@ public enum SQLUnaryNumberOperator implements SQLUnaryOperator {
                 case ROUND: string.append("ROUND"); break;
                 case NEGATE: string.append("-"); break;
                 case ABSOLUTE: string.append("ABS"); break;
-                default: throw UnexpectedValueException.with(node.name() + " not implemented.");
+                default: throw UnexpectedValueException.with("name", node);
             }
         }
         

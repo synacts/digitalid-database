@@ -1,7 +1,12 @@
 package net.digitalid.database.dialect.ast.statement.table.create;
 
 import java.lang.reflect.Field;
+
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.validation.annotations.math.Positive;
+import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.dialect.ast.expression.SQLExpression;
@@ -10,9 +15,6 @@ import net.digitalid.database.dialect.ast.expression.bool.SQLNumberComparisonBoo
 import net.digitalid.database.dialect.ast.expression.number.SQLNumberLiteral;
 import net.digitalid.database.dialect.ast.expression.number.SQLNumberReference;
 import net.digitalid.database.exceptions.operation.FailedValueStoringException;
-
-import net.digitalid.utility.validation.annotations.math.Positive;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 /**
  *
