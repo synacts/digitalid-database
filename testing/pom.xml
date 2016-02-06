@@ -4,9 +4,7 @@
                              http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     
-    <groupId>net.digitalid.database</groupId>
-    <artifactId>database-conversion</artifactId>
-    <version>1.0.0</version>
+    <artifactId>database-testing</artifactId>
     <packaging>jar</packaging>
     
     <parent>
@@ -18,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>net.digitalid.utility</groupId>
-            <artifactId>utility-conversion</artifactId>
+            <artifactId>utility-testing</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -30,9 +28,20 @@
 
         <dependency>
             <groupId>net.digitalid.database</groupId>
-            <artifactId>database-testing</artifactId>
+            <artifactId>database-jdbc</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.190</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
         </dependency>
     </dependencies>
     

@@ -6,11 +6,14 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.exceptions.internal.UncoveredCaseException;
 import net.digitalid.utility.testing.TestingBase;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
@@ -37,8 +40,8 @@ public class SQLTestBase extends TestingBase {
         SQLDialect.dialect.set(new H2Dialect());
         server = Server.createTcpServer();
         server.start();
-        H2JDBCDatabaseInstance h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:tcp://localhost:9092/mem:test;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS " + TestHost.SCHEMA_NAME + ";mode=MySQL;");
-        //H2JDBCDatabaseInstance h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:mem:test;INIT=CREATE SCHEMA IF NOT EXISTS " + TestHost.SCHEMA_NAME + ";mode=MySQL;");
+        //H2JDBCDatabaseInstance h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:tcp://localhost:9092/mem:test;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS " + TestHost.SCHEMA_NAME + ";mode=MySQL;");
+        H2JDBCDatabaseInstance h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:mem:test;INIT=CREATE SCHEMA IF NOT EXISTS " + TestHost.SCHEMA_NAME + ";mode=MySQL;");
         Database.initialize(h2Database);
     }
     
@@ -174,17 +177,56 @@ public class SQLTestBase extends TestingBase {
         Assert.assertSame("Table '" + table + "' does not contain " + rowCount + " rows.", rowCount, rowCountResult.getInteger64());
     }
     
-    protected void assertTableContains(@Nonnull Table table, @Nonnull @NonNullableElements String[][] values) throws EntryNotFoundException, FailedNonCommittingOperationException {
+    protected void assertTableContains(@Nonnull Table table, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException {
         final @Nonnull String tableName = table.getName().getValue();
         final @Nonnull DatabaseInstance instance = Database.getInstance();
-        for (String[] value : values) {
-            final @Nonnull String columnName = value[0];
-            final @Nonnull String columnValue = value[1];
-            final @Nonnull String rowCountQuery = "SELECT COUNT(*) AS count FROM " + tableName.toUpperCase() + " WHERE " + columnName.toUpperCase() + " = " + columnValue;
+        for (@Nonnull Expected expected : expectedArray) {
+            @Nonnull String rowCountQuery = "SELECT COUNT(*) AS count FROM " + tableName.toUpperCase() ;
+            if (expected.expectedColumnClauses.size() > 0) {
+                rowCountQuery += " WHERE ";
+            }
+            String columnsInfo = "";
+            for (int i = 0; i < expected.expectedColumnClauses.size(); i++) {
+                ExpectedColumnClause expectedColumnClause = expected.expectedColumnClauses.get(i);
+                final @Nonnull String columnName = expectedColumnClause.column;
+                final @Nonnull String columnValue = expectedColumnClause.columnValue;
+                rowCountQuery += columnName.toUpperCase() + " = " + columnValue;
+                columnsInfo += columnName + " = " + columnValue;
+                if (i < expected.expectedColumnClauses.size() - 1) {
+                    rowCountQuery += " AND ";
+                    columnsInfo += ", ";
+                }
+            }
             final @Nonnull SelectionResult rowCountResult = instance.executeSelect(rowCountQuery);
             rowCountResult.moveToFirstRow();
-            Assert.assertSame("Table '" + table + "' does not contain column " + columnName + " = " + columnValue, 1L, rowCountResult.getInteger64());
+            Assert.assertSame("Table '" + table + "' does not contain column(s) " + columnsInfo, 1L, rowCountResult.getInteger64());
         }
+    }
+    
+    public static class Expected {
+        
+        protected List<ExpectedColumnClause> expectedColumnClauses = new ArrayList<>();
+        
+        public static ExpectedColumnClause column(String columnName) {
+            return new ExpectedColumnClause(columnName);
+        }
+    }
+    
+    public static class ExpectedColumnClause extends Expected {
+        
+        public final String column;
+        public String columnValue;
+        
+        ExpectedColumnClause(@Nonnull String column) {
+            this.column = column;
+        }
+        
+        public Expected value(String columnValue) {
+            this.columnValue = columnValue;
+            this.expectedColumnClauses.add(this);
+            return this;
+        }
+        
     }
      
 }

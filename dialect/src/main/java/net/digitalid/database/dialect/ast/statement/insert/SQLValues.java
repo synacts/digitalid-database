@@ -1,6 +1,7 @@
 package net.digitalid.database.dialect.ast.statement.insert;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.castable.exceptions.InvalidClassCastException;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
@@ -25,27 +26,38 @@ import net.digitalid.database.core.table.Site;
  */
 public class SQLValues implements SQLParameterizableNode<SQLValues>, SQLValuesOrStatement<SQLValues> {
    
-    public final @Nonnull @NonNullableElements FreezableArrayList<SQLExpression<?>> values;
+    public final @Nonnull @NullableElements FreezableArrayList<SQLExpression<?>> values;
     
     private SQLValues() {
         this.values = FreezableArrayList.get();
     }
     
-    public static @Nonnull @NullableElements
-    SQLValues get() {
+    private SQLValues(@Nonnull FreezableArrayList<SQLExpression<?>> values) {
+        this.values = values;
+    }
+    
+    public static @Nonnull @NullableElements SQLValues get() {
         return new SQLValues();
+    }
+    
+    public static @Nonnull @NullableElements SQLValues get(@Nonnull FreezableArrayList<SQLExpression<?>> values) {
+        return new SQLValues(values);
     }
     
     @Override
     public void storeValues(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
-        for (@Nonnull SQLExpression sqlExpression : values) {
+        for (@Nullable SQLExpression sqlExpression : values) {
             // in the simplest case, the sqlExpression is a literal.
             sqlExpression.storeValues(collector);
         }
     }
     
-    public void addValue(SQLExpression value) {
+    public void addValue(@Nullable SQLExpression value) {
         values.add(value);
+    }
+    
+    public SQLValues copy() {
+        return new SQLValues(this.values);
     }
     
     /* -------------------------------------------------- SQL Node -------------------------------------------------- */

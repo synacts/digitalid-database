@@ -15,6 +15,7 @@ import net.digitalid.utility.reflection.exceptions.StructureException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 import net.digitalid.database.conversion.SQLConverter;
+import net.digitalid.database.conversion.value.SQLSingleRowConverter;
 import net.digitalid.database.core.interfaces.SelectionResult;
 import net.digitalid.database.dialect.ast.expression.number.SQLNumberLiteral;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
@@ -30,7 +31,7 @@ import net.digitalid.database.exceptions.state.value.CorruptNullValueException;
 /**
  *
  */
-public class SQLInteger32Converter extends SQLConverter<Integer> {
+public class SQLInteger32Converter extends SQLSingleRowConverter<Integer> {
     
     /* -------------------------------------------------- SQL Type -------------------------------------------------- */
     
@@ -60,7 +61,8 @@ public class SQLInteger32Converter extends SQLConverter<Integer> {
     
     @Override
     public void putColumnDeclarations(@Nonnull Field field, @NonCapturable @Nonnull FreezableArrayList<SQLColumnDeclaration> columnDeclarations) throws ConverterNotFoundException, StructureException, NoSuchFieldException {
-        assert int.class.isAssignableFrom(field.getType()) || Integer.class.isAssignableFrom(field.getType()) : "The field has the type 'int' or 'Integer'";
+// TODO: Figure out what to do with the assert. If called from the CollectionsConverter we have the wrong type, but should we even care?
+//        assert int.class.isAssignableFrom(field.getType()) || Integer.class.isAssignableFrom(field.getType()) : "The field has the type 'int' or 'Integer'";
         // TODO: column-prefixes?
         final @Nonnull SQLColumnDeclaration columnDeclaration = SQLColumnDeclaration.of(SQLQualifiedColumnName.get(field.getName()), SQLType.INTEGER32, SQLColumnDefinition.of(field), SQLColumnConstraint.of(field));
         columnDeclarations.add(columnDeclaration);

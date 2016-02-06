@@ -1,20 +1,16 @@
 package net.digitalid.database.conversion;
 
-import org.h2.jdbc.JdbcSQLException;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
 import net.digitalid.database.conversion.testenvironment.columnconstraints.ConstraintIntegerColumnTable;
 import net.digitalid.database.conversion.testenvironment.embedded.Convertible1;
 import net.digitalid.database.conversion.testenvironment.embedded.Convertible2;
 import net.digitalid.database.conversion.testenvironment.embedded.EmbeddedConvertibles;
+import net.digitalid.database.conversion.testenvironment.iterable.CollectionAndAdditionalFieldClass;
+import net.digitalid.database.conversion.testenvironment.iterable.SimpleCollectionsClass;
 import net.digitalid.database.conversion.testenvironment.property.PropertyTable;
 import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColumnTable;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTable;
@@ -27,6 +23,15 @@ import net.digitalid.database.exceptions.operation.FailedUpdateExecutionExceptio
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
 import net.digitalid.database.testing.SQLTestBase;
 import net.digitalid.database.testing.TestHost;
+
+import org.h2.jdbc.JdbcSQLException;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /**
  *
@@ -41,6 +46,8 @@ public class SQLInsertTableTest extends SQLTestBase {
     private static Table constraintIntegerColumnTable;
     private static Table propertyTable;
     private static Table convertibleTable;
+    private static Table simpleCollectionsTable;
+    private static Table collectionAndAdditionalFieldTable;
     
     @BeforeClass
     public static void createTables() throws Exception {
@@ -51,6 +58,8 @@ public class SQLInsertTableTest extends SQLTestBase {
         constraintIntegerColumnTable = SQL.create("int_table_1", site, ConstraintIntegerColumnTable.class);
         propertyTable = SQL.create("property_table", site, PropertyTable.class);
         convertibleTable = SQL.create("embedded_table_1", site, EmbeddedConvertibles.class);
+        simpleCollectionsTable = SQL.create("collections_table_1", site, SimpleCollectionsClass.class);
+        collectionAndAdditionalFieldTable = SQL.create("collections_table_2", site, CollectionAndAdditionalFieldClass.class);
     }
     
     @Before
@@ -65,7 +74,7 @@ public class SQLInsertTableTest extends SQLTestBase {
         SQL.insert(convertibleObject, SingleBooleanColumnTable.class, simpleBooleanTable);
         
         assertRowCount(simpleBooleanTable, 1);
-        assertTableContains(simpleBooleanTable, new String[][]{ {"value", "TRUE"} });
+        assertTableContains(simpleBooleanTable, Expected.column("value").value("TRUE"));
     }
     
     @Test
@@ -74,7 +83,7 @@ public class SQLInsertTableTest extends SQLTestBase {
         SQL.insert(convertibleObject, MultiBooleanColumnTable.class, multiColumnBooleanTable);
         
         assertRowCount(multiColumnBooleanTable, 1);
-        assertTableContains(multiColumnBooleanTable, new String[][]{ {"firstValue", "TRUE"}, {"secondValue", "FALSE"} });
+        assertTableContains(multiColumnBooleanTable, Expected.column("firstvalue").value("TRUE"), Expected.column("secondValue").value("FALSE"));
     }
     
     @Test
@@ -83,7 +92,7 @@ public class SQLInsertTableTest extends SQLTestBase {
         SQL.insert(convertibleObject, ConstraintIntegerColumnTable.class, constraintIntegerColumnTable);
         
         assertRowCount(constraintIntegerColumnTable, 1);
-        assertTableContains(constraintIntegerColumnTable, new String[][]{ {"value", "14"} });
+        assertTableContains(constraintIntegerColumnTable, Expected.column("value").value("14"));
     }
     
     @Test
@@ -119,7 +128,7 @@ public class SQLInsertTableTest extends SQLTestBase {
         SQL.insert(convertible, PropertyTable.class, propertyTable);
     
         assertRowCount(propertyTable, 1);
-        assertTableContains(propertyTable, new String[][]{ {"myproperty", "TRUE"} });
+        assertTableContains(propertyTable, Expected.column("myproperty").value("TRUE"));
     }
     
     @Test
@@ -130,7 +139,48 @@ public class SQLInsertTableTest extends SQLTestBase {
         SQL.insert(embeddedConvertibles, EmbeddedConvertibles.class, convertibleTable);
     
         assertRowCount(convertibleTable, 1);
-        assertTableContains(convertibleTable, new String[][]{ {"value1", "2"}, {"value2", "3"} });
+        assertTableContains(convertibleTable, Expected.column("value1").value("2"), Expected.column("value2").value("3"));
+    }
+    
+    @Test
+    public void shouldInsertIntoTableWithSimpleCollectionsClass() throws Exception {
+        final @Nonnull @NonNullableElements FreezableArrayList<Integer> listOfIntegers = FreezableArrayList.get();
+        listOfIntegers.add(1);
+        listOfIntegers.add(2);
+        listOfIntegers.add(3);
+        listOfIntegers.add(4);
+        listOfIntegers.add(5);
+        final @Nonnull SimpleCollectionsClass simpleCollectionsClass = SimpleCollectionsClass.get(listOfIntegers);
+        SQL.insert(simpleCollectionsClass, SimpleCollectionsClass.class, simpleCollectionsTable);
+    
+        assertRowCount(simpleCollectionsTable, 5L);
+        assertTableContains(simpleCollectionsTable, 
+                Expected.column("listofintegers").value("1"),
+                Expected.column("listofintegers").value("2"),
+                Expected.column("listofintegers").value("3"),
+                Expected.column("listofintegers").value("4"),
+                Expected.column("listofintegers").value("5"));
+    }
+    
+    @Test
+    public void shouldInsertIntoTableWithCollectionAndAdditionalFieldClass() throws Exception {
+        final @Nonnull @NonNullableElements FreezableArrayList<Integer> listOfIntegers = FreezableArrayList.get();
+        listOfIntegers.add(1);
+        listOfIntegers.add(2);
+        listOfIntegers.add(3);
+        listOfIntegers.add(4);
+        listOfIntegers.add(5);
+        final @Nonnull CollectionAndAdditionalFieldClass collectionAndAdditionalFieldClass = CollectionAndAdditionalFieldClass.get(listOfIntegers, 99);
+        SQL.insert(collectionAndAdditionalFieldClass, CollectionAndAdditionalFieldClass.class, collectionAndAdditionalFieldTable);
+    
+        assertRowCount(collectionAndAdditionalFieldTable, 5L);
+        assertTableContains(collectionAndAdditionalFieldTable,
+                Expected.column("listofintegers").value("1").column("additionalfield").value("99"),
+                Expected.column("listofintegers").value("2").column("additionalfield").value("99"),
+                Expected.column("listofintegers").value("3").column("additionalfield").value("99"),
+                Expected.column("listofintegers").value("4").column("additionalfield").value("99"),
+                Expected.column("listofintegers").value("5").column("additionalfield").value("99")
+                );
     }
     
 }

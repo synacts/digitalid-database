@@ -13,6 +13,7 @@ import net.digitalid.database.conversion.testenvironment.columnconstraints.Const
 import net.digitalid.database.conversion.testenvironment.embedded.EmbeddedConvertibles;
 import net.digitalid.database.conversion.testenvironment.empty.EmptyClass;
 import net.digitalid.database.conversion.testenvironment.inherited.SubClass;
+import net.digitalid.database.conversion.testenvironment.iterable.SimpleCollectionsClass;
 import net.digitalid.database.conversion.testenvironment.property.PropertyTable;
 import net.digitalid.database.conversion.testenvironment.referenced.Entity;
 import net.digitalid.database.conversion.testenvironment.referenced.ReferencedEntity;
@@ -151,6 +152,17 @@ public class SQLCreateTableTest extends SQLTestBase {
         assertTableHasColumns(tableName, site.toString(), expectedResult2);
         
         assertTableReferences(tableName, site.toString(), "referencedentity", "referenced_table_1", "id", UpdateAction.RESTRICT, DeleteAction.CASCADE);
+    }
+    
+    @Test
+    public void shouldCreateTableWithSimpleCollectionClass() throws Exception {
+        final @Nonnull String collectionTableName = "collection_table_1";
+        final @Nonnull Table collectionTable = SQL.create(collectionTableName, site, SimpleCollectionsClass.class);
+    
+        Assert.assertEquals(site.toString() + "." + collectionTableName, collectionTable.getName(site));
+        Map<String, String[]> expectedResult = new HashMap<>();
+        expectedResult.put("listofintegers", new String[] { "integer(10)" });
+        assertTableHasColumns(collectionTableName, site.toString(), expectedResult);
     }
     
 }

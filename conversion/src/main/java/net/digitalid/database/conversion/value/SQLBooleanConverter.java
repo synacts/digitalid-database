@@ -5,14 +5,13 @@ import java.lang.reflect.Field;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.validation.annotations.elements.NullableElements;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
 import net.digitalid.utility.reflection.exceptions.StructureException;
+import net.digitalid.utility.validation.annotations.elements.NullableElements;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
-import net.digitalid.database.conversion.SQLConverter;
 import net.digitalid.database.core.interfaces.SelectionResult;
 import net.digitalid.database.dialect.ast.expression.bool.SQLBooleanLiteral;
 import net.digitalid.database.dialect.ast.identifier.SQLColumnName;
@@ -29,7 +28,7 @@ import net.digitalid.database.exceptions.state.value.CorruptNullValueException;
 /**
  *
  */
-public class SQLBooleanConverter extends SQLConverter<Boolean> {
+public class SQLBooleanConverter extends SQLSingleRowConverter<Boolean> {
     
     /* -------------------------------------------------- SQL Type -------------------------------------------------- */
     

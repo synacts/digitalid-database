@@ -13,6 +13,7 @@ import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.reflection.exceptions.StructureException;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
@@ -37,7 +38,7 @@ public abstract class SQLConverter<T> extends Converter {
     
     /* -------------------------------------------------- Converting -------------------------------------------------- */
     
-    public abstract void collectValues(@Nullable Object object, Class<?> type, @NonCapturable @Nonnull SQLValues values) throws StoringException, ConverterNotFoundException, FailedValueStoringException, InternalException, StructureException, NoSuchFieldException;
+    public abstract void collectValues(@Nullable Object object, @Nonnull Class<?> type, @Nonnull @NonNullableElements FreezableArrayList<SQLValues> valuesList) throws FailedValueStoringException, StoringException, StructureException, NoSuchFieldException;
     
     public abstract void putColumnNames(@Nonnull Field field, @Nullable String tableName, @NonCapturable @Nonnull FreezableList<? super SQLQualifiedColumnName> qualifiedColumnNames) throws StructureException, ConverterNotFoundException;
     
@@ -47,8 +48,6 @@ public abstract class SQLConverter<T> extends Converter {
     
     // TODO: Cache column declarations in caller.
     public abstract void putColumnDeclarations(@Nonnull Field field, @NonCapturable @Nonnull FreezableArrayList<SQLColumnDeclaration> columnDeclarations) throws ConverterNotFoundException, StructureException, NoSuchFieldException;
-    
-
     
     /* -------------------------------------------------- Recovery -------------------------------------------------- */
     
