@@ -26,7 +26,7 @@ public class SQLCheckMultipleOfConstraint extends SQLCheckConstraint {
     private final long multipleOfValue;
     
     SQLCheckMultipleOfConstraint(@Nonnull Field field) {
-        assert field.isAnnotationPresent(MultipleOf.class) : "The annotation @MultipleOf is present.";
+        Require.that(field.isAnnotationPresent(MultipleOf.class)).orThrow("The annotation @MultipleOf is present.");
         @Nonnull MultipleOf multipleOf = field.getAnnotation(MultipleOf.class);
         this.multipleOfValue = multipleOf.value();
         checkConstraint = SQLNumberComparisonBooleanExpression.get(SQLComparisonOperator.EQUAL,

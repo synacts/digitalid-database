@@ -1,6 +1,7 @@
 package net.digitalid.database.dialect.ast.expression.bool;
 
 import javax.annotation.Nonnull;
+
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
@@ -9,6 +10,7 @@ import net.digitalid.database.dialect.ast.expression.SQLBinaryExpression;
 import net.digitalid.database.dialect.ast.expression.number.SQLNumberExpression;
 import net.digitalid.database.dialect.ast.utility.binary.SQLBinaryExpressionTranscriber;
 import net.digitalid.database.exceptions.operation.FailedValueStoringException;
+
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 

@@ -162,7 +162,7 @@ public class SQLObjectConverter<T extends Convertible> extends SQLConverter<T> {
     
     @Override
     public void putColumnDeclarations(@Nonnull Field field, @NonCapturable @Nonnull @NonNullableElements FreezableArrayList<SQLColumnDeclaration> columnDeclarations) throws ConverterNotFoundException, StructureException, NoSuchFieldException {
-        assert Convertible.class.isAssignableFrom(field.getType()) : "The field has the type 'Convertible'";
+        Require.that(Convertible.class.isAssignableFrom(field.getType())).orThrow("The field has the type 'Convertible'");
         
         if (field.isAnnotationPresent(References.class)) {
             putColumnDeclarationsOfReferencedType(field, columnDeclarations);

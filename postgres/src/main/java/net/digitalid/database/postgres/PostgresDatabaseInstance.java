@@ -91,7 +91,7 @@ public final class PostgresDatabaseInstance extends JDBCDatabaseInstance {
     private PostgresDatabaseInstance(@Nonnull @Validated String name, boolean reset) throws FailedUpdateExecutionException, IOException {
         super(new org.postgresql.Driver());
         
-        assert Configuration.isValidName(name) : "The name is valid for a database.";
+        Require.that(Configuration.isValidName(name)).orThrow("The name is valid for a database.");
         
         final @Nonnull File file = new File(Directory.getDataDirectory().getPath() + File.separator + name + ".conf");
         if (file.exists()) {
@@ -325,7 +325,7 @@ public final class PostgresDatabaseInstance extends JDBCDatabaseInstance {
     @Pure
     @Override
     public @Nonnull String INDEX(@Nonnull String... columns) {
-        assert columns.length > 0 : "The columns are not empty.";
+        Require.that(columns.length > 0).orThrow("The columns are not empty.");
         
         return "";
     }
@@ -335,7 +335,7 @@ public final class PostgresDatabaseInstance extends JDBCDatabaseInstance {
     @NonCommitting
     @SuppressWarnings("StringEquality")
     public void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateExecutionException {
-        assert columns.length > 0 : "The columns are not empty.";
+        Require.that(columns.length > 0).orThrow("The columns are not empty.");
         
         final @Nonnull StringBuilder string = new StringBuilder("DO $$ DECLARE counter INTEGER; BEGIN ");
         string.append("SELECT COUNT(*) INTO counter FROM pg_indexes WHERE schemaname = 'public' AND tablename = '").append(table).append("' AND indexname = '").append(table).append("_index").append("';");
@@ -361,7 +361,7 @@ public final class PostgresDatabaseInstance extends JDBCDatabaseInstance {
      */
     @NonCommitting
     protected void onInsertIgnore(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateExecutionException {
-        assert columns.length > 0 : "The columns are not empty.";
+        Require.that(columns.length > 0).orThrow("The columns are not empty.");
         
         final @Nonnull StringBuilder string = new StringBuilder("CREATE OR REPLACE RULE ").append(table).append("_on_insert_ignore ");
         string.append("AS ON INSERT TO ").append(table).append(" WHERE EXISTS(SELECT 1 FROM ").append(table).append(" WHERE (");
@@ -407,8 +407,8 @@ public final class PostgresDatabaseInstance extends JDBCDatabaseInstance {
      */
     @NonCommitting
     protected void onInsertUpdate(@Nonnull Statement statement, @Nonnull String table, int key, @Nonnull String... columns) throws FailedUpdateExecutionException {
-        assert key > 0 : "The number of columns in the primary key is positive.";
-        assert columns.length >= key : "At least as many columns as in the primary key are provided.";
+        Require.that(key > 0).orThrow("The number of columns in the primary key is positive.");
+        Require.that(columns.length >= key).orThrow("At least as many columns as in the primary key are provided.");
         
         final @Nonnull StringBuilder string = new StringBuilder("CREATE OR REPLACE RULE ").append(table).append("_on_insert_update ");
         string.append("AS ON INSERT TO ").append(table).append(" WHERE EXISTS(SELECT 1 FROM ").append(table);

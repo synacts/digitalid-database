@@ -5,7 +5,7 @@ import java.sql.Types;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.exceptions.internal.UncoveredCaseException;
+import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
@@ -151,7 +151,7 @@ public enum SQLType implements SQLNode {
                 case BINARY128: string.append("BINARY(16)"); break;
                 case BINARY256: string.append("BINARY(32)"); break;
                 case BINARY: string.append("MEDIUMBLOB"); break;
-                default: throw UncoveredCaseException.with(type.name() + " not implemented.");
+                default: throw UnexpectedValueException.with(type.name() + " not implemented.");
             }
         }
         

@@ -1,12 +1,14 @@
 package net.digitalid.database.dialect.ast.expression.bool;
 
 import javax.annotation.Nonnull;
+
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLBinaryOperator;
+
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.exceptions.internal.UncoveredCaseException;
+import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -64,7 +66,7 @@ public enum SQLComparisonOperator implements SQLBinaryOperator<SQLComparisonOper
             case GREATER: string.append(">"); break;
             case LESS_OR_EQUAL: string.append("<="); break;
             case LESS: string.append("<"); break;
-            default: throw UncoveredCaseException.with(node.name() + " not implemented.");
+            default: throw UnexpectedValueException.with(node.name() + " not implemented.");
         }
         }
         

@@ -97,7 +97,7 @@ public class SQLValues implements SQLParameterizableNode<SQLValues>, SQLValuesOr
     @Nonnull
     @Override
     public <T> T castTo(@Nonnull Class<T> targetClass) throws InvalidClassCastException {
-        assert targetClass.isInstance(this) : "This object can only be casted to SQLValues";
+        Require.that(targetClass.isInstance(this)).orThrow("This object can only be casted to SQLValues");
         return (T) this;
     }
 }

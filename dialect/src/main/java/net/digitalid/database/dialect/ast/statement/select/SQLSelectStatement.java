@@ -50,7 +50,7 @@ public class SQLSelectStatement implements SQLParameterizableNode<SQLSelectState
     
     @Override
     public @Nonnull <T> T castTo(@Nonnull Class<T> targetClass) throws InvalidClassCastException {
-        assert targetClass.isInstance(this) : "This object can only be casted to SQLSelectStatement";
+        Require.that(targetClass.isInstance(this)).orThrow("This object can only be casted to SQLSelectStatement");
         return (T) this;
     }
 }

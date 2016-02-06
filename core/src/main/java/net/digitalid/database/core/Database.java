@@ -36,7 +36,7 @@ public final class Database {
      */
     @Pure
     public static @NonCapturable @Nonnull DatabaseInstance getInstance() {
-        assert instance != null : "The database is initialized.";
+        Require.that(instance != null).orThrow("The database is initialized.");
         
         return instance;
     }

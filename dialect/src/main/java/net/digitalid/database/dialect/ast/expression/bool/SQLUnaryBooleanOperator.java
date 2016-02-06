@@ -3,7 +3,7 @@ package net.digitalid.database.dialect.ast.expression.bool;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.exceptions.internal.UncoveredCaseException;
+import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -36,7 +36,7 @@ public enum SQLUnaryBooleanOperator implements SQLUnaryOperator {
         protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLUnaryBooleanOperator node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
             switch (node) {
                 case NOT: string.append("NOT"); break;
-                default: throw UncoveredCaseException.with(node.name() + " not implemented.");
+                default: throw UnexpectedValueException.with(node.name() + " not implemented.");
             }
         }
         

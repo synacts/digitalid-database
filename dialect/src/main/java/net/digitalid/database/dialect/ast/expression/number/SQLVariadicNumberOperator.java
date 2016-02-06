@@ -3,7 +3,7 @@ package net.digitalid.database.dialect.ast.expression.number;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.exceptions.internal.UncoveredCaseException;
+import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -42,7 +42,7 @@ public enum SQLVariadicNumberOperator implements SQLVariadicOperator {
             switch (operator) {
                 case GREATEST: string.append("GREATEST"); break;
                 case COALESCE: string.append("COALESCE"); break;
-                default: throw UncoveredCaseException.with(operator.name() + " not implemented.");
+                default: throw UnexpectedValueException.with(operator.name() + " not implemented.");
             }
         }
         

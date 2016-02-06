@@ -63,7 +63,7 @@ public final class SQLName implements SQLIdentifier<SQLName> {
      */
     @Pure
     public final @Nonnull SQLName prefixedWith(@Nonnull SQLPrefix prefix) {
-        assert prefix.getValue().length() + getValue().length() <= 62 : "The added lengths of the prefix and this name may be at most 62.";
+        Require.that(prefix.getValue().length() + getValue().length() <= 62).orThrow("The added lengths of the prefix and this name may be at most 62.");
         
         return new SQLName(prefix.getValue() + "_" + this.getValue());
     }

@@ -22,7 +22,7 @@ public class SQLCheckPositiveConstraint extends SQLCheckConstraint {
     private final @Nonnull SQLExpression checkConstraint;
     
     SQLCheckPositiveConstraint(@Nonnull Field field) {
-        assert field.isAnnotationPresent(Positive.class) : "The annotation @Positive is present.";
+        Require.that(field.isAnnotationPresent(Positive.class)).orThrow("The annotation @Positive is present.");
         checkConstraint = SQLNumberComparisonBooleanExpression.get(SQLComparisonOperator.GREATER, SQLNumberReference.get(field), SQLNumberLiteral.get(0L));
     }
     

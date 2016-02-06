@@ -22,7 +22,7 @@ public class SQLCheckNegativeConstraint extends SQLCheckConstraint {
     private final @Nonnull SQLExpression checkConstraint;
     
     SQLCheckNegativeConstraint(@Nonnull Field field) {
-        assert field.isAnnotationPresent(Negative.class) : "The annotation @Negative is present.";
+        Require.that(field.isAnnotationPresent(Negative.class)).orThrow("The annotation @Negative is present.");
         checkConstraint = SQLNumberComparisonBooleanExpression.get(SQLComparisonOperator.LESS, SQLNumberReference.get(field), SQLNumberLiteral.get(0L));
     }
     
