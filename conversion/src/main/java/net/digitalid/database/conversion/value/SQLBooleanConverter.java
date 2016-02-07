@@ -1,5 +1,6 @@
 package net.digitalid.database.conversion.value;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 import javax.annotation.Nonnull;

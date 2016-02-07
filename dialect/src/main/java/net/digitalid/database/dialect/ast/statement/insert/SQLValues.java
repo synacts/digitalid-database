@@ -57,7 +57,7 @@ public class SQLValues implements SQLParameterizableNode<SQLValues>, SQLValuesOr
     }
     
     public SQLValues copy() {
-        return new SQLValues(this.values);
+        return new SQLValues(this.values.clone());
     }
     
     /* -------------------------------------------------- SQL Node -------------------------------------------------- */

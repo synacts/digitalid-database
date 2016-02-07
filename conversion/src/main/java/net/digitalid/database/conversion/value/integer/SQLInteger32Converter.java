@@ -14,7 +14,6 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.reflection.exceptions.StructureException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
-import net.digitalid.database.conversion.SQLConverter;
 import net.digitalid.database.conversion.value.SQLSingleRowConverter;
 import net.digitalid.database.core.interfaces.SelectionResult;
 import net.digitalid.database.dialect.ast.expression.number.SQLNumberLiteral;

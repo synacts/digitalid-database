@@ -1,5 +1,6 @@
 package net.digitalid.database.conversion;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 import javax.annotation.Nonnull;
@@ -11,7 +12,6 @@ import net.digitalid.utility.conversion.Converter;
 import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
-import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.reflection.exceptions.StructureException;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
@@ -38,7 +38,7 @@ public abstract class SQLConverter<T> extends Converter {
     
     /* -------------------------------------------------- Converting -------------------------------------------------- */
     
-    public abstract void collectValues(@Nullable Object object, @Nonnull Class<?> type, @Nonnull @NonNullableElements FreezableArrayList<SQLValues> valuesList) throws FailedValueStoringException, StoringException, StructureException, NoSuchFieldException;
+    public abstract void collectValues(@Nullable Object object, @Nonnull Class<?> type, @Nonnull @NonNullableElements FreezableArrayList<SQLValues> valuesList, Annotation[] annotations) throws FailedValueStoringException, StoringException, StructureException, NoSuchFieldException;
     
     public abstract void putColumnNames(@Nonnull Field field, @Nullable String tableName, @NonCapturable @Nonnull FreezableList<? super SQLQualifiedColumnName> qualifiedColumnNames) throws StructureException, ConverterNotFoundException;
     

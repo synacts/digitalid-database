@@ -1,5 +1,6 @@
 package net.digitalid.database.conversion.value.property;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -67,7 +68,7 @@ public class SQLPropertyConverter extends SQLConverter<ReadOnlyProperty<?, ?>> {
     }
     
     @Override
-    public void collectValues(@Nullable Object object, Class<?> type, @NonCapturable @Nonnull @NonNullableElements FreezableArrayList<SQLValues> values) throws StoringException, ConverterNotFoundException, FailedValueStoringException, InternalException, StructureException, NoSuchFieldException {
+    public void collectValues(@Nullable Object object, Class<?> type, @NonCapturable @Nonnull @NonNullableElements FreezableArrayList<SQLValues> values, Annotation[] annotations) throws StoringException, ConverterNotFoundException, FailedValueStoringException, InternalException, StructureException, NoSuchFieldException {
         final @Nonnull Method getMethod = getGetMethod(type);
         final @Nonnull Class<?> returnType = getMethod.getReturnType();
         final @Nullable Object propertyObject;
@@ -80,7 +81,7 @@ public class SQLPropertyConverter extends SQLConverter<ReadOnlyProperty<?, ?>> {
         } else {
             propertyObject = null;
         }
-        SQL.FORMAT.getConverter(returnType).collectValues(propertyObject, returnType, values);
+        SQL.FORMAT.getConverter(returnType).collectValues(propertyObject, returnType, values, null);
     }
     
     // TODO: move to "SimpleTypeConverter"

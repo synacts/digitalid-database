@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.conversion.annotations.Constructing;
+import net.digitalid.utility.conversion.annotations.GenericTypes;
 import net.digitalid.utility.generator.conversion.Convertible;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
@@ -13,6 +14,7 @@ import net.digitalid.utility.validation.annotations.elements.NonNullableElements
  */
 public class SimpleCollectionsClass implements Convertible {
     
+    @GenericTypes(Integer.class)
     public final @Nonnull @NonNullableElements FreezableArrayList<Integer> listOfIntegers;
     
     private SimpleCollectionsClass(@Nonnull @NonNullableElements FreezableArrayList<Integer> listOfIntegers) {

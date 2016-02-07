@@ -1,5 +1,6 @@
 package net.digitalid.database.conversion.value;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 import javax.annotation.Nonnull;
@@ -39,7 +40,7 @@ public abstract class SQLSingleRowConverter<T> extends SQLConverter<T> {
     public abstract void collectValues(@Nullable Object object, Class<?> type, @NonCapturable @Nonnull SQLValues values) throws StoringException, ConverterNotFoundException, FailedValueStoringException, InternalException, StructureException, NoSuchFieldException;
     
     @Override
-    public void collectValues(@Nullable Object object, @Nonnull Class<?> type, @Nonnull @NonNullableElements FreezableArrayList<SQLValues> valuesList) throws FailedValueStoringException, StoringException, StructureException, NoSuchFieldException {
+    public void collectValues(@Nullable Object object, @Nonnull Class<?> type, @Nonnull @NonNullableElements FreezableArrayList<SQLValues> valuesList, Annotation[] annotations) throws FailedValueStoringException, StoringException, StructureException, NoSuchFieldException {
         if (valuesList.isEmpty()) {
             valuesList.add(SQLValues.get());
         }

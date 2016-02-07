@@ -10,6 +10,7 @@ import net.digitalid.database.conversion.testenvironment.embedded.Convertible1;
 import net.digitalid.database.conversion.testenvironment.embedded.Convertible2;
 import net.digitalid.database.conversion.testenvironment.embedded.EmbeddedConvertibles;
 import net.digitalid.database.conversion.testenvironment.iterable.CollectionAndAdditionalFieldClass;
+import net.digitalid.database.conversion.testenvironment.iterable.CompositeCollectionsClass;
 import net.digitalid.database.conversion.testenvironment.iterable.SimpleCollectionsClass;
 import net.digitalid.database.conversion.testenvironment.property.PropertyTable;
 import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColumnTable;
@@ -48,18 +49,20 @@ public class SQLInsertTableTest extends SQLTestBase {
     private static Table convertibleTable;
     private static Table simpleCollectionsTable;
     private static Table collectionAndAdditionalFieldTable;
+    private static Table compositeCollectionTable;
     
     @BeforeClass
     public static void createTables() throws Exception {
         SQLTestBase.setUpSQL();
         Site site = new TestHost();
-        simpleBooleanTable = SQL.create("boolean_table_1", site, SingleBooleanColumnTable.class);
-        multiColumnBooleanTable = SQL.create("boolean_table_2", site, MultiBooleanColumnTable.class);
-        constraintIntegerColumnTable = SQL.create("int_table_1", site, ConstraintIntegerColumnTable.class);
-        propertyTable = SQL.create("property_table", site, PropertyTable.class);
-        convertibleTable = SQL.create("embedded_table_1", site, EmbeddedConvertibles.class);
-        simpleCollectionsTable = SQL.create("collections_table_1", site, SimpleCollectionsClass.class);
-        collectionAndAdditionalFieldTable = SQL.create("collections_table_2", site, CollectionAndAdditionalFieldClass.class);
+        simpleBooleanTable = SQL.create("SQLInsertTableTest_boolean_table_1", site, SingleBooleanColumnTable.class);
+        multiColumnBooleanTable = SQL.create("SQLInsertTableTest_boolean_table_2", site, MultiBooleanColumnTable.class);
+        constraintIntegerColumnTable = SQL.create("SQLInsertTableTest_int_table_1", site, ConstraintIntegerColumnTable.class);
+        propertyTable = SQL.create("SQLInsertTableTest_property_table", site, PropertyTable.class);
+        convertibleTable = SQL.create("SQLInsertTableTest_embedded_table_1", site, EmbeddedConvertibles.class);
+        simpleCollectionsTable = SQL.create("SQLInsertTableTest_collections_table_1", site, SimpleCollectionsClass.class);
+        collectionAndAdditionalFieldTable = SQL.create("SQLInsertTableTest_collections_table_2", site, CollectionAndAdditionalFieldClass.class);
+        compositeCollectionTable = SQL.create("SQLInsertTableTest_collections_table_3", site, CompositeCollectionsClass.class);
     }
     
     @Before
@@ -170,17 +173,53 @@ public class SQLInsertTableTest extends SQLTestBase {
         listOfIntegers.add(3);
         listOfIntegers.add(4);
         listOfIntegers.add(5);
-        final @Nonnull CollectionAndAdditionalFieldClass collectionAndAdditionalFieldClass = CollectionAndAdditionalFieldClass.get(listOfIntegers, 99);
+        final @Nonnull CollectionAndAdditionalFieldClass collectionAndAdditionalFieldClass = CollectionAndAdditionalFieldClass.get(99, listOfIntegers);
         SQL.insert(collectionAndAdditionalFieldClass, CollectionAndAdditionalFieldClass.class, collectionAndAdditionalFieldTable);
     
         assertRowCount(collectionAndAdditionalFieldTable, 5L);
         assertTableContains(collectionAndAdditionalFieldTable,
-                Expected.column("listofintegers").value("1").column("additionalfield").value("99"),
-                Expected.column("listofintegers").value("2").column("additionalfield").value("99"),
-                Expected.column("listofintegers").value("3").column("additionalfield").value("99"),
-                Expected.column("listofintegers").value("4").column("additionalfield").value("99"),
-                Expected.column("listofintegers").value("5").column("additionalfield").value("99")
+                Expected.column("listofintegers").value("1").and("additionalfield").value("99"),
+                Expected.column("listofintegers").value("2").and("additionalfield").value("99"),
+                Expected.column("listofintegers").value("3").and("additionalfield").value("99"),
+                Expected.column("listofintegers").value("4").and("additionalfield").value("99"),
+                Expected.column("listofintegers").value("5").and("additionalfield").value("99")
                 );
+    }
+    
+    @Test
+    public void shouldInsertIntoTableWithCompositeCollection() throws Exception {
+        final @Nonnull @NonNullableElements FreezableArrayList<Integer> listOfIntegers1 = FreezableArrayList.get();
+        listOfIntegers1.add(1);
+        listOfIntegers1.add(2);
+        listOfIntegers1.add(3);
+        listOfIntegers1.add(4);
+        listOfIntegers1.add(5);
+        
+        final @Nonnull @NonNullableElements FreezableArrayList<Integer> listOfIntegers2 = FreezableArrayList.get();
+        listOfIntegers2.add(100);
+        listOfIntegers2.add(200);
+        listOfIntegers2.add(300);
+        listOfIntegers2.add(400);
+        
+        final @Nonnull @NonNullableElements FreezableArrayList<FreezableArrayList<Integer>> listOfListOfIntegers = FreezableArrayList.get();
+        listOfListOfIntegers.add(listOfIntegers1);
+        listOfListOfIntegers.add(listOfIntegers2);
+        
+        final @Nonnull CompositeCollectionsClass collectionAndAdditionalFieldClass = CompositeCollectionsClass.get(listOfListOfIntegers);
+        SQL.insert(collectionAndAdditionalFieldClass, CompositeCollectionsClass.class, compositeCollectionTable);
+    
+        assertRowCount(compositeCollectionTable, 5L);
+        assertTableContains(compositeCollectionTable,
+                Expected.column("_listofintegers_index").value("0").and("listofintegers").value("1"),
+                Expected.column("_listofintegers_index").value("0").and("listofintegers").value("2"),
+                Expected.column("_listofintegers_index").value("0").and("listofintegers").value("3"),
+                Expected.column("_listofintegers_index").value("0").and("listofintegers").value("4"),
+                Expected.column("_listofintegers_index").value("0").and("listofintegers").value("5"),
+                Expected.column("_listofintegers_index").value("1").and("listofintegers").value("100"),
+                Expected.column("_listofintegers_index").value("1").and("listofintegers").value("200"),
+                Expected.column("_listofintegers_index").value("1").and("listofintegers").value("300"),
+                Expected.column("_listofintegers_index").value("1").and("listofintegers").value("400")
+        );
     }
     
 }

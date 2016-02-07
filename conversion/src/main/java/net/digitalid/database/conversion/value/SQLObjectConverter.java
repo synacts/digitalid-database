@@ -1,5 +1,6 @@
 package net.digitalid.database.conversion.value;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 import javax.annotation.Nonnull;
@@ -80,7 +81,7 @@ public class SQLObjectConverter<T extends Convertible> extends SQLConverter<T> {
     }
     
     @Override
-    public void collectValues(@Nullable Object object, @Nonnull Class<?> type, @NonCapturable @Nonnull @NonNullableElements FreezableArrayList<SQLValues> values) throws FailedValueStoringException, InternalException, StoringException, StructureException, NoSuchFieldException {
+    public void collectValues(@Nullable Object object, @Nonnull Class<?> type, @NonCapturable @Nonnull @NonNullableElements FreezableArrayList<SQLValues> values, Annotation[] annotations) throws FailedValueStoringException, InternalException, StoringException, StructureException, NoSuchFieldException {
         assert object == null || object instanceof Convertible: "The object is of type Convertible.";
         
         final @Nonnull @NonNullableElements @Frozen ReadOnlyList<Field> fields = ReflectionUtility.getReconstructionFields(type);
@@ -112,7 +113,7 @@ public class SQLObjectConverter<T extends Convertible> extends SQLConverter<T> {
             } else {
                 referencedFieldValue = null;
             }
-            converter.collectValues(referencedFieldValue, storableField.getType(), values);
+            converter.collectValues(referencedFieldValue, storableField.getType(), values, null);
         }
     }
     
