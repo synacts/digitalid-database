@@ -5,7 +5,6 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,6 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.testing.TestingBase;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
@@ -86,7 +84,7 @@ public class SQLTestBase extends TestingBase {
                     return action;
                 }
             }
-            throw UncoveredCaseException.with(i);
+            throw UnexpectedValueException.with("UpdateAction", i);
         }
     }
     
@@ -106,7 +104,7 @@ public class SQLTestBase extends TestingBase {
                     return action;
                 }
             }
-            throw UnexpectedValueException.with("i", i);
+            throw UnexpectedValueException.with("DeleteAction", i);
         }
     }
     

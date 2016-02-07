@@ -1,7 +1,5 @@
 package net.digitalid.database.conversion.testenvironment.iterable;
 
-import java.util.List;
-
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
