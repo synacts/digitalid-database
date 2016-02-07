@@ -3,14 +3,14 @@ package net.digitalid.database.dialect.ast.expression.number;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.exceptions.internal.UncoveredCaseException;
+import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLVariadicOperator;
-import net.digitalid.database.core.table.Site;
 
 /**
  * This class enumerates the supported variadic number operators.
@@ -42,7 +42,7 @@ public enum SQLVariadicNumberOperator implements SQLVariadicOperator {
             switch (operator) {
                 case GREATEST: string.append("GREATEST"); break;
                 case COALESCE: string.append("COALESCE"); break;
-                default: throw UncoveredCaseException.with(operator.name() + " not implemented.");
+                default: throw UnexpectedValueException.with("operator", operator);
             }
         }
         

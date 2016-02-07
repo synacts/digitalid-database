@@ -1,24 +1,18 @@
 package net.digitalid.database.dialect.ast;
 
-import java.util.Iterator;
-import java.util.ServiceLoader;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.utility.configuration.Configuration;
-import net.digitalid.utility.configuration.InitializationError;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.exceptions.internal.InitializationException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.table.Site;
-import net.digitalid.database.dialect.spi.SQLDialectServiceProviderInterface;
 
 /**
  * A dialect implements a particular version of the structured query language (SQL). This abstract class transcribes SQL nodes to SQL statements
- * by calling the default transcriber of the node. Subclasses of SQLDialect may override the behaviour by calling their own transcribers before falling back to the default transcriber.
+ * by calling the default transcriber of the node. Subclasses of SQLDialect may override the behavior by calling their own transcribers before falling back to the default transcriber.
  */
 @Immutable
 public abstract class SQLDialect {
@@ -50,7 +44,7 @@ public abstract class SQLDialect {
         return instance;
     }*/
     
-    public static @Nonnull SQLDialect getDialect() throws InitializationError {
+    public static @Nonnull SQLDialect getDialect() {
         return dialect.get();
     }
     

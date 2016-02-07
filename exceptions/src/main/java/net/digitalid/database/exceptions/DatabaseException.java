@@ -3,7 +3,7 @@ package net.digitalid.database.exceptions;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.exceptions.CustomException;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.exceptions.operation.FailedOperationException;
@@ -16,7 +16,7 @@ import net.digitalid.database.exceptions.state.CorruptStateException;
  * @see FailedOperationException
  */
 @Immutable
-public abstract class DatabaseException extends CustomException {
+public abstract class DatabaseException extends ExternalException {
     
     /**
      * Creates a new database exception with the given message and cause.

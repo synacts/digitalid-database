@@ -1,5 +1,11 @@
 package net.digitalid.database.testing;
 
+import org.h2.tools.Server;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -7,7 +13,8 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.exceptions.internal.UncoveredCaseException;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.testing.TestingBase;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
@@ -20,12 +27,6 @@ import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationE
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
 import net.digitalid.database.testing.h2.H2Dialect;
 import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
-
-import org.h2.tools.Server;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  *
@@ -105,7 +106,7 @@ public class SQLTestBase extends TestingBase {
                     return action;
                 }
             }
-            throw UncoveredCaseException.with(i);
+            throw UnexpectedValueException.with("i", i);
         }
     }
     
@@ -202,7 +203,6 @@ public class SQLTestBase extends TestingBase {
         }
     }
     
-    // TODO: the following is still very ugly. Improve!
     public static class Expected {
         
         protected List<ExpectedColumnClause> expectedColumnClauses = new ArrayList<>();
@@ -210,32 +210,23 @@ public class SQLTestBase extends TestingBase {
         public static ExpectedColumnClause column(String columnName) {
             return new ExpectedColumnClause(columnName);
         }
-        
     }
     
-    public static class ExpectedColumnClause extends Expected implements Cloneable {
+    public static class ExpectedColumnClause extends Expected {
         
-        public String column;
+        public final String column;
         public String columnValue;
         
         ExpectedColumnClause(@Nonnull String column) {
             this.column = column;
         }
         
-        public ExpectedColumnClause value(String columnValue) {
+        public Expected value(String columnValue) {
             this.columnValue = columnValue;
-            try {
-                this.expectedColumnClauses.add((ExpectedColumnClause) this.clone());
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
+            this.expectedColumnClauses.add(this);
             return this;
         }
-    
-        public ExpectedColumnClause and(String columnName) {
-            column = columnName;
-            return this;
-        }
+        
     }
      
 }

@@ -3,7 +3,7 @@ package net.digitalid.database.dialect.ast.expression.number;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.exceptions.internal.UncoveredCaseException;
+import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -59,15 +59,15 @@ public enum SQLBinaryNumberOperator implements SQLBinaryOperator {
         
         @Override
         protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBinaryNumberOperator node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
-        switch (node) {
-            case ADDITION: string.append("+"); break;
-            case SUBTRACTION: string.append("-"); break;
-            case MULTIPLICATION: string.append("*"); break;
-            case DIVISION: string.append("/"); break;
-            case INTEGER_DIVISION: string.append("DIV"); break;
-            case MODULO: string.append("%"); break;
-            default: throw UncoveredCaseException.with(node.name() + " not implemented.");
-        }
+            switch (node) {
+                case ADDITION: string.append("+"); break;
+                case SUBTRACTION: string.append("-"); break;
+                case MULTIPLICATION: string.append("*"); break;
+                case DIVISION: string.append("/"); break;
+                case INTEGER_DIVISION: string.append("DIV"); break;
+                case MODULO: string.append("%"); break;
+                default: throw UnexpectedValueException.with("node", node);
+            }
         }
         
     };

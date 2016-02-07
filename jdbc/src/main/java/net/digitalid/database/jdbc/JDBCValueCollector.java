@@ -7,15 +7,15 @@ import java.sql.SQLException;
 
 import javax.annotation.Nonnull;
 
-
+import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;
 
 import net.digitalid.database.core.Database;
+import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.exceptions.operation.FailedResourceClosingException;
 import net.digitalid.database.exceptions.operation.FailedValueStoringException;
-import net.digitalid.database.core.interfaces.ValueCollector;
 
 /**
  * This classes uses the JDBC prepared statement to collect the values.
@@ -173,7 +173,7 @@ public class JDBCValueCollector implements ValueCollector {
     
     @Override
     public void setString64(@Nonnull @MaxSize(64) String value) throws FailedValueStoringException {
-        assert value.length() <= 64 : "The length of the string is at most 64.";
+        Require.that(value.length() <= 64).orThrow("The length of the string is at most 64.");
         
         try {
             preparedStatement.setString(parameterIndex++, value);
@@ -193,7 +193,7 @@ public class JDBCValueCollector implements ValueCollector {
     
     @Override
     public void setBinary128(@Nonnull @Size(16) byte[] value) throws FailedValueStoringException {
-        assert value.length == 16 : "The length of the byte array is 16.";
+        Require.that(value.length == 16).orThrow("The length of the byte array is 16.");
         
         try {
             preparedStatement.setBytes(parameterIndex++, value);
@@ -204,7 +204,7 @@ public class JDBCValueCollector implements ValueCollector {
     
     @Override
     public void setBinary256(@Nonnull @Size(32) byte[] value) throws FailedValueStoringException {
-        assert value.length == 32 : "The length of the byte array is 32.";
+        Require.that(value.length == 32).orThrow("The length of the byte array is 32.");
         
         try {
             preparedStatement.setBytes(parameterIndex++, value);
@@ -224,7 +224,7 @@ public class JDBCValueCollector implements ValueCollector {
     
     @Override
     public void setBinaryStream(@Nonnull InputStream stream, int length) throws FailedValueStoringException {
-        assert Database.getInstance().supportsBinaryStreams() : "The database supports binary streams.";
+        Require.that(Database.getInstance().supportsBinaryStreams()).orThrow("The database supports binary streams.");
         
         try {
             preparedStatement.setBinaryStream(parameterIndex++, stream, length);

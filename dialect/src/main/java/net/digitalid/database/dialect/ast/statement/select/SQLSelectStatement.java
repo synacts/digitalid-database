@@ -3,6 +3,7 @@ package net.digitalid.database.dialect.ast.statement.select;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.castable.exceptions.InvalidClassCastException;
+import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
@@ -50,7 +51,7 @@ public class SQLSelectStatement implements SQLParameterizableNode<SQLSelectState
     
     @Override
     public @Nonnull <T> T castTo(@Nonnull Class<T> targetClass) throws InvalidClassCastException {
-        assert targetClass.isInstance(this) : "This object can only be casted to SQLSelectStatement";
+        Require.that(targetClass.isInstance(this)).orThrow("This object can only be casted to SQLSelectStatement");
         return (T) this;
     }
 }

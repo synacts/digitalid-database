@@ -1,7 +1,12 @@
 package net.digitalid.database.dialect.ast.statement.table.create;
 
 import java.lang.reflect.Field;
+
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.validation.annotations.math.MultipleOf;
+import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.dialect.ast.expression.SQLExpression;
@@ -13,9 +18,6 @@ import net.digitalid.database.dialect.ast.expression.number.SQLNumberLiteral;
 import net.digitalid.database.dialect.ast.expression.number.SQLNumberReference;
 import net.digitalid.database.exceptions.operation.FailedValueStoringException;
 
-import net.digitalid.utility.validation.annotations.math.MultipleOf;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
-
 /**
  *
  */
@@ -26,7 +28,8 @@ public class SQLCheckMultipleOfConstraint extends SQLCheckConstraint {
     private final long multipleOfValue;
     
     SQLCheckMultipleOfConstraint(@Nonnull Field field) {
-        assert field.isAnnotationPresent(MultipleOf.class) : "The annotation @MultipleOf is present.";
+        Require.that(field.isAnnotationPresent(MultipleOf.class)).orThrow("The annotation @MultipleOf is present.");
+        
         @Nonnull MultipleOf multipleOf = field.getAnnotation(MultipleOf.class);
         this.multipleOfValue = multipleOf.value();
         checkConstraint = SQLNumberComparisonBooleanExpression.get(SQLComparisonOperator.EQUAL,

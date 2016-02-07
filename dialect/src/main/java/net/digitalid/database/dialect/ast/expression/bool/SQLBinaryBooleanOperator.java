@@ -3,14 +3,14 @@ package net.digitalid.database.dialect.ast.expression.bool;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.exceptions.internal.UncoveredCaseException;
+import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLBinaryOperator;
-import net.digitalid.database.core.table.Site;
 
 /**
  * This class enumerates the supported binary boolean operators.
@@ -55,14 +55,14 @@ public enum SQLBinaryBooleanOperator implements SQLBinaryOperator {
         
         @Override
         protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBinaryBooleanOperator node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
-        switch (node) {
-            case AND: string.append("AND"); break;
-            case OR: string.append("OR"); break;
-            case XOR: string.append("XOR"); break;
-            case EQUAL: string.append("="); break;
-            case UNEQUAL: string.append("!="); break;
-            default: throw UncoveredCaseException.with(node.name() + " not implemented.");
-        }           
+            switch (node) {
+                case AND: string.append("AND"); break;
+                case OR: string.append("OR"); break;
+                case XOR: string.append("XOR"); break;
+                case EQUAL: string.append("="); break;
+                case UNEQUAL: string.append("!="); break;
+                default: throw UnexpectedValueException.with("node", node);
+            }
         }
         
     };

@@ -3,14 +3,15 @@ package net.digitalid.database.core;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.logging.Log;
+import net.digitalid.utility.validation.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Stateless;
-import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.database.exceptions.operation.FailedCommitException;
 import net.digitalid.database.core.interfaces.DatabaseInstance;
+import net.digitalid.database.exceptions.operation.FailedCommitException;
 
 /**
  * This class provides connections to the database.
@@ -35,8 +36,9 @@ public final class Database {
      * @return the database instance.
      */
     @Pure
+    @SuppressWarnings("null")
     public static @NonCapturable @Nonnull DatabaseInstance getInstance() {
-        assert instance != null : "The database is initialized.";
+        Require.that(instance != null).orThrow("The database is initialized.");
         
         return instance;
     }

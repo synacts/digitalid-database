@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
 import net.digitalid.utility.reflection.exceptions.StructureException;
 import net.digitalid.utility.validation.annotations.elements.NullableElements;
@@ -42,7 +43,7 @@ public class SQLBooleanConverter extends SQLSingleRowConverter<Boolean> {
     
     @Override
     public void collectValues(@Nullable Object object, @Nonnull Class<?> type, @Nonnull @NullableElements SQLValues values) throws FailedValueStoringException {
-        assert object == null || object instanceof Boolean : "The object is of type boolean.";
+        Require.that(object == null || object instanceof Boolean).orThrow("The object is of type boolean.");
         
         final @Nonnull SQLBooleanLiteral booleanLiteral = SQLBooleanLiteral.get((Boolean) object);
         values.addValue(booleanLiteral);
@@ -58,7 +59,7 @@ public class SQLBooleanConverter extends SQLSingleRowConverter<Boolean> {
     
     @Override
     public void putColumnDeclarations(@Nonnull Field field, @NonCapturable @Nonnull FreezableArrayList<SQLColumnDeclaration> columnDeclarations) {
-        assert boolean.class.isAssignableFrom(field.getType()) || Boolean.class.isAssignableFrom(field.getType()) : "The field has the type 'Boolean'";
+        Require.that(Boolean.class.isAssignableFrom(field.getType())).orThrow("The field has the type 'Boolean'");
         // TODO: column-prefixes?
         final @Nonnull SQLColumnDeclaration columnDeclaration = SQLColumnDeclaration.of(SQLColumnName.get(field.getName()), SQLType.BOOLEAN, SQLColumnDefinition.of(field), SQLColumnConstraint.of(field));
         columnDeclarations.add(columnDeclaration);
