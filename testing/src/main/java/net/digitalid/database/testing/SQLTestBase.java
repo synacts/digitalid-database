@@ -7,6 +7,8 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.exceptions.UnexpectedValueException;
+import net.digitalid.utility.testing.CustomTest;
 import net.digitalid.utility.testing.TestingBase;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
@@ -29,7 +31,7 @@ import org.junit.Test;
 /**
  *
  */
-public class SQLTestBase extends TestingBase {
+public class SQLTestBase extends CustomTest {
     
     private static Server server;
     
