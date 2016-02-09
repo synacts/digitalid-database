@@ -9,7 +9,6 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.testing.CustomTest;
-import net.digitalid.utility.testing.TestingBase;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
 import net.digitalid.database.core.Database;
@@ -86,7 +85,7 @@ public class SQLTestBase extends CustomTest {
                     return action;
                 }
             }
-            throw UncoveredCaseException.with(i);
+            throw UnexpectedValueException.with("i", i);
         }
     }
     
