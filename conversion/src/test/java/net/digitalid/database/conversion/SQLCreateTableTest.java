@@ -2,7 +2,6 @@ package net.digitalid.database.conversion;
 
 import org.junit.Assert;
 import org.junit.Test;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,13 +12,14 @@ import net.digitalid.database.conversion.testenvironment.columnconstraints.Const
 import net.digitalid.database.conversion.testenvironment.embedded.EmbeddedConvertibles;
 import net.digitalid.database.conversion.testenvironment.empty.EmptyClass;
 import net.digitalid.database.conversion.testenvironment.inherited.SubClass;
+import net.digitalid.database.conversion.testenvironment.iterable.ReferencedCollectionClass;
 import net.digitalid.database.conversion.testenvironment.iterable.SimpleCollectionsClass;
 import net.digitalid.database.conversion.testenvironment.property.PropertyTable;
 import net.digitalid.database.conversion.testenvironment.referenced.Entity;
-import net.digitalid.database.conversion.testenvironment.referenced.ReferencedEntity;
 import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColumnTable;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTable;
 import net.digitalid.database.core.table.Site;
+import net.digitalid.database.dialect.annotations.References;
 import net.digitalid.database.dialect.table.Table;
 import net.digitalid.database.testing.SQLTestBase;
 import net.digitalid.database.testing.TestHost;
@@ -133,19 +133,17 @@ public class SQLCreateTableTest extends SQLTestBase {
     
     @Test
     public void shouldCreateTableWithReference() throws Exception {
-        final @Nonnull String referencedTableName = "referenced_table_1";
-        final @Nonnull Table referencedTable = SQL.create(referencedTableName, site, ReferencedEntity.class);
-        Assert.assertEquals(site.toString() + "." + referencedTableName, referencedTable.getName(site));
+        final @Nonnull String tableName = "entity_table_1";
+        final @Nonnull Table table = SQL.create(tableName, site, Entity.class);
+        Assert.assertEquals(site.toString() + "." + tableName, table.getName(site));
+    
+        final @Nonnull String referencedTableName = Entity.class.getField("referencedEntity").getAnnotation(References.class).foreignTable();
         
         assertTableExists(referencedTableName, site.toString());
         Map<String, String[]> expectedResult = new HashMap<>();
         expectedResult.put("id", new String[] { "integer(10)" });
         expectedResult.put("othervalue", new String[] { "integer(10)" });
         assertTableHasColumns(referencedTableName, site.toString(), expectedResult);
-        
-        final @Nonnull String tableName = "entity_table_1";
-        final @Nonnull Table table = SQL.create(tableName, site, Entity.class);
-        Assert.assertEquals(site.toString() + "." + tableName, table.getName(site));
         
         Map<String, String[]> expectedResult2 = new HashMap<>();
         expectedResult2.put("referencedentity", new String[] { "integer(10)" });
@@ -162,7 +160,30 @@ public class SQLCreateTableTest extends SQLTestBase {
         Assert.assertEquals(site.toString() + "." + collectionTableName, collectionTable.getName(site));
         Map<String, String[]> expectedResult = new HashMap<>();
         expectedResult.put("listofintegers", new String[] { "integer(10)" });
+        expectedResult.put("_listofintegers_index", new String[] { "integer(10)" });
         assertTableHasColumns(collectionTableName, site.toString(), expectedResult);
+    }
+    
+    @Test
+    public void shouldCreateTableWithReferencedCollectionClass() throws Exception {
+        final @Nonnull String collectionTableName = "collection_table_2";
+        final @Nonnull Table collectionTable = SQL.create(collectionTableName, site, ReferencedCollectionClass.class);
+    
+        Assert.assertEquals(site.toString() + "." + collectionTableName, collectionTable.getName(site));
+        {
+            Map<String, String[]> expectedResult = new HashMap<>();
+            expectedResult.put("additionalfield", new String[]{"integer(10)"});
+            assertTableHasColumns(collectionTableName, site.toString(), expectedResult);
+        }
+        {
+            assertTableExists("listofintegers", site.toString());
+    
+            Map<String, String[]> expectedResult = new HashMap<>();
+            expectedResult.put("_collection_table_2_additionalfield", new String[]{"integer(10)"});
+            expectedResult.put("listofintegers", new String[]{"integer(10)"});
+            expectedResult.put("_listofintegers_index", new String[]{"integer(10)"});
+            assertTableHasColumns("listofintegers", site.toString(), expectedResult);
+        }
     }
     
 }

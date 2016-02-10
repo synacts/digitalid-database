@@ -1,5 +1,6 @@
 package net.digitalid.database.dialect.ast.statement.table.create;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 import javax.annotation.Nonnull;
@@ -23,9 +24,10 @@ public class SQLCheckPositiveConstraint extends SQLCheckConstraint {
     
     private final @Nonnull SQLExpression checkConstraint;
     
-    SQLCheckPositiveConstraint(@Nonnull Field field) {
-        Require.that(field.isAnnotationPresent(Positive.class)).orThrow("The annotation @Positive is present.");
-        checkConstraint = SQLNumberComparisonBooleanExpression.get(SQLComparisonOperator.GREATER, SQLNumberReference.get(field), SQLNumberLiteral.get(0L));
+    SQLCheckPositiveConstraint(@Nonnull Annotation annotation, @Nonnull String columnName) {
+        Require.that(annotation instanceof Positive).orThrow("The annotation @Positive is present.");
+        
+        checkConstraint = SQLNumberComparisonBooleanExpression.get(SQLComparisonOperator.GREATER, SQLNumberReference.get(columnName), SQLNumberLiteral.get(0L));
     }
     
     @Override

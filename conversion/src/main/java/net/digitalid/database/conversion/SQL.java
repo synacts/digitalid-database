@@ -1,6 +1,8 @@
 package net.digitalid.database.conversion;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +36,6 @@ import net.digitalid.database.dialect.ast.statement.insert.SQLValues;
 import net.digitalid.database.dialect.ast.statement.select.SQLWhereClause;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDeclaration;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLCreateTableStatement;
-import net.digitalid.database.dialect.ast.statement.table.create.SQLReference;
 import net.digitalid.database.dialect.table.Table;
 import net.digitalid.database.exceptions.operation.FailedCommitException;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
@@ -86,11 +87,6 @@ public final class SQL {
     
     /* -------------------------------------------------- Converting -------------------------------------------------- */
     
-    @SafeVarargs
-    public static @Nonnull Table create(@Nonnull String tableName, @Nonnull Site site, @Nonnull @NonNullableElements Class<? extends Convertible>... columnGroups) throws InternalException, FailedNonCommittingOperationException, StructureException {
-        return create(tableName, site, columnGroups, new SQLReference[0]);
-    }
-    
     /**
      * Creates a table with the given table name at the given site which is capable of storing a
      * set of convertible object specified through the columnGroup parameter and references other tables
@@ -100,14 +96,16 @@ public final class SQL {
      * the database instance, which executes the statement. Upon successful execution, a table object is 
      * returned. It may be used for other calls to the SQL class as a reference.
      */
-    public static @Nonnull Table create(@Nonnull String tableName, @Nonnull Site site, @Nonnull @NonNullableElements Class<? extends Convertible>[] columnGroups, @Nonnull SQLReference[] references) throws InternalException, FailedNonCommittingOperationException, StructureException {
+    public static @Nonnull Table create(@Nonnull String tableName, @Nonnull Site site, @Nonnull @NonNullableElements Class<? extends Convertible>... columnGroups) throws InternalException, FailedNonCommittingOperationException, StructureException {
         final @Nonnull SQLQualifiedTableName qualifiedTableName = SQLQualifiedTableName.get(tableName, site);
         @Nonnull @NonNullableElements FreezableArrayList<SQLColumnDeclaration> columnDeclarations = FreezableArrayList.get();
+        
         for (@Nonnull Class<? extends Convertible> columnGroup : columnGroups) {
             for (@Nonnull Field field : ReflectionUtility.getReconstructionFields(columnGroup)) {
                 @Nonnull SQLConverter<?> sqlConverter = FORMAT.getConverter(field);
                 try {
-                    sqlConverter.putColumnDeclarations(field, columnDeclarations);
+                    sqlConverter.createRequiredTables(field, site);
+                    sqlConverter.putColumnDeclarations(field.getType(), field.getName(), columnDeclarations, site, field.getAnnotations());
                 } catch (StructureException | NoSuchFieldException e) {
                     throw ConformityViolation.with("Failed to convert the field '" + field.getName() + "' due to conformity problems.", e);
                 }
@@ -117,7 +115,19 @@ public final class SQL {
         final @Nonnull String createTableStatementString = createTableStatement.toSQL(SQLDialect.getDialect(), site);
         System.out.println("SQL: " + createTableStatementString);
         Database.getInstance().execute(createTableStatementString);
-        return Table.get(qualifiedTableName);
+        final @Nonnull Table newTable = Table.get(createTableStatement);
+        
+        for (@Nonnull Class<? extends Convertible> columnGroup : columnGroups) {
+            for (@Nonnull Field field : ReflectionUtility.getReconstructionFields(columnGroup)) {
+                @Nonnull SQLConverter<?> sqlConverter = FORMAT.getConverter(field);
+                try {
+                    sqlConverter.createDependentTables(newTable, field, site);
+                } catch (StructureException | NoSuchFieldException e) {
+                    throw ConformityViolation.with("Failed to convert the field '" + field.getName() + "' due to conformity problems.", e);
+                }
+            }
+        }
+        return newTable;
     }
     
     /* -------------------------------------------------- Insert -------------------------------------------------- */
@@ -138,7 +148,24 @@ public final class SQL {
         }
     }
     
-    private static @Frozen @Nonnull @NonNullableElements ReadOnlyList<SQLValues> getSQLValues(@Nullable Convertible object, @Nonnull @NonNullableElements ReadOnlyList<Field> fields) throws InternalException, FailedValueStoringException, StoringException {
+    private static void insertDependentRows(@Nonnull Table referencedTable, @Nonnull @NonNullableElements FreezableArrayList<SQLValues> primaryKeyTableCells, @Nullable Object object, @Nonnull @NonNullableElements ReadOnlyList<Field> fields, @Nonnull Site site) throws StoringException, StructureException, FailedNonCommittingOperationException {
+        for (@Nonnull Field field : fields) {
+            final @Nonnull SQLConverter<?> sqlFieldConverter = FORMAT.getConverter(field);
+            final @Nullable Object value;
+            if (object == null) {
+                value = null;
+            } else {
+                try {
+                    value = field.get(object);
+                } catch (IllegalAccessException e) {
+                    throw StoringException.get(field.getType(), e);
+                }
+            }
+            sqlFieldConverter.insertIntoDependentTable(referencedTable, primaryKeyTableCells, value, field, site);
+        }
+    }
+    
+    private static @Frozen @Nonnull @NonNullableElements ReadOnlyList<SQLValues> getSQLValues(@Nullable Object object, @Nonnull @NonNullableElements ReadOnlyList<Field> fields, @Nonnull @NonNullableElements Annotation[] annotations) throws InternalException, FailedValueStoringException, StoringException {
         final @NonFrozen @Nonnull @NonNullableElements FreezableArrayList<SQLValues> sqlValues = FreezableArrayList.get();
         for (@Nonnull Field field : fields) {
             final @Nonnull SQLConverter<?> sqlFieldConverter = FORMAT.getConverter(field);
@@ -153,7 +180,10 @@ public final class SQL {
                 }
             }
             try {
-                sqlFieldConverter.collectValues(value, field.getType(), sqlValues, null);
+                final @Nonnull @NonNullableElements FreezableArrayList<Annotation> allAnnotations = FreezableArrayList.getWithCapacity(annotations.length + field.getAnnotations().length);
+                allAnnotations.addAll(Arrays.asList(annotations));
+                allAnnotations.addAll(Arrays.asList(field.getAnnotations()));
+                sqlFieldConverter.collectValues(value, field.getType(), sqlValues, field.getAnnotations());
             } catch (StructureException | NoSuchFieldException e) {
                 throw ConformityViolation.with("Failed to convert the field '" + field.getName() + "' due to conformity problems.", e);
             }
@@ -162,7 +192,7 @@ public final class SQL {
     }
     
     // TODO: what if multiple convertible objects should be inserted?
-    public static void insert(@Nullable Convertible object, @Nonnull Class<? extends Convertible> type, @Nonnull Table table) throws FailedNonCommittingOperationException, InternalException, StoringException, FailedCommitException, StructureException {
+    public static void insert(@Nullable Object object, @Nonnull Class<?> type, @Nonnull Table table) throws FailedNonCommittingOperationException, InternalException, StoringException, FailedCommitException, StructureException {
         // TODO: what about prefixes?!
         
         final @Nonnull SQLQualifiedTableName qualifiedTableName = table.getName();
@@ -170,6 +200,7 @@ public final class SQL {
         final @Nonnull Site site = qualifiedTableName.site;
         final @Frozen @Nonnull @NonNullableElements ReadOnlyList<Field> fields = ReflectionUtility.getReconstructionFields(type);
         final @Nullable @NonNullableElements @NonFrozen FreezableList<SQLColumnName> columnNames;
+        final @Nonnull @NonNullableElements Annotation[] annotations = type.getAnnotations();
         
         if (Cache.containsColumnNames(type)) {
             columnNames = Cache.getColumnNames(type);
@@ -179,7 +210,7 @@ public final class SQL {
                 final Class<?> fieldType = field.getType();
                 final @Nonnull SQLConverter<?> sqlFieldConverter = FORMAT.getConverter(field);
                 try {
-                    sqlFieldConverter.putColumnNames(field, columnNames);
+                    sqlFieldConverter.putColumnNames(field.getType(), field.getName(), null, field.getAnnotations(), columnNames);
                 } catch (StructureException e) {
                     throw ConformityViolation.with("Failed to convert the field '" + field.getName() + "' due to conformity problems.", e);
                 }
@@ -187,15 +218,18 @@ public final class SQL {
             }
         }
         // TODO: Explicit transaction definition?
-        final @Nonnull @NonNullableElements ReadOnlyList<SQLValues> valuesList = getSQLValues(object, fields);
+        final @Nonnull @NonNullableElements ReadOnlyList<SQLValues> valuesList = getSQLValues(object, fields, annotations);
         for (@Nonnull @NullableElements SQLValues values : valuesList) {
             final @Nonnull SQLInsertStatement sqlInsertStatement = SQLInsertStatement.get(SQLQualifiedTableName.get(tableName, site), columnNames, values);
             final @Nonnull String insertIntoTableStatementString = sqlInsertStatement.toPreparedStatement(SQLDialect.getDialect(), site);
+            System.out.println("SQL: " + insertIntoTableStatementString);
             @Nonnull ValueCollector valueCollector = Database.getInstance().getValueCollector(insertIntoTableStatementString);
             sqlInsertStatement.storeValues(valueCollector);
             Database.getInstance().execute(valueCollector);
         }
-        
+// TODO: add this for optimization:        if (table.hasDependentTable()) {
+            insertDependentRows(table, table.filterPrimaryKeyTableCells(valuesList), object, fields, site);
+//        }
         Database.getInstance().commit();
     }
     

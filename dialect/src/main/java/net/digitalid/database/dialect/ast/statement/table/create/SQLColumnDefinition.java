@@ -27,9 +27,9 @@ public abstract class SQLColumnDefinition implements SQLNode<SQLColumnDefinition
     
     public abstract void getColumnDefinition(@Nonnull @NonCapturable StringBuilder string) throws InternalException;
     
-    public static @Nonnull @NonNullableElements FreezableList<SQLColumnDefinition> of(@Nonnull Field field) {
+    public static @Nonnull @NonNullableElements FreezableList<SQLColumnDefinition> of(@Nonnull @NonNullableElements Annotation[] annotations) {
         final @Nonnull @NonNullableElements FreezableArrayList<SQLColumnDefinition> columnConstraints = FreezableArrayList.get();
-        for (@Nonnull Annotation annotation : field.getAnnotations()) {
+        for (@Nonnull Annotation annotation : annotations) {
             if (annotation.annotationType().equals(Nonnull.class)) {
                 columnConstraints.add(new SQLNotNullConstraint());
             } else if (annotation.annotationType().equals(Default.class)) {

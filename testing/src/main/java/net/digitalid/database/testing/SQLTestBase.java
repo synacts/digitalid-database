@@ -8,10 +8,12 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.collections.freezable.FreezableHashSet;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.testing.TestingBase;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
@@ -134,11 +136,13 @@ public class SQLTestBase extends TestingBase {
     
         tableColumnsQuery.moveToFirstRow();
         final @Nonnull String constraintQuery = "SELECT CHECK_CONSTRAINT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tableName.toUpperCase() + "' AND COLUMN_NAME = ";
+        final @Nonnull Set<String> checkedSet = FreezableHashSet.get();
         do {
             @Nullable String field = tableColumnsQuery.getString();
             Assert.assertNotNull("A column name was expected, but none defined", field);
             Assert.assertTrue("Column name '" + field + "' is unexpected", expectedResults.containsKey(field));
             @Nonnull String[] column = expectedResults.get(field);
+            checkedSet.add(field);
             
             @Nullable String type = tableColumnsQuery.getString();
             Assert.assertNotNull("A column type was expected, but none defined", field);
@@ -165,18 +169,26 @@ public class SQLTestBase extends TestingBase {
                 Assert.assertEquals(column[4], constraint);
             }
         } while (tableColumnsQuery.moveToNextRow());
+        
+        expectedResults.keySet().removeAll(checkedSet);
+        if (expectedResults.size() > 0) {
+            Assert.fail("Column name(s) '" + expectedResults.keySet() + "' not declared.");
+        }
     }
     
-    protected void assertRowCount(@Nonnull Table table, long rowCount) throws FailedNonCommittingOperationException, EntryNotFoundException {
-        final @Nonnull String rowCountQuery = "SELECT COUNT(*) AS count FROM " + table.getName().getValue().toUpperCase();
+    protected void assertRowCount(@Nonnull String tableName, long rowCount) throws FailedNonCommittingOperationException, EntryNotFoundException {
+        final @Nonnull String rowCountQuery = "SELECT COUNT(*) AS count FROM " + tableName.toUpperCase();
         final @Nonnull DatabaseInstance instance = Database.getInstance();
         final @Nonnull SelectionResult rowCountResult = instance.executeSelect(rowCountQuery);
         rowCountResult.moveToFirstRow();
-        Assert.assertSame("Table '" + table + "' does not contain " + rowCount + " rows.", rowCount, rowCountResult.getInteger64());
+        Assert.assertSame("Table '" + tableName + "' does not contain " + rowCount + " rows.", rowCount, rowCountResult.getInteger64());
     }
     
-    protected void assertTableContains(@Nonnull Table table, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException {
-        final @Nonnull String tableName = table.getName().getValue();
+    protected void assertRowCount(@Nonnull Table table, long rowCount) throws FailedNonCommittingOperationException, EntryNotFoundException {
+        assertRowCount(table.getName().getValue(), rowCount);
+    }
+    
+    protected void assertTableContains(@Nonnull String tableName, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException {
         final @Nonnull DatabaseInstance instance = Database.getInstance();
         for (@Nonnull Expected expected : expectedArray) {
             @Nonnull String rowCountQuery = "SELECT COUNT(*) AS count FROM " + tableName.toUpperCase() ;
@@ -197,10 +209,16 @@ public class SQLTestBase extends TestingBase {
             }
             final @Nonnull SelectionResult rowCountResult = instance.executeSelect(rowCountQuery);
             rowCountResult.moveToFirstRow();
-            Assert.assertSame("Table '" + table + "' does not contain column(s) " + columnsInfo, 1L, rowCountResult.getInteger64());
+            Assert.assertSame("Table '" + tableName + "' does not contain column(s) " + columnsInfo, 1L, rowCountResult.getInteger64());
         }
     }
     
+    protected void assertTableContains(@Nonnull Table table, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException {
+        final @Nonnull String tableName = table.getName().getValue();
+        assertTableContains(tableName, expectedArray);
+    }
+    
+    // TODO: the following is still very ugly. Improve!
     public static class Expected {
         
         protected List<ExpectedColumnClause> expectedColumnClauses = new ArrayList<>();
@@ -208,20 +226,30 @@ public class SQLTestBase extends TestingBase {
         public static ExpectedColumnClause column(String columnName) {
             return new ExpectedColumnClause(columnName);
         }
+        
     }
     
-    public static class ExpectedColumnClause extends Expected {
+    public static class ExpectedColumnClause extends Expected implements Cloneable {
         
-        public final String column;
+        public String column;
         public String columnValue;
         
         ExpectedColumnClause(@Nonnull String column) {
             this.column = column;
         }
         
-        public Expected value(String columnValue) {
+        public ExpectedColumnClause value(String columnValue) {
             this.columnValue = columnValue;
-            this.expectedColumnClauses.add(this);
+            try {
+                this.expectedColumnClauses.add((ExpectedColumnClause) this.clone());
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
+            }
+            return this;
+        }
+    
+        public ExpectedColumnClause and(String columnName) {
+            column = columnName;
             return this;
         }
         

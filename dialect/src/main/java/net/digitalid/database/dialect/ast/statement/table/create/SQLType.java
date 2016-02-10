@@ -1,5 +1,6 @@
 package net.digitalid.database.dialect.ast.statement.table.create;
 
+import java.math.BigInteger;
 import java.sql.Types;
 
 import javax.annotation.Nonnull;
@@ -26,77 +27,77 @@ public enum SQLType implements SQLNode {
     /**
      * The SQL type for empty.
      */
-    EMPTY(Types.BOOLEAN),
+    EMPTY(Types.BOOLEAN, Boolean.class),
     
     /**
      * The SQL type for booleans.
      */
-    BOOLEAN(Types.BOOLEAN),
+    BOOLEAN(Types.BOOLEAN, Boolean.class),
     
     /**
      * The SQL type for tiny integers.
      */
-    INTEGER08(Types.TINYINT),
+    INTEGER08(Types.TINYINT, Byte.class),
     
     /**
      * The SQL type for small integers.
      */
-    INTEGER16(Types.SMALLINT),
+    INTEGER16(Types.SMALLINT, Short.class),
     
     /**
      * The SQL type for normal integers.
      */
-    INTEGER32(Types.INTEGER),
+    INTEGER32(Types.INTEGER, Integer.class),
     
     /**
      * The SQL type for big integers.
      */
-    INTEGER64(Types.BIGINT),
+    INTEGER64(Types.BIGINT, Long.class),
     
     /**
      * The SQL type for big integers.
      */
-    INTEGER(Types.BLOB),
+    INTEGER(Types.BLOB, BigInteger.class),
     
     /**
      * The SQL type for floats.
      */
-    DECIMAL32(Types.FLOAT),
+    DECIMAL32(Types.FLOAT, Float.class),
     
     /**
      * The SQL type for doubles.
      */
-    DECIMAL64(Types.DOUBLE),
+    DECIMAL64(Types.DOUBLE, Double.class),
     
     /**
      * The SQL type for chars.
      */
-    STRING01(Types.CHAR),
+    STRING01(Types.CHAR, Character.class),
     
     /**
      * The SQL type for varchars.
      */
-    STRING64(Types.VARCHAR),
+    STRING64(Types.VARCHAR, String.class),
     
     /**
      * The SQL type for strings.
      */
-    STRING(Types.VARCHAR),
+    STRING(Types.VARCHAR, String.class),
     
     /**
      * The SQL type for vectors.
      */
-    BINARY128(Types.BINARY),
+    BINARY128(Types.BINARY, Byte[].class),
     
     /**
      * The SQL type for hashes.
      */
-    BINARY256(Types.BINARY),
+    BINARY256(Types.BINARY, Byte[].class),
     
     /**
      * The SQL type for large objects.
      */
-    BINARY(Types.BLOB);
+    BINARY(Types.BLOB, Byte[].class);
     
     /* -------------------------------------------------- Code -------------------------------------------------- */
     
@@ -115,6 +116,15 @@ public enum SQLType implements SQLNode {
         return code;
     }
     
+    /* -------------------------------------------------- Java Type -------------------------------------------------- */
+    
+    private final @Nonnull Class<?> javaType;
+    
+    @Pure
+    public Class<?> getJavaType() {
+        return javaType;
+    }
+    
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
@@ -122,8 +132,9 @@ public enum SQLType implements SQLNode {
      * 
      * @param code the JDBC code of this SQL type.
      */
-    private SQLType(int code) {
+    private SQLType(int code, @Nonnull Class<?> javaType) {
         this.code = code;
+        this.javaType = javaType;
     }
     
     /* -------------------------------------------------- SQLNode -------------------------------------------------- */

@@ -16,7 +16,12 @@ import net.digitalid.database.conversion.value.iterable.SQLCollectionsConverter;
 import net.digitalid.database.conversion.value.property.SQLPropertyConverter;
 
 public class SQLFormat extends Format<SQLConverter> {
-
+    
+    @SuppressWarnings("unchecked")
+    public <T> SQLConverter<T> getSQLConverter(Class<T> type) {
+        return getConverter(type);
+    }
+    
     /**
      * Creates a new converter which converts boolean to SQL.
      */
