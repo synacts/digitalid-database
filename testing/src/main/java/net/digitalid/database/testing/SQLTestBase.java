@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableHashSet;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
-import net.digitalid.utility.testing.TestingBase;
+import net.digitalid.utility.testing.CustomTest;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
 import net.digitalid.database.core.Database;
@@ -31,7 +31,7 @@ import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
 /**
  *
  */
-public class SQLTestBase extends TestingBase {
+public class SQLTestBase extends CustomTest {
     
     private static Server server;
     
