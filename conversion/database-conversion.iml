@@ -14,7 +14,7 @@
     <orderEntry type="module" module-name="utility-conversion" />
     <orderEntry type="module" module-name="utility-property" />
     <orderEntry type="module" module-name="database-dialect" />
-    <orderEntry type="library" name="Maven: net.digitalid.database:database-core:1.0.0" level="project" />
+    <orderEntry type="module" module-name="database-core" />
     <orderEntry type="module" module-name="database-exceptions" />
     <orderEntry type="module" module-name="database-testing" scope="TEST" />
     <orderEntry type="module" module-name="utility-testing" scope="TEST" />
