@@ -5,11 +5,12 @@ import java.lang.annotation.Annotation;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.reflection.exceptions.StructureException;
+import net.digitalid.utility.conversion.reflection.exceptions.StructureException;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
@@ -37,10 +38,9 @@ public class SQLInteger32Converter extends SQLSingleRowConverter<Integer> {
     /* -------------------------------------------------- Value Collection -------------------------------------------------- */
     
     @Override
-    public void collectValues(@Nullable Object object, Class<?> type, @NonCapturable @Nonnull SQLValues values) throws StoringException, ConverterNotFoundException, FailedValueStoringException, InternalException, StructureException, NoSuchFieldException {
-        assert object == null || object instanceof Integer: "The object is of type integer32.";
+    public void collectNonNullValues(@Nonnull Object object, Class<?> type, @NonCapturable @Nonnull SQLValues values) throws StoringException, FailedValueStoringException, InternalException, StructureException, NoSuchFieldException {
+        Require.that(object instanceof Integer).orThrow("The object is of type integer.");
         
-        // TODO: handle null-cases properly
         final @Nonnull SQLNumberLiteral numberLiteral = SQLNumberLiteral.get((Integer) object);
         values.addValue(numberLiteral);
     }
@@ -48,9 +48,10 @@ public class SQLInteger32Converter extends SQLSingleRowConverter<Integer> {
     /* -------------------------------------------------- Recovery -------------------------------------------------- */
     
     @Override
-    public @Nullable Object recoverNullable(@Nonnull Class<?> type, @NonCapturable @Nonnull SelectionResult result) throws CorruptNullValueException, FailedValueRestoringException, StructureException, ConverterNotFoundException, RecoveryException {
+    public @Nullable Integer recoverNullable(@Nonnull Class<?> type, @NonCapturable @Nonnull SelectionResult result, @Nullable @NonNullableElements Annotation[] annotations) throws CorruptNullValueException, FailedValueRestoringException, StructureException, ConverterNotFoundException, RecoveryException {
         final @Nullable Integer value = result.getInteger32();
         return value;
     }
+    
     
 }

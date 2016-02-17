@@ -10,15 +10,15 @@ import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.collections.readonly.ReadOnlyList;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.conversion.Converter;
+import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
+import net.digitalid.utility.conversion.reflection.ReflectionUtility;
+import net.digitalid.utility.conversion.reflection.exceptions.StructureException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.generator.conversion.Convertible;
-import net.digitalid.utility.reflection.ReflectionUtility;
-import net.digitalid.utility.reflection.exceptions.StructureException;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.elements.NullableElements;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
@@ -249,15 +249,16 @@ public class SQLObjectConverter<T extends Convertible> extends SQLConverter<T> {
     /* -------------------------------------------------- Recovery -------------------------------------------------- */
     
     @Override
-    public @Nullable Object recoverNullable(@Nonnull Class<?> type, @NonCapturable @Nonnull SelectionResult result) throws CorruptNullValueException, FailedValueRestoringException, StructureException, ConverterNotFoundException, RecoveryException {
+    @SuppressWarnings("unchecked")
+    public @Nullable T recoverNullable(@Nonnull Class<?> type, @NonCapturable @Nonnull SelectionResult result, @Nonnull @NonNullableElements Annotation[] annotations) throws CorruptNullValueException, FailedValueRestoringException, StructureException, ConverterNotFoundException, RecoveryException {
         final @Nonnull @NonNullableElements @Frozen ReadOnlyList<Field> fields = ReflectionUtility.getReconstructionFields(type);
         final @Nonnull @NullableElements FreezableArrayList<Object> recoveredValues = FreezableArrayList.get();
         for (@Nonnull Field field : fields) {
-            final @Nonnull SQLConverter<?> converter = SQL.FORMAT.getConverter(field);
-            final @Nullable Object fieldValue = converter.recoverNullable(type, result);
+            final @Nonnull SQLConverter<?> converter = SQL.FORMAT.getConverter(field.getType());
+            final @Nullable Object fieldValue = converter.recoverNullable(field.getType(), result, annotations);
             recoveredValues.add(fieldValue);
         }
-        return Converter.recoverNonNullableObject(type, recoveredValues);
+        return Converter.recoverNonNullableObject((Class<T>) type, recoveredValues);
     }
     
 }

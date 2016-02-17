@@ -35,6 +35,18 @@ public interface SelectionResult extends AutoCloseable {
      */
     public void moveToFirstRow() throws FailedValueRestoringException, EntryNotFoundException;
     
+    /**
+     * Returns the current position of the cursor in the columns.
+     */
+    public int getColumnIndex();
+    
+    /**
+     * Moves the cursor to the column specified in the parameter.
+     * 
+     * @param columnIndex the column to which the cursor should be moved.
+     */
+    public void moveToColumn(int columnIndex);
+    
     /* -------------------------------------------------- Getters -------------------------------------------------- */
     
     /**

@@ -104,10 +104,10 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
-                    <compilerArgument>-parameters</compilerArgument>
-                    <testCompilerArgument>-parameters</testCompilerArgument>
                     <source>1.7</source>
                     <target>1.7</target>
+                    <!-- Temporarily disabled. -->
+                    <compilerArgument>-proc:none</compilerArgument>
                 </configuration>
             </plugin>
             

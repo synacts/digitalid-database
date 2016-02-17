@@ -16,7 +16,7 @@ import net.digitalid.utility.conversion.exceptions.StoringException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.UnexpectedFailureException;
 import net.digitalid.utility.property.ReadOnlyProperty;
-import net.digitalid.utility.reflection.exceptions.StructureException;
+import net.digitalid.utility.conversion.reflection.exceptions.StructureException;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
@@ -109,14 +109,14 @@ public class SQLPropertyConverter extends SQLConverter<ReadOnlyProperty<?, ?>> {
     }
     
     @Override
-    public @Nullable Object recoverNullable(@Nonnull Class<?> type, @NonCapturable @Nonnull SelectionResult result) throws CorruptNullValueException, FailedValueRestoringException, StructureException, ConverterNotFoundException, RecoveryException {
+    public @Nullable ReadOnlyProperty<?, ?> recoverNullable(@Nonnull Class<?> type, @NonCapturable @Nonnull SelectionResult result, @Nonnull @NonNullableElements Annotation[] annotations) throws CorruptNullValueException, FailedValueRestoringException, StructureException, ConverterNotFoundException, RecoveryException {
         final @Nonnull Class<?> propertyType = getPropertyType(type);
-        final @Nullable Object recoveredObject = SQL.FORMAT.getConverter(propertyType).recoverNullable(propertyType, result);
+        final @Nullable Object recoveredObject = SQL.FORMAT.getSQLConverter(propertyType).recoverNullable(propertyType, result, annotations);
     
         if (recoveredObject != null) {
             // TODO: what if the property constructor is not empty?
             try {
-                final @Nonnull Object property = type.newInstance();
+                final @Nonnull ReadOnlyProperty<?, ?> property = (ReadOnlyProperty<?, ?>) type.newInstance();
                 final @Nonnull Method setter = type.getMethod("set");
                 setter.invoke(property, recoveredObject);
                 return property;

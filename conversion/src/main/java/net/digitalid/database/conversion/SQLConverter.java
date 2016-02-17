@@ -8,11 +8,11 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
 import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.conversion.Converter;
+import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
-import net.digitalid.utility.reflection.exceptions.StructureException;
+import net.digitalid.utility.conversion.reflection.exceptions.StructureException;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Stateless;
@@ -59,14 +59,14 @@ public abstract class SQLConverter<T> extends Converter {
     
     /* -------------------------------------------------- Recovery -------------------------------------------------- */
     
-    protected @Nonnull Object recoverNonNullable(@Nonnull Class<?> type, @NonCapturable @Nonnull SelectionResult result) throws CorruptNullValueException, FailedValueRestoringException, RecoveryException, StructureException, ConverterNotFoundException {
-        @Nullable Object object = recoverNullable(type, result);
+    public @Nonnull T recoverNonNullable(@Nonnull Class<?> type, @NonCapturable @Nonnull SelectionResult result, @Nonnull @NonNullableElements Annotation[] annotations) throws CorruptNullValueException, FailedValueRestoringException, StructureException, ConverterNotFoundException, RecoveryException {
+        @Nullable T object = recoverNullable(type, result, new Annotation[0]);
         if (object == null) {
             throw CorruptNullValueException.get();
         }
         return object;
     }
     
-    public abstract @Nullable Object recoverNullable(@Nonnull Class<?> type, @NonCapturable @Nonnull SelectionResult result) throws CorruptNullValueException, FailedValueRestoringException, StructureException, ConverterNotFoundException, RecoveryException;
+    public abstract @Nullable T recoverNullable(@Nonnull Class<?> type, @NonCapturable @Nonnull SelectionResult result, @Nonnull @NonNullableElements Annotation[] annotations) throws CorruptNullValueException, FailedValueRestoringException, StructureException, ConverterNotFoundException, RecoveryException;
     
 }

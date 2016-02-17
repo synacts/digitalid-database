@@ -12,7 +12,7 @@ import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.StoringException;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.reflection.exceptions.StructureException;
+import net.digitalid.utility.conversion.reflection.exceptions.StructureException;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.elements.NullableElements;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
@@ -26,7 +26,6 @@ import net.digitalid.database.dialect.ast.statement.insert.SQLValues;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnConstraint;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDeclaration;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDefinition;
-import net.digitalid.database.dialect.ast.statement.table.create.SQLType;
 import net.digitalid.database.dialect.table.Table;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.operation.FailedValueRestoringException;
@@ -38,7 +37,7 @@ import net.digitalid.database.exceptions.state.value.CorruptNullValueException;
  */
 public abstract class SQLSingleRowConverter<T> extends SQLConverter<T> {
     
-    public abstract void collectValues(@Nullable Object object, Class<?> type, @NonCapturable @Nonnull SQLValues values) throws StoringException, ConverterNotFoundException, FailedValueStoringException, InternalException, StructureException, NoSuchFieldException;
+    public abstract void collectNonNullValues(@Nonnull Object object, Class<?> type, @NonCapturable @Nonnull SQLValues values) throws StoringException, FailedValueStoringException, InternalException, StructureException, NoSuchFieldException;
     
     @Override
     public void collectValues(@Nullable Object object, @Nonnull Class<?> type, @Nonnull @NonNullableElements FreezableArrayList<SQLValues> valuesList, @Nonnull Annotation[] annotations) throws FailedValueStoringException, StoringException, StructureException, NoSuchFieldException {
@@ -46,7 +45,11 @@ public abstract class SQLSingleRowConverter<T> extends SQLConverter<T> {
             valuesList.add(SQLValues.get());
         }
         for (@Nonnull @NullableElements SQLValues values : valuesList) {
-            collectValues(object, type, values);
+            if (object == null) {
+                values.addValue(null);
+            } else {
+                collectNonNullValues(object, type, values);
+            }
         }
     }
     
@@ -78,11 +81,6 @@ public abstract class SQLSingleRowConverter<T> extends SQLConverter<T> {
     @Override
     public void createRequiredTables(@Nonnull Field field, @Nonnull Site site) throws NoSuchFieldException, StructureException, FailedNonCommittingOperationException {
         
-    }
-    
-    @Override 
-    public @Nullable Object recoverNullable(@Nonnull Class<?> type, @NonCapturable @Nonnull SelectionResult result) throws CorruptNullValueException, FailedValueRestoringException, StructureException, ConverterNotFoundException, RecoveryException {
-        return null;
     }
     
 }

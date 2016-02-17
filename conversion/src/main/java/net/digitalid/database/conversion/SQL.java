@@ -18,8 +18,8 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.conversion.Convertible;
-import net.digitalid.utility.reflection.ReflectionUtility;
-import net.digitalid.utility.reflection.exceptions.StructureException;
+import net.digitalid.utility.conversion.reflection.ReflectionUtility;
+import net.digitalid.utility.conversion.reflection.exceptions.StructureException;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.elements.NullableElements;
 import net.digitalid.utility.validation.annotations.type.Stateless;
@@ -33,6 +33,7 @@ import net.digitalid.database.dialect.ast.identifier.SQLColumnName;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
 import net.digitalid.database.dialect.ast.statement.insert.SQLInsertStatement;
 import net.digitalid.database.dialect.ast.statement.insert.SQLValues;
+import net.digitalid.database.dialect.ast.statement.select.SQLSelectStatement;
 import net.digitalid.database.dialect.ast.statement.select.SQLWhereClause;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDeclaration;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLCreateTableStatement;
@@ -231,6 +232,12 @@ public final class SQL {
             insertDependentRows(table, table.filterPrimaryKeyTableCells(valuesList), object, fields, site);
 //        }
         Database.getInstance().commit();
+    }
+    
+    /* -------------------------------------------------- Select -------------------------------------------------- */
+    
+    public static <T extends Convertible> T select(@Nonnull Class<T> convertible) {
+        final @Nonnull SQLSelectStatement selectStatement = SQLSelectStatement.get(SQLQualifiedTableName tables)
     }
     
 }
