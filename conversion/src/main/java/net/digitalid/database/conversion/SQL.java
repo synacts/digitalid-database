@@ -26,14 +26,21 @@ import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.conversion.exceptions.ConformityViolation;
 import net.digitalid.database.core.Database;
+import net.digitalid.database.core.interfaces.SelectionResult;
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
+import net.digitalid.database.dialect.ast.expression.bool.SQLBooleanExpression;
 import net.digitalid.database.dialect.ast.identifier.SQLColumnName;
+import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
 import net.digitalid.database.dialect.ast.statement.insert.SQLInsertStatement;
 import net.digitalid.database.dialect.ast.statement.insert.SQLValues;
+import net.digitalid.database.dialect.ast.statement.select.SQLGroupByClause;
+import net.digitalid.database.dialect.ast.statement.select.SQLOrderByClause;
+import net.digitalid.database.dialect.ast.statement.select.SQLResultColumn;
 import net.digitalid.database.dialect.ast.statement.select.SQLSelectStatement;
+import net.digitalid.database.dialect.ast.statement.select.SQLSource;
 import net.digitalid.database.dialect.ast.statement.select.SQLWhereClause;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDeclaration;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLCreateTableStatement;
@@ -223,7 +230,7 @@ public final class SQL {
         for (@Nonnull @NullableElements SQLValues values : valuesList) {
             final @Nonnull SQLInsertStatement sqlInsertStatement = SQLInsertStatement.get(SQLQualifiedTableName.get(tableName, site), columnNames, values);
             final @Nonnull String insertIntoTableStatementString = sqlInsertStatement.toPreparedStatement(SQLDialect.getDialect(), site);
-            System.out.println("SQL: " + insertIntoTableStatementString);
+            
             @Nonnull ValueCollector valueCollector = Database.getInstance().getValueCollector(insertIntoTableStatementString);
             sqlInsertStatement.storeValues(valueCollector);
             Database.getInstance().execute(valueCollector);
@@ -236,8 +243,26 @@ public final class SQL {
     
     /* -------------------------------------------------- Select -------------------------------------------------- */
     
-    public static <T extends Convertible> T select(@Nonnull Class<T> convertible) {
-        final @Nonnull SQLSelectStatement selectStatement = SQLSelectStatement.get(SQLQualifiedTableName tables)
+    /**
+     * Builds and executes an SQL select statement based on the given convertible and site.
+     */
+    public static <T extends Convertible> T select(@Nonnull Class<T> convertible, @Nonnull SQLBooleanExpression whereClauseExpression, @Nonnull Site site) throws FailedNonCommittingOperationException, RecoveryException, StructureException, CorruptNullValueException {
+        final @Nonnull @NonNullableElements FreezableArrayList<SQLResultColumn> resultColumns = FreezableArrayList.get();
+        // TODO: set resultColumns to the fields of the convertible
+        final @Nonnull @NonNullableElements FreezableArrayList<SQLSource<?>> sources = FreezableArrayList.get();
+        // TODO: if there are references, we need to join them.
+        final @Nonnull SQLWhereClause whereClause = SQLWhereClause.get(whereClauseExpression);
+        
+        final @Nonnull SQLSelectStatement selectStatement = SQLSelectStatement.get(resultColumns, sources, whereClause, null, null, null, null);
+    
+        final @Nonnull String selectIntoTableStatementString = selectStatement.toPreparedStatement(SQLDialect.getDialect(), site);
+        @Nonnull ValueCollector valueCollector = Database.getInstance().getValueCollector(selectIntoTableStatementString);
+        selectStatement.storeValues(valueCollector);
+        
+        @Nonnull SelectionResult selectionResult = Database.getInstance().executeSelect(valueCollector);
+        
+        final @Nonnull SQLConverter<T> converter = SQL.FORMAT.getSQLConverter(convertible);
+        return converter.recoverNullable(convertible, selectionResult, new Annotation[0]);
     }
     
 }

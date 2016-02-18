@@ -6,6 +6,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
 
+import net.digitalid.database.core.interfaces.SelectionResult;
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.operation.FailedOperationException;
@@ -68,4 +69,8 @@ public class H2JDBCDatabaseInstance extends JDBCDatabaseInstance {
         return JDBCValueCollector.get(prepare(preparedStatement, false));
     }
     
+    @Override
+    public SelectionResult executeSelect(@Nonnull ValueCollector valueCollector) throws InternalException, FailedNonCommittingOperationException {
+        return executeSelect((JDBCValueCollector) valueCollector);
+    }
 }
