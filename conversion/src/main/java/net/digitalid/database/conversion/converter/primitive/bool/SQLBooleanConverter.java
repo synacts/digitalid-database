@@ -1,4 +1,4 @@
-package net.digitalid.database.conversion.value.integer;
+package net.digitalid.database.conversion.converter.primitive.bool;
 
 import java.lang.annotation.Annotation;
 
@@ -8,15 +8,14 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.exceptions.ConverterNotFoundException;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
-import net.digitalid.utility.conversion.exceptions.StoringException;
-import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.conversion.reflection.exceptions.StructureException;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.elements.NullableElements;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
-import net.digitalid.database.conversion.value.SQLSingleRowConverter;
+import net.digitalid.database.conversion.converter.primitive.SQLSingleRowConverter;
 import net.digitalid.database.core.interfaces.SelectionResult;
-import net.digitalid.database.dialect.ast.expression.number.SQLNumberLiteral;
+import net.digitalid.database.dialect.ast.expression.bool.SQLBooleanLiteral;
 import net.digitalid.database.dialect.ast.statement.insert.SQLValues;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLType;
 import net.digitalid.database.exceptions.operation.FailedValueRestoringException;
@@ -24,34 +23,34 @@ import net.digitalid.database.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.exceptions.state.value.CorruptNullValueException;
 
 /**
- *
+ * The boolean converter converts and recovers boolean types into and from SQL cells.
  */
-public class SQLInteger32Converter extends SQLSingleRowConverter<Integer> {
+public class SQLBooleanConverter extends SQLSingleRowConverter<Boolean> {
     
     /* -------------------------------------------------- SQL Type -------------------------------------------------- */
     
     @Override
-    public @Nullable SQLType getSQLType(@Nonnull Class<?> type, @Nonnull @NonNullableElements Annotation[] annotations) {
-        return SQLType.INTEGER32;
+    public @Nonnull SQLType getSQLType(@Nonnull Class<?> type, @Nonnull @NonNullableElements Annotation[] annotations) {
+        return SQLType.BOOLEAN;
     }
     
     /* -------------------------------------------------- Value Collection -------------------------------------------------- */
     
     @Override
-    public void collectNonNullValues(@Nonnull Object object, Class<?> type, @NonCapturable @Nonnull SQLValues values) throws StoringException, FailedValueStoringException, InternalException, StructureException, NoSuchFieldException {
-        Require.that(object instanceof Integer).orThrow("The object is of type integer.");
+    public void collectNonNullValues(@Nonnull Object object, @Nonnull Class<?> type, @Nonnull @NullableElements SQLValues values) throws FailedValueStoringException {
+        Require.that(object instanceof Boolean).orThrow("The object is of type boolean.");
+        assert object instanceof Boolean;
         
-        final @Nonnull SQLNumberLiteral numberLiteral = SQLNumberLiteral.get((Integer) object);
-        values.addValue(numberLiteral);
+        final @Nonnull SQLBooleanLiteral booleanLiteral = SQLBooleanLiteral.get((Boolean) object);
+        values.addValue(booleanLiteral);
     }
     
     /* -------------------------------------------------- Recovery -------------------------------------------------- */
     
     @Override
-    public @Nullable Integer recoverNullable(@Nonnull Class<?> type, @NonCapturable @Nonnull SelectionResult result, @Nullable @NonNullableElements Annotation[] annotations) throws CorruptNullValueException, FailedValueRestoringException, StructureException, ConverterNotFoundException, RecoveryException {
-        final @Nullable Integer value = result.getInteger32();
+    public @Nullable Boolean recoverNullable(@Nonnull Class<?> type, @NonCapturable @Nonnull SelectionResult result, @Nonnull @NonNullableElements Annotation[] annotations) throws CorruptNullValueException, FailedValueRestoringException, StructureException, ConverterNotFoundException, RecoveryException {
+        final @Nullable Boolean value = result.getBoolean();
         return value;
     }
-    
     
 }

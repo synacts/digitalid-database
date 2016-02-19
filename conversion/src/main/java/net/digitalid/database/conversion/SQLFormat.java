@@ -9,12 +9,13 @@ import net.digitalid.utility.conversion.converter.Format;
 import net.digitalid.utility.conversion.converter.TypeMapper;
 import net.digitalid.utility.property.ReadOnlyProperty;
 
-import net.digitalid.database.conversion.value.SQLBooleanConverter;
-import net.digitalid.database.conversion.value.SQLObjectConverter;
-import net.digitalid.database.conversion.value.integer.SQLInteger32Converter;
-import net.digitalid.database.conversion.value.iterable.SQLArrayConverter;
-import net.digitalid.database.conversion.value.iterable.SQLCollectionsConverter;
-import net.digitalid.database.conversion.value.property.SQLPropertyConverter;
+import net.digitalid.database.conversion.converter.SQLConverter;
+import net.digitalid.database.conversion.converter.primitive.bool.SQLBooleanConverter;
+import net.digitalid.database.conversion.converter.object.SQLObjectConverter;
+import net.digitalid.database.conversion.converter.primitive.integer.SQLInteger32Converter;
+import net.digitalid.database.conversion.converter.iterable.SQLArrayConverter;
+import net.digitalid.database.conversion.converter.iterable.SQLCollectionsConverter;
+import net.digitalid.database.conversion.converter.property.SQLPropertyConverter;
 
 public class SQLFormat extends Format<SQLConverter> {
     

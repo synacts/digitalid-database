@@ -1,4 +1,4 @@
-package net.digitalid.database.conversion.value;
+package net.digitalid.database.conversion.converter.object;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -22,22 +22,20 @@ import net.digitalid.utility.generator.conversion.Convertible;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.elements.NullableElements;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
+import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.conversion.SQL;
-import net.digitalid.database.conversion.SQLConverter;
+import net.digitalid.database.conversion.converter.SQLConverter;
 import net.digitalid.database.conversion.exceptions.ConformityViolation;
-import net.digitalid.database.core.Database;
+import net.digitalid.database.conversion.exceptions.NoSQLTypeRepresentationException;
 import net.digitalid.database.core.interfaces.SelectionResult;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.annotations.References;
-import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
-import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
 import net.digitalid.database.dialect.ast.statement.insert.SQLValues;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnConstraint;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDeclaration;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDefinition;
-import net.digitalid.database.dialect.ast.statement.table.create.SQLCreateTableStatement;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLType;
 import net.digitalid.database.dialect.table.Table;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
@@ -46,15 +44,16 @@ import net.digitalid.database.exceptions.operation.FailedValueStoringException;
 import net.digitalid.database.exceptions.state.value.CorruptNullValueException;
 
 /**
- *
+ * The purpose of the SQL object converter is to create tables, declare columns, and collect values of a {@link Convertible} object for the conversion of it into the rows of one or more SQL tables.
  */
+@Stateless
 public class SQLObjectConverter<T extends Convertible> extends SQLConverter<T> {
     
     /* -------------------------------------------------- SQL Type -------------------------------------------------- */
     
     @Override
-    public @Nullable SQLType getSQLType(@Nonnull Class<?> type, @Nonnull @NonNullableElements Annotation[] annotations) {
-        throw new UnsupportedOperationException("Only simple types can be converted to SQL types.");
+    public @Nonnull SQLType getSQLType(@Nonnull Class<?> type, @Nonnull @NonNullableElements Annotation[] annotations) {
+        throw NoSQLTypeRepresentationException.with(type);
     }
     
     /* -------------------------------------------------- Value Collection -------------------------------------------------- */
@@ -89,7 +88,7 @@ public class SQLObjectConverter<T extends Convertible> extends SQLConverter<T> {
     }
     
     @Override
-    public void collectValues(@Nullable Object object, @Nonnull Class<?> type, @NonCapturable @Nonnull @NonNullableElements FreezableArrayList<SQLValues> values, Annotation[] annotations) throws FailedValueStoringException, InternalException, StoringException, StructureException, NoSuchFieldException {
+    public void collectValues(@Nullable Object object, @Nonnull Class<?> type, @Nonnull @NonNullableElements Annotation[] annotations, @NonCapturable @Nonnull @NonNullableElements FreezableArrayList<SQLValues> values) throws FailedValueStoringException, InternalException, StoringException, StructureException, NoSuchFieldException {
         assert object == null || object instanceof Convertible: "The object is of type Convertible.";
         
         final @Nonnull @NonNullableElements @Frozen ReadOnlyList<Field> fields = ReflectionUtility.getReconstructionFields(type);
@@ -121,12 +120,15 @@ public class SQLObjectConverter<T extends Convertible> extends SQLConverter<T> {
             } else {
                 referencedFieldValue = null;
             }
-            converter.collectValues(referencedFieldValue, storableField.getType(), values, null);
+            converter.collectValues(referencedFieldValue, storableField.getType(), field.getAnnotations(), values);
         }
     }
     
     /* -------------------------------------------------- Column Names -------------------------------------------------- */
     
+    /**
+     * Collects the fields of the object and converts them into column names.
+     */
     private void putColumnNamesOfEmbeddedType(@Nonnull Class<?> type, @Nullable String tableName, @NonCapturable @Nonnull @NonNullableElements FreezableList<? super SQLQualifiedColumnName> columnNames) throws ConverterNotFoundException, StructureException {
         final @Nonnull @NonNullableElements @Frozen ReadOnlyList<Field> fields = ReflectionUtility.getReconstructionFields(type);
         for (@Nonnull Field embeddedField : fields) {
@@ -135,6 +137,9 @@ public class SQLObjectConverter<T extends Convertible> extends SQLConverter<T> {
         }
     }
     
+    /**
+     * Returns true if a reference annotation is amoung the array of annotations.
+     */
     private boolean isReferenceAnnotationPresent(@Nullable @NonNullableElements Annotation[] annotations) {
         if (annotations != null) {
             for (@Nonnull Annotation annotation : annotations) {
@@ -146,10 +151,14 @@ public class SQLObjectConverter<T extends Convertible> extends SQLConverter<T> {
         return false;
     }
     
-    private @Nullable <T extends Annotation> T getAnnotation(@Nonnull @NonNullableElements Annotation[] annotations, @Nonnull Class<T> annotationType) {
+    /**
+     * Returns the annotation specified in the given annotation type or null if the annotation could not be found in the array of annotations.
+     */
+    @SuppressWarnings("unchecked")
+    private @Nullable <A extends Annotation> A getAnnotation(@Nonnull @NonNullableElements Annotation[] annotations, @Nonnull Class<A> annotationType) {
         for (@Nonnull Annotation annotation : annotations) {
             if (annotationType.isInstance(annotation)) {
-                return (T) annotation;
+                return (A) annotation;
             }
         }
         return null;
@@ -170,41 +179,81 @@ public class SQLObjectConverter<T extends Convertible> extends SQLConverter<T> {
     
     /* -------------------------------------------------- Column Declarations -------------------------------------------------- */
     
-    private void putColumnDeclarationsOfEmbeddedType(@Nonnull Class<?> type, @NonCapturable @Nonnull @NonNullableElements FreezableArrayList<SQLColumnDeclaration> columnDeclarations, @Nonnull Site site, @Nonnull @NonNullableElements Annotation[] annotations) throws ConverterNotFoundException, StructureException, NoSuchFieldException {
+    /**
+     * Iterates through the fields of the type and converts each field into a column declaration.
+     */
+    private void putColumnDeclarationsOfEmbeddedType(@Nonnull Class<?> type, @Nonnull @NonCapturable @NonNullableElements FreezableArrayList<SQLColumnDeclaration> columnDeclarations, @Nonnull @NonNullableElements Annotation[] annotations) throws ConverterNotFoundException, StructureException, NoSuchFieldException {
         final @Nonnull @NonNullableElements @Frozen ReadOnlyList<Field> fields = ReflectionUtility.getReconstructionFields(type);
         for (@Nonnull Field embeddedField : fields) {
             final @Nonnull SQLConverter<?> sqlConverter = SQL.FORMAT.getConverter(embeddedField);
-            sqlConverter.putColumnDeclarations(type, embeddedField.getName(), columnDeclarations, site, annotations);
+            sqlConverter.putColumnDeclarations(type, embeddedField.getName(), annotations, columnDeclarations);
         }
     }
     
-    private void putColumnDeclarationsOfReferencedType(@Nonnull Class<?> type, @Nonnull String columnName, @NonCapturable @Nonnull @NonNullableElements FreezableArrayList<SQLColumnDeclaration> columnDeclarations, @Nonnull @NonNullableElements Annotation[] annotations) throws NoSuchFieldException, ConverterNotFoundException {
+    /**
+     * Adds the column declaration of a referenced type to the list of column declarations. Throws a StructureException if the referenced column does not exist.
+     */
+    private void putColumnDeclarationsOfReferencedType(@Nonnull Class<?> type, @Nonnull String columnName, @NonCapturable @Nonnull @NonNullableElements FreezableArrayList<SQLColumnDeclaration> columnDeclarations, @Nonnull @NonNullableElements Annotation[] annotations) throws NoSuchFieldException, ConverterNotFoundException, StructureException {
         final @Nullable References references = getAnnotation(annotations, References.class);
-        final @Nonnull Field referencedField = type.getField(references.columnName());
+        assert references != null;
         
+        final @Nonnull Field referencedField;
+        try {
+            referencedField = type.getField(references.columnName());
+        } catch (NoSuchFieldException e) {
+            throw StructureException.get("The column '" + references.columnName() + "' does not exist.");
+        }
         final @Nonnull SQLConverter<?> referencedFieldConverter = SQL.FORMAT.getConverter(referencedField);
-        final @Nullable SQLType sqlType = referencedFieldConverter.getSQLType(referencedField.getType(), referencedField.getAnnotations());
+        final @Nonnull SQLType sqlType = referencedFieldConverter.getSQLType(referencedField.getType(), referencedField.getAnnotations());
         final @Nonnull SQLColumnDeclaration columnDeclaration = SQLColumnDeclaration.of(SQLQualifiedColumnName.get(columnName), sqlType, SQLColumnDefinition.of(annotations), SQLColumnConstraint.of(annotations, columnName));
         columnDeclarations.add(columnDeclaration);
     }
     
     @Override
-    public void putColumnDeclarations(@Nonnull Class<?> type, @Nonnull String columnName, @NonCapturable @Nonnull @NonNullableElements FreezableArrayList<SQLColumnDeclaration> columnDeclarations, @Nullable Site site, @Nonnull @NonNullableElements Annotation[] annotations) throws ConverterNotFoundException, StructureException, NoSuchFieldException {
+    public void putColumnDeclarations(@Nonnull Class<?> type, @Nonnull String columnName, @Nonnull @NonNullableElements Annotation[] annotations, @NonCapturable @Nonnull @NonNullableElements FreezableArrayList<SQLColumnDeclaration> columnDeclarations) throws ConverterNotFoundException, StructureException, NoSuchFieldException {
         Require.that(Convertible.class.isAssignableFrom(type)).orThrow("The field has the type 'Convertible'");
         
         if (isReferenceAnnotationPresent(annotations)) {
             putColumnDeclarationsOfReferencedType(type, columnName, columnDeclarations, annotations);
         } else {
-            putColumnDeclarationsOfEmbeddedType(type, columnDeclarations, site, annotations);
+            putColumnDeclarationsOfEmbeddedType(type, columnDeclarations, annotations);
+        }
+    }
+    
+    /* -------------------------------------------------- Required and Dependent Tables -------------------------------------------------- */
+    
+    // TODO: How do we detect cycles?
+    @Override
+    public void createRequiredTables(@Nonnull Class<?> type, @Nonnull @NonNullableElements Annotation[] annotations, @Nonnull Site site) throws NoSuchFieldException, StructureException, FailedNonCommittingOperationException {
+        // create tables for all fields in the type
+        for (@Nonnull Field field : type.getFields()) {
+            if (isReferenceAnnotationPresent(field.getAnnotations())) {
+                assert Convertible.class.isInstance(field.getType());
+    
+                @SuppressWarnings("unchecked")
+                Class<? extends Convertible> convertibleType = (Class<? extends Convertible>) field.getType();
+                // TODO: Create non-committing?! Creating required tables should be in the same transaction as the original table.
+                SQL.create(field.getName(), site, convertibleType);
+            }
+            
+            final @Nonnull SQLConverter<?> sqlConverter = SQL.FORMAT.getConverter(field);
+            sqlConverter.createRequiredTables(field.getType(), field.getAnnotations(), site);
         }
     }
     
     @Override
-    public void insertIntoDependentTable(@Nonnull Table referencedTable, @Nonnull @NonNullableElements FreezableArrayList<SQLValues> primaryKeyTableCells, @Nullable Object object, @Nonnull Field field, @Nonnull Site site) throws StructureException, StoringException, FailedNonCommittingOperationException {
-        // TODO: insert values of referenced types into the referenced table
-        if (field.isAnnotationPresent(References.class)) {
-            for (@Nonnull Field embeddedField : field.getType().getFields()) {
-                final @Nonnull SQLConverter<?> sqlConverter = SQL.FORMAT.getConverter(embeddedField);
+    public void createDependentTables(@Nonnull Table referencedTable, @Nonnull Class<?> type, @Nonnull String nameOfDependentTable, @Nonnull @NonNullableElements Annotation[] annotations) throws NoSuchFieldException, StructureException, FailedNonCommittingOperationException {
+        for (@Nonnull Field field : type.getFields()) {
+            final @Nonnull SQLConverter<?> sqlConverter = SQL.FORMAT.getConverter(field);
+            sqlConverter.createDependentTables(referencedTable, type, field.getName(), field.getAnnotations());
+        }
+    }
+    
+    @Override
+    public void insertIntoDependentTable(@Nonnull Table referencedTable, @Nonnull @NonNullableElements FreezableArrayList<SQLValues> primaryKeyTableCells, @Nullable Object object, @Nonnull Class<?> type, @Nonnull String nameOfDependentTable, @Nonnull @NonNullableElements Annotation[] annotations) throws StructureException, StoringException, FailedNonCommittingOperationException {
+        for (@Nonnull Field field: type.getFields()) {
+            if (!isReferenceAnnotationPresent(annotations)) {
+                final @Nonnull SQLConverter<?> sqlConverter = SQL.FORMAT.getConverter(field);
                 final @Nullable Object value;
                 try {
                     field.setAccessible(true);
@@ -212,40 +261,12 @@ public class SQLObjectConverter<T extends Convertible> extends SQLConverter<T> {
                 } catch (IllegalAccessException e) {
                     throw StoringException.get(field.getType(), e);
                 }
-                sqlConverter.insertIntoDependentTable(referencedTable, primaryKeyTableCells, value, embeddedField, site);
+                sqlConverter.insertIntoDependentTable(referencedTable, primaryKeyTableCells, value, field.getType(), field.getName(), field.getAnnotations());
             }
         }
     }
     
-    @Override
-    public void createDependentTables(@Nonnull Table referencedTable, @Nonnull Field field, @Nonnull Site site) throws NoSuchFieldException, StructureException, FailedNonCommittingOperationException {
-        for (@Nonnull Field embeddedField : field.getType().getFields()) {
-            final @Nonnull SQLConverter<?> sqlConverter = SQL.FORMAT.getConverter(embeddedField);
-            sqlConverter.createDependentTables(referencedTable, embeddedField, site);
-        }
-    }
-    
-    @Override
-    public void createRequiredTables(@Nonnull Field field, @Nonnull Site site) throws NoSuchFieldException, StructureException, FailedNonCommittingOperationException {
-        // create tables for all fields in the type
-        for (@Nonnull Field embeddedField : field.getType().getFields()) {
-            final @Nonnull SQLConverter<?> sqlConverter = SQL.FORMAT.getConverter(embeddedField);
-            sqlConverter.createRequiredTables(embeddedField, site);
-        }
-        if (field.isAnnotationPresent(References.class)) {
-            final @Nonnull @NonNullableElements FreezableArrayList<SQLColumnDeclaration> columnDeclaration = FreezableArrayList.get();
-            for (@Nonnull Field referencedField : field.getType().getFields()) {
-                final @Nonnull SQLConverter<?> fieldConverter = SQL.FORMAT.getConverter(referencedField);
-                fieldConverter.putColumnDeclarations(referencedField.getType(), referencedField.getName(), columnDeclaration, site, referencedField.getAnnotations());
-            }
-            final @Nonnull SQLCreateTableStatement createTableStatement = SQLCreateTableStatement.with(SQLQualifiedTableName.get(field.getAnnotation(References.class).foreignTable(), site), columnDeclaration);
-    
-            final @Nonnull String createTableStatementString = createTableStatement.toSQL(SQLDialect.getDialect(), site);
-            System.out.println("SQL: " + createTableStatementString);
-            Database.getInstance().execute(createTableStatementString);
-        }
-    }
-    
+   
     /* -------------------------------------------------- Recovery -------------------------------------------------- */
     
     @Override
@@ -258,7 +279,7 @@ public class SQLObjectConverter<T extends Convertible> extends SQLConverter<T> {
             final @Nullable Object fieldValue = converter.recoverNullable(field.getType(), result, annotations);
             recoveredValues.add(fieldValue);
         }
-        return Converter.recoverNonNullableObject((Class<T>) type, recoveredValues);
+        return (T) Converter.recoverNonNullableObject(type, recoveredValues);
     }
     
 }

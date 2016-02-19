@@ -1,4 +1,4 @@
-package net.digitalid.database.conversion.value.iterable;
+package net.digitalid.database.conversion.converter.iterable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
@@ -33,9 +33,10 @@ import net.digitalid.database.exceptions.state.value.CorruptNullValueException;
 public class SQLCollectionsConverter extends SQLIterableConverter<Collection<?>> {
     
     @Override 
-    @SuppressWarnings("unchecked")
     protected @Nonnull @NullableElements Collection<?> getCollection(@Nonnull Object object) {
         Require.that(object instanceof Collection<?>).orThrow("The object is not an instance of Collection.");
+        assert object instanceof Collection;
+        
         return (Collection<?>) object;
     }
     
@@ -57,7 +58,7 @@ public class SQLCollectionsConverter extends SQLIterableConverter<Collection<?>>
     @SuppressWarnings("unchecked")
     public @Nullable Collection<?> recoverNullable(@Nonnull Class<?> type, @NonCapturable @Nonnull SelectionResult result, @Nonnull @NonNullableElements Annotation[] annotations) throws CorruptNullValueException, FailedValueRestoringException, StructureException, ConverterNotFoundException, RecoveryException {
         
-        final @Nullable @NullableElements Object[] elementValues = recoverNullableObjectArray(type, result, annotations);
+        final @Nullable @NullableElements Object[] elementValues = recoverNullableObjectArray(result, annotations);
         if (elementValues == null) {
             return null;
         }

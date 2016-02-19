@@ -1,4 +1,4 @@
-package net.digitalid.database.conversion.value.iterable;
+package net.digitalid.database.conversion.converter.iterable;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
@@ -29,7 +29,7 @@ public class SQLArrayConverter extends SQLIterableConverter<Object[]> {
     
     @Override
     public @Nullable Object[] recoverNullable(@Nonnull Class<?> type, @NonCapturable @Nonnull SelectionResult result, @Nonnull @NonNullableElements Annotation[] annotations) throws CorruptNullValueException, FailedValueRestoringException, StructureException, ConverterNotFoundException, RecoveryException {
-        return recoverNullableObjectArray(type, result, annotations);
+        return recoverNullableObjectArray(result, annotations);
     }
     
 }
