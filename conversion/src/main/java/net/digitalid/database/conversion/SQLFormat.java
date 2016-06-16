@@ -5,18 +5,25 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.generator.conversion.Convertible;
-import net.digitalid.utility.conversion.Format;
-import net.digitalid.utility.conversion.TypeMapper;
+import net.digitalid.utility.conversion.converter.Format;
+import net.digitalid.utility.conversion.converter.TypeMapper;
 import net.digitalid.utility.property.ReadOnlyProperty;
 
-import net.digitalid.database.conversion.value.SQLBooleanConverter;
-import net.digitalid.database.conversion.value.SQLObjectConverter;
-import net.digitalid.database.conversion.value.integer.SQLInteger32Converter;
-import net.digitalid.database.conversion.value.iterable.SQLCollectionsConverter;
-import net.digitalid.database.conversion.value.property.SQLPropertyConverter;
+import net.digitalid.database.conversion.converter.SQLConverter;
+import net.digitalid.database.conversion.converter.primitive.bool.SQLBooleanConverter;
+import net.digitalid.database.conversion.converter.object.SQLObjectConverter;
+import net.digitalid.database.conversion.converter.primitive.integer.SQLInteger32Converter;
+import net.digitalid.database.conversion.converter.iterable.SQLArrayConverter;
+import net.digitalid.database.conversion.converter.iterable.SQLCollectionsConverter;
+import net.digitalid.database.conversion.converter.property.SQLPropertyConverter;
 
 public class SQLFormat extends Format<SQLConverter> {
-
+    
+    @SuppressWarnings("unchecked")
+    public <T> SQLConverter<T> getSQLConverter(Class<T> type) {
+        return getConverter(type);
+    }
+    
     /**
      * Creates a new converter which converts boolean to SQL.
      */
@@ -27,6 +34,8 @@ public class SQLFormat extends Format<SQLConverter> {
     private final static @Nonnull SQLConverter<ReadOnlyProperty<?, ?>> PROPERTY_CONVERTER = new SQLPropertyConverter();
     
     private final static @Nonnull SQLConverter<Collection<?>> COLLECTION_CONVERTER = new SQLCollectionsConverter();
+    
+    private final static @Nonnull SQLConverter<Object[]> ARRAY_CONVERTER = new SQLArrayConverter();
     
     /**
      * Creates a new converter which converts convertible objects to SQL.
@@ -95,7 +104,7 @@ public class SQLFormat extends Format<SQLConverter> {
     
     @Override
     protected @Nonnull SQLConverter getArrayConverter() {
-        return null;
+        return ARRAY_CONVERTER;
     }
     
     @Override

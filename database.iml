@@ -16,10 +16,10 @@
     <orderEntry type="module" module-name="digitalid-utility-string" />
     <orderEntry type="module" module-name="digitalid-utility-freezable" />
     <orderEntry type="module" module-name="digitalid-utility-validation" />
-    <orderEntry type="module" module-name="digitalid-utility-exceptions" />
     <orderEntry type="module" module-name="digitalid-utility-logging" />
     <orderEntry type="module" module-name="utility-configuration" />
-    <orderEntry type="module" module-name="digitalid-utility-errors" />
+    <orderEntry type="module" module-name="utility-contracts" />
+    <orderEntry type="module" module-name="digitalid-utility-exceptions" />
     <orderEntry type="module" module-name="digitalid-utility-taglets" />
     <orderEntry type="module" module-name="digitalid-utility-time" />
     <orderEntry type="library" name="Maven: com.google.j2objc:j2objc-annotations:0.9.8" level="project" />

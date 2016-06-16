@@ -34,7 +34,7 @@ public class SQLInsertStatement implements SQLParameterizableNode<SQLInsertState
     
     /* -------------------------------------------------- Column Names -------------------------------------------------- */
     
-    private final @Nonnull @NonNullableElements @Frozen ReadOnlyList<SQLColumnName> columnNames;
+    private final @Nonnull @NonNullableElements @Frozen ReadOnlyList<SQLColumnName<?>> columnNames;
     
     /* -------------------------------------------------- Values Or SelectStatement -------------------------------------------------- */
     
@@ -47,19 +47,19 @@ public class SQLInsertStatement implements SQLParameterizableNode<SQLInsertState
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
-    private SQLInsertStatement(@Nonnull SQLQualifiedTableName qualifiedTableName, @Nonnull @NonNullableElements @Frozen ReadOnlyList<SQLColumnName> columnNames, @Nonnull @NullableElements SQLValuesOrStatement<?> valuesOrStatement) {
+    private SQLInsertStatement(@Nonnull SQLQualifiedTableName qualifiedTableName, @Nonnull @NonNullableElements @Frozen ReadOnlyList<SQLColumnName<?>> columnNames, @Nonnull @NullableElements SQLValuesOrStatement<?> valuesOrStatement) {
         this.qualifiedTableName = qualifiedTableName;
         this.columnNames = columnNames;
         this.valuesOrStatement = valuesOrStatement;
     }
     
-    public static @Nonnull SQLInsertStatement get(@Nonnull SQLQualifiedTableName qualifiedTableName, @Nonnull @NonNullableElements @Frozen ReadOnlyList<SQLColumnName> columnNames, @Nonnull @NullableElements SQLValuesOrStatement<?> valuesOrStatement) {
+    public static @Nonnull SQLInsertStatement get(@Nonnull SQLQualifiedTableName qualifiedTableName, @Nonnull @NonNullableElements @Frozen ReadOnlyList<SQLColumnName<?>> columnNames, @Nonnull @NullableElements SQLValuesOrStatement<?> valuesOrStatement) {
         return new SQLInsertStatement(qualifiedTableName, columnNames, valuesOrStatement);
     }
     
     /* -------------------------------------------------- SQL Node -------------------------------------------------- */
     
-    private static class SQLColumnConverter implements NonNullableElementConverter<SQLColumnName> {
+    private static class SQLColumnConverter implements NonNullableElementConverter<SQLColumnName<?>> {
          
         private final @Nonnull SQLDialect dialect;
         private final @Nonnull Site site;
@@ -71,7 +71,7 @@ public class SQLInsertStatement implements SQLParameterizableNode<SQLInsertState
         
         // TODO: the ElementConverter should also use the string builder instead of creating a new string everytime.
         @Override
-        public @Nonnull String toString(@Nonnull SQLColumnName element) {
+        public @Nonnull String toString(@Nonnull SQLColumnName<?> element) {
             StringBuilder string = new StringBuilder();
             try {
                 dialect.transcribe(site, string, element, false);

@@ -1,15 +1,17 @@
 package net.digitalid.database.dialect.ast.expression.number;
 
-import java.lang.reflect.Field;
 import java.math.BigInteger;
+
 import javax.annotation.Nonnull;
+
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.reference.NonCapturable;
+
 import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.identifier.SQLIdentifier;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
 import net.digitalid.database.exceptions.operation.FailedValueStoringException;
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 /**
  *
@@ -24,9 +26,9 @@ public class SQLNumberReference extends SQLNumberExpression<SQLNumberReference> 
         this.qualifiedColumnName = qualifiedColumnName;
     }
     
-    public static @Nonnull SQLNumberReference get(@Nonnull Field field) {
+    public static @Nonnull SQLNumberReference get(@Nonnull String columnName) {
         //Validator.checkType(field, acceptedTypes);
-        final @Nonnull SQLQualifiedColumnName qualifiedColumnName = SQLQualifiedColumnName.get(field.getName(), null);
+        final @Nonnull SQLQualifiedColumnName qualifiedColumnName = SQLQualifiedColumnName.get(columnName, null);
         return new SQLNumberReference(qualifiedColumnName);
     }
     

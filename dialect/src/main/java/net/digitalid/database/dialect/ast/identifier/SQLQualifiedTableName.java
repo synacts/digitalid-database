@@ -7,6 +7,7 @@ import net.digitalid.utility.validation.annotations.size.MinSize;
 
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.Transcriber;
+import net.digitalid.database.dialect.ast.statement.select.SQLSource;
 
 /**
  *

@@ -50,6 +50,8 @@ public interface DatabaseInstance extends AutoCloseable {
     
     public @Nonnull SelectionResult executeSelect(@Nonnull String selectStatement) throws FailedNonCommittingOperationException, InternalException;
     
+    public @Nonnull SelectionResult executeSelect(@Nonnull ValueCollector valueCollector) throws FailedNonCommittingOperationException, InternalException;
+    
 //    /**
 //     * Executes the given create table statement at the given site.
 //     * 

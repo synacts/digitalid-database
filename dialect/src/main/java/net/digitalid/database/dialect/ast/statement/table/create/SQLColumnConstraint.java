@@ -1,14 +1,13 @@
 package net.digitalid.database.dialect.ast.statement.table.create;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.collections.freezable.FreezableList;
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.freezable.FreezableList;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.math.MultipleOf;
 import net.digitalid.utility.validation.annotations.math.Negative;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
@@ -31,9 +30,9 @@ public abstract class SQLColumnConstraint implements SQLParameterizableNode<SQLC
     
     public abstract void getConstraintDeclaration(@Nonnull SQLDialect dialect, @Nonnull SQLColumnConstraint node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string) throws InternalException;
     
-    public static @Nonnull @NonNullableElements FreezableList<SQLColumnConstraint> of(@Nonnull Field field) {
+    public static @Nonnull @NonNullableElements FreezableList<SQLColumnConstraint> of(@Nonnull @NonNullableElements Annotation[] annotations, @Nonnull String columnName) {
         final @Nonnull @NonNullableElements FreezableArrayList<SQLColumnConstraint> columnConstraints = FreezableArrayList.get();
-        for (@Nonnull Annotation annotation : field.getAnnotations()) {
+        for (@Nonnull Annotation annotation : annotations) {
             if (annotation.annotationType().equals(Unique.class)) {
                 columnConstraints.add(new SQLUniqueConstraint());
             } else if (annotation.annotationType().equals(PrimaryKey.class)) {
@@ -41,15 +40,15 @@ public abstract class SQLColumnConstraint implements SQLParameterizableNode<SQLC
             } else if (annotation.annotationType().equals(References.class)) {
                 columnConstraints.add(new SQLForeignKeyConstraint((References) annotation));
             } else if (annotation.annotationType().equals(MultipleOf.class)) {
-                columnConstraints.add(new SQLCheckMultipleOfConstraint(field));
+                columnConstraints.add(new SQLCheckMultipleOfConstraint(annotation, columnName));
             } else if (annotation.annotationType().equals(Negative.class)) {
-                columnConstraints.add(new SQLCheckNegativeConstraint(field));
+                columnConstraints.add(new SQLCheckNegativeConstraint(annotation, columnName));
             } else if (annotation.annotationType().equals(NonNegative.class)) {
-                columnConstraints.add(new SQLCheckNonNegativeConstraint(field));
+                columnConstraints.add(new SQLCheckNonNegativeConstraint(annotation, columnName));
             } else if (annotation.annotationType().equals(Positive.class)) {
-                columnConstraints.add(new SQLCheckPositiveConstraint(field));
+                columnConstraints.add(new SQLCheckPositiveConstraint(annotation, columnName));
             } else if (annotation.annotationType().equals(NonPositive.class)) {
-                columnConstraints.add(new SQLCheckNonPositiveConstraint(field));
+                columnConstraints.add(new SQLCheckNonPositiveConstraint(annotation, columnName));
             }
         }
         return columnConstraints;

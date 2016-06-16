@@ -1,5 +1,14 @@
 package net.digitalid.database.conversion;
 
+import org.h2.jdbc.JdbcSQLException;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.collections.freezable.FreezableArrayList;
@@ -11,6 +20,7 @@ import net.digitalid.database.conversion.testenvironment.embedded.Convertible2;
 import net.digitalid.database.conversion.testenvironment.embedded.EmbeddedConvertibles;
 import net.digitalid.database.conversion.testenvironment.iterable.CollectionAndAdditionalFieldClass;
 import net.digitalid.database.conversion.testenvironment.iterable.CompositeCollectionsClass;
+import net.digitalid.database.conversion.testenvironment.iterable.ReferencedCollectionClass;
 import net.digitalid.database.conversion.testenvironment.iterable.SimpleCollectionsClass;
 import net.digitalid.database.conversion.testenvironment.property.PropertyTable;
 import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColumnTable;
@@ -24,15 +34,6 @@ import net.digitalid.database.exceptions.operation.FailedUpdateExecutionExceptio
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
 import net.digitalid.database.testing.SQLTestBase;
 import net.digitalid.database.testing.TestHost;
-
-import org.h2.jdbc.JdbcSQLException;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 /**
  *
@@ -50,6 +51,7 @@ public class SQLInsertTableTest extends SQLTestBase {
     private static Table simpleCollectionsTable;
     private static Table collectionAndAdditionalFieldTable;
     private static Table compositeCollectionTable;
+    private static Table referencedCollectionFieldTable;
     
     @BeforeClass
     public static void createTables() throws Exception {
@@ -63,6 +65,7 @@ public class SQLInsertTableTest extends SQLTestBase {
         simpleCollectionsTable = SQL.create("SQLInsertTableTest_collections_table_1", site, SimpleCollectionsClass.class);
         collectionAndAdditionalFieldTable = SQL.create("SQLInsertTableTest_collections_table_2", site, CollectionAndAdditionalFieldClass.class);
         compositeCollectionTable = SQL.create("SQLInsertTableTest_collections_table_3", site, CompositeCollectionsClass.class);
+        referencedCollectionFieldTable = SQL.create("SQLInsertTableTest_collections_table_4", site, ReferencedCollectionClass.class);
     }
     
     @Before
@@ -207,18 +210,45 @@ public class SQLInsertTableTest extends SQLTestBase {
         
         final @Nonnull CompositeCollectionsClass collectionAndAdditionalFieldClass = CompositeCollectionsClass.get(listOfListOfIntegers);
         SQL.insert(collectionAndAdditionalFieldClass, CompositeCollectionsClass.class, compositeCollectionTable);
-    
-        assertRowCount(compositeCollectionTable, 5L);
+        
+        assertRowCount(compositeCollectionTable, 9L);
         assertTableContains(compositeCollectionTable,
-                Expected.column("_listofintegers_index").value("0").and("listofintegers").value("1"),
-                Expected.column("_listofintegers_index").value("0").and("listofintegers").value("2"),
-                Expected.column("_listofintegers_index").value("0").and("listofintegers").value("3"),
-                Expected.column("_listofintegers_index").value("0").and("listofintegers").value("4"),
-                Expected.column("_listofintegers_index").value("0").and("listofintegers").value("5"),
-                Expected.column("_listofintegers_index").value("1").and("listofintegers").value("100"),
-                Expected.column("_listofintegers_index").value("1").and("listofintegers").value("200"),
-                Expected.column("_listofintegers_index").value("1").and("listofintegers").value("300"),
-                Expected.column("_listofintegers_index").value("1").and("listofintegers").value("400")
+                Expected.column("_listoflistofintegers_index").value("0").and("listoflistofintegers").value("1"),
+                Expected.column("_listoflistofintegers_index").value("0").and("listoflistofintegers").value("2"),
+                Expected.column("_listoflistofintegers_index").value("0").and("listoflistofintegers").value("3"),
+                Expected.column("_listoflistofintegers_index").value("0").and("listoflistofintegers").value("4"),
+                Expected.column("_listoflistofintegers_index").value("0").and("listoflistofintegers").value("5"),
+                Expected.column("_listoflistofintegers_index").value("1").and("listoflistofintegers").value("100"),
+                Expected.column("_listoflistofintegers_index").value("1").and("listoflistofintegers").value("200"),
+                Expected.column("_listoflistofintegers_index").value("1").and("listoflistofintegers").value("300"),
+                Expected.column("_listoflistofintegers_index").value("1").and("listoflistofintegers").value("400")
+        );
+    }
+    
+    @Test
+    public void shouldInsertIntoTableWithReferencedCollection() throws Exception {
+        final @Nonnull @NonNullableElements FreezableArrayList<Integer> listOfIntegers = FreezableArrayList.get();
+        listOfIntegers.add(1);
+        listOfIntegers.add(2);
+        listOfIntegers.add(3);
+        listOfIntegers.add(4);
+        listOfIntegers.add(5);
+        final @Nonnull ReferencedCollectionClass collectionAndAdditionalFieldClass = ReferencedCollectionClass.get(99, listOfIntegers);
+        SQL.insert(collectionAndAdditionalFieldClass, ReferencedCollectionClass.class, referencedCollectionFieldTable);
+    
+        assertRowCount(referencedCollectionFieldTable, 1L);
+        assertTableContains(referencedCollectionFieldTable,
+                Expected.column("additionalfield").value("99")
+        );
+        final @Nonnull String referencedColumnName = "_" + referencedCollectionFieldTable.getName().tableName + "_additionalfield";
+        
+        assertRowCount("TEST_HOST.LISTOFINTEGERS", 5L);
+        assertTableContains("TEST_HOST.LISTOFINTEGERS",
+                Expected.column("listofintegers").value("1").and(referencedColumnName).value("99"),
+                Expected.column("listofintegers").value("2").and(referencedColumnName).value("99"),
+                Expected.column("listofintegers").value("3").and(referencedColumnName).value("99"),
+                Expected.column("listofintegers").value("4").and(referencedColumnName).value("99"),
+                Expected.column("listofintegers").value("5").and(referencedColumnName).value("99")
         );
     }
     

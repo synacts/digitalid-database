@@ -282,6 +282,16 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
             throw FailedQueryExecutionException.get(exception);
         }
     }
+     
+    public @Nonnull SelectionResult executeSelect(@Nonnull JDBCValueCollector valueCollector) throws FailedNonCommittingOperationException, InternalException {
+        final @Nonnull PreparedStatement preparedStatement = valueCollector.getPreparedStatement();
+        try {
+            final @Nonnull ResultSet resultSet = preparedStatement.executeQuery();
+            return JDBCSelectionResult.get(resultSet);
+        } catch (@Nonnull SQLException exception) {
+            throw FailedQueryExecutionException.get(exception);
+        }
+    }
     
     @Override
     public long executeAndReturnGeneratedKey(@Nonnull String insertStatement) throws FailedNonCommittingOperationException, InternalException {

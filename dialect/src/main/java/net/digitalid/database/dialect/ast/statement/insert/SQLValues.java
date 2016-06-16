@@ -1,5 +1,7 @@
 package net.digitalid.database.dialect.ast.statement.insert;
 
+import net.digitalid.net.root.Copyable;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -24,7 +26,7 @@ import net.digitalid.database.core.table.Site;
 /**
  *
  */
-public class SQLValues implements SQLParameterizableNode<SQLValues>, SQLValuesOrStatement<SQLValues> {
+public class SQLValues implements SQLParameterizableNode<SQLValues>, SQLValuesOrStatement<SQLValues>, Copyable<SQLValues> {
    
     public final @Nonnull @NullableElements FreezableArrayList<SQLExpression<?>> values;
     
@@ -50,6 +52,10 @@ public class SQLValues implements SQLParameterizableNode<SQLValues>, SQLValuesOr
             // in the simplest case, the sqlExpression is a literal.
             sqlExpression.storeValues(collector);
         }
+    }
+    
+    public void prependValue(@Nullable SQLExpression value) {
+        values.add(0, value);
     }
     
     public void addValue(@Nullable SQLExpression value) {

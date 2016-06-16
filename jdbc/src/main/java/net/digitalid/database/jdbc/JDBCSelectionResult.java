@@ -76,6 +76,7 @@ public class JDBCSelectionResult implements SelectionResult {
      * @return the index of the next column to get.
      */
     @Pure
+    @Override
     public int getColumnIndex() {
         return columnIndex;
     }
@@ -100,6 +101,10 @@ public class JDBCSelectionResult implements SelectionResult {
         } catch (@Nonnull SQLException exception) {
             throw FailedValueRestoringException.get(exception);
         }
+    }
+    
+    public void moveToColumn(int columnIndex) {
+        columnIndex = 1;
     }
     
     /* -------------------------------------------------- Getters -------------------------------------------------- */

@@ -8,11 +8,14 @@ import net.digitalid.utility.conversion.annotations.GenericTypes;
 import net.digitalid.utility.generator.conversion.Convertible;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
+import net.digitalid.database.dialect.annotations.Embedd;
+
 /**
  *
  */
 public class CollectionAndAdditionalFieldClass implements Convertible {
     
+    @Embedd
     @GenericTypes(Integer.class)
     public final @Nonnull @NonNullableElements FreezableArrayList<Integer> listOfIntegers;
     

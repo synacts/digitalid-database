@@ -19,10 +19,10 @@
     <orderEntry type="module" module-name="utility-string" />
     <orderEntry type="module" module-name="utility-freezable" />
     <orderEntry type="module" module-name="utility-validation" />
-    <orderEntry type="module" module-name="utility-exceptions" />
     <orderEntry type="module" module-name="utility-logging" />
     <orderEntry type="module" module-name="utility-configuration" />
-    <orderEntry type="module" module-name="utility-errors" />
+    <orderEntry type="module" module-name="utility-contracts" />
+    <orderEntry type="module" module-name="utility-exceptions" />
     <orderEntry type="module" module-name="utility-taglets" />
     <orderEntry type="module" module-name="utility-time" />
     <orderEntry type="library" name="Maven: com.google.j2objc:j2objc-annotations:0.9.8" level="project" />

@@ -2,11 +2,20 @@ package net.digitalid.database.dialect.table;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
+import net.digitalid.database.dialect.ast.statement.insert.SQLValues;
+import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnConstraint;
+import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDeclaration;
+import net.digitalid.database.dialect.ast.statement.table.create.SQLCreateTableStatement;
+import net.digitalid.database.dialect.ast.statement.table.create.SQLPrimaryKeyConstraint;
 
 /**
  * This class models a database table.
@@ -31,27 +40,54 @@ public class Table {
         return name;
     }
     
+    /* -------------------------------------------------- Primary Keys -------------------------------------------------- */
+    
+    private final @Nonnull FreezableArrayList<PrimaryKey> primaryKeys;
+    
+    public final @Nonnull @Frozen @NonNullableElements ReadOnlyList<PrimaryKey> getPrimaryKeys() {
+        return primaryKeys;
+    }
+    
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
+    
+    private void initializePrimaryKeys(@Nonnull SQLCreateTableStatement createTableStatement) {
+        int position = 0;
+        for (SQLColumnDeclaration columnDeclaration : createTableStatement.columnDeclarations) {
+            final Class<?> type = columnDeclaration.type.getJavaType();
+            if (columnDeclaration.columnConstraints != null) {
+                for (SQLColumnConstraint columnConstraint : columnDeclaration.columnConstraints) {
+                    if (columnConstraint instanceof SQLPrimaryKeyConstraint) {
+                        primaryKeys.add(PrimaryKey.with(type, columnDeclaration.qualifiedColumnName.getValue(), position));
+                    }
+                }
+            }
+            position++;
+        }
+        position = 0;
+        if (primaryKeys.size() == 0) {
+            for (SQLColumnDeclaration columnDeclaration : createTableStatement.columnDeclarations) {
+                final Class<?> type = columnDeclaration.type.getJavaType();
+                primaryKeys.add(PrimaryKey.with(type, columnDeclaration.qualifiedColumnName.getValue(), position));
+                position++;
+            }           
+        }
+    }
     
     /**
      * Creates a new table with the given name and declaration.
-     * 
-     * @param tableName the name of the new table.
      */
-    protected Table(@Nonnull SQLQualifiedTableName tableName) {
-        this.name = tableName;
+    protected Table(@Nonnull SQLCreateTableStatement createTableStatement) {
+        this.name = createTableStatement.qualifiedTableName;
+        this.primaryKeys = FreezableArrayList.get();
+        initializePrimaryKeys(createTableStatement);
     }
     
     /**
      * Returns a new table with the given name and declaration.
-     * 
-     * @param name the name of the new table.
-     * 
-     * @return a new table with the given name and declaration.
      */
     @Pure
-    public static @Nonnull Table get(@Nonnull SQLQualifiedTableName name) {
-        return new Table(name);
+    public static @Nonnull Table get(@Nonnull SQLCreateTableStatement createTableStatement) {
+        return new Table(createTableStatement);
     }
     
     /* -------------------------------------------------- Name -------------------------------------------------- */
@@ -66,6 +102,18 @@ public class Table {
     @Pure
     public final @Nonnull String getName(@Nonnull Site site) {
         return name.getValue();
+    }
+    
+    public @Nonnull @NonNullableElements FreezableArrayList<SQLValues> filterPrimaryKeyTableCells(@Nonnull @NonNullableElements ReadOnlyList<SQLValues> tableRows) {
+        final @Nonnull @NonNullableElements FreezableArrayList<SQLValues> primaryKeyTableCells = FreezableArrayList.get();
+        for (@Nonnull SQLValues sqlValues : tableRows) {
+            SQLValues values = SQLValues.get();
+            for (@Nonnull PrimaryKey primaryKey : primaryKeys) {
+                values.addValue(sqlValues.values.get(primaryKey.columnPosition));
+            }
+            primaryKeyTableCells.add(values);
+        }
+        return primaryKeyTableCells;
     }
     
     /* -------------------------------------------------- Creation and Deletion -------------------------------------------------- */

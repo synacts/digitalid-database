@@ -1,10 +1,13 @@
 package net.digitalid.database.dialect.ast.statement.table.create;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.math.MultipleOf;
 import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
@@ -27,13 +30,13 @@ public class SQLCheckMultipleOfConstraint extends SQLCheckConstraint {
     
     private final long multipleOfValue;
     
-    SQLCheckMultipleOfConstraint(@Nonnull Field field) {
-        Require.that(field.isAnnotationPresent(MultipleOf.class)).orThrow("The annotation @MultipleOf is present.");
+    SQLCheckMultipleOfConstraint(@Nonnull Annotation annotation, @Nonnull String columnName) {
+        Require.that(annotation instanceof MultipleOf).orThrow("The annotation @MultipleOf is present.");
         
-        @Nonnull MultipleOf multipleOf = field.getAnnotation(MultipleOf.class);
+        @Nullable MultipleOf multipleOf = (MultipleOf) annotation; 
         this.multipleOfValue = multipleOf.value();
         checkConstraint = SQLNumberComparisonBooleanExpression.get(SQLComparisonOperator.EQUAL,
-                SQLBinaryNumberExpression.get(SQLBinaryNumberOperator.MODULO, SQLNumberReference.get(field), SQLNumberLiteral.get(multipleOfValue)), SQLNumberLiteral.get(0L));
+                SQLBinaryNumberExpression.get(SQLBinaryNumberOperator.MODULO, SQLNumberReference.get(columnName), SQLNumberLiteral.get(multipleOfValue)), SQLNumberLiteral.get(0L));
     }
     
     @Override
