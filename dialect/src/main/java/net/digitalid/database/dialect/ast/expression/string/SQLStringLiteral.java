@@ -2,16 +2,15 @@ package net.digitalid.database.dialect.ast.expression.string;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
-import net.digitalid.utility.validation.annotations.method.Pure;
 
+import net.digitalid.database.core.interfaces.SQLValueCollector;
+import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLLiteral;
-import net.digitalid.database.exceptions.operation.FailedValueStoringException;
-import net.digitalid.database.core.interfaces.ValueCollector;
-import net.digitalid.database.core.table.Site;
+import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 
 /**
  * This class implements a string literal.
@@ -66,7 +65,7 @@ public class SQLStringLiteral extends SQLStringExpression implements SQLLiteral 
     private static final @Nonnull Transcriber<SQLStringLiteral> transcriber = new Transcriber<SQLStringLiteral>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLStringLiteral node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
+        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLStringLiteral node, @Nonnull Site site)  throws InternalException {
             if (parameterizable) {
                 string.append("?");
             } else {
@@ -84,7 +83,7 @@ public class SQLStringLiteral extends SQLStringExpression implements SQLLiteral 
     /* -------------------------------------------------- SQLParameterizableNode -------------------------------------------------- */
     
     @Override
-    public final void storeValues(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+    public final void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         collector.setString(value);
     }
     

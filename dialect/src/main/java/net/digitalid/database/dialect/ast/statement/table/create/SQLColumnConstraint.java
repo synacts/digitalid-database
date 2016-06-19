@@ -4,16 +4,16 @@ import java.lang.annotation.Annotation;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.collections.freezable.FreezableArrayList;
-import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
+import net.digitalid.utility.collections.list.FreezableArrayList;
+import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
-import net.digitalid.utility.validation.annotations.math.MultipleOf;
+import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.validation.annotations.math.Negative;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
 import net.digitalid.utility.validation.annotations.math.NonPositive;
 import net.digitalid.utility.validation.annotations.math.Positive;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
+import net.digitalid.utility.validation.annotations.math.modulo.MultipleOf;
 
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.annotations.PrimaryKey;
@@ -28,10 +28,10 @@ import net.digitalid.database.dialect.ast.Transcriber;
  */
 public abstract class SQLColumnConstraint implements SQLParameterizableNode<SQLColumnConstraint> {
     
-    public abstract void getConstraintDeclaration(@Nonnull SQLDialect dialect, @Nonnull SQLColumnConstraint node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string) throws InternalException;
+    public abstract void getConstraintDeclaration(@Nonnull SQLDialect dialect, @Nonnull SQLColumnConstraint node, @Nonnull Site site, @Nonnull @NonCaptured StringBuilder string) throws InternalException;
     
-    public static @Nonnull @NonNullableElements FreezableList<SQLColumnConstraint> of(@Nonnull @NonNullableElements Annotation[] annotations, @Nonnull String columnName) {
-        final @Nonnull @NonNullableElements FreezableArrayList<SQLColumnConstraint> columnConstraints = FreezableArrayList.get();
+    public static @Nonnull ReadOnlyList<@Nonnull SQLColumnConstraint> of(@Nonnull ImmutableList<@Nonnull Annotation> annotations, @Nonnull String columnName) {
+        final @Nonnull FreezableArrayList<@Nonnull SQLColumnConstraint> columnConstraints = FreezableArrayList.withNoElements();
         for (@Nonnull Annotation annotation : annotations) {
             if (annotation.annotationType().equals(Unique.class)) {
                 columnConstraints.add(new SQLUniqueConstraint());
@@ -62,7 +62,7 @@ public abstract class SQLColumnConstraint implements SQLParameterizableNode<SQLC
     private static final @Nonnull Transcriber<SQLColumnConstraint> transcriber = new Transcriber<SQLColumnConstraint>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLColumnConstraint node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
+        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLColumnConstraint node, @Nonnull Site site, @Nonnull @NonCaptured StringBuilder string, boolean parameterizable) throws InternalException {
             node.getConstraintDeclaration(dialect, node, site, string);
         }
         

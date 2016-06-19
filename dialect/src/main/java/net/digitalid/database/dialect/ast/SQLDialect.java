@@ -5,13 +5,12 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.table.Site;
 
 /**
- * A dialect implements a particular version of the structured query language (SQL). This abstract class transcribes SQL nodes to SQL statements
+ * A dialect implements a particular version of the structured filter language (SQL). This abstract class transcribes SQL nodes to SQL statements
  * by calling the default transcriber of the node. Subclasses of SQLDialect may override the behavior by calling their own transcribers before falling back to the default transcriber.
  */
 @Immutable
@@ -23,8 +22,8 @@ public abstract class SQLDialect {
     /**
      * Transcribes an SQL node by calling the default transcriber of the node which stores the SQL statement as a string in the string builder.
      */
-    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLNode<?> node, boolean parameterizable) throws InternalException {
-        node.getTranscriber().transcribeNode(this, node, site, string, parameterizable);
+    public @Nonnull String transcribe(@Nonnull Site site, @Nonnull SQLNode<?> node) throws InternalException {
+        return node.getTranscriber().transcribeNode(this, node, site);
     }
     
     // TODO: Should throw InitializationError instead.

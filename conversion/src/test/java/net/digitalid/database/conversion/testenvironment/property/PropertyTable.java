@@ -3,7 +3,7 @@ package net.digitalid.database.conversion.testenvironment.property;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.conversion.annotations.Constructing;
-import net.digitalid.utility.generator.conversion.Convertible;
+import net.digitalid.utility.conversion.converter.Convertible;
 
 /**
  *

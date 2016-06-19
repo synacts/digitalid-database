@@ -3,13 +3,13 @@ package net.digitalid.database.core;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.ownership.NonCapturable;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.logging.Log;
-import net.digitalid.utility.validation.annotations.method.Pure;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
-import net.digitalid.database.core.annotations.Committing;
+import net.digitalid.database.annotations.Committing;
 import net.digitalid.database.core.interfaces.DatabaseInstance;
 import net.digitalid.database.exceptions.operation.FailedCommitException;
 

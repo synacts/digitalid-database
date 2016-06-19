@@ -5,10 +5,10 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.validation.annotations.type.Immutable;
-import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.Pure;
 
 /**
- * This exception is thrown when a query could not be executed in the database.
+ * This exception is thrown when a filter could not be executed in the database.
  */
 @Immutable
 public class FailedQueryExecutionException extends FailedNonCommittingOperationException {
@@ -16,20 +16,20 @@ public class FailedQueryExecutionException extends FailedNonCommittingOperationE
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new failed query execution exception.
+     * Creates a new failed filter execution exception.
      * 
-     * @param cause the cause of the failed query execution.
+     * @param cause the cause of the failed filter execution.
      */
     protected FailedQueryExecutionException(@Nonnull SQLException cause) {
         super(cause);
     }
     
     /**
-     * Returns a new failed query execution exception.
+     * Returns a new failed filter execution exception.
      * 
-     * @param cause the cause of the failed query execution.
+     * @param cause the cause of the failed filter execution.
      * 
-     * @return a new failed query execution exception.
+     * @return a new failed filter execution exception.
      */
     @Pure
     public static @Nonnull FailedQueryExecutionException get(@Nonnull SQLException cause) {

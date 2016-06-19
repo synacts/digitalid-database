@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import javax.annotation.Nonnull;
+
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
 /**
@@ -16,6 +17,8 @@ import net.digitalid.utility.validation.annotations.elements.NonNullableElements
 public @interface References {
     
     @Nonnull String foreignTable();
+    
+    @Nonnull String columnType();
     
     @Nonnull @NonNullableElements String columnName();
     

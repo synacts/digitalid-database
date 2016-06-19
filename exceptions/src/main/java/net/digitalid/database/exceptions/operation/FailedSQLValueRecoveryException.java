@@ -4,14 +4,16 @@ import java.sql.SQLException;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
-import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.Pure;
 
 /**
  * This exception is thrown when a value could not be restored from the database.
  */
 @Immutable
-public class FailedValueRestoringException extends FailedNonCommittingOperationException {
+// TODO: improve exception hierarchy
+public class FailedSQLValueRecoveryException extends RuntimeException {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -20,7 +22,7 @@ public class FailedValueRestoringException extends FailedNonCommittingOperationE
      * 
      * @param cause the cause of the failed value restoring.
      */
-    protected FailedValueRestoringException(@Nonnull SQLException cause) {
+    protected FailedSQLValueRecoveryException(@Nonnull SQLException cause) {
         super(cause);
     }
     
@@ -32,8 +34,8 @@ public class FailedValueRestoringException extends FailedNonCommittingOperationE
      * @return a new failed value restoring exception.
      */
     @Pure
-    public static @Nonnull FailedValueRestoringException get(@Nonnull SQLException cause) {
-        return new FailedValueRestoringException(cause);
+    public static @Nonnull FailedSQLValueRecoveryException get(@Nonnull SQLException cause) {
+        return new FailedSQLValueRecoveryException(cause);
     }
     
 }

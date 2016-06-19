@@ -9,6 +9,7 @@ import net.digitalid.database.dialect.ast.Transcriber;
 /**
  *
  */
+// TODO: check if it's really a good idea to have a generic parameter here. Seems to be cumbersome to require a wildcard everywhere.
 public class SQLColumnName<T extends SQLColumnName<T>> implements SQLIdentifier<T> {
     
     protected final @Nonnull String columnName;
@@ -19,7 +20,7 @@ public class SQLColumnName<T extends SQLColumnName<T>> implements SQLIdentifier<
         this.columnName = columnName;
     }
     
-    public static SQLColumnName get(@Nonnull String columnName) {
+    public static @Nonnull SQLColumnName<?> get(@Nonnull String columnName) {
         return new SQLColumnName(columnName);
     }
     

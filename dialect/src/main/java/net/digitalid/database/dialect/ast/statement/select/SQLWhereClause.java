@@ -3,15 +3,14 @@ package net.digitalid.database.dialect.ast.statement.select;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
-import net.digitalid.database.core.interfaces.ValueCollector;
+import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLParameterizableNode;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.bool.SQLBooleanExpression;
-import net.digitalid.database.exceptions.operation.FailedValueStoringException;
+import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 
 /**
  * This SQL node represents the where clause part of an SQL select or insert statement.
@@ -44,7 +43,7 @@ public class SQLWhereClause implements SQLParameterizableNode<SQLWhereClause> {
     /* -------------------------------------------------- SQL Parameterized Node -------------------------------------------------- */
     
     @Override 
-    public void storeValues(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+    public void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         booleanExpression.storeValues(collector);
     }
     
@@ -56,7 +55,7 @@ public class SQLWhereClause implements SQLParameterizableNode<SQLWhereClause> {
     private static final @Nonnull Transcriber<SQLWhereClause> transcriber = new Transcriber<SQLWhereClause>() {
     
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLWhereClause node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
+        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLWhereClause node, @Nonnull Site site)  throws InternalException {
             string.append(" WHERE ");
             dialect.transcribe(site, string, node.booleanExpression, parameterizable);
         }

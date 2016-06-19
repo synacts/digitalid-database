@@ -3,14 +3,13 @@ package net.digitalid.database.dialect.ast.statement.select;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.string.iterable.IterableConverter;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.size.MinSize;
 
-import net.digitalid.database.core.interfaces.ValueCollector;
+import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLParameterizableNode;
@@ -18,7 +17,7 @@ import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.bool.SQLBooleanExpression;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
 import net.digitalid.database.dialect.ast.utility.SQLNodeConverter;
-import net.digitalid.database.exceptions.operation.FailedValueStoringException;
+import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 
 /**
  * This SQL node represents a GROUP BY clause for an SQL select statement.
@@ -57,7 +56,7 @@ public class SQLGroupByClause implements SQLParameterizableNode<SQLGroupByClause
     /* -------------------------------------------------- SQL Parameterized Node -------------------------------------------------- */
     
     @Override 
-    public void storeValues(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+    public void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         if (havingExpression != null) {
             havingExpression.storeValues(collector);
         }
@@ -71,7 +70,7 @@ public class SQLGroupByClause implements SQLParameterizableNode<SQLGroupByClause
     private static final @Nonnull Transcriber<SQLGroupByClause> transcriber = new Transcriber<SQLGroupByClause>() {
     
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLGroupByClause node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
+        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLGroupByClause node, @Nonnull Site site)  throws InternalException {
             string.append(" GROUP BY ");
             string.append(IterableConverter.toString(node.qualifiedColumnNames, SQLNodeConverter.get(dialect, site)));
             if (node.havingExpression != null) {

@@ -1,6 +1,6 @@
 package net.digitalid.database.conversion.testenvironment.empty;
 
-import net.digitalid.utility.generator.conversion.Convertible;
+import net.digitalid.utility.conversion.converter.Convertible;
 
 /**
  *

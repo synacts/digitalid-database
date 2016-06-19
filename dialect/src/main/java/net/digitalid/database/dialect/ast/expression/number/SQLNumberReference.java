@@ -5,13 +5,12 @@ import java.math.BigInteger;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
-import net.digitalid.database.core.interfaces.ValueCollector;
+import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.identifier.SQLIdentifier;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
-import net.digitalid.database.exceptions.operation.FailedValueStoringException;
+import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 
 /**
  *
@@ -33,7 +32,7 @@ public class SQLNumberReference extends SQLNumberExpression<SQLNumberReference> 
     }
     
     @Override
-    public void storeValues(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+    public void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         // TODO: implement
     }
     

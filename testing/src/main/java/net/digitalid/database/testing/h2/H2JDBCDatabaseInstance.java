@@ -1,13 +1,17 @@
 package net.digitalid.database.testing.h2;
 
 import java.util.Properties;
+import java.util.Queue;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Impure;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.functional.iterables.FiniteIterable;
 
-import net.digitalid.database.core.interfaces.SelectionResult;
-import net.digitalid.database.core.interfaces.ValueCollector;
+import net.digitalid.database.core.interfaces.SQLSelectionResult;
+import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.operation.FailedOperationException;
 import net.digitalid.database.jdbc.JDBCDatabaseInstance;
@@ -44,33 +48,39 @@ public class H2JDBCDatabaseInstance extends JDBCDatabaseInstance {
         return properties;
     }
     
+    @Impure
     @Override
     public void dropDatabase() throws FailedOperationException {
         
     }
     
+    @Impure
     @Override
     public void close() throws Exception {
         getConnection().close();
     }
     
+    @Impure
     @Override
     public void execute(@Nonnull String sqlStatement) throws InternalException, FailedNonCommittingOperationException {
         executeUpdate(sqlStatement);
     }
     
+    @Impure
     @Override
-    public void execute(@Nonnull ValueCollector valueCollector) throws InternalException, FailedNonCommittingOperationException {
+    public void execute(@Nonnull SQLValueCollector valueCollector) throws InternalException, FailedNonCommittingOperationException {
         executeUpdate((JDBCValueCollector) valueCollector);
     }
     
+    @Pure
     @Override
-    public @Nonnull ValueCollector getValueCollector(@Nonnull String preparedStatement) throws FailedNonCommittingOperationException {
-        return JDBCValueCollector.get(prepare(preparedStatement, false));
+    public @Nonnull SQLValueCollector getValueCollector(@Nonnull FiniteIterable<String> preparedStatements, @Nonnull Queue<Integer> orderOfExecution) throws FailedNonCommittingOperationException {
+        return JDBCValueCollector.get(preparedStatements.map(preparedStatementString -> prepare(preparedStatementString, false)), orderOfExecution);
     }
     
+    @Impure
     @Override
-    public SelectionResult executeSelect(@Nonnull ValueCollector valueCollector) throws InternalException, FailedNonCommittingOperationException {
+    public SQLSelectionResult executeSelect(@Nonnull SQLValueCollector valueCollector) throws InternalException, FailedNonCommittingOperationException {
         return executeSelect((JDBCValueCollector) valueCollector);
     }
 }

@@ -4,7 +4,6 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.table.Site;

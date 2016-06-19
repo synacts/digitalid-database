@@ -3,12 +3,11 @@ package net.digitalid.database.dialect.ast.statement.table.create;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
-import net.digitalid.database.core.interfaces.ValueCollector;
+import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
-import net.digitalid.database.exceptions.operation.FailedValueStoringException;
+import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 
 /**
  *
@@ -23,5 +22,5 @@ public class SQLUniqueConstraint extends SQLColumnConstraint {
     }
     
     @Override
-    public void storeValues(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {}
+    public void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {}
 }

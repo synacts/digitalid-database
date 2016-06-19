@@ -2,17 +2,16 @@ package net.digitalid.database.dialect.ast.expression.bool;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
-import net.digitalid.utility.validation.annotations.method.Pure;
 
+import net.digitalid.database.core.interfaces.SQLValueCollector;
+import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
-import net.digitalid.database.exceptions.operation.FailedValueStoringException;
-import net.digitalid.database.core.interfaces.ValueCollector;
 import net.digitalid.database.dialect.ast.expression.SQLUnaryExpression;
-import net.digitalid.database.core.table.Site;
+import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 
 /**
  * This class implements a unary boolean expression.
@@ -80,7 +79,7 @@ public class SQLUnaryBooleanExpression extends SQLBooleanExpression implements S
     private static final @Nonnull Transcriber<SQLUnaryBooleanExpression> transcriber = new Transcriber<SQLUnaryBooleanExpression>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLUnaryBooleanExpression node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
+        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLUnaryBooleanExpression node, @Nonnull Site site)  throws InternalException {
             dialect.transcribe(site, string, node.operator, false);
             string.append("(");
             dialect.transcribe(site, string, node.expression, false);
@@ -97,7 +96,7 @@ public class SQLUnaryBooleanExpression extends SQLBooleanExpression implements S
     /* -------------------------------------------------- SQLParameterizableNode -------------------------------------------------- */
     
     @Override
-    public final void storeValues(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+    public final void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         expression.storeValues(collector);
     }
     

@@ -4,7 +4,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
@@ -47,7 +46,7 @@ public class SQLOrderingTerm implements SQLNode<SQLOrderingTerm> {
     private static final @Nonnull Transcriber<SQLOrderingTerm> transcriber = new Transcriber<SQLOrderingTerm>() {
     
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLOrderingTerm node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
+        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLOrderingTerm node, @Nonnull Site site)  throws InternalException {
             dialect.transcribe(site, string, node.qualifiedColumnName, parameterizable);
             if (node.orderingDirection != null) {
                 string.append(" ");

@@ -1,4 +1,4 @@
-package net.digitalid.database.core.annotations;
+package net.digitalid.database.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -6,10 +6,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import net.digitalid.database.core.Database;
-
 /**
- * This annotation indicates that a method does not {@link Database#commit() commit} the current transaction.
+ * This annotation indicates that a method does not commit the current transaction.
  * In order to being able to roll back the whole method, actions and queries should never commit.
  * 
  * @see Committing

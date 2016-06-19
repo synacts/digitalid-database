@@ -4,20 +4,19 @@ import java.math.BigInteger;
 
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Impure;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;
 
 import net.digitalid.database.exceptions.operation.FailedResourceClosingException;
-import net.digitalid.database.exceptions.operation.FailedValueRestoringException;
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
-import net.digitalid.database.exceptions.state.value.CorruptNullValueException;
-import net.digitalid.database.exceptions.state.value.CorruptParameterValueException;
 
 /**
  * This interface allows to get the values of an SQL result.
  * Advancing the column index is left to the implementation.
  */
-public interface SelectionResult extends AutoCloseable {
+public interface SQLSelectionResult extends AutoCloseable, net.digitalid.utility.conversion.converter.SelectionResult {
     
     /* -------------------------------------------------- Iteration -------------------------------------------------- */
     
@@ -26,18 +25,21 @@ public interface SelectionResult extends AutoCloseable {
      * 
      * @return whether there was another row to which the cursor could be moved.
      */
-    public boolean moveToNextRow() throws FailedValueRestoringException;
+    @Impure
+    public boolean moveToNextRow();
     
     /**
      * Moves the cursor to the first row of the selection result.
      * 
      * @throws EntryNotFoundException if the selection results contains no rows.
      */
-    public void moveToFirstRow() throws FailedValueRestoringException, EntryNotFoundException;
+    @Impure
+    public void moveToFirstRow() throws EntryNotFoundException;
     
     /**
      * Returns the current position of the cursor in the columns.
      */
+    @Pure
     public int getColumnIndex();
     
     /**
@@ -45,6 +47,7 @@ public interface SelectionResult extends AutoCloseable {
      * 
      * @param columnIndex the column to which the cursor should be moved.
      */
+    @Impure
     public void moveToColumn(int columnIndex);
     
     /* -------------------------------------------------- Getters -------------------------------------------------- */
@@ -52,105 +55,120 @@ public interface SelectionResult extends AutoCloseable {
     /**
      * Returns nothing from the next column.
      */
-    public void getEmpty() throws FailedValueRestoringException;
+    @Impure
+    public void getEmpty();
     
     /**
      * Returns the boolean value of the next column.
      * 
      * @return the boolean value of the next column.
      */
-    public boolean getBoolean() throws FailedValueRestoringException;
+    @Impure
+    public boolean getBoolean();
     
     /**
      * Returns the byte value of the next column.
      * 
      * @return the byte value of the next column.
      */
-    public byte getInteger08() throws FailedValueRestoringException;
+    @Impure
+    public byte getInteger08();
     
     /**
      * Returns the short value of the next column.
      * 
      * @return the short value of the next column.
      */
-    public short getInteger16() throws FailedValueRestoringException;
+    @Impure
+    public short getInteger16();
     
     /**
      * Returns the int value of the next column.
      * 
      * @return the int value of the next column.
      */
-    public int getInteger32() throws FailedValueRestoringException;
+    @Impure
+    public int getInteger32();
     
     /**
      * Returns the long value of the next column.
      * 
      * @return the long value of the next column.
      */
-    public long getInteger64() throws FailedValueRestoringException;
+    @Impure
+    public long getInteger64();
     
     /**
      * Returns the integer value of the next column.
      * 
      * @return the integer value of the next column.
      */
-    public @Nullable BigInteger getInteger() throws FailedValueRestoringException;
+    @Impure
+    public @Nullable BigInteger getInteger();
     
     /**
      * Returns the float value of the next column.
      * 
      * @return the float value of the next column.
      */
-    public float getDecimal32() throws FailedValueRestoringException;
+    @Impure
+    public float getDecimal32();
     
     /**
      * Returns the double value of the next column.
      * 
      * @return the double value of the next column.
      */
-    public double getDecimal64() throws FailedValueRestoringException;
+    @Impure
+    public double getDecimal64();
     
     /**
      * Returns the char value of the next column.
      * 
      * @return the char value of the next column.
      */
-    public char getString01() throws FailedValueRestoringException, CorruptNullValueException;
+    @Impure
+    public char getString01();
     
     /**
      * Returns the string value of the next column.
      * 
      * @return the string value of the next column.
      */
-    public @Nullable @MaxSize(64) String getString64() throws FailedValueRestoringException, CorruptParameterValueException;
+    @Impure
+    public @Nullable @MaxSize(64) String getString64();
     
     /**
      * Returns the string value of the next column.
      * 
      * @return the string value of the next column.
      */
-    public @Nullable String getString() throws FailedValueRestoringException;
+    @Impure
+    public @Nullable String getString();
     
     /**
      * Returns the binary value of the next column.
      * 
      * @return the binary value of the next column.
      */
-    public @Nullable @Size(16) byte[] getBinary128() throws FailedValueRestoringException, CorruptParameterValueException;
+    @Impure
+    public @Nullable @Size(16) byte[] getBinary128();
     
     /**
      * Returns the binary value of the next column.
      * 
      * @return the binary value of the next column.
      */
-    public @Nullable @Size(32) byte[] getBinary256() throws FailedValueRestoringException, CorruptParameterValueException;
+    @Impure
+    public @Nullable @Size(32) byte[] getBinary256();
     
     /**
      * Returns the binary value of the next column.
      * 
      * @return the binary value of the next column.
      */
-    public @Nullable byte[] getBinary() throws FailedValueRestoringException;
+    @Impure
+    public @Nullable byte[] getBinary();
     
     /* -------------------------------------------------- Null -------------------------------------------------- */
     
@@ -159,10 +177,12 @@ public interface SelectionResult extends AutoCloseable {
      * 
      * @return whether the last returned column was null.
      */
-    public boolean wasNull() throws FailedValueRestoringException;
+    @Pure
+    public boolean wasNull();
     
     /* -------------------------------------------------- Closing -------------------------------------------------- */
     
+    @Impure
     @Override
     public void close() throws FailedResourceClosingException;
     

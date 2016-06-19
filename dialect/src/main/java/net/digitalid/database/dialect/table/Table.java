@@ -2,12 +2,12 @@ package net.digitalid.database.dialect.table;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.collections.freezable.FreezableArrayList;
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collections.list.FreezableArrayList;
+import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Immutable;
-import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
@@ -57,7 +57,7 @@ public class Table {
             if (columnDeclaration.columnConstraints != null) {
                 for (SQLColumnConstraint columnConstraint : columnDeclaration.columnConstraints) {
                     if (columnConstraint instanceof SQLPrimaryKeyConstraint) {
-                        primaryKeys.add(PrimaryKey.with(type, columnDeclaration.qualifiedColumnName.getValue(), position));
+                        primaryKeys.add(PrimaryKey.with(type, columnDeclaration.columnName.getValue(), position));
                     }
                 }
             }
@@ -67,7 +67,7 @@ public class Table {
         if (primaryKeys.size() == 0) {
             for (SQLColumnDeclaration columnDeclaration : createTableStatement.columnDeclarations) {
                 final Class<?> type = columnDeclaration.type.getJavaType();
-                primaryKeys.add(PrimaryKey.with(type, columnDeclaration.qualifiedColumnName.getValue(), position));
+                primaryKeys.add(PrimaryKey.with(type, columnDeclaration.columnName.getValue(), position));
                 position++;
             }           
         }

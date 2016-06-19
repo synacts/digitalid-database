@@ -3,7 +3,6 @@ package net.digitalid.database.dialect.ast.statement.select;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
@@ -34,7 +33,7 @@ public enum SQLJoinOperator implements SQLNode<SQLJoinOperator> {
     private static final @Nonnull Transcriber<SQLJoinOperator> transcriber = new Transcriber<SQLJoinOperator>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLJoinOperator node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
+        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLJoinOperator node, @Nonnull Site site)  throws InternalException {
             string.append(node.name().replaceAll("_", " "));
         }
         

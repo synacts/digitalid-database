@@ -11,4 +11,6 @@ import net.digitalid.database.dialect.ast.expression.string.SQLStringLiteral;
  * @see SQLNumberLiteral
  * @see SQLStringLiteral
  */
-public interface SQLLiteral<T> extends SQLExpression<T> {}
+public interface SQLLiteral<T> extends SQLExpression<T> {
+    
+}

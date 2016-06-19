@@ -3,10 +3,10 @@ package net.digitalid.database.conversion.testenvironment.iterable;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.collections.freezable.FreezableArrayList;
+import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.conversion.annotations.Constructing;
 import net.digitalid.utility.conversion.annotations.GenericTypes;
-import net.digitalid.utility.generator.conversion.Convertible;
+import net.digitalid.utility.conversion.converter.Convertible;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
 import net.digitalid.database.dialect.annotations.Embedd;

@@ -3,10 +3,9 @@ package net.digitalid.database.dialect.ast.statement.table.create;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.collections.readonly.ReadOnlyList;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
+import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
@@ -19,23 +18,23 @@ import net.digitalid.database.dialect.ast.identifier.SQLColumnName;
  */
 public class SQLColumnDeclaration implements SQLNode<SQLColumnDeclaration> {
     
-    public final @Nonnull SQLColumnName qualifiedColumnName;
+    public final @Nonnull SQLColumnName columnName;
     
     public final @Nonnull SQLType type;
     
-    public final @Nullable @NonNullableElements ReadOnlyList<SQLColumnDefinition> columnDefinitions;
+    public final @Nullable ReadOnlyList<@Nonnull SQLColumnDefinition> columnDefinitions;
     
-    public final @Nullable @NonNullableElements ReadOnlyList<SQLColumnConstraint> columnConstraints;
+    public final @Nullable ReadOnlyList<@Nonnull SQLColumnConstraint> columnConstraints;
     
-    private SQLColumnDeclaration(@Nonnull SQLColumnName qualifiedColumnName, @Nonnull SQLType type, @Nullable @NonNullableElements ReadOnlyList<SQLColumnDefinition> columnDefinitions, @Nullable @NonNullableElements ReadOnlyList<SQLColumnConstraint> columnConstraints) {
-        this.qualifiedColumnName = qualifiedColumnName;
+    private SQLColumnDeclaration(@Nonnull SQLColumnName columnName, @Nonnull SQLType type, @Nullable ReadOnlyList<@Nonnull SQLColumnDefinition> columnDefinitions, @Nullable ReadOnlyList<@Nonnull SQLColumnConstraint> columnConstraints) {
+        this.columnName = columnName;
         this.type = type;
         this.columnDefinitions = columnDefinitions;
         this.columnConstraints = columnConstraints;
     }
     
-    public static @Nonnull SQLColumnDeclaration of(@Nonnull SQLColumnName qualifiedColumnName, @Nonnull SQLType type, @Nullable @NonNullableElements ReadOnlyList<SQLColumnDefinition> columnDefinitions, @Nullable @NonNullableElements ReadOnlyList<SQLColumnConstraint> columnConstraints) {
-        return new SQLColumnDeclaration(qualifiedColumnName, type, columnDefinitions, columnConstraints);
+    public static @Nonnull SQLColumnDeclaration of(@Nonnull SQLColumnName columnName, @Nonnull SQLType type, @Nullable ReadOnlyList<@Nonnull SQLColumnDefinition> columnDefinitions, @Nullable ReadOnlyList<@Nonnull SQLColumnConstraint> columnConstraints) {
+        return new SQLColumnDeclaration(columnName, type, columnDefinitions, columnConstraints);
     }
     
     /* -------------------------------------------------- SQL Node -------------------------------------------------- */
@@ -46,8 +45,8 @@ public class SQLColumnDeclaration implements SQLNode<SQLColumnDeclaration> {
     private static final @Nonnull Transcriber<SQLColumnDeclaration> transcriber = new Transcriber<SQLColumnDeclaration>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLColumnDeclaration node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
-            dialect.transcribe(site, string, node.qualifiedColumnName, false);
+        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLColumnDeclaration node, @Nonnull Site site, @Nonnull @NonCaptured StringBuilder string, boolean parameterizable) throws InternalException {
+            dialect.transcribe(site, string, node.columnName, false);
             string.append(" ");
             dialect.transcribe(site, string, node.type, false);
             if (node.columnDefinitions != null) {

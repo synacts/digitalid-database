@@ -1,22 +1,19 @@
 package net.digitalid.database.dialect.ast.statement.table.create;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.collections.freezable.FreezableArrayList;
-import net.digitalid.utility.collections.freezable.FreezableList;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
+import net.digitalid.utility.collections.list.FreezableArrayList;
+import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
+import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.immutable.ImmutableList;
 
 import net.digitalid.database.core.table.Site;
-import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.annotations.Default;
-import net.digitalid.database.dialect.annotations.PrimaryKey;
-import net.digitalid.database.dialect.annotations.References;
-import net.digitalid.database.dialect.annotations.Unique;
+import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLNode;
 import net.digitalid.database.dialect.ast.Transcriber;
 
@@ -25,10 +22,10 @@ import net.digitalid.database.dialect.ast.Transcriber;
  */
 public abstract class SQLColumnDefinition implements SQLNode<SQLColumnDefinition> {
     
-    public abstract void getColumnDefinition(@Nonnull @NonCapturable StringBuilder string) throws InternalException;
+    public abstract void getColumnDefinition(@Nonnull @NonCaptured StringBuilder string) throws InternalException;
     
-    public static @Nonnull @NonNullableElements FreezableList<SQLColumnDefinition> of(@Nonnull @NonNullableElements Annotation[] annotations) {
-        final @Nonnull @NonNullableElements FreezableArrayList<SQLColumnDefinition> columnConstraints = FreezableArrayList.get();
+    public static @Nonnull @Frozen ReadOnlyList<@Nonnull SQLColumnDefinition> of(@Nonnull ImmutableList<Annotation> annotations) {
+        final @Nonnull FreezableArrayList<@Nonnull SQLColumnDefinition> columnConstraints = FreezableArrayList.withNoElements();
         for (@Nonnull Annotation annotation : annotations) {
             if (annotation.annotationType().equals(Nonnull.class)) {
                 columnConstraints.add(new SQLNotNullConstraint());
@@ -36,7 +33,7 @@ public abstract class SQLColumnDefinition implements SQLNode<SQLColumnDefinition
                 columnConstraints.add(new SQLDefaultValueConstraint((Default) annotation));
             }
         }
-        return columnConstraints;
+        return columnConstraints.freeze();
     }
     
     /* -------------------------------------------------- SQLNode -------------------------------------------------- */
@@ -47,7 +44,7 @@ public abstract class SQLColumnDefinition implements SQLNode<SQLColumnDefinition
     private static final @Nonnull Transcriber<SQLColumnDefinition> transcriber = new Transcriber<SQLColumnDefinition>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLColumnDefinition node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
+        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLColumnDefinition node, @Nonnull Site site, @Nonnull @NonCaptured StringBuilder string, boolean parameterizable) throws InternalException {
             node.getColumnDefinition(string);
         }
         

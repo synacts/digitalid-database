@@ -1,19 +1,15 @@
 package net.digitalid.database.dialect.ast.statement.table.create;
 
-import java.util.Arrays;
-
 import javax.annotation.Nonnull;
 
-import net.digitalid.database.core.interfaces.ValueCollector;
+import net.digitalid.utility.exceptions.InternalException;
+
+import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.annotations.References;
 import net.digitalid.database.dialect.ast.SQLDialect;
-import net.digitalid.database.exceptions.operation.FailedValueStoringException;
+import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 
-import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.string.iterable.Brackets;
-import net.digitalid.utility.string.iterable.IterableConverter;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 /**
  *
@@ -40,6 +36,6 @@ public class SQLForeignKeyConstraint extends SQLColumnConstraint {
     }
     
     @Override
-    public void storeValues(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {}
+    public void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {}
     
 }

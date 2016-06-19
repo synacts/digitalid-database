@@ -12,16 +12,16 @@ import java.util.Properties;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Impure;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.logging.Log;
-import net.digitalid.utility.validation.annotations.method.Pure;
-import net.digitalid.utility.validation.annotations.type.Immutable;
+import net.digitalid.utility.validation.annotations.type.Mutable;
 
-import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.Committing;
+import net.digitalid.database.annotations.NonCommitting;
 import net.digitalid.database.core.interfaces.DatabaseInstance;
-import net.digitalid.database.core.interfaces.SelectionResult;
-import net.digitalid.database.core.interfaces.ValueCollector;
+import net.digitalid.database.core.interfaces.SQLSelectionResult;
 import net.digitalid.database.exceptions.operation.FailedCommitException;
 import net.digitalid.database.exceptions.operation.FailedConnectionException;
 import net.digitalid.database.exceptions.operation.FailedKeyGenerationException;
@@ -34,7 +34,7 @@ import net.digitalid.database.exceptions.operation.FailedUpdateExecutionExceptio
 /**
  * This classes uses the JDBC connection to execute the statements.
  */
-@Immutable
+@Mutable
 public abstract class JDBCDatabaseInstance implements DatabaseInstance {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
@@ -77,6 +77,7 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
     /**
      * Drops this database instance.
      */
+    @Impure
     @Committing
     public abstract void dropDatabase() throws FailedOperationException;
     
@@ -90,6 +91,7 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
     /**
      * Sets a new database connection for the current thread.
      */
+    @Impure
     @NonCommitting
     private void setConnection() throws FailedConnectionException {
         try {
@@ -105,6 +107,7 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
     /**
      * Checks that the database connection of the current thread is valid.
      */
+    @Impure
     @NonCommitting
     private void checkConnection() throws FailedConnectionException {
         final @Nullable Connection connection = this.connection.get();
@@ -131,6 +134,7 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
      * 
      * @return the database connection of the current thread.
      */
+    @Impure
     @NonCommitting
     protected final @Nonnull Connection getConnection() throws FailedConnectionException {
         if (!transaction.get()) { begin(); }
@@ -149,12 +153,14 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
     /**
      * Begins a new transaction.
      */
+    @Impure
     @NonCommitting
     protected void begin() throws FailedConnectionException {
         checkConnection();
         transaction.set(Boolean.TRUE);
     }
     
+    @Impure
     @Override
     @Committing
     public void commit() throws FailedCommitException {
@@ -168,6 +174,7 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
         }
     }
     
+    @Impure
     @Override
     @Committing
     public void rollback() {
@@ -189,6 +196,7 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
      * 
      * @return the prepared statement that is ready for execution.
      */
+    @Pure
     protected @Nonnull PreparedStatement prepare(@Nonnull String statement, boolean generatesKeys) throws FailedNonCommittingOperationException, InternalException {
         try {
             final @Nonnull PreparedStatement preparedStatement = getConnection().prepareStatement(statement, generatesKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS);
@@ -230,6 +238,7 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
      * 
      * @return the number of rows affected by the given statement.
      */
+    @Impure
     protected int executeUpdate(@Nonnull String statement) throws FailedNonCommittingOperationException, InternalException {
         try {
             return prepare(statement, false).executeUpdate();
@@ -238,9 +247,14 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
         }
     }
     
+    @Impure
     protected int executeUpdate(@Nonnull JDBCValueCollector valueCollector) throws FailedNonCommittingOperationException, InternalException {
         try {
-            return valueCollector.getPreparedStatement().executeUpdate();
+            int result = 0;
+            for (@Nonnull PreparedStatement preparedStatement : valueCollector.getPreparedStatements()) {
+                result += preparedStatement.executeUpdate();
+            }
+            return result;
         } catch (@Nonnull SQLException exception) {
             throw FailedUpdateExecutionException.get(exception);
         }
@@ -272,8 +286,9 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
         return executeUpdate(site, deleteStatement);
     }*/
     
+    @Impure
     @Override
-    public @Nonnull SelectionResult executeSelect(@Nonnull String selectStatement) throws FailedNonCommittingOperationException, InternalException {
+    public @Nonnull SQLSelectionResult executeSelect(@Nonnull String selectStatement) throws FailedNonCommittingOperationException, InternalException {
         final @Nonnull PreparedStatement preparedStatement = prepare(selectStatement, false);
         try {
             final @Nonnull ResultSet resultSet = preparedStatement.executeQuery();
@@ -283,8 +298,10 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
         }
     }
      
-    public @Nonnull SelectionResult executeSelect(@Nonnull JDBCValueCollector valueCollector) throws FailedNonCommittingOperationException, InternalException {
-        final @Nonnull PreparedStatement preparedStatement = valueCollector.getPreparedStatement();
+    @Impure
+    public @Nonnull SQLSelectionResult executeSelect(@Nonnull JDBCValueCollector valueCollector) throws FailedNonCommittingOperationException, InternalException {
+        // TODO: Implement wrapper around ResultSet such that multiple result-sets can be retrieved. Alternatively, make sure that only one prepared statement exists.
+        final @Nonnull PreparedStatement preparedStatement = valueCollector.getPreparedStatements().getFirst();
         try {
             final @Nonnull ResultSet resultSet = preparedStatement.executeQuery();
             return JDBCSelectionResult.get(resultSet);
@@ -293,6 +310,7 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
         }
     }
     
+    @Impure
     @Override
     public long executeAndReturnGeneratedKey(@Nonnull String insertStatement) throws FailedNonCommittingOperationException, InternalException {
         final @Nonnull PreparedStatement preparedStatement = prepare(insertStatement, true);

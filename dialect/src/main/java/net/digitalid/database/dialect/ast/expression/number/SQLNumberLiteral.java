@@ -2,16 +2,15 @@ package net.digitalid.database.dialect.ast.expression.number;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
-import net.digitalid.utility.validation.annotations.method.Pure;
 
+import net.digitalid.database.core.interfaces.SQLValueCollector;
+import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLLiteral;
-import net.digitalid.database.exceptions.operation.FailedValueStoringException;
-import net.digitalid.database.core.interfaces.ValueCollector;
-import net.digitalid.database.core.table.Site;
+import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 
 /**
  * This class implements a number literal.
@@ -56,7 +55,7 @@ public final class SQLNumberLiteral extends SQLNumberExpression<SQLNumberLiteral
     private static final @Nonnull Transcriber<SQLNumberLiteral> transcriber = new Transcriber<SQLNumberLiteral>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLNumberLiteral node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
+        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLNumberLiteral node, @Nonnull Site site)  throws InternalException {
             if (parameterizable) {
                 string.append("?");
             } else {
@@ -72,7 +71,7 @@ public final class SQLNumberLiteral extends SQLNumberExpression<SQLNumberLiteral
     }
     
     @Override
-    public void storeValues(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+    public void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         collector.setInteger64(value);
     }
     

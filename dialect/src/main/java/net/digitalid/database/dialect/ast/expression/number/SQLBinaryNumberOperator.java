@@ -4,7 +4,6 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.table.Site;
@@ -58,7 +57,7 @@ public enum SQLBinaryNumberOperator implements SQLBinaryOperator {
     private static final @Nonnull Transcriber<SQLBinaryNumberOperator> transcriber = new Transcriber<SQLBinaryNumberOperator>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBinaryNumberOperator node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
+        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBinaryNumberOperator node, @Nonnull Site site)  throws InternalException {
             switch (node) {
                 case ADDITION: string.append("+"); break;
                 case SUBTRACTION: string.append("-"); break;

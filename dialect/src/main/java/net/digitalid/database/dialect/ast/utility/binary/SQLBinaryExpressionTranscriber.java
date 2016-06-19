@@ -3,7 +3,6 @@ package net.digitalid.database.dialect.ast.utility.binary;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
@@ -19,16 +18,18 @@ public final class SQLBinaryExpressionTranscriber {
     /**
      * Transcribes binary expressions and stores them in the given string.
      */
-    public static void transcribeNode(@Nonnull SQLBinaryExpression<?, ?> sqlBinaryExpression, @Nonnull SQLDialect dialect, @Nonnull Site site, @NonCapturable @Nonnull StringBuilder string) throws InternalException {
+    public static String transcribeNode(@Nonnull SQLBinaryExpression<?, ?> sqlBinaryExpression, @Nonnull SQLDialect dialect, @Nonnull Site site) throws InternalException {
+        final @Nonnull StringBuilder string = new StringBuilder();
         string.append("(");
         final @Nonnull SQLExpression leftNode = sqlBinaryExpression.getLeftExpression();
-        dialect.transcribe(site, string, leftNode, false);
+        dialect.transcribe(site, leftNode);
         string.append(") ");
         final @Nonnull SQLBinaryOperator sqlBinaryOperator = sqlBinaryExpression.getOperator();
-        dialect.transcribe(site, string, sqlBinaryOperator, false);
+        dialect.transcribe(site, sqlBinaryOperator);
         string.append(" (");
         final @Nonnull SQLExpression rightNode = sqlBinaryExpression.getRightExpression();
-        dialect.transcribe(site, string, rightNode, false);
+        dialect.transcribe(site, rightNode);
         string.append(")");
+        return string.toString();
     }
 }

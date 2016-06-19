@@ -4,7 +4,6 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.table.Site;
@@ -43,7 +42,7 @@ public enum SQLVariadicStringOperator implements SQLVariadicOperator {
     private static final @Nonnull Transcriber<SQLVariadicStringOperator> transcriber = new Transcriber<SQLVariadicStringOperator>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLVariadicStringOperator node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
+        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLVariadicStringOperator node, @Nonnull Site site)  throws InternalException {
             switch (node) {
                 case CONCAT:
                     string.append("CONCAT");

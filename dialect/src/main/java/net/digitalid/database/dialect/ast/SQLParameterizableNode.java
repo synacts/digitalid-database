@@ -2,10 +2,10 @@ package net.digitalid.database.dialect.ast;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
 
-import net.digitalid.database.exceptions.operation.FailedValueStoringException;
-import net.digitalid.database.core.interfaces.ValueCollector;
+import net.digitalid.database.core.interfaces.SQLValueCollector;
+import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 
 /**
  * This is the abstract class that all parameterizable SQL syntax tree nodes have to implement.
@@ -18,6 +18,6 @@ public interface SQLParameterizableNode<T> extends SQLNode<T> {
      * 
      * @param collector the value collector used to collect a value for each parameter.
      */
-    public abstract void storeValues(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException;
+    public abstract void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException;
     
 }

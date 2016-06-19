@@ -3,7 +3,6 @@ package net.digitalid.database.dialect.ast.statement.select;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
@@ -27,7 +26,7 @@ public enum SQLCompoundOperator implements SQLNode<SQLCompoundOperator> {
     private static final @Nonnull Transcriber<SQLCompoundOperator> transcriber = new Transcriber<SQLCompoundOperator>() {
     
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLCompoundOperator node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
+        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLCompoundOperator node, @Nonnull Site site)  throws InternalException {
             string.append(node.name());
         }
     };

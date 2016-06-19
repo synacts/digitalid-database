@@ -2,14 +2,14 @@ package net.digitalid.database.dialect.ast.identifier;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.annotations.size.MaxSize;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
+import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLNode;
-import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.Transcriber;
 
 /**
@@ -37,7 +37,7 @@ public interface SQLIdentifier<T> extends SQLNode<T> {
     final class SQLIdentifierTranscriber<T extends SQLIdentifier<T>> extends Transcriber<T> {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull T node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
+        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull T node, @Nonnull Site site, @Nonnull @NonCaptured StringBuilder string, boolean parameterizable) throws InternalException {
             string.append("\"").append(node.getValue()).append("\"");
         }
         

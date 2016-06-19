@@ -2,10 +2,10 @@ package net.digitalid.database.dialect.ast.expression;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.readonly.ReadOnlyArray;
 import net.digitalid.utility.freezable.annotations.Frozen;
-import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
 import net.digitalid.database.dialect.ast.expression.number.SQLVariadicNumberExpression;
 import net.digitalid.database.dialect.ast.expression.string.SQLVariadicStringExpression;

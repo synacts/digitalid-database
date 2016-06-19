@@ -2,9 +2,9 @@ package net.digitalid.database.dialect.ast.identifier;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.type.Immutable;
-import net.digitalid.utility.validation.annotations.method.Pure;
 
 import net.digitalid.database.dialect.ast.Transcriber;
 

@@ -4,15 +4,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
-import net.digitalid.database.core.interfaces.ValueCollector;
+import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLParameterizableNode;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.number.SQLNumberExpression;
-import net.digitalid.database.exceptions.operation.FailedValueStoringException;
+import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 
 /**
  * This SQL node represents a limit claus node.
@@ -51,7 +50,7 @@ public class SQLLimitClause implements SQLParameterizableNode<SQLLimitClause> {
     /* -------------------------------------------------- SQL Parameterizable Node -------------------------------------------------- */
     
     @Override
-    public void storeValues(@NonCapturable @Nonnull ValueCollector collector) throws FailedValueStoringException {
+    public void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         limit.storeValues(collector);
         if (offset != null) {
             offset.storeValues(collector);
@@ -66,7 +65,7 @@ public class SQLLimitClause implements SQLParameterizableNode<SQLLimitClause> {
     private static final @Nonnull Transcriber<SQLLimitClause> transcriber = new Transcriber<SQLLimitClause>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLLimitClause node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
+        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLLimitClause node, @Nonnull Site site)  throws InternalException {
             dialect.transcribe(site, string, node.limit, parameterizable);
             if (node.offset != null) {
                 string.append(" OFFSET");

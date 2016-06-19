@@ -3,13 +3,14 @@ package net.digitalid.database.exceptions.state.value;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.validation.annotations.type.Immutable;
-import net.digitalid.utility.validation.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.Pure;
 
 /**
  * This exception is thrown when a value which may not be null is null.
  */
 @Immutable
-public class CorruptNullValueException extends CorruptValueException {
+// TODO: improve exception hierarchy
+public class CorruptNullValueException extends RuntimeException {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     

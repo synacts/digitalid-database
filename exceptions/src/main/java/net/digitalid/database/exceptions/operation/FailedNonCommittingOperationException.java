@@ -17,8 +17,8 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
  * @see FailedSavepointRollbackException
  * @see FailedStatementCreationException
  * @see FailedUpdateExecutionException
- * @see FailedValueRestoringException
- * @see FailedValueStoringException
+ * @see FailedSQLValueRecoveryException
+ * @see FailedSQLValueConversionException
  */
 @Immutable
 public abstract class FailedNonCommittingOperationException extends FailedOperationException {
