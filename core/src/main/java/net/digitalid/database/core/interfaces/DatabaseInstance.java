@@ -9,7 +9,7 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 
-import net.digitalid.database.annotations.Committing;
+import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.exceptions.operation.FailedCommitException;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 

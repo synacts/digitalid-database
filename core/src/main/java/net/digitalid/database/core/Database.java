@@ -9,7 +9,7 @@ import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
-import net.digitalid.database.annotations.Committing;
+import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.core.interfaces.DatabaseInstance;
 import net.digitalid.database.exceptions.operation.FailedCommitException;
 

@@ -1,4 +1,4 @@
-package net.digitalid.database.annotations;
+package net.digitalid.database.annotations.mode;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -7,11 +7,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation indicates that a method should only be called if the database is in single-access mode.
+ * This annotation indicates that a method should only be called if the database is in multi-access mode.
  * 
- * @see MultiAccess 
+ * @see SingleAccess
  */
 @Documented
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
-public @interface SingleAccess {}
+public @interface MultiAccess {}
