@@ -18,8 +18,8 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
-import net.digitalid.database.annotations.Committing;
-import net.digitalid.database.annotations.NonCommitting;
+import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.interfaces.DatabaseInstance;
 import net.digitalid.database.core.interfaces.SQLSelectionResult;
 import net.digitalid.database.exceptions.operation.FailedCommitException;
