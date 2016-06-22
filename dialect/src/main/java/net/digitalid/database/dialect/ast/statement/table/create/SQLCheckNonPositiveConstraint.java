@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.validation.annotations.math.NonPositive;
@@ -17,23 +18,37 @@ import net.digitalid.database.dialect.ast.expression.number.SQLNumberReference;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 
 /**
- *
+ * This SQL node represents a check-non-positive constraint.
  */
 public class SQLCheckNonPositiveConstraint extends SQLCheckConstraint {
     
+    /* -------------------------------------------------- Check Constraint -------------------------------------------------- */
+    
+    /**
+     * The expression for the check constraint.
+     */
     private final @Nonnull SQLExpression checkConstraint;
     
+    @Pure
+    @Override
+    protected @Nonnull SQLExpression<?> getCheckConstraint() {
+        return checkConstraint;
+    }
+    
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
+    
+    /**
+     * Creates an SQL check non-positive constraint instance for the {@link NonPositive @NonPositive} annotation and a given column name.
+     */
     SQLCheckNonPositiveConstraint(@Nonnull Annotation annotation, @Nonnull String columnName) {
         Require.that(annotation instanceof NonPositive).orThrow("The annotation @NonPositive is present.");
         
         checkConstraint = SQLNumberComparisonBooleanExpression.get(SQLComparisonOperator.LESS_OR_EQUAL, SQLNumberReference.get(columnName), SQLNumberLiteral.get(0L));
     }
     
-    @Override
-    protected @Nonnull SQLExpression<?> getCheckConstraint() {
-        return checkConstraint;
-    }
+    /* -------------------------------------------------- SQL Parameterized Node -------------------------------------------------- */
     
+    @Pure
     @Override
     public void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         collector.setInteger64(0L);

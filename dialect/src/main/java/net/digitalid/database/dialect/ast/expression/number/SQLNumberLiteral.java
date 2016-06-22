@@ -3,6 +3,7 @@ package net.digitalid.database.dialect.ast.expression.number;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.exceptions.InternalException;
 
 import net.digitalid.database.core.interfaces.SQLValueCollector;
@@ -56,11 +57,7 @@ public final class SQLNumberLiteral extends SQLNumberExpression<SQLNumberLiteral
         
         @Override
         protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLNumberLiteral node, @Nonnull Site site)  throws InternalException {
-            if (parameterizable) {
-                string.append("?");
-            } else {
-                string.append(node.value);
-            }
+            return Long.toString(node.value);
         }
         
     };

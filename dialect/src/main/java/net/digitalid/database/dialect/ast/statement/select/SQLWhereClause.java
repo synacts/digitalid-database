@@ -2,6 +2,9 @@ package net.digitalid.database.dialect.ast.statement.select;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
+import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.exceptions.InternalException;
 
 import net.digitalid.database.core.interfaces.SQLValueCollector;
@@ -36,14 +39,16 @@ public class SQLWhereClause implements SQLParameterizableNode<SQLWhereClause> {
     /**
      * Returns a new where clause node with a given boolean expression.
      */
+    @Pure
     public static @Nonnull SQLWhereClause get(@Nonnull SQLBooleanExpression booleanExpression) {
         return new SQLWhereClause(booleanExpression);
     }
     
     /* -------------------------------------------------- SQL Parameterized Node -------------------------------------------------- */
     
+    @Pure
     @Override 
-    public void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
+    public void storeValues(@Nonnull @NonCaptured @Modified SQLValueCollector collector) throws FailedSQLValueConversionException {
         booleanExpression.storeValues(collector);
     }
     
@@ -56,12 +61,15 @@ public class SQLWhereClause implements SQLParameterizableNode<SQLWhereClause> {
     
         @Override
         protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLWhereClause node, @Nonnull Site site)  throws InternalException {
+            final @Nonnull StringBuilder string = new StringBuilder();
             string.append(" WHERE ");
-            dialect.transcribe(site, string, node.booleanExpression, parameterizable);
+            string.append(dialect.transcribe(site, node.booleanExpression));
+            return string.toString();
         }
     
     };
     
+    @Pure
     @Override 
     public @Nonnull Transcriber<SQLWhereClause> getTranscriber() {
         return transcriber;

@@ -5,19 +5,21 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.converter.Converter;
-import net.digitalid.utility.conversion.converter.Convertible;
 import net.digitalid.utility.conversion.exceptions.FailedValueRecoveryException;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.logging.Level;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.logging.logger.Logger;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
+import net.digitalid.database.annotations.Committing;
 import net.digitalid.database.conversion.collectors.SQLColumnDeclarations;
 import net.digitalid.database.conversion.collectors.SQLInsertDeclaration;
 import net.digitalid.database.conversion.collectors.SQLOrderedInsertStatements;
 import net.digitalid.database.conversion.collectors.SQLSelectDeclaration;
 import net.digitalid.database.core.Database;
-import net.digitalid.database.annotations.Committing;
 import net.digitalid.database.core.interfaces.SQLSelectionResult;
 import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.core.table.Site;
@@ -38,11 +40,6 @@ public final class SQL {
     
      /* -------------------------------------------------- Format -------------------------------------------------- */
     
-    /**
-     * The format object of SQL, which contains the SQL converters.
-     */
-    public static final @Nonnull SQLFormat FORMAT = new SQLFormat();
-    
     /* -------------------------------------------------- Create -------------------------------------------------- */
     
     /**
@@ -54,6 +51,7 @@ public final class SQL {
      * the database instance, which executes the statement. Upon successful execution, a table object is 
      * returned. It may be used for other calls to the SQL class as a reference.
      */
+    @Pure
     @Committing
     public static @Nonnull Table create(@Nonnull String tableName, @Nonnull Site site, @Nonnull Converter<?> converter) throws InternalException, FailedNonCommittingOperationException, FailedCommitException {
         final @Nonnull SQLColumnDeclarations columnDeclarations = SQLColumnDeclarations.get(tableName);
@@ -63,10 +61,10 @@ public final class SQL {
         for (Map.Entry<@Nonnull String, @Nonnull SQLColumnDeclarations> referencedTables : referencedTablesColumnDeclarations.entrySet()) {
             final @Nonnull SQLColumnDeclarations referencedColumnDeclarations = referencedTables.getValue();
             final @Nonnull SQLCreateTableStatement referencedTableStatement = referencedColumnDeclarations.getCreateTableStatement(site);
-            Database.getInstance().execute(referencedTableStatement.toSQL(SQLDialect.getDialect(), site));
+            Database.getInstance().execute(SQLDialect.getDialect().transcribe(site, referencedTableStatement));
         }
         final @Nonnull SQLCreateTableStatement createTableStatement = columnDeclarations.getCreateTableStatement(site);
-        final @Nonnull String createTableStatementString = createTableStatement.toSQL(SQLDialect.getDialect(), site);
+        final @Nonnull String createTableStatementString = SQLDialect.getDialect().transcribe(site, createTableStatement);
         Database.getInstance().execute(createTableStatementString);
         final @Nonnull Table newTable = Table.get(createTableStatement);
     
@@ -74,7 +72,10 @@ public final class SQL {
         for (Map.Entry<@Nonnull String, @Nonnull SQLColumnDeclarations> dependentTables : dependentTablesColumnDeclarations.entrySet()) {
             final @Nonnull SQLColumnDeclarations dependentColumnDeclarations = dependentTables.getValue();
             final @Nonnull SQLCreateTableStatement dependentCreateTableStatement = dependentColumnDeclarations.getCreateTableStatement(site);
-            Database.getInstance().execute(dependentCreateTableStatement.toSQL(SQLDialect.getDialect(), site));
+            final @Nonnull String statement = SQLDialect.getDialect().transcribe(site, dependentCreateTableStatement);
+            // TODO: change to DEBUGGING
+            Logger.log(Level.INFORMATION, "Create Statement: " + statement, null);
+            Database.getInstance().execute(statement);
         }
         Database.commit();
         
@@ -86,6 +87,7 @@ public final class SQL {
     /**
      * Inserts a given object of a given type into a given table by constructing an SQL insert statement and collecting the values of the object..
      */
+    @Pure
     public static <T> void insert(@Nullable T object, @Nonnull Converter<T> converter, @Nonnull Table table) throws ExternalException {
         final @Nonnull SQLQualifiedTableName qualifiedTableName = table.getName();
         final @Nonnull Site site = qualifiedTableName.site;
@@ -106,7 +108,8 @@ public final class SQL {
     /**
      * Builds and executes an SQL select statement based on the given convertible and site.
      */
-    public static <T extends Convertible> T select(@Nonnull Converter<T> converter, @Nonnull SQLBooleanExpression whereClauseExpression, @Nonnull Table table) throws FailedNonCommittingOperationException, FailedValueRecoveryException {
+    @Pure
+    public static <T> T select(@Nonnull Converter<T> converter, @Nonnull SQLBooleanExpression whereClauseExpression, @Nonnull Table table) throws FailedNonCommittingOperationException, FailedValueRecoveryException {
         final @Nonnull SQLQualifiedTableName qualifiedTableName = table.getName();
         final @Nonnull Site site = table.getName().site;
         

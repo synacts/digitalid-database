@@ -2,9 +2,10 @@ package net.digitalid.database.dialect.ast.statement.select;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.string.iterable.IterableConverter;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.size.MinSize;
 
@@ -12,7 +13,6 @@ import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
-import net.digitalid.database.dialect.ast.utility.SQLNodeConverter;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 
 /**
@@ -45,6 +45,7 @@ public class SQLJoinClause implements SQLSource<SQLJoinClause> {
     /**
      * Returns a join clause node.
      */
+    @Pure
     public static @Nonnull SQLJoinClause get(@Nonnull SQLSource<?> source, @Nonnull ReadOnlyList<SQLJoinDefinition> joinDefinitions) {
         return new SQLJoinClause(source, joinDefinitions);
     }
@@ -52,19 +53,22 @@ public class SQLJoinClause implements SQLSource<SQLJoinClause> {
     /* -------------------------------------------------- Transcriber -------------------------------------------------- */
     
     /**
-     * The transcriber that stores a string representation of this SQL node in the string builder.
+     * The transcriber that returns a string representation of this SQL node.
      */
     private static final @Nonnull Transcriber<SQLJoinClause> transcriber = new Transcriber<SQLJoinClause>() {
     
         @Override
         protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLJoinClause node, @Nonnull Site site)  throws InternalException {
-            dialect.transcribe(site, string, node.source, parameterizable);
+            final @Nonnull StringBuilder string = new StringBuilder();
+            string.append(dialect.transcribe(site, node.source));
             string.append(" ");
-            string.append(IterableConverter.toString(node.joinDefinitions, SQLNodeConverter.get(dialect, site)));
+            string.append(node.joinDefinitions.map(joinDefinition -> dialect.transcribe(site, joinDefinition)).join());
+            return string.toString();
         }
         
     };
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLJoinClause> getTranscriber() {
         return transcriber;
@@ -72,6 +76,7 @@ public class SQLJoinClause implements SQLSource<SQLJoinClause> {
     
     /* -------------------------------------------------- SQL Parameterizable Node -------------------------------------------------- */
     
+    @Pure
     @Override 
     public void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         source.storeValues(collector);

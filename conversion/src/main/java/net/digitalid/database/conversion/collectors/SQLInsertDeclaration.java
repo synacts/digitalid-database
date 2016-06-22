@@ -8,12 +8,11 @@ import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.collections.map.FreezableHashMap;
 import net.digitalid.utility.collections.map.ReadOnlyMap;
-import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.conversion.converter.CustomField;
 import net.digitalid.utility.conversion.converter.Declaration;
 import net.digitalid.utility.conversion.converter.types.CustomType;
-import net.digitalid.utility.exceptions.ConformityViolation;
 
+import net.digitalid.database.conversion.exceptions.ConformityViolationException;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.annotations.Embedd;
 import net.digitalid.database.dialect.annotations.References;
@@ -79,6 +78,7 @@ public class SQLInsertDeclaration implements Declaration {
         this.site = site;
     }
     
+    @Pure
     public static @Nonnull SQLInsertDeclaration get(@Nonnull String tableName, @Nonnull Site site) {
         return new SQLInsertDeclaration(tableName, site);
     }
@@ -87,32 +87,32 @@ public class SQLInsertDeclaration implements Declaration {
     
     @Impure
     @Override
-    public void setField(@Nonnull CustomField field, @Nonnull Converter<?> converter) {
-        if (field.customType.isCompositeType()) {
+    public void setField(@Nonnull CustomField field) {
+        if (field.getCustomType().isCompositeType()) {
             if (field.isAnnotatedWith(Embedd.class)) {
                 columnNamesMainTable.add(SQLQualifiedColumnName.get(field.getName(), tableName));
                 orderedInsertDeclarations.add(this);
             } else {
                 final @Nonnull SQLInsertDeclaration dependentTable = SQLInsertDeclaration.get(tableName + "_" + field.getName(), site);
-                dependentTable.setField(field, converter);
+                dependentTable.setField(field);
                 orderedInsertDeclarations.addAll(dependentTable.orderedInsertDeclarations);
                 dependentTables.put(tableName + "_" + field.getName(), dependentTable);
             } // else: if is referenced, a new table will be created that links back to the current table.
-        } else if (field.customType.isObjectType()) {
-            final CustomType.@Nonnull CustomObjectType customObjectType = (CustomType.@Nonnull CustomObjectType) field.customType;
+        } else if (field.getCustomType().isObjectType()) {
+            final CustomType.@Nonnull CustomObjectType customObjectType = (CustomType.@Nonnull CustomObjectType) field.getCustomType();
             if (field.isAnnotatedWith(Embedd.class)) {
-                customObjectType.converter.declare(this);
+                customObjectType.getConverter().declare(this);
             } else {
                 if (field.isAnnotatedWith(References.class)) {
                     final @Nonnull References references = field.getAnnotation(References.class);
                     columnNamesMainTable.add(SQLQualifiedColumnName.get(references.columnName(), tableName));
                     orderedInsertDeclarations.add(this);
                     final @Nonnull SQLInsertDeclaration referencedTable = SQLInsertDeclaration.get(references.foreignTable(), site);
-                    customObjectType.converter.declare(referencedTable);
+                    customObjectType.getConverter().declare(referencedTable);
                     orderedInsertDeclarations.addAll(referencedTable.orderedInsertDeclarations);
                     referencedTables.put(references.foreignTable(), referencedTable);
                 } else {
-                    throw ConformityViolation.with("Expected @" + Embedd.class.getSimpleName() + " or @" + References.class.getSimpleName() + " annotation on non-primitive field type");
+                    throw ConformityViolationException.with("Expected @" + Embedd.class.getSimpleName() + " or @" + References.class.getSimpleName() + " annotation on non-primitive field type");
                 }
             }
         } else {
@@ -121,6 +121,7 @@ public class SQLInsertDeclaration implements Declaration {
         }
     }
     
+    @Pure
     public @Nonnull SQLOrderedInsertStatements getOrderedInsertStatements() {
         final @Nonnull SQLOrderedInsertStatements orderedInsertStatements = new SQLOrderedInsertStatements(orderedInsertDeclarations, SQLQualifiedTableName.get(tableName, site));
         return orderedInsertStatements;

@@ -3,6 +3,7 @@ package net.digitalid.database.dialect.ast;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -22,6 +23,7 @@ public abstract class SQLDialect {
     /**
      * Transcribes an SQL node by calling the default transcriber of the node which stores the SQL statement as a string in the string builder.
      */
+    @Pure
     public @Nonnull String transcribe(@Nonnull Site site, @Nonnull SQLNode<?> node) throws InternalException {
         return node.getTranscriber().transcribeNode(this, node, site);
     }
@@ -43,6 +45,7 @@ public abstract class SQLDialect {
         return instance;
     }*/
     
+    @Pure
     public static @Nonnull SQLDialect getDialect() {
         return dialect.get();
     }

@@ -2,13 +2,18 @@ package net.digitalid.database.conversion.testenvironment.simple;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.annotations.Constructing;
-import net.digitalid.utility.conversion.converter.Convertible;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+
 
 /**
  *
  */
-public class MultiBooleanColumnTable implements Convertible {
+@GenerateBuilder
+@GenerateConverter
+public class MultiBooleanColumnTable  {
     
     public final @Nonnull Boolean firstValue;
     public final @Nonnull Boolean secondValue;
@@ -18,6 +23,7 @@ public class MultiBooleanColumnTable implements Convertible {
         this.secondValue = secondValue;
     }
     
+    @Pure
     @Constructing
     public static @Nonnull MultiBooleanColumnTable get(@Nonnull Boolean firstValue, @Nonnull Boolean secondValue) {
         return new MultiBooleanColumnTable(firstValue, secondValue);

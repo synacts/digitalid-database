@@ -92,17 +92,18 @@ public class SQLBinaryBooleanExpression extends SQLBooleanExpression implements 
     /* -------------------------------------------------- SQLNode -------------------------------------------------- */
     
     /**
-     * The transcriber that stores a string representation of this SQL node in the string builder.
+     * The transcriber that returns a string representation of this SQL node.
      */
     private static final @Nonnull Transcriber<SQLBinaryBooleanExpression> transcriber = new Transcriber<SQLBinaryBooleanExpression>() {
         
         @Override
         protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBinaryBooleanExpression node, @Nonnull Site site)  throws InternalException {
-            SQLBinaryExpressionTranscriber.transcribeNode(node, dialect, site, string);
+            return SQLBinaryExpressionTranscriber.transcribeNode(node, dialect, site);
         }
         
     };
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLBinaryBooleanExpression> getTranscriber() {
         return transcriber;
@@ -110,6 +111,7 @@ public class SQLBinaryBooleanExpression extends SQLBooleanExpression implements 
     
     /* -------------------------------------------------- SQLParameterizableNode -------------------------------------------------- */
     
+    @Pure
     @Override
     public final void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         leftExpression.storeValues(collector);

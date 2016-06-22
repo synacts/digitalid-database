@@ -44,9 +44,9 @@ public enum SQLUnaryNumberOperator implements SQLUnaryOperator {
         @Override
         protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLUnaryNumberOperator node, @Nonnull Site site)  throws InternalException {
             switch (node) {
-                case ROUND: string.append("ROUND"); break;
-                case NEGATE: string.append("-"); break;
-                case ABSOLUTE: string.append("ABS"); break;
+                case ROUND: return "ROUND";
+                case NEGATE: return "-";
+                case ABSOLUTE: return "ABS";
                 default: throw UnexpectedValueException.with("name", node);
             }
         }

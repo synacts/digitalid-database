@@ -2,6 +2,7 @@ package net.digitalid.database.dialect.ast.statement.select;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.InternalException;
 
 import net.digitalid.database.core.table.Site;
@@ -27,10 +28,11 @@ public enum SQLCompoundOperator implements SQLNode<SQLCompoundOperator> {
     
         @Override
         protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLCompoundOperator node, @Nonnull Site site)  throws InternalException {
-            string.append(node.name());
+            return node.name();
         }
     };
     
+    @Pure
     @Override 
     public @Nonnull Transcriber<SQLCompoundOperator> getTranscriber() {
         return transcriber;

@@ -2,28 +2,29 @@ package net.digitalid.database.dialect.ast.statement.delete;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
+
 import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.dialect.ast.SQLParameterizableNode;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 
 /**
- * Description.
+ * TODO: Implement
  */
 public class SQLDeleteStatement implements SQLParameterizableNode {
     
-    public SQLDeleteStatement() {
-        
-    }
-    
+    @Pure
     @Override
     public void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         
     }
     
-    @Nonnull
+    @Pure
     @Override
-    public Transcriber getTranscriber() {
+    public @Nonnull Transcriber getTranscriber() {
         return null;
     }
+    
 }

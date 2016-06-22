@@ -2,6 +2,9 @@ package net.digitalid.database.dialect.ast.statement.table.create;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
+import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.exceptions.InternalException;
 
 import net.digitalid.database.core.interfaces.SQLValueCollector;
@@ -22,8 +25,10 @@ public class SQLForeignKeyConstraint extends SQLColumnConstraint {
         this.references = references;
     }
     
+    @Pure
     @Override
-    public void getConstraintDeclaration(@Nonnull SQLDialect dialect, @Nonnull SQLColumnConstraint node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string) throws InternalException {
+    public @Nonnull String getConstraintDeclaration(@Nonnull SQLDialect dialect, @Nonnull SQLColumnConstraint node, @Nonnull Site site) throws InternalException {
+        final @Nonnull StringBuilder string = new StringBuilder();
         //string.append("FOREIGN KEY REFERENCES ");
         string.append("REFERENCES ");
         string.append(references.foreignTable());
@@ -33,9 +38,11 @@ public class SQLForeignKeyConstraint extends SQLColumnConstraint {
         string.append(references.onDelete().value);
         string.append(" ON UPDATE ");
         string.append(references.onUpdate().value);
+        return string.toString();
     }
     
+    @Pure
     @Override
-    public void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {}
+    public void storeValues(@Nonnull @NonCaptured @Modified SQLValueCollector collector) throws FailedSQLValueConversionException {}
     
 }

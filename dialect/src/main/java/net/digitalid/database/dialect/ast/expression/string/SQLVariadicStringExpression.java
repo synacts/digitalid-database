@@ -3,14 +3,19 @@ package net.digitalid.database.dialect.ast.expression.string;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.annotations.ownership.Captured;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
+import net.digitalid.utility.circumfixes.Brackets;
+import net.digitalid.utility.collections.array.FreezableArray;
+import net.digitalid.utility.collections.array.ReadOnlyArray;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
-import net.digitalid.utility.validation.annotations.reference.Captured;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.interfaces.SQLValueCollector;
+import net.digitalid.database.core.table.Site;
+import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLExpression;
 import net.digitalid.database.dialect.ast.expression.SQLVariadicExpression;
@@ -40,8 +45,7 @@ public class SQLVariadicStringExpression extends SQLStringExpression implements 
     /**
      * Stores the child expressions of this variadic expression.
      */
-    private final @Nonnull @NonNullableElements @Frozen
-    ReadOnlyArray<SQLStringExpression> expressions;
+    private final @Frozen @NonNullableElements @Nonnull ReadOnlyArray<SQLStringExpression> expressions;
     
     @Pure
     @Override
@@ -59,7 +63,7 @@ public class SQLVariadicStringExpression extends SQLStringExpression implements 
      */
     protected SQLVariadicStringExpression(@Nonnull SQLVariadicStringOperator operator, @Captured @Nonnull SQLStringExpression... expressions) {
         this.operator = operator;
-        this.expressions = FreezableArray.getNonNullable(expressions).freeze();
+        this.expressions = FreezableArray.withElements(expressions).freeze();
     }
     
     /**
@@ -77,13 +81,30 @@ public class SQLVariadicStringExpression extends SQLStringExpression implements 
     
     /* -------------------------------------------------- SQLNode -------------------------------------------------- */
     
+    /**
+     * The transcriber that stores a string representation of this SQL node in the string builder.
+     */
+    private static final @Nonnull Transcriber<SQLVariadicStringExpression> transcriber = new Transcriber<SQLVariadicStringExpression>() {
+        
+        @Override
+        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLVariadicStringExpression node, @Nonnull Site site)  throws InternalException {
+            final @Nonnull StringBuilder string = new StringBuilder();
+            string.append(dialect.transcribe(site, node.operator));
+            string.append(node.expressions.map(expression -> dialect.transcribe(site, expression)).join(Brackets.ROUND));
+            return string.toString();
+        }
+        
+    };
+    
+    @Pure
     @Override
-    public @Nonnull Transcriber getTranscriber() {
-        return null;
+    public @Nonnull Transcriber<SQLVariadicStringExpression> getTranscriber() {
+        return transcriber;
     }
     
     /* -------------------------------------------------- SQLParameterizableNode -------------------------------------------------- */
     
+    @Pure
     @Override
     public final void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         for (final @Nonnull SQLExpression expression : expressions) {

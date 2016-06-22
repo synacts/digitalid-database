@@ -3,6 +3,7 @@ package net.digitalid.database.dialect.ast.statement.select;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.InternalException;
 
 import net.digitalid.database.core.table.Site;
@@ -41,6 +42,7 @@ public class SQLResultColumn implements SQLNode<SQLResultColumn> {
     /**
      * Returns a result column node with a given qualified column name and an optional alias.
      */
+    @Pure
     public static @Nonnull SQLResultColumn get(@Nonnull SQLQualifiedColumnName qualifiedColumnName, @Nullable String alias) {
         return new SQLResultColumn(qualifiedColumnName, alias);
     }
@@ -53,16 +55,19 @@ public class SQLResultColumn implements SQLNode<SQLResultColumn> {
     private static final @Nonnull Transcriber<SQLResultColumn> transcriber = new Transcriber<SQLResultColumn>() {
     
         @Override
-        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLResultColumn node, @Nonnull Site site)  throws InternalException {
-            dialect.transcribe(site, string, node.qualifiedColumnName, parameterizable);
+        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLResultColumn node, @Nonnull Site site)  throws InternalException {
+            final @Nonnull StringBuilder string = new StringBuilder();
+            string.append(dialect.transcribe(site, node.qualifiedColumnName));
             if (node.alias != null) {
                 string.append(" AS ");
                 string.append(node.alias);
             }
+            return string.toString();
         }
         
     };
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLResultColumn> getTranscriber() {
         return transcriber;

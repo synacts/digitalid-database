@@ -3,6 +3,7 @@ package net.digitalid.database.dialect.ast.statement.select;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.freezable.annotations.Frozen;
@@ -45,6 +46,7 @@ public abstract class SQLUnorderedSelectStatement<T extends SQLUnorderedSelectSt
     
     /* -------------------------------------------------- SQLParameterizableNode -------------------------------------------------- */
     
+    @Pure
     @Override
     public void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         for (@Nonnull SQLSource<?> source : sources) {

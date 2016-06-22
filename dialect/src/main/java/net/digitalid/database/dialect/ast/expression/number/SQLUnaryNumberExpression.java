@@ -3,6 +3,8 @@ package net.digitalid.database.dialect.ast.expression.number;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
+import net.digitalid.utility.circumfixes.Brackets;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -80,14 +82,15 @@ public class SQLUnaryNumberExpression extends SQLNumberExpression implements SQL
         
         @Override
         protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLUnaryNumberExpression node, @Nonnull Site site)  throws InternalException {
-            dialect.transcribe(site, string, node.operator, false);
-            string.append("(");
-            dialect.transcribe(site, string, node.expression, false);
-            string.append(")");
+            final @Nonnull StringBuilder string = new StringBuilder();
+            string.append(dialect.transcribe(site, node.operator));
+            string.append(Brackets.inRound(dialect.transcribe(site, node.expression)));
+            return string.toString();
         }
         
     };
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLUnaryNumberExpression> getTranscriber() {
         return transcriber;
@@ -95,6 +98,7 @@ public class SQLUnaryNumberExpression extends SQLNumberExpression implements SQL
     
     /* -------------------------------------------------- SQLParameterizableNode -------------------------------------------------- */
     
+    @Pure
     @Override
     public final void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         expression.storeValues(collector);

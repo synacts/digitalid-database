@@ -3,11 +3,15 @@
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/resources" type="java-test-resource" />
-      <excludeFolder url="file://$MODULE_DIR$/target" />
+      <sourceFolder url="file://$MODULE_DIR$/target/generated-test-sources/test-annotations" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/annotations" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/target/maven-status" />
+      <excludeFolder url="file://$MODULE_DIR$/target/processor-logs" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -30,10 +34,14 @@
     <orderEntry type="module" module-name="database-dialect" />
     <orderEntry type="module" module-name="database-core" />
     <orderEntry type="module" module-name="database-exceptions" />
+    <orderEntry type="module" module-name="database-annotations" />
     <orderEntry type="module" module-name="utility-testing (1) (net.digitalid.database)" scope="TEST" />
     <orderEntry type="module" module-name="utility-testing" scope="TEST" />
     <orderEntry type="module" module-name="database-jdbc" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="Maven: com.h2database:h2:1.4.190" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
+    <orderEntry type="module" module-name="digitalid-utility-property" />
     <orderEntry type="module" module-name="digitalid-utility-collections" />
     <orderEntry type="module" module-name="utility-generator" />
     <orderEntry type="module" module-name="utility-processor" />
@@ -41,8 +49,5 @@
     <orderEntry type="module" module-name="digitalid-utility-casting" />
     <orderEntry type="module" module-name="digitalid-utility-freezable" />
     <orderEntry type="module" module-name="digitalid-utility-time" />
-    <orderEntry type="library" name="Maven: com.google.j2objc:j2objc-annotations:0.9.8" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
   </component>
 </module>

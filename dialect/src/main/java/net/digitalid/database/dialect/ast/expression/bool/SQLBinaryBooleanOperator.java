@@ -2,6 +2,7 @@ package net.digitalid.database.dialect.ast.expression.bool;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -53,19 +54,20 @@ public enum SQLBinaryBooleanOperator implements SQLBinaryOperator {
     private static final @Nonnull Transcriber<SQLBinaryBooleanOperator> transcriber = new Transcriber<SQLBinaryBooleanOperator>() {
         
         @Override
-        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBinaryBooleanOperator node, @Nonnull Site site)  throws InternalException {
+        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBinaryBooleanOperator node, @Nonnull Site site)  throws InternalException {
             switch (node) {
-                case AND: string.append("AND"); break;
-                case OR: string.append("OR"); break;
-                case XOR: string.append("XOR"); break;
-                case EQUAL: string.append("="); break;
-                case UNEQUAL: string.append("!="); break;
+                case AND: return "AND";
+                case OR: return "OR";
+                case XOR: return "XOR";
+                case EQUAL: return "=";
+                case UNEQUAL: return "!=";
                 default: throw UnexpectedValueException.with("node", node);
             }
         }
         
     };
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLBinaryBooleanOperator> getTranscriber() {
         return transcriber;

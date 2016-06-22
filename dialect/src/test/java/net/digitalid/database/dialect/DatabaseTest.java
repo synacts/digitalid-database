@@ -2,17 +2,14 @@ package net.digitalid.database.dialect;
 
 import net.digitalid.database.core.Database;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
-
 /**
  * Unit testing of the class {@link Database}.
  * 
  * @see MySQLTest
  * @see PostgreSQLTest
  * @see SQLiteTest
+ * TODO: Remove this class
  */
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DatabaseTest {
     
 //    @Pure

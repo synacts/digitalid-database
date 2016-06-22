@@ -2,6 +2,7 @@ package net.digitalid.database.dialect.ast.expression.number;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -37,16 +38,17 @@ public enum SQLVariadicNumberOperator implements SQLVariadicOperator {
     private static final @Nonnull Transcriber<SQLVariadicNumberOperator> transcriber = new Transcriber<SQLVariadicNumberOperator>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLVariadicNumberOperator operator, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
+        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLVariadicNumberOperator operator, @Nonnull Site site) throws InternalException {
             switch (operator) {
-                case GREATEST: string.append("GREATEST"); break;
-                case COALESCE: string.append("COALESCE"); break;
+                case GREATEST: return "GREATEST";
+                case COALESCE: return "COALESCE";
                 default: throw UnexpectedValueException.with("operator", operator);
             }
         }
         
     };
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLVariadicNumberOperator> getTranscriber() {
         return transcriber;

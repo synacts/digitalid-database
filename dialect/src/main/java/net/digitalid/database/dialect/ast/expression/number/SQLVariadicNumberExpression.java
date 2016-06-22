@@ -3,12 +3,14 @@ package net.digitalid.database.dialect.ast.expression.number;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collections.freezable.FreezableArray;
-import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.annotations.ownership.Captured;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
+import net.digitalid.utility.circumfixes.Brackets;
+import net.digitalid.utility.collections.array.FreezableArray;
+import net.digitalid.utility.collections.array.ReadOnlyArray;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
-import net.digitalid.utility.validation.annotations.reference.Captured;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.interfaces.SQLValueCollector;
@@ -43,8 +45,7 @@ public class SQLVariadicNumberExpression extends SQLNumberExpression implements 
     /**
      * Stores the child expressions of this variadic expression.
      */
-    private final @Nonnull @NonNullableElements @Frozen
-    ReadOnlyArray<SQLNumberExpression> expressions;
+    private final @Frozen @NonNullableElements @Nonnull ReadOnlyArray<SQLNumberExpression> expressions;
     
     @Pure
     @Override
@@ -62,7 +63,7 @@ public class SQLVariadicNumberExpression extends SQLNumberExpression implements 
      */
     protected SQLVariadicNumberExpression(@Nonnull SQLVariadicNumberOperator operator, @Captured @Nonnull SQLNumberExpression... expressions) {
         this.operator = operator;
-        this.expressions = FreezableArray.getNonNullable(expressions).freeze();
+        this.expressions = FreezableArray.withElements(expressions).freeze();
     }
     
     /**
@@ -87,11 +88,15 @@ public class SQLVariadicNumberExpression extends SQLNumberExpression implements 
         
         @Override
         protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLVariadicNumberExpression node, @Nonnull Site site)  throws InternalException {
-
+            final @Nonnull StringBuilder string = new StringBuilder();
+            string.append(dialect.transcribe(site, node.operator));
+            string.append(node.expressions.map(expression -> dialect.transcribe(site, expression)).join(Brackets.ROUND));
+            return string.toString();
         }
         
     };
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLVariadicNumberExpression> getTranscriber() {
         return transcriber;
@@ -99,6 +104,7 @@ public class SQLVariadicNumberExpression extends SQLNumberExpression implements 
     
     /* -------------------------------------------------- SQLParameterizableNode -------------------------------------------------- */
     
+    @Pure
     @Override
     public final void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         for (final @Nonnull SQLExpression expression : expressions) {

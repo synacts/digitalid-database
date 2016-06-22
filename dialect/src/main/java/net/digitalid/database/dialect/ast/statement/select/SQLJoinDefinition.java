@@ -2,6 +2,8 @@ package net.digitalid.database.dialect.ast.statement.select;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.exceptions.InternalException;
 
 import net.digitalid.database.core.interfaces.SQLValueCollector;
@@ -41,6 +43,7 @@ public class SQLJoinDefinition implements SQLParameterizableNode<SQLJoinDefiniti
     /**
      * Returns a new join definition node.
      */
+    @Pure
     public static @Nonnull SQLJoinDefinition get(@Nonnull SQLJoinOperator joinOperator, @Nonnull SQLSource<?> source) {
         return new SQLJoinDefinition(joinOperator, source);
     }
@@ -54,13 +57,16 @@ public class SQLJoinDefinition implements SQLParameterizableNode<SQLJoinDefiniti
     
         @Override
         protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLJoinDefinition node, @Nonnull Site site)  throws InternalException {
-            dialect.transcribe(site, string, node.joinOperator, parameterizable);
+            final @Nonnull StringBuilder string = new StringBuilder();
+            string.append(dialect.transcribe(site, node.joinOperator));
             string.append(" ");
-            dialect.transcribe(site, string, node.joinOperator, parameterizable);
+            string.append(dialect.transcribe(site, node.joinOperator));
+            return string.toString();
         }
         
     };
     
+    @Pure
     @Override 
     public @Nonnull Transcriber<SQLJoinDefinition> getTranscriber() {
         return transcriber;
@@ -68,6 +74,7 @@ public class SQLJoinDefinition implements SQLParameterizableNode<SQLJoinDefiniti
     
     /* -------------------------------------------------- SQL Parameterizable Node -------------------------------------------------- */
     
+    @Pure
     @Override 
     public void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         source.storeValues(collector);

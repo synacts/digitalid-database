@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.validation.annotations.math.Negative;
@@ -29,11 +30,13 @@ public class SQLCheckNegativeConstraint extends SQLCheckConstraint {
         checkConstraint = SQLNumberComparisonBooleanExpression.get(SQLComparisonOperator.LESS, SQLNumberReference.get(columnname), SQLNumberLiteral.get(0L));
     }
     
+    @Pure
     @Override
     protected @Nonnull SQLExpression<?> getCheckConstraint() {
         return checkConstraint;
     }
     
+    @Pure
     @Override
     public void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         collector.setInteger64(0L);
