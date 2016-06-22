@@ -22,8 +22,8 @@ import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.validation.state.Validated;
 
 import net.digitalid.database.core.Database;
-import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.database.core.annotations.NonCommitting;
+import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.operation.FailedOperationException;
 import net.digitalid.database.exceptions.operation.FailedUpdateExecutionException;
 import net.digitalid.database.core.interfaces.jdbc.JDBCDatabaseInstance;

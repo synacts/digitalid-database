@@ -14,13 +14,13 @@ import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.logging.logger.Logger;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
-import net.digitalid.database.annotations.Committing;
 import net.digitalid.database.conversion.collectors.SQLColumnDeclarations;
 import net.digitalid.database.conversion.collectors.SQLInsertDeclaration;
 import net.digitalid.database.conversion.collectors.SQLOrderedInsertStatements;
 import net.digitalid.database.conversion.collectors.SQLSelectDeclaration;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.interfaces.SQLSelectionResult;
+import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
