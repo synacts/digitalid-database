@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.conversion.converter.SelectionResult;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;
 
@@ -16,7 +17,7 @@ import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
  * This interface allows to get the values of an SQL result.
  * Advancing the column index is left to the implementation.
  */
-public interface SQLSelectionResult extends AutoCloseable, net.digitalid.utility.conversion.converter.SelectionResult {
+public interface SQLSelectionResult extends AutoCloseable, SelectionResult {
     
     /* -------------------------------------------------- Iteration -------------------------------------------------- */
     
@@ -60,112 +61,84 @@ public interface SQLSelectionResult extends AutoCloseable, net.digitalid.utility
     
     /**
      * Returns the boolean value of the next column.
-     * 
-     * @return the boolean value of the next column.
      */
     @Impure
     public boolean getBoolean();
     
     /**
      * Returns the byte value of the next column.
-     * 
-     * @return the byte value of the next column.
      */
     @Impure
     public byte getInteger08();
     
     /**
      * Returns the short value of the next column.
-     * 
-     * @return the short value of the next column.
      */
     @Impure
     public short getInteger16();
     
     /**
      * Returns the int value of the next column.
-     * 
-     * @return the int value of the next column.
      */
     @Impure
     public int getInteger32();
     
     /**
      * Returns the long value of the next column.
-     * 
-     * @return the long value of the next column.
      */
     @Impure
     public long getInteger64();
     
     /**
      * Returns the integer value of the next column.
-     * 
-     * @return the integer value of the next column.
      */
     @Impure
     public @Nullable BigInteger getInteger();
     
     /**
      * Returns the float value of the next column.
-     * 
-     * @return the float value of the next column.
      */
     @Impure
     public float getDecimal32();
     
     /**
      * Returns the double value of the next column.
-     * 
-     * @return the double value of the next column.
      */
     @Impure
     public double getDecimal64();
     
     /**
      * Returns the char value of the next column.
-     * 
-     * @return the char value of the next column.
      */
     @Impure
     public char getString01();
     
     /**
      * Returns the string value of the next column.
-     * 
-     * @return the string value of the next column.
      */
     @Impure
     public @Nullable @MaxSize(64) String getString64();
     
     /**
      * Returns the string value of the next column.
-     * 
-     * @return the string value of the next column.
      */
     @Impure
     public @Nullable String getString();
     
     /**
      * Returns the binary value of the next column.
-     * 
-     * @return the binary value of the next column.
      */
     @Impure
     public @Nullable @Size(16) byte[] getBinary128();
     
     /**
      * Returns the binary value of the next column.
-     * 
-     * @return the binary value of the next column.
      */
     @Impure
     public @Nullable @Size(32) byte[] getBinary256();
     
     /**
      * Returns the binary value of the next column.
-     * 
-     * @return the binary value of the next column.
      */
     @Impure
     public @Nullable byte[] getBinary();
@@ -174,8 +147,6 @@ public interface SQLSelectionResult extends AutoCloseable, net.digitalid.utility
     
     /**
      * Returns whether the last returned column was null.
-     * 
-     * @return whether the last returned column was null.
      */
     @Pure
     public boolean wasNull();
