@@ -3,6 +3,7 @@ package net.digitalid.database.dialect.ast.expression.number;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -97,11 +98,12 @@ public class SQLBinaryNumberExpression extends SQLNumberExpression implements SQ
         
         @Override
         protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBinaryNumberExpression node, @Nonnull Site site)  throws InternalException {
-            SQLBinaryExpressionTranscriber.transcribeNode(node, dialect, site, string);
+            return SQLBinaryExpressionTranscriber.transcribeNode(node, dialect, site);
         }
         
     };
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLBinaryNumberExpression> getTranscriber() {
         return transcriber;
@@ -109,6 +111,7 @@ public class SQLBinaryNumberExpression extends SQLNumberExpression implements SQ
     
     /* -------------------------------------------------- SQLParameterizableNode -------------------------------------------------- */
     
+    @Pure
     @Override
     public final void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         leftExpression.storeValues(collector);

@@ -3,6 +3,7 @@ package net.digitalid.database.dialect.ast.expression.string;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.exceptions.InternalException;
 
 import net.digitalid.database.core.interfaces.SQLValueCollector;
@@ -66,15 +67,12 @@ public class SQLStringLiteral extends SQLStringExpression implements SQLLiteral 
         
         @Override
         protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLStringLiteral node, @Nonnull Site site)  throws InternalException {
-            if (parameterizable) {
-                string.append("?");
-            } else {
-                string.append(node.value);
-            }
+            return node.value;
         }
         
     };
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLStringLiteral> getTranscriber() {
         return transcriber;
@@ -82,6 +80,7 @@ public class SQLStringLiteral extends SQLStringExpression implements SQLLiteral 
     
     /* -------------------------------------------------- SQLParameterizableNode -------------------------------------------------- */
     
+    @Pure
     @Override
     public final void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         collector.setString(value);

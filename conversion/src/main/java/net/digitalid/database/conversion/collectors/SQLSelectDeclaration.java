@@ -12,16 +12,13 @@ import net.digitalid.utility.collections.map.ReadOnlyMap;
 import net.digitalid.utility.conversion.converter.CustomField;
 import net.digitalid.utility.conversion.converter.Declaration;
 import net.digitalid.utility.conversion.converter.types.CustomType;
-import net.digitalid.utility.exceptions.ConformityViolation;
-import net.digitalid.utility.freezable.annotations.Frozen;
 
+import net.digitalid.database.conversion.exceptions.ConformityViolationException;
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.annotations.Embedd;
 import net.digitalid.database.dialect.annotations.References;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
-import net.digitalid.database.dialect.ast.statement.insert.SQLInsertStatement;
-import net.digitalid.database.dialect.ast.statement.insert.SQLValues;
 import net.digitalid.database.dialect.ast.statement.select.SQLQualifiedTableNameSource;
 import net.digitalid.database.dialect.ast.statement.select.SQLResultColumn;
 import net.digitalid.database.dialect.ast.statement.select.SQLSelectStatement;
@@ -85,6 +82,7 @@ public class SQLSelectDeclaration implements Declaration {
         this.site = site;
     }
     
+    @Pure
     public static @Nonnull SQLSelectDeclaration get(@Nonnull String tableName, @Nonnull Site site) {
         return new SQLSelectDeclaration(tableName, site);
     }
@@ -94,7 +92,7 @@ public class SQLSelectDeclaration implements Declaration {
     @Impure
     @Override
     public void setField(@Nonnull CustomField field) {
-        if (field.customType.isCompositeType()) {
+        if (field.getCustomType().isCompositeType()) {
             if (field.isAnnotatedWith(Embedd.class)) {
                 columnNamesMainTable.add(SQLQualifiedColumnName.get(field.getName(), tableName));
             } else {
@@ -102,19 +100,19 @@ public class SQLSelectDeclaration implements Declaration {
                 dependentTable.setField(field);
                 dependentTables.put(tableName + "_" + field.getName(), dependentTable);
             } // else: if is referenced, a new table will be created that links back to the current table.
-        } else if (field.customType.isObjectType()) {
-            final CustomType.@Nonnull CustomObjectType customObjectType = (CustomType.@Nonnull CustomObjectType) field.customType;
+        } else if (field.getCustomType().isObjectType()) {
+            final CustomType.@Nonnull CustomObjectType customObjectType = (CustomType.@Nonnull CustomObjectType) field.getCustomType();
             if (field.isAnnotatedWith(Embedd.class)) {
-                customObjectType.converter.declare(this);
+                customObjectType.getConverter().declare(this);
             } else {
                 if (field.isAnnotatedWith(References.class)) {
                     final @Nonnull References references = field.getAnnotation(References.class);
                     columnNamesMainTable.add(SQLQualifiedColumnName.get(references.columnName(), tableName));
                     final @Nonnull SQLSelectDeclaration referencedTable = SQLSelectDeclaration.get(references.foreignTable(), site);
-                    customObjectType.converter.declare(referencedTable);
+                    customObjectType.getConverter().declare(referencedTable);
                     referencedTables.put(references.foreignTable(), referencedTable);
                 } else {
-                    throw ConformityViolation.with("Expected @" + Embedd.class.getSimpleName() + " or @" + References.class.getSimpleName() + " annotation on non-primitive field type");
+                    throw ConformityViolationException.with("Expected @" + Embedd.class.getSimpleName() + " or @" + References.class.getSimpleName() + " annotation on non-primitive field type");
                 }
             }
         } else {
@@ -122,6 +120,7 @@ public class SQLSelectDeclaration implements Declaration {
         }
     }
     
+    @Pure
     public SQLSelectStatement getSelectStatement(@Nullable SQLWhereClause whereClause) {
         final @Nonnull FreezableArrayList<SQLResultColumn> resultColumns = FreezableArrayList.withCapacity(columnNamesMainTable.size());
         for (@Nonnull SQLQualifiedColumnName columnName : columnNamesMainTable) {

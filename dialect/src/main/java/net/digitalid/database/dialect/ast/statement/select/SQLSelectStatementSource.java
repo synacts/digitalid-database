@@ -3,6 +3,8 @@ package net.digitalid.database.dialect.ast.statement.select;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.exceptions.InternalException;
 
 import net.digitalid.database.core.interfaces.SQLValueCollector;
@@ -41,6 +43,7 @@ public class SQLSelectStatementSource implements SQLSource<SQLSelectStatementSou
     /**
      * Returns a new select statement source with a given select statement and an optional alias.
      */
+    @Pure
     public static @Nonnull SQLSelectStatementSource get(@Nonnull SQLSelectStatement sqlSelectStatement, @Nullable String alias) {
         return new SQLSelectStatementSource(sqlSelectStatement, alias);
     }
@@ -54,15 +57,18 @@ public class SQLSelectStatementSource implements SQLSource<SQLSelectStatementSou
     
         @Override
         protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLSelectStatementSource node, @Nonnull Site site)  throws InternalException {
-            dialect.transcribe(site, string, node.selectStatement, parameterizable);
+            final @Nonnull StringBuilder string = new StringBuilder();
+            dialect.transcribe(site, node.selectStatement);
             if (node.alias != null) {
                 string.append(" AS ");
                 string.append(node.alias);
             }
+            return string.toString();
         }
     
     };
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLSelectStatementSource> getTranscriber() {
         return transcriber;
@@ -70,8 +76,10 @@ public class SQLSelectStatementSource implements SQLSource<SQLSelectStatementSou
     
     /* -------------------------------------------------- SQL Parameterizable Node -------------------------------------------------- */
     
+    @Pure
     @Override 
     public void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         selectStatement.storeValues(collector);
     }
+    
 }

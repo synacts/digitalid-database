@@ -9,6 +9,8 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
+import net.digitalid.database.dialect.ast.statement.table.create.SQLType;
+
 /**
  *
  */
@@ -18,7 +20,7 @@ public @interface References {
     
     @Nonnull String foreignTable();
     
-    @Nonnull String columnType();
+    @Nonnull SQLType columnType();
     
     @Nonnull @NonNullableElements String columnName();
     

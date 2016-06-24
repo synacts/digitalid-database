@@ -5,11 +5,10 @@ import java.sql.Types;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.annotations.ownership.NonCaptured;
+import net.digitalid.utility.circumfixes.Quotes;
 import net.digitalid.utility.conversion.converter.types.CustomType;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
-import net.digitalid.utility.fixes.Quotes;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.table.Site;
@@ -119,7 +118,18 @@ public enum SQLType implements SQLNode {
     
     /* -------------------------------------------------- Custom Type -------------------------------------------------- */
     
+    /**
+     * The custom type that corresponds to the SQL type.
+     */
     private final @Nonnull CustomType customType;
+    
+    /**
+     * Returns the custom type.
+     */
+    @Pure
+    public @Nonnull CustomType getCustomType() {
+        return customType;
+    }
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -154,23 +164,23 @@ public enum SQLType implements SQLNode {
     private static final @Nonnull Transcriber<SQLType> transcriber = new Transcriber<SQLType>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLType type, @Nonnull Site site, @Nonnull @NonCaptured StringBuilder string, boolean parameterizable) throws InternalException {
+        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLType type, @Nonnull Site site) throws InternalException {
             switch (type) {
-                case EMPTY: string.append("BOOLEAN"); break;
-                case BOOLEAN: string.append("BOOLEAN"); break;
-                case INTEGER08: string.append("TINYINT"); break;
-                case INTEGER16: string.append("SMALLINT"); break;
-                case INTEGER32: string.append("INT"); break;
-                case INTEGER64: string.append("BIGINT"); break;
-                case INTEGER: string.append("BLOB"); break;
-                case DECIMAL32: string.append("FLOAT"); break;
-                case DECIMAL64: string.append("DOUBLE"); break;
-                case STRING01: string.append("CHAR(1)"); break;
-                case STRING64: string.append("VARCHAR(64) COLLATE utf16_bin"); break;
-                case STRING: string.append("TEXT"); break;
-                case BINARY128: string.append("BINARY(16)"); break;
-                case BINARY256: string.append("BINARY(32)"); break;
-                case BINARY: string.append("MEDIUMBLOB"); break;
+                case EMPTY: return "BOOLEAN";
+                case BOOLEAN: return "BOOLEAN";
+                case INTEGER08: return "TINYINT";
+                case INTEGER16: return "SMALLINT";
+                case INTEGER32: return "INT";
+                case INTEGER64: return "BIGINT";
+                case INTEGER: return "BLOB";
+                case DECIMAL32: return "FLOAT";
+                case DECIMAL64: return "DOUBLE";
+                case STRING01: return "CHAR(1)";
+                case STRING64: return "VARCHAR(64) COLLATE utf16_bin";
+                case STRING: return "TEXT";
+                case BINARY128: return "BINARY(16)";
+                case BINARY256: return "BINARY(32)";
+                case BINARY: return "MEDIUMBLOB";
                 default: throw UnexpectedValueException.with("type", type);
             }
         }

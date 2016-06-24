@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
+import net.digitalid.utility.conversion.converter.types.CustomType;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -44,16 +45,18 @@ public class Table {
     
     private final @Nonnull FreezableArrayList<PrimaryKey> primaryKeys;
     
+    @Pure
     public final @Nonnull @Frozen @NonNullableElements ReadOnlyList<PrimaryKey> getPrimaryKeys() {
         return primaryKeys;
     }
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
+    @Pure
     private void initializePrimaryKeys(@Nonnull SQLCreateTableStatement createTableStatement) {
         int position = 0;
         for (SQLColumnDeclaration columnDeclaration : createTableStatement.columnDeclarations) {
-            final Class<?> type = columnDeclaration.type.getJavaType();
+            final CustomType type = columnDeclaration.type.getCustomType();
             if (columnDeclaration.columnConstraints != null) {
                 for (SQLColumnConstraint columnConstraint : columnDeclaration.columnConstraints) {
                     if (columnConstraint instanceof SQLPrimaryKeyConstraint) {
@@ -66,7 +69,7 @@ public class Table {
         position = 0;
         if (primaryKeys.size() == 0) {
             for (SQLColumnDeclaration columnDeclaration : createTableStatement.columnDeclarations) {
-                final Class<?> type = columnDeclaration.type.getJavaType();
+                final @Nonnull CustomType type = columnDeclaration.type.getCustomType();
                 primaryKeys.add(PrimaryKey.with(type, columnDeclaration.columnName.getValue(), position));
                 position++;
             }           
@@ -78,7 +81,7 @@ public class Table {
      */
     protected Table(@Nonnull SQLCreateTableStatement createTableStatement) {
         this.name = createTableStatement.qualifiedTableName;
-        this.primaryKeys = FreezableArrayList.get();
+        this.primaryKeys = FreezableArrayList.withNoElements();
         initializePrimaryKeys(createTableStatement);
     }
     
@@ -104,8 +107,9 @@ public class Table {
         return name.getValue();
     }
     
+    @Pure
     public @Nonnull @NonNullableElements FreezableArrayList<SQLValues> filterPrimaryKeyTableCells(@Nonnull @NonNullableElements ReadOnlyList<SQLValues> tableRows) {
-        final @Nonnull @NonNullableElements FreezableArrayList<SQLValues> primaryKeyTableCells = FreezableArrayList.get();
+        final @Nonnull @NonNullableElements FreezableArrayList<SQLValues> primaryKeyTableCells = FreezableArrayList.withNoElements();
         for (@Nonnull SQLValues sqlValues : tableRows) {
             SQLValues values = SQLValues.get();
             for (@Nonnull PrimaryKey primaryKey : primaryKeys) {

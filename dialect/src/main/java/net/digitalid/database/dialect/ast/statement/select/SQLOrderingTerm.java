@@ -3,6 +3,7 @@ package net.digitalid.database.dialect.ast.statement.select;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.InternalException;
 
 import net.digitalid.database.core.table.Site;
@@ -47,16 +48,19 @@ public class SQLOrderingTerm implements SQLNode<SQLOrderingTerm> {
     
         @Override
         protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLOrderingTerm node, @Nonnull Site site)  throws InternalException {
-            dialect.transcribe(site, string, node.qualifiedColumnName, parameterizable);
+            final @Nonnull StringBuilder string = new StringBuilder();
+            string.append(dialect.transcribe(site, node.qualifiedColumnName));
             if (node.orderingDirection != null) {
-                string.append(" ");
-                dialect.transcribe(site, string, node.orderingDirection, parameterizable);
+                string.append(" ").append(dialect.transcribe(site, node.orderingDirection));
             }
+            return string.toString();
         }
         
     };
     
-    @Nonnull @Override public Transcriber<SQLOrderingTerm> getTranscriber() {
+    @Pure
+    @Override
+    public @Nonnull Transcriber<SQLOrderingTerm> getTranscriber() {
         return transcriber;
     }
     

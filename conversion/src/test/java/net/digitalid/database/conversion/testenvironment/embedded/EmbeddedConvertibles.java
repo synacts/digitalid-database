@@ -2,24 +2,25 @@ package net.digitalid.database.conversion.testenvironment.embedded;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.conversion.converter.Convertible;
+import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+
 
 /**
  *
  */
-public class EmbeddedConvertibles implements Convertible {
+@GenerateBuilder
+@GenerateConverter
+public class EmbeddedConvertibles  {
     
     public final @Nonnull Convertible1 convertible1;
     
     public final @Nonnull Convertible2 convertible2;
     
-    private EmbeddedConvertibles(@Nonnull Convertible1 convertible1, @Nonnull Convertible2 convertible2) {
+    EmbeddedConvertibles(@Nonnull Convertible1 convertible1, @Nonnull Convertible2 convertible2) {
         this.convertible1 = convertible1;
         this.convertible2 = convertible2;
-    }
-    
-    public static @Nonnull EmbeddedConvertibles get(@Nonnull Convertible1 convertible1, @Nonnull Convertible2 convertible2) {
-        return new EmbeddedConvertibles(convertible1, convertible2);
     }
     
 }

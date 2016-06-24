@@ -2,7 +2,9 @@ package net.digitalid.database.dialect.ast;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
+import net.digitalid.utility.annotations.parameter.Modified;
 
 import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
@@ -18,6 +20,7 @@ public interface SQLParameterizableNode<T> extends SQLNode<T> {
      * 
      * @param collector the value collector used to collect a value for each parameter.
      */
-    public abstract void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException;
+    @Pure
+    public abstract void storeValues(@Nonnull @NonCaptured @Modified SQLValueCollector collector) throws FailedSQLValueConversionException;
     
 }

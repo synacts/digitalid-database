@@ -2,6 +2,7 @@ package net.digitalid.database.dialect.ast.expression.string;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -45,14 +46,11 @@ public enum SQLVariadicStringOperator implements SQLVariadicOperator {
         protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLVariadicStringOperator node, @Nonnull Site site)  throws InternalException {
             switch (node) {
                 case CONCAT:
-                    string.append("CONCAT");
-                    break;
+                    return "CONCAT";
                 case GREATEST:
-                    string.append("GREATEST");
-                    break;
+                    return "GREATEST";
                 case COALESCE:
-                    string.append("COALESCE");
-                    break;
+                    return "COALESCE";
                 default:
                     throw UnexpectedValueException.with("node", node);
             }
@@ -60,6 +58,7 @@ public enum SQLVariadicStringOperator implements SQLVariadicOperator {
         
     };
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLVariadicStringOperator> getTranscriber() {
         return transcriber;

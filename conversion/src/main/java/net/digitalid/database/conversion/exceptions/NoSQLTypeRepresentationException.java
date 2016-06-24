@@ -3,6 +3,7 @@ package net.digitalid.database.conversion.exceptions;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.exceptions.InternalException;
 
@@ -21,6 +22,7 @@ public class NoSQLTypeRepresentationException extends InternalException {
     /**
      * Returns a new no-SQLType-representation exception with a given message and a given cause.
      */
+    @Pure
     public static @Nonnull NoSQLTypeRepresentationException with(@Nonnull String message, @Nullable Exception cause) {
         return new NoSQLTypeRepresentationException(message, cause);
     }
@@ -28,10 +30,12 @@ public class NoSQLTypeRepresentationException extends InternalException {
     /**
      * Returns a new no-SQLType-representation exception with a given message.
      */
+    @Pure
     public static @Nonnull NoSQLTypeRepresentationException with(@Nonnull String message) {
         return new NoSQLTypeRepresentationException(message, null);
     }
     
+    @Pure
     public static @Nonnull NoSQLTypeRepresentationException with(@Nonnull Converter<?> converter) {
         return new NoSQLTypeRepresentationException("The type represented by the converter '" + converter.getClass().getSimpleName() + "' cannot be represented as an SQL type", null);
     }

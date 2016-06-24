@@ -2,6 +2,8 @@ package net.digitalid.database.testing;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
+
 import net.digitalid.database.core.table.Site;
 
 /**
@@ -16,6 +18,7 @@ public class TestHost extends Site {
     }
     
     // TODO: refactor in the future. References, if needed, should be included using the SQL AST.
+    @Pure
     @Override
     public @Nonnull String getEntityReference() {
         return "REFERENCES general_identity (identity) ON DELETE RESTRICT ON UPDATE RESTRICT";

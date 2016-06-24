@@ -3,7 +3,7 @@ package net.digitalid.database.dialect.ast.expression;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collections.readonly.ReadOnlyArray;
+import net.digitalid.utility.collections.array.ReadOnlyArray;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
@@ -36,6 +36,6 @@ public interface SQLVariadicExpression<O extends SQLVariadicOperator, E extends 
      * @return the child expressions of this variadic expression.
      */
     @Pure
-    public abstract @Nonnull @NonNullableElements @Frozen ReadOnlyArray<E> getExpressions();
+    public abstract @Frozen @NonNullableElements @Nonnull ReadOnlyArray<E> getExpressions();
     
 }

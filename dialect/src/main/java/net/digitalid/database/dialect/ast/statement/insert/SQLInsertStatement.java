@@ -2,10 +2,12 @@ package net.digitalid.database.dialect.ast.statement.insert;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.circumfixes.Brackets;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
 import net.digitalid.database.core.table.Site;
@@ -17,27 +19,39 @@ import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
 
 /**
  * An AST node holding information about nodes relevant to the SQL insert statement, such as
- * the table name, the column names and the values, which should eventually be inserted.
- * The SQLInsertStatement is a parameterizable node, because its values might be parameterized.
+ * the table name and the column names, which should eventually be inserted.
  */
 // TODO: re-integrate the SQLValues node, e.g. by adding a Subclass SQLPreparedInsertStatement that does not have SQLValues.
 public class SQLInsertStatement implements SQLNode<SQLInsertStatement> {
     
     /* -------------------------------------------------- Table name -------------------------------------------------- */
     
+    /**
+     * The qualified table name.
+     */
     public final @Nonnull SQLQualifiedTableName qualifiedTableName;
     
     /* -------------------------------------------------- Column Names -------------------------------------------------- */
     
-    private final @Nonnull @NonNullableElements @Frozen ReadOnlyList<? extends SQLColumnName<?>> columnNames;
+    /**
+     * A list of column names.
+     */
+    private final @Nonnull ImmutableList<@Nonnull ? extends SQLColumnName<?>> columnNames;
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
-    private SQLInsertStatement(@Nonnull SQLQualifiedTableName qualifiedTableName, @Nonnull @NonNullableElements @Frozen ReadOnlyList<? extends SQLColumnName<?>> columnNames) {
+    /**
+     * Creates a new SQL insert statement node.
+     */
+    private SQLInsertStatement(@Nonnull SQLQualifiedTableName qualifiedTableName, @Nonnull @Frozen ReadOnlyList<@Nonnull ? extends SQLColumnName<?>> columnNames) {
         this.qualifiedTableName = qualifiedTableName;
-        this.columnNames = columnNames;
+        this.columnNames = ImmutableList.with(columnNames);
     }
     
+    /**
+     * Returns an SQL insert statement node.
+     */
+    @Pure
     public static @Nonnull SQLInsertStatement get(@Nonnull SQLQualifiedTableName qualifiedTableName, @Nonnull @NonNullableElements @Frozen ReadOnlyList<? extends SQLColumnName<?>> columnNames) {
         return new SQLInsertStatement(qualifiedTableName, columnNames);
     }
@@ -61,6 +75,7 @@ public class SQLInsertStatement implements SQLNode<SQLInsertStatement> {
         
     };
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLInsertStatement> getTranscriber() {
         return transcriber;
@@ -68,6 +83,10 @@ public class SQLInsertStatement implements SQLNode<SQLInsertStatement> {
     
     /* -------------------------------------------------- to SQL -------------------------------------------------- */
     
+    /**
+     * Returns a string representation of the prepared statement.
+     */
+    @Pure
     public String toPreparedStatement(@Nonnull SQLDialect dialect, @Nonnull Site site) throws InternalException {
         return dialect.transcribe(site, this);
     }

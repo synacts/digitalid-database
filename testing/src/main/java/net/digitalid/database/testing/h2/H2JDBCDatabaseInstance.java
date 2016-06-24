@@ -31,15 +31,18 @@ public class H2JDBCDatabaseInstance extends JDBCDatabaseInstance {
         this.url = url;
     }
     
+    @Pure
     public static H2JDBCDatabaseInstance get(@Nonnull String url) {
         return new H2JDBCDatabaseInstance(url);
     }
     
+    @Pure
     @Override
     protected @Nonnull String getURL() {
         return url;
     }
     
+    @Pure
     @Override
     protected @Nonnull Properties getProperties() {
         final @Nonnull Properties properties = new Properties();

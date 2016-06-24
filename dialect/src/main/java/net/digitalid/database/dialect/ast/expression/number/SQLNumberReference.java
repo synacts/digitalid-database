@@ -4,6 +4,8 @@ import java.math.BigInteger;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
 import net.digitalid.database.core.interfaces.SQLValueCollector;
@@ -25,17 +27,20 @@ public class SQLNumberReference extends SQLNumberExpression<SQLNumberReference> 
         this.qualifiedColumnName = qualifiedColumnName;
     }
     
+    @Pure
     public static @Nonnull SQLNumberReference get(@Nonnull String columnName) {
         //Validator.checkType(field, acceptedTypes);
         final @Nonnull SQLQualifiedColumnName qualifiedColumnName = SQLQualifiedColumnName.get(columnName, null);
         return new SQLNumberReference(qualifiedColumnName);
     }
     
+    @Pure
     @Override
     public void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         // TODO: implement
     }
     
+    @Pure
     @Override
     public @Nonnull String getValue() {
         return qualifiedColumnName.getValue();
@@ -45,6 +50,7 @@ public class SQLNumberReference extends SQLNumberExpression<SQLNumberReference> 
     
     private static final @Nonnull Transcriber<SQLNumberReference> transcriber = new SQLIdentifierTranscriber<>();
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLNumberReference> getTranscriber() {
         return transcriber;

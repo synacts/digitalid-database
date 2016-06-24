@@ -2,10 +2,13 @@ package net.digitalid.database.conversion.testenvironment.iterable;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.conversion.annotations.Constructing;
 import net.digitalid.utility.conversion.annotations.GenericTypes;
-import net.digitalid.utility.conversion.converter.Convertible;
+
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
 import net.digitalid.database.dialect.annotations.Embedd;
@@ -13,7 +16,9 @@ import net.digitalid.database.dialect.annotations.Embedd;
 /**
  *
  */
-public class CompositeCollectionsClass implements Convertible {
+@GenerateBuilder
+@GenerateConverter
+public class CompositeCollectionsClass  {
     
     @Embedd
     @GenericTypes(Integer.class)
@@ -23,13 +28,8 @@ public class CompositeCollectionsClass implements Convertible {
     @GenericTypes(ListOfIntegers.class)
     public final @Nonnull @NonNullableElements FreezableArrayList<FreezableArrayList<Integer>> listOfListOfIntegers;
     
-    private CompositeCollectionsClass(@Nonnull @NonNullableElements FreezableArrayList<FreezableArrayList<Integer>> listOfListOfIntegers) {
+    CompositeCollectionsClass(@Nonnull @NonNullableElements FreezableArrayList<FreezableArrayList<Integer>> listOfListOfIntegers) {
         this.listOfListOfIntegers = listOfListOfIntegers;
-    }
-    
-    @Constructing
-    public static @Nonnull CompositeCollectionsClass get(@Nonnull @NonNullableElements FreezableArrayList<FreezableArrayList<Integer>> listOfListOfIntegers) {
-        return new CompositeCollectionsClass(listOfListOfIntegers);
     }
     
 }

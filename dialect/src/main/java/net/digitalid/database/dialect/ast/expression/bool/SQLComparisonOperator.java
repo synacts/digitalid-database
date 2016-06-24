@@ -2,6 +2,7 @@ package net.digitalid.database.dialect.ast.expression.bool;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -57,20 +58,21 @@ public enum SQLComparisonOperator implements SQLBinaryOperator<SQLComparisonOper
     private static final @Nonnull Transcriber<SQLComparisonOperator> transcriber = new Transcriber<SQLComparisonOperator>() {
         
         @Override
-        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLComparisonOperator node, @Nonnull Site site)  throws InternalException {
+        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLComparisonOperator node, @Nonnull Site site)  throws InternalException {
             switch (node) {
-                case EQUAL: string.append("="); break;
-                case UNEQUAL: string.append("!="); break;
-                case GREATER_OR_EQUAL: string.append(">="); break;
-                case GREATER: string.append(">"); break;
-                case LESS_OR_EQUAL: string.append("<="); break;
-                case LESS: string.append("<"); break;
+                case EQUAL: return "=";
+                case UNEQUAL: return "!=";
+                case GREATER_OR_EQUAL: return ">=";
+                case GREATER: return ">";
+                case LESS_OR_EQUAL: return "<=";
+                case LESS: return "<";
                 default: throw UnexpectedValueException.with("node", node);
             }
         }
         
     };
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLComparisonOperator> getTranscriber() {
         return transcriber;

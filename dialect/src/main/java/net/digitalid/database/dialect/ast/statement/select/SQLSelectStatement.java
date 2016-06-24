@@ -3,6 +3,7 @@ package net.digitalid.database.dialect.ast.statement.select;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.exceptions.InternalException;
@@ -44,6 +45,10 @@ public class SQLSelectStatement extends SQLUnorderedSelectStatement<SQLSelectSta
         this.limitsClause = limitsClause;
     }
     
+    /**
+     * Returns an SQL select statement to query the result columns from the given sources with an optionally given where clause, group-by clause, order clause, limits clause and compound operator.
+     */
+    @Pure
     public static @Nonnull SQLSelectStatement get(@Nonnull @NonNullableElements @Frozen @MinSize(1) ReadOnlyList<SQLResultColumn> resultColumns, @Nonnull @NonNullableElements @Frozen @MinSize(1) ReadOnlyList<? extends SQLSource<?>> sources, @Nullable SQLWhereClause whereClause, @Nullable SQLGroupByClause groupByClause, @Nullable SQLOrderByClause orderByClause, @Nullable SQLLimitsClause limitsClause, @Nullable SQLCompoundOperator compoundOperator) {
         return new SQLSelectStatement(resultColumns, sources, whereClause, groupByClause, orderByClause, limitsClause, compoundOperator);
     }
@@ -55,53 +60,46 @@ public class SQLSelectStatement extends SQLUnorderedSelectStatement<SQLSelectSta
      */
     private static final @Nonnull Transcriber<SQLSelectStatement> transcriber = new Transcriber<SQLSelectStatement>() {
         
+        @Pure
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLSelectStatement node, @Nonnull Site site, @Nonnull @NonCaptured StringBuilder string, boolean parameterizable) throws InternalException {
+        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLSelectStatement node, @Nonnull Site site) throws InternalException {
+            final @Nonnull StringBuilder string = new StringBuilder();
             string.append("SELECT ");
-            node.resultColumns.map((resultColumn) -> {
-                StringBuilder stringBuilder = new StringBuilder();
-                dialect.transcribe(site, stringBuilder, resultColumn, false);
-                return stringBuilder;
-            }).join();
+            string.append(node.resultColumns.map((resultColumn) -> dialect.transcribe(site, resultColumn)).join(", "));
             string.append(" ");
-            node.sources.map((source) -> {
-                StringBuilder stringBuilder = new StringBuilder();
-                dialect.transcribe(site, stringBuilder, source, false);
-                return stringBuilder;
-            }).join();
+            string.append(node.sources.map((source) -> dialect.transcribe(site, source)).join(", "));
             if (node.whereClause != null) {
-                string.append(" ");
-                dialect.transcribe(site, string, node.whereClause, parameterizable);
+                string.append(" ").append(dialect.transcribe(site, node.whereClause));
             }
             if (node.groupByClause != null) {
-                string.append(" ");
-                dialect.transcribe(site, string, node.groupByClause, parameterizable);
+                string.append(" ").append(dialect.transcribe(site, node.groupByClause));
             }
             if (node.compoundOperator != null) {
-                string.append(" ");
-                dialect.transcribe(site, string, node.compoundOperator, parameterizable);
+                string.append(" ").append(dialect.transcribe(site, node.compoundOperator));
             }
             if (node.orderByClause != null) {
-                string.append(" ");
-                dialect.transcribe(site, string, node.orderByClause, parameterizable);
+                string.append(" ").append(dialect.transcribe(site, node.orderByClause));
             }
             if (node.limitsClause != null) {
-                string.append(" ");
-                dialect.transcribe(site, string, node.limitsClause, parameterizable);
+                string.append(" ").append(dialect.transcribe(site, node.limitsClause));
             }
+            return string.toString();
         }
         
     };
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLSelectStatement> getTranscriber() {
         return transcriber;
     }
     
-    public String toPreparedStatement(@Nonnull SQLDialect dialect, @Nonnull Site site) throws InternalException {
-        final @Nonnull StringBuilder stringBuilder = new StringBuilder();
-        dialect.transcribe(site, stringBuilder, this, true);
-        return stringBuilder.toString();
+    /**
+     * Returns a prepared statement as string.
+     */
+    @Pure
+    public @Nonnull String toPreparedStatement(@Nonnull SQLDialect dialect, @Nonnull Site site) throws InternalException {
+        return dialect.transcribe(site, this);
     }
     
 }

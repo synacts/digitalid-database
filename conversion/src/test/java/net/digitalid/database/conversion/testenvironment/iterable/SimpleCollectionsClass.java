@@ -4,9 +4,9 @@ package net.digitalid.database.conversion.testenvironment.iterable;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.collections.list.FreezableArrayList;
-import net.digitalid.utility.conversion.annotations.Constructing;
 import net.digitalid.utility.conversion.annotations.GenericTypes;
-import net.digitalid.utility.conversion.converter.Convertible;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
 import net.digitalid.database.dialect.annotations.Embedd;
@@ -14,19 +14,16 @@ import net.digitalid.database.dialect.annotations.Embedd;
 /**
  *
  */
-public class SimpleCollectionsClass implements Convertible {
+@GenerateBuilder
+@GenerateConverter
+public class SimpleCollectionsClass  {
     
     @Embedd
     @GenericTypes(Integer.class)
     public final @Nonnull @NonNullableElements FreezableArrayList<Integer> listOfIntegers;
     
-    private SimpleCollectionsClass(@Nonnull @NonNullableElements FreezableArrayList<Integer> listOfIntegers) {
+    SimpleCollectionsClass(@Nonnull @NonNullableElements FreezableArrayList<Integer> listOfIntegers) {
         this.listOfIntegers = listOfIntegers;
-    }
-    
-    @Constructing
-    public static @Nonnull SimpleCollectionsClass get(@Nonnull @NonNullableElements FreezableArrayList<Integer> listOfIntegers) {
-        return new SimpleCollectionsClass(listOfIntegers);
     }
     
 }

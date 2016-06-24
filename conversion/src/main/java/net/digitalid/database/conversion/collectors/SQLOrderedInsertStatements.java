@@ -4,6 +4,7 @@ import java.util.Queue;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
@@ -31,10 +32,12 @@ public class SQLOrderedInsertStatements {
         }
     }
     
+    @Pure
     public @Nonnull ReadOnlyList<@Nonnull SQLInsertStatement> getInsertStatements() {
         return insertStatements;
     }
     
+    @Pure
     public @Nonnull Queue<@Nonnull Integer> getOrder() {
         return order;
     }

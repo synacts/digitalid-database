@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
+import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.exceptions.InternalException;
 
 import net.digitalid.database.core.interfaces.SQLValueCollector;
@@ -56,16 +57,13 @@ public class SQLBooleanLiteral extends SQLBooleanExpression implements SQLLitera
     private static final @Nonnull Transcriber<SQLBooleanLiteral> transcriber = new Transcriber<SQLBooleanLiteral>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBooleanLiteral node, @Nonnull Site site, @Nonnull @NonCaptured StringBuilder string, boolean parameterizable) throws InternalException {
-            if (parameterizable) {
-                string.append("?");
-            } else {
-                string.append(Boolean.toString(node.value).toUpperCase());
-            }
+        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBooleanLiteral node, @Nonnull Site site) throws InternalException {
+            return Boolean.toString(node.value).toUpperCase();
         }
         
     };
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLBooleanLiteral> getTranscriber() {
         return transcriber;
@@ -73,8 +71,9 @@ public class SQLBooleanLiteral extends SQLBooleanExpression implements SQLLitera
     
     /* -------------------------------------------------- SQLParameterizableNode -------------------------------------------------- */
     
+    @Pure
     @Override
-    public final void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
+    public final void storeValues(@Nonnull @NonCaptured @Modified SQLValueCollector collector) throws FailedSQLValueConversionException {
         collector.setBoolean(value);
     }
     

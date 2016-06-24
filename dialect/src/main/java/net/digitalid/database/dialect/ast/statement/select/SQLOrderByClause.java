@@ -2,9 +2,9 @@ package net.digitalid.database.dialect.ast.statement.select;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.string.iterable.IterableConverter;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.size.MinSize;
 
@@ -12,7 +12,6 @@ import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLNode;
 import net.digitalid.database.dialect.ast.Transcriber;
-import net.digitalid.database.dialect.ast.utility.SQLNodeConverter;
 
 /**
  * This SQL node represents the order clause of an SQL select statement.
@@ -38,6 +37,7 @@ public class SQLOrderByClause implements SQLNode<SQLOrderByClause> {
     /**
      * Returns a new order-by clause node with a given list of ordering terms.
      */
+    @Pure
     public static @Nonnull SQLOrderByClause get(@Nonnull @MinSize(1) @NonNullableElements ReadOnlyList<SQLOrderingTerm> orderingTerms) {
         return new SQLOrderByClause(orderingTerms);
     }
@@ -51,12 +51,15 @@ public class SQLOrderByClause implements SQLNode<SQLOrderByClause> {
         
         @Override
         protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLOrderByClause node, @Nonnull Site site)  throws InternalException {
+            final @Nonnull StringBuilder string = new StringBuilder();
             string.append("ORDER BY ");
-            string.append(IterableConverter.toString(node.orderingTerms, SQLNodeConverter.get(dialect, site)));
+            string.append(node.orderingTerms.map(orderingTerm -> dialect.transcribe(site, orderingTerm)).join());
+            return string.toString();
         }
         
     };
     
+    @Pure
     @Override 
     public @Nonnull Transcriber<SQLOrderByClause> getTranscriber() {
         return transcriber;

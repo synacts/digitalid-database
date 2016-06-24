@@ -59,12 +59,12 @@ public enum SQLBinaryNumberOperator implements SQLBinaryOperator {
         @Override
         protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBinaryNumberOperator node, @Nonnull Site site)  throws InternalException {
             switch (node) {
-                case ADDITION: string.append("+"); break;
-                case SUBTRACTION: string.append("-"); break;
-                case MULTIPLICATION: string.append("*"); break;
-                case DIVISION: string.append("/"); break;
-                case INTEGER_DIVISION: string.append("DIV"); break;
-                case MODULO: string.append("%"); break;
+                case ADDITION: return "+";
+                case SUBTRACTION: return "-";
+                case MULTIPLICATION: return "*";
+                case DIVISION: return "/";
+                case INTEGER_DIVISION: return "DIV";
+                case MODULO: return "%";
                 default: throw UnexpectedValueException.with("node", node);
             }
         }

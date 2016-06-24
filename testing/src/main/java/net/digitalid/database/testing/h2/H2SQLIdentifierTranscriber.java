@@ -2,8 +2,8 @@ package net.digitalid.database.testing.h2;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.reference.NonCapturable;
 
 import net.digitalid.database.core.table.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
@@ -19,9 +19,10 @@ public class H2SQLIdentifierTranscriber<T extends SQLIdentifier<T>> extends Tran
         super(type);
     }
     
+    @Pure
     @Override
-    protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull T node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
-        string.append(node.getValue().toUpperCase());
+    protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull T node, @Nonnull Site site) throws InternalException {
+        return node.getValue().toUpperCase();
     }
     
 }

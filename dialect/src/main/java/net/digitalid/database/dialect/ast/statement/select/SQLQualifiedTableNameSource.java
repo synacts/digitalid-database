@@ -3,6 +3,7 @@ package net.digitalid.database.dialect.ast.statement.select;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.exceptions.InternalException;
 
@@ -43,6 +44,7 @@ public class SQLQualifiedTableNameSource implements SQLSource<SQLQualifiedTableN
     /**
      * Returns a qualified table name source node with a given qualified table name and an optional alias.
      */
+    @Pure
     public static @Nonnull SQLQualifiedTableNameSource get(@Nonnull SQLQualifiedTableName qualifiedTableName, @Nullable String alias) {
         return new SQLQualifiedTableNameSource(qualifiedTableName, alias);
     }
@@ -56,20 +58,24 @@ public class SQLQualifiedTableNameSource implements SQLSource<SQLQualifiedTableN
     private static final @Nonnull Transcriber<SQLQualifiedTableNameSource> transcriber = new Transcriber<SQLQualifiedTableNameSource>() {
     
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLQualifiedTableNameSource node, @Nonnull Site site, @Nonnull @NonCaptured StringBuilder string, boolean parameterizable) throws InternalException {
-            dialect.transcribe(site, string, node.qualifiedTableName, parameterizable);
+        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLQualifiedTableNameSource node, @Nonnull Site site) throws InternalException {
+            final @Nonnull StringBuilder string = new StringBuilder();
+            string.append(dialect.transcribe(site, node.qualifiedTableName));
             if (node.alias != null) {
                 string.append(" AS ");
                 string.append(node.alias);
             }
+            return string.toString();
         }
     };
-            
+    
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLQualifiedTableNameSource> getTranscriber() {
         return transcriber;
     }
     
+    @Pure
     @Override 
     public void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         // intentionally empty

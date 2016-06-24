@@ -3,9 +3,11 @@ package net.digitalid.database.dialect.ast.statement.insert;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Impure;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
+import net.digitalid.utility.circumfixes.Brackets;
 import net.digitalid.utility.collections.list.FreezableArrayList;
-import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.elements.NullableElements;
 
@@ -22,13 +24,13 @@ import net.digitalid.database.exceptions.operation.FailedSQLValueConversionExcep
  */
 public class SQLValues implements SQLParameterizableNode<SQLValues>, SQLValuesOrStatement<SQLValues> {
    
-    public final @Nonnull @NullableElements FreezableArrayList<SQLExpression<?>> values;
+    public final @Nonnull FreezableArrayList<@Nonnull SQLExpression<?>> values;
     
     private SQLValues() {
-        this.values = FreezableArrayList.get();
+        this.values = FreezableArrayList.withNoElements();
     }
     
-    private SQLValues(@Nonnull FreezableArrayList<SQLExpression<?>> values) {
+    private SQLValues(@Nonnull FreezableArrayList<@Nonnull SQLExpression<?>> values) {
         this.values = values;
     }
     
@@ -36,18 +38,22 @@ public class SQLValues implements SQLParameterizableNode<SQLValues>, SQLValuesOr
         this(sqlValues.values.clone());
     }
     
-    public static @Nonnull @NullableElements SQLValues get() {
+    @Pure
+    public static @Nonnull SQLValues get() {
         return new SQLValues();
     }
     
-    public static @Nonnull @NullableElements SQLValues get(@Nonnull FreezableArrayList<SQLExpression<?>> values) {
+    @Pure
+    public static @Nonnull SQLValues get(@Nonnull FreezableArrayList<SQLExpression<?>> values) {
         return new SQLValues(values);
     }
     
+    @Pure
     public static SQLValues clone(SQLValues c) {
         return new SQLValues(c);
     }
     
+    @Pure
     @Override
     public void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         for (@Nullable SQLExpression sqlExpression : values) {
@@ -56,39 +62,17 @@ public class SQLValues implements SQLParameterizableNode<SQLValues>, SQLValuesOr
         }
     }
     
+    @Impure
     public void prependValue(@Nullable SQLExpression value) {
         values.add(0, value);
     }
     
+    @Impure
     public void addValue(@Nullable SQLExpression value) {
         values.add(value);
     }
     
     /* -------------------------------------------------- SQL Node -------------------------------------------------- */
-    
-    private static class SQLExpressionConverter implements NonNullableElementConverter<SQLExpression<?>> {
-         
-        private final @Nonnull SQLDialect dialect;
-        private final @Nonnull Site site;
-        
-        SQLExpressionConverter(@Nonnull SQLDialect dialect, @Nonnull Site site) {
-            this.dialect = dialect;
-            this.site = site;
-        }
-        
-        // TODO: the ElementConverter should also use the string builder instead of creating a new string everytime.
-        @Override
-        public @Nonnull String toString(@Nonnull SQLExpression<?> element) {
-            StringBuilder string = new StringBuilder();
-            try {
-                dialect.transcribe(site, string, element, true);
-            } catch (InternalException e) {
-                e.printStackTrace();
-            }
-            return string.toString();
-        }
-        
-    }
     
     /**
      * The transcriber that stores a string representation of this SQL node in the string builder.
@@ -97,23 +81,20 @@ public class SQLValues implements SQLParameterizableNode<SQLValues>, SQLValuesOr
         
         @Override
         protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLValues node, @Nonnull Site site)  throws InternalException {
+            final @Nonnull StringBuilder string = new StringBuilder();
             if (node.values.size() > 0) {
                 string.append("VALUES ");
-                string.append(IterableConverter.toString(node.values, new SQLExpressionConverter(dialect, site), Brackets.ROUND, ", "));
+                string.append(node.values.map(value -> dialect.transcribe(site, value)).join(Brackets.ROUND, ", "));
             }
+            return string.toString();
         }
         
     };
  
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLValues> getTranscriber() {
         return transcriber;
     }
     
-    @Nonnull
-    @Override
-    public <T> T castTo(@Nonnull Class<T> targetClass) throws InvalidClassCastException {
-        Require.that(targetClass.isInstance(this)).orThrow("This object can only be casted to SQLValues");
-        return (T) this;
-    }
 }

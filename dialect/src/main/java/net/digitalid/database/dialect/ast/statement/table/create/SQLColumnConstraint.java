@@ -4,7 +4,7 @@ import java.lang.annotation.Annotation;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.annotations.ownership.NonCaptured;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.exceptions.InternalException;
@@ -24,12 +24,20 @@ import net.digitalid.database.dialect.ast.SQLParameterizableNode;
 import net.digitalid.database.dialect.ast.Transcriber;
 
 /**
- * Description.
+ * This SQL node represents an SQL column constraint.
  */
 public abstract class SQLColumnConstraint implements SQLParameterizableNode<SQLColumnConstraint> {
     
-    public abstract void getConstraintDeclaration(@Nonnull SQLDialect dialect, @Nonnull SQLColumnConstraint node, @Nonnull Site site, @Nonnull @NonCaptured StringBuilder string) throws InternalException;
+    /**
+     * Returns the constraint declaration for the specific column constraint.
+     */
+    @Pure
+    public abstract @Nonnull String getConstraintDeclaration(@Nonnull SQLDialect dialect, @Nonnull SQLColumnConstraint node, @Nonnull Site site) throws InternalException;
     
+    /**
+     * Returns a list of column constrains derived from a list of annotations.
+     */
+    @Pure
     public static @Nonnull ReadOnlyList<@Nonnull SQLColumnConstraint> of(@Nonnull ImmutableList<@Nonnull Annotation> annotations, @Nonnull String columnName) {
         final @Nonnull FreezableArrayList<@Nonnull SQLColumnConstraint> columnConstraints = FreezableArrayList.withNoElements();
         for (@Nonnull Annotation annotation : annotations) {
@@ -62,14 +70,16 @@ public abstract class SQLColumnConstraint implements SQLParameterizableNode<SQLC
     private static final @Nonnull Transcriber<SQLColumnConstraint> transcriber = new Transcriber<SQLColumnConstraint>() {
         
         @Override
-        protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLColumnConstraint node, @Nonnull Site site, @Nonnull @NonCaptured StringBuilder string, boolean parameterizable) throws InternalException {
-            node.getConstraintDeclaration(dialect, node, site, string);
+        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLColumnConstraint node, @Nonnull Site site) throws InternalException {
+            return node.getConstraintDeclaration(dialect, node, site);
         }
         
     };
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLColumnConstraint> getTranscriber() {
         return transcriber;
     }
+    
 }

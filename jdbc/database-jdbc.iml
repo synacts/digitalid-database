@@ -11,6 +11,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="database-core" />
     <orderEntry type="module" module-name="database-exceptions" />
+    <orderEntry type="module" module-name="database-annotations" />
     <orderEntry type="module" module-name="digitalid-utility-collections" />
     <orderEntry type="module" module-name="utility-generator" />
     <orderEntry type="module" module-name="utility-processor" />
@@ -34,8 +35,5 @@
     <orderEntry type="module" module-name="utility-circumfixes" />
     <orderEntry type="module" module-name="digitalid-utility-freezable" />
     <orderEntry type="module" module-name="digitalid-utility-time" />
-    <orderEntry type="library" name="Maven: com.google.j2objc:j2objc-annotations:0.9.8" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
   </component>
 </module>

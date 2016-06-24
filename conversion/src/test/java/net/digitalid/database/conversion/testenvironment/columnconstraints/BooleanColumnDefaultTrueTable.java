@@ -2,15 +2,20 @@ package net.digitalid.database.conversion.testenvironment.columnconstraints;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.annotations.Constructing;
-import net.digitalid.utility.conversion.converter.Convertible;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+
 
 import net.digitalid.database.dialect.annotations.Default;
 
 /**
  *
  */
-public class BooleanColumnDefaultTrueTable implements Convertible {
+@GenerateBuilder
+@GenerateConverter
+public class BooleanColumnDefaultTrueTable  {
     
     @Default("TRUE")
     public final @Nonnull Boolean value;
@@ -19,6 +24,7 @@ public class BooleanColumnDefaultTrueTable implements Convertible {
         this.value = value;
     }
     
+    @Pure
     @Constructing
     public static @Nonnull BooleanColumnDefaultTrueTable get(@Nonnull Boolean value) {
         return new BooleanColumnDefaultTrueTable(value);

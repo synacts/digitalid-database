@@ -2,6 +2,7 @@ package net.digitalid.database.dialect.ast.expression.bool;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.exceptions.InternalException;
 
 import net.digitalid.database.core.interfaces.SQLValueCollector;
@@ -67,7 +68,7 @@ public final class SQLNumberComparisonBooleanExpression extends SQLBooleanExpres
         
         @Override
         protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLNumberComparisonBooleanExpression node, @Nonnull Site site)  throws InternalException {
-            SQLBinaryExpressionTranscriber.transcribeNode(node, dialect, site, string);
+            return SQLBinaryExpressionTranscriber.transcribeNode(node, dialect, site);
         }
         
     };
