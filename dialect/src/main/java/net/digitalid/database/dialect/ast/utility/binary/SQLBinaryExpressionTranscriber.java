@@ -22,13 +22,13 @@ public final class SQLBinaryExpressionTranscriber {
         final @Nonnull StringBuilder string = new StringBuilder();
         string.append("(");
         final @Nonnull SQLExpression leftNode = sqlBinaryExpression.getLeftExpression();
-        dialect.transcribe(site, leftNode);
+        string.append(dialect.transcribe(site, leftNode));
         string.append(") ");
         final @Nonnull SQLBinaryOperator sqlBinaryOperator = sqlBinaryExpression.getOperator();
-        dialect.transcribe(site, sqlBinaryOperator);
+        string.append(dialect.transcribe(site, sqlBinaryOperator));
         string.append(" (");
         final @Nonnull SQLExpression rightNode = sqlBinaryExpression.getRightExpression();
-        dialect.transcribe(site, rightNode);
+        string.append(dialect.transcribe(site, rightNode));
         string.append(")");
         return string.toString();
     }

@@ -6,6 +6,8 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 
+import net.digitalid.database.dialect.annotations.Embedd;
+
 
 /**
  *
@@ -14,8 +16,10 @@ import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 @GenerateConverter
 public class EmbeddedConvertibles  {
     
+    @Embedd
     public final @Nonnull Convertible1 convertible1;
     
+    @Embedd
     public final @Nonnull Convertible2 convertible2;
     
     EmbeddedConvertibles(@Nonnull Convertible1 convertible1, @Nonnull Convertible2 convertible2) {

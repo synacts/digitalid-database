@@ -1,7 +1,5 @@
 package net.digitalid.database.dialect.ast.statement.table.create;
 
-import java.lang.annotation.Annotation;
-
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
@@ -9,6 +7,7 @@ import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
+import net.digitalid.utility.conversion.converter.CustomAnnotation;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.immutable.ImmutableList;
@@ -34,13 +33,13 @@ public abstract class SQLColumnDefinition implements SQLNode<SQLColumnDefinition
      * Transforms a list of annotations into a list of column definitions.
      */
     @Pure
-    public static @Nonnull @Frozen ReadOnlyList<@Nonnull SQLColumnDefinition> of(@Nonnull ImmutableList<Annotation> annotations) {
+    public static @Nonnull @Frozen ReadOnlyList<@Nonnull SQLColumnDefinition> of(@Nonnull ImmutableList<CustomAnnotation> annotations) {
         final @Nonnull FreezableArrayList<@Nonnull SQLColumnDefinition> columnConstraints = FreezableArrayList.withNoElements();
-        for (@Nonnull Annotation annotation : annotations) {
-            if (annotation.annotationType().equals(Nonnull.class)) {
+        for (@Nonnull CustomAnnotation annotation : annotations) {
+            if (annotation.getAnnotationType().equals(Nonnull.class)) {
                 columnConstraints.add(new SQLNotNullConstraint());
-            } else if (annotation.annotationType().equals(Default.class)) {
-                columnConstraints.add(new SQLDefaultValueConstraint((Default) annotation));
+            } else if (annotation.getAnnotationType().equals(Default.class)) {
+                columnConstraints.add(new SQLDefaultValueConstraint(annotation));
             }
         }
         return columnConstraints.freeze();

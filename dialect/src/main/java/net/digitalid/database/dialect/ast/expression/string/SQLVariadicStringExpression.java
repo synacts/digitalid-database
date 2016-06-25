@@ -87,7 +87,7 @@ public class SQLVariadicStringExpression extends SQLStringExpression implements 
     private static final @Nonnull Transcriber<SQLVariadicStringExpression> transcriber = new Transcriber<SQLVariadicStringExpression>() {
         
         @Override
-        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLVariadicStringExpression node, @Nonnull Site site)  throws InternalException {
+        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLVariadicStringExpression node, @Nonnull Site site)  throws InternalException {
             final @Nonnull StringBuilder string = new StringBuilder();
             string.append(dialect.transcribe(site, node.operator));
             string.append(node.expressions.map(expression -> dialect.transcribe(site, expression)).join(Brackets.ROUND));

@@ -9,6 +9,7 @@ import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.collections.map.FreezableHashMap;
 import net.digitalid.utility.collections.map.ReadOnlyMap;
+import net.digitalid.utility.conversion.converter.CustomAnnotation;
 import net.digitalid.utility.conversion.converter.CustomField;
 import net.digitalid.utility.conversion.converter.Declaration;
 import net.digitalid.utility.conversion.converter.types.CustomType;
@@ -101,16 +102,17 @@ public class SQLSelectDeclaration implements Declaration {
                 dependentTables.put(tableName + "_" + field.getName(), dependentTable);
             } // else: if is referenced, a new table will be created that links back to the current table.
         } else if (field.getCustomType().isObjectType()) {
-            final CustomType.@Nonnull CustomObjectType customObjectType = (CustomType.@Nonnull CustomObjectType) field.getCustomType();
+            final CustomType.@Nonnull TupleType tupleType = (CustomType.@Nonnull TupleType) field.getCustomType();
             if (field.isAnnotatedWith(Embedd.class)) {
-                customObjectType.getConverter().declare(this);
+                // TODO: Think about whether we could improve the design of tuple converters
+                ((CustomType.CustomConverterType) tupleType).getConverter().declare(this);
             } else {
                 if (field.isAnnotatedWith(References.class)) {
-                    final @Nonnull References references = field.getAnnotation(References.class);
-                    columnNamesMainTable.add(SQLQualifiedColumnName.get(references.columnName(), tableName));
-                    final @Nonnull SQLSelectDeclaration referencedTable = SQLSelectDeclaration.get(references.foreignTable(), site);
-                    customObjectType.getConverter().declare(referencedTable);
-                    referencedTables.put(references.foreignTable(), referencedTable);
+                    final @Nonnull CustomAnnotation references = field.getAnnotation(References.class);
+                    columnNamesMainTable.add(SQLQualifiedColumnName.get(field.getName(), tableName));
+                    final @Nonnull SQLSelectDeclaration referencedTable = SQLSelectDeclaration.get(references.get("foreignTable", String.class), site);
+                    ((CustomType.CustomConverterType) tupleType).getConverter().declare(referencedTable);
+                    referencedTables.put(references.get("foreignTable", String.class), referencedTable);
                 } else {
                     throw ConformityViolationException.with("Expected @" + Embedd.class.getSimpleName() + " or @" + References.class.getSimpleName() + " annotation on non-primitive field type");
                 }

@@ -81,10 +81,10 @@ public class SQLUnaryBooleanExpression extends SQLBooleanExpression implements S
     private static final @Nonnull Transcriber<SQLUnaryBooleanExpression> transcriber = new Transcriber<SQLUnaryBooleanExpression>() {
         
         @Override
-        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLUnaryBooleanExpression node, @Nonnull Site site)  throws InternalException {
+        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLUnaryBooleanExpression node, @Nonnull Site site)  throws InternalException {
             final @Nonnull StringBuilder string = new StringBuilder();
-            dialect.transcribe(site, node.operator);
-            Brackets.inRound(dialect.transcribe(site, node.expression));
+            string.append(dialect.transcribe(site, node.operator));
+            string.append(Brackets.inRound(dialect.transcribe(site, node.expression)));
             return string.toString();
         }
         

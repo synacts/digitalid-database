@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.conversion.converter.CustomAnnotation;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
 
 import net.digitalid.database.core.interfaces.SQLValueCollector;
@@ -24,8 +25,8 @@ public class SQLCheckNonNegativeConstraint extends SQLCheckConstraint {
     
     private final @Nonnull SQLExpression checkConstraint;
     
-    SQLCheckNonNegativeConstraint(@Nonnull Annotation annotation, @Nonnull String columnName) {
-        Require.that(annotation instanceof NonNegative).orThrow("The annotation @NonNegative is present.");
+    SQLCheckNonNegativeConstraint(@Nonnull CustomAnnotation annotation, @Nonnull String columnName) {
+        Require.that(annotation.getAnnotationType().isAssignableFrom(NonNegative.class)).orThrow("The annotation @NonNegative is present.");
         
         checkConstraint = SQLNumberComparisonBooleanExpression.get(SQLComparisonOperator.GREATER_OR_EQUAL, SQLNumberReference.get(columnName), SQLNumberLiteral.get(0L));
     }

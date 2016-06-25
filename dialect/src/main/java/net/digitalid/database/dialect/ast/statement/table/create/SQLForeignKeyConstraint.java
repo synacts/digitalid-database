@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
+import net.digitalid.utility.conversion.converter.CustomAnnotation;
 import net.digitalid.utility.exceptions.InternalException;
 
 import net.digitalid.database.core.interfaces.SQLValueCollector;
@@ -19,9 +20,9 @@ import net.digitalid.database.exceptions.operation.FailedSQLValueConversionExcep
  */
 public class SQLForeignKeyConstraint extends SQLColumnConstraint {
     
-    private final @Nonnull References references;
+    private final @Nonnull CustomAnnotation references;
     
-    SQLForeignKeyConstraint(@Nonnull References references) {
+    SQLForeignKeyConstraint(@Nonnull CustomAnnotation references) {
         this.references = references;
     }
     
@@ -31,13 +32,13 @@ public class SQLForeignKeyConstraint extends SQLColumnConstraint {
         final @Nonnull StringBuilder string = new StringBuilder();
         //string.append("FOREIGN KEY REFERENCES ");
         string.append("REFERENCES ");
-        string.append(references.foreignTable());
+        string.append(references.get("foreignTable", String.class));
         string.append(" (");
-        string.append(references.columnName());
+        string.append(references.get("columnName", String.class));
         string.append(") ON DELETE ");
-        string.append(references.onDelete().value);
+        string.append(references.get("onDelete", References.Action.class).value);
         string.append(" ON UPDATE ");
-        string.append(references.onUpdate().value);
+        string.append(references.get("onUpdate", References.Action.class).value);
         return string.toString();
     }
     

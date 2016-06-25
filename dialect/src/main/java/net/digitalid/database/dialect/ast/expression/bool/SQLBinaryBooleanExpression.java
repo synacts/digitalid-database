@@ -97,7 +97,7 @@ public class SQLBinaryBooleanExpression extends SQLBooleanExpression implements 
     private static final @Nonnull Transcriber<SQLBinaryBooleanExpression> transcriber = new Transcriber<SQLBinaryBooleanExpression>() {
         
         @Override
-        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBinaryBooleanExpression node, @Nonnull Site site)  throws InternalException {
+        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBinaryBooleanExpression node, @Nonnull Site site)  throws InternalException {
             return SQLBinaryExpressionTranscriber.transcribeNode(node, dialect, site);
         }
         

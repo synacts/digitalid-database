@@ -67,7 +67,7 @@ public final class SQLNumberComparisonBooleanExpression extends SQLBooleanExpres
     private static final @Nonnull Transcriber<SQLNumberComparisonBooleanExpression> transcriber = new Transcriber<SQLNumberComparisonBooleanExpression>() {
         
         @Override
-        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLNumberComparisonBooleanExpression node, @Nonnull Site site)  throws InternalException {
+        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLNumberComparisonBooleanExpression node, @Nonnull Site site)  throws InternalException {
             return SQLBinaryExpressionTranscriber.transcribeNode(node, dialect, site);
         }
         

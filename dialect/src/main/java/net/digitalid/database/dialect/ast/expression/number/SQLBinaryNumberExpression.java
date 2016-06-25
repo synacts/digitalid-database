@@ -97,7 +97,7 @@ public class SQLBinaryNumberExpression extends SQLNumberExpression implements SQ
     private static final @Nonnull Transcriber<SQLBinaryNumberExpression> transcriber = new Transcriber<SQLBinaryNumberExpression>() {
         
         @Override
-        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBinaryNumberExpression node, @Nonnull Site site)  throws InternalException {
+        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBinaryNumberExpression node, @Nonnull Site site)  throws InternalException {
             return SQLBinaryExpressionTranscriber.transcribeNode(node, dialect, site);
         }
         

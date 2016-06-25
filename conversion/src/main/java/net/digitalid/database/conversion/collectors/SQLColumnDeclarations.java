@@ -9,6 +9,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.collections.map.FreezableHashMap;
+import net.digitalid.utility.conversion.converter.CustomAnnotation;
 import net.digitalid.utility.conversion.converter.CustomField;
 import net.digitalid.utility.conversion.converter.Declaration;
 import net.digitalid.utility.conversion.converter.types.CustomType;
@@ -74,17 +75,17 @@ public class SQLColumnDeclarations implements Declaration {
     @Override
     public void setField(@Nonnull CustomField field) {
         if (field.getCustomType().isObjectType()) {
-            final CustomType.@Nonnull CustomObjectType customObjectType = (CustomType.@Nonnull CustomObjectType) field.getCustomType();
+            final CustomType.@Nonnull TupleType tupleType = (CustomType.@Nonnull TupleType) field.getCustomType();
             if (field.isAnnotatedWith(Embedd.class)) {
-                customObjectType.getConverter().declare(this);
+                ((CustomType.CustomConverterType) tupleType).getConverter().declare(this);
             } else if (field.isAnnotatedWith(References.class)) {
-                final @Nonnull References references = field.getAnnotation(References.class);
-                final @Nonnull SQLColumnName<?> columnName = SQLColumnName.get(references.columnName());
+                final @Nonnull CustomAnnotation references = field.getAnnotation(References.class);
+                final @Nonnull SQLColumnName<?> columnName = SQLColumnName.get(field.getName());
                 // TODO: prevent naming conflicts.
-                columnDeclarationList.add(SQLColumnDeclaration.of(columnName, references.columnType(), null, null));
-                final @Nonnull SQLColumnDeclarations referencedTableColumnDeclarations = SQLColumnDeclarations.get(references.foreignTable());
-                customObjectType.getConverter().declare(referencedTableColumnDeclarations);
-                referencedTablesColumnDeclarations.put(references.foreignTable(), referencedTableColumnDeclarations);
+                columnDeclarationList.add(SQLColumnDeclaration.of(columnName, references.get("columnType", SQLType.class), SQLColumnDefinition.of(field.getAnnotations()), SQLColumnConstraint.of(field.getAnnotations(), field.getName())));
+                final @Nonnull SQLColumnDeclarations referencedTableColumnDeclarations = SQLColumnDeclarations.get(references.get("foreignTable", String.class));
+                ((CustomType.CustomConverterType) tupleType).getConverter().declare(referencedTableColumnDeclarations);
+                referencedTablesColumnDeclarations.put(references.get("foreignTable", String.class), referencedTableColumnDeclarations);
             } else {
                 throw ConformityViolationException.with("Expected @" + Embedd.class.getSimpleName() + " or @" + References.class.getSimpleName() + " annotation on non-primitive field type");
             }
@@ -105,7 +106,12 @@ public class SQLColumnDeclarations implements Declaration {
     @Pure
     private @Nonnull SQLColumnDeclaration fromField(@Nonnull CustomField field) {
         final @Nonnull SQLColumnName<?> columnName = SQLColumnName.get(field.getName());
-        final @Nonnull SQLType type = SQLType.of(field.getCustomType());
+        final @Nonnull SQLType type;
+        if (field.getCustomType().isCompositeType()) {
+            type = SQLType.of(((CustomType.CompositeType) field.getCustomType()).getCompositeType());
+        } else {
+            type = SQLType.of(field.getCustomType());
+        }
         final @Nonnull ReadOnlyList<SQLColumnDefinition> columnDefinitions = SQLColumnDefinition.of(field.getAnnotations());
         final @Nonnull ReadOnlyList<SQLColumnConstraint> columnConstraints = SQLColumnConstraint.of(field.getAnnotations(), field.getName());
         final @Nonnull SQLColumnDeclaration columnDeclaration = SQLColumnDeclaration.of(columnName, type, columnDefinitions, columnConstraints);

@@ -64,7 +64,7 @@ public class SQLCreateTableStatement implements SQLNode<SQLCreateTableStatement>
             string.append(node.qualifiedTableName.getValue());
             string.append(" ");
             if (node.columnDeclarations.size() > 0) {
-                node.columnDeclarations.map(column -> dialect.transcribe(site, column)).join(Brackets.ROUND);
+                string.append(node.columnDeclarations.map(column -> dialect.transcribe(site, column)).join(Brackets.ROUND));
             }
             return string.toString();
         }

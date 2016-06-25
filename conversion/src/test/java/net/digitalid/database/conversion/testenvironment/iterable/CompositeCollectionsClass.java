@@ -21,11 +21,9 @@ import net.digitalid.database.dialect.annotations.Embedd;
 public class CompositeCollectionsClass  {
     
     @Embedd
-    @GenericTypes(Integer.class)
-    private static class ListOfIntegers extends FreezableArrayList<Integer> {}
+    static class ListOfIntegers extends FreezableArrayList<Integer> {}
     
     @Embedd
-    @GenericTypes(ListOfIntegers.class)
     public final @Nonnull @NonNullableElements FreezableArrayList<FreezableArrayList<Integer>> listOfListOfIntegers;
     
     CompositeCollectionsClass(@Nonnull @NonNullableElements FreezableArrayList<FreezableArrayList<Integer>> listOfListOfIntegers) {

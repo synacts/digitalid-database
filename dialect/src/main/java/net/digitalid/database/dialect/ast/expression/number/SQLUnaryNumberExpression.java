@@ -81,7 +81,7 @@ public class SQLUnaryNumberExpression extends SQLNumberExpression implements SQL
     private static final @Nonnull Transcriber<SQLUnaryNumberExpression> transcriber = new Transcriber<SQLUnaryNumberExpression>() {
         
         @Override
-        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLUnaryNumberExpression node, @Nonnull Site site)  throws InternalException {
+        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLUnaryNumberExpression node, @Nonnull Site site)  throws InternalException {
             final @Nonnull StringBuilder string = new StringBuilder();
             string.append(dialect.transcribe(site, node.operator));
             string.append(Brackets.inRound(dialect.transcribe(site, node.expression)));

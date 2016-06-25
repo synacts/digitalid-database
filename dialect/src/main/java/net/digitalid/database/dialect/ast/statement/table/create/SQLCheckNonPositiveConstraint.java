@@ -1,12 +1,11 @@
 package net.digitalid.database.dialect.ast.statement.table.create;
 
-import java.lang.annotation.Annotation;
-
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.conversion.converter.CustomAnnotation;
 import net.digitalid.utility.validation.annotations.math.NonPositive;
 
 import net.digitalid.database.core.interfaces.SQLValueCollector;
@@ -40,8 +39,8 @@ public class SQLCheckNonPositiveConstraint extends SQLCheckConstraint {
     /**
      * Creates an SQL check non-positive constraint instance for the {@link NonPositive @NonPositive} annotation and a given column name.
      */
-    SQLCheckNonPositiveConstraint(@Nonnull Annotation annotation, @Nonnull String columnName) {
-        Require.that(annotation instanceof NonPositive).orThrow("The annotation @NonPositive is present.");
+    SQLCheckNonPositiveConstraint(@Nonnull CustomAnnotation annotation, @Nonnull String columnName) {
+        Require.that(annotation.getAnnotationType().isAssignableFrom(NonPositive.class)).orThrow("The annotation @NonPositive is present.");
         
         checkConstraint = SQLNumberComparisonBooleanExpression.get(SQLComparisonOperator.LESS_OR_EQUAL, SQLNumberReference.get(columnName), SQLNumberLiteral.get(0L));
     }

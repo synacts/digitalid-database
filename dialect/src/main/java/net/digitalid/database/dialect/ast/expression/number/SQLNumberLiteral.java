@@ -56,7 +56,7 @@ public final class SQLNumberLiteral extends SQLNumberExpression<SQLNumberLiteral
     private static final @Nonnull Transcriber<SQLNumberLiteral> transcriber = new Transcriber<SQLNumberLiteral>() {
         
         @Override
-        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLNumberLiteral node, @Nonnull Site site)  throws InternalException {
+        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLNumberLiteral node, @Nonnull Site site)  throws InternalException {
             return Long.toString(node.value);
         }
         

@@ -9,6 +9,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.conversion.converter.CustomAnnotation;
 import net.digitalid.utility.validation.annotations.math.modulo.MultipleOf;
 
 import net.digitalid.database.core.interfaces.SQLValueCollector;
@@ -39,11 +40,10 @@ public class SQLCheckMultipleOfConstraint extends SQLCheckConstraint {
     /**
      * Creates a new multiple-of constraint instance.
      */
-    SQLCheckMultipleOfConstraint(@Nonnull Annotation annotation, @Nonnull String columnName) {
-        Require.that(annotation instanceof MultipleOf).orThrow("The annotation @MultipleOf is present.");
+    SQLCheckMultipleOfConstraint(@Nonnull CustomAnnotation annotation, @Nonnull String columnName) {
+        Require.that(annotation.getAnnotationType().isAssignableFrom(MultipleOf.class)).orThrow("The annotation @MultipleOf is present.");
         
-        @Nullable MultipleOf multipleOf = (MultipleOf) annotation; 
-        this.multipleOfValue = multipleOf.value();
+        this.multipleOfValue = annotation.get("value", long.class);
         checkConstraint = SQLNumberComparisonBooleanExpression.get(SQLComparisonOperator.EQUAL,
                 SQLBinaryNumberExpression.get(SQLBinaryNumberOperator.MODULO, SQLNumberReference.get(columnName), SQLNumberLiteral.get(multipleOfValue)), SQLNumberLiteral.get(0L));
     }

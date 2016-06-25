@@ -66,7 +66,7 @@ public class SQLStringLiteral extends SQLStringExpression implements SQLLiteral 
     private static final @Nonnull Transcriber<SQLStringLiteral> transcriber = new Transcriber<SQLStringLiteral>() {
         
         @Override
-        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLStringLiteral node, @Nonnull Site site)  throws InternalException {
+        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLStringLiteral node, @Nonnull Site site)  throws InternalException {
             return node.value;
         }
         

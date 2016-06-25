@@ -10,6 +10,7 @@ import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.conversion.exceptions.FailedValueRecoveryException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.logging.Level;
+import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.logging.logger.Logger;
 import net.digitalid.utility.validation.annotations.type.Stateless;
@@ -65,6 +66,8 @@ public final class SQL {
         }
         final @Nonnull SQLCreateTableStatement createTableStatement = columnDeclarations.getCreateTableStatement(site);
         final @Nonnull String createTableStatementString = SQLDialect.getDialect().transcribe(site, createTableStatement);
+        // TODO: change to DEBUGGING
+        Log.information("Create Statement: " + createTableStatementString);
         Database.getInstance().execute(createTableStatementString);
         final @Nonnull Table newTable = Table.get(createTableStatement);
     
@@ -73,8 +76,6 @@ public final class SQL {
             final @Nonnull SQLColumnDeclarations dependentColumnDeclarations = dependentTables.getValue();
             final @Nonnull SQLCreateTableStatement dependentCreateTableStatement = dependentColumnDeclarations.getCreateTableStatement(site);
             final @Nonnull String statement = SQLDialect.getDialect().transcribe(site, dependentCreateTableStatement);
-            // TODO: change to DEBUGGING
-            Logger.log(Level.INFORMATION, "Create Statement: " + statement, null);
             Database.getInstance().execute(statement);
         }
         Database.commit();
