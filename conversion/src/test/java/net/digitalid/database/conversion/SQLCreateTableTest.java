@@ -1,38 +1,29 @@
 package net.digitalid.database.conversion;
 
-import org.junit.Assert;
-import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.database.conversion.testenvironment.columnconstraints.BooleanColumnDefaultTrueTable;
 import net.digitalid.database.conversion.testenvironment.columnconstraints.BooleanColumnDefaultTrueTableConverter;
-import net.digitalid.database.conversion.testenvironment.columnconstraints.ConstraintIntegerColumnTable;
 import net.digitalid.database.conversion.testenvironment.columnconstraints.ConstraintIntegerColumnTableConverter;
-import net.digitalid.database.conversion.testenvironment.embedded.EmbeddedConvertibles;
 import net.digitalid.database.conversion.testenvironment.embedded.EmbeddedConvertiblesConverter;
-import net.digitalid.database.conversion.testenvironment.empty.EmptyClass;
 import net.digitalid.database.conversion.testenvironment.empty.EmptyClassConverter;
-import net.digitalid.database.conversion.testenvironment.inherited.SubClass;
 import net.digitalid.database.conversion.testenvironment.inherited.SubClassConverter;
-import net.digitalid.database.conversion.testenvironment.iterable.ReferencedCollectionClass;
-import net.digitalid.database.conversion.testenvironment.iterable.SimpleCollectionsClass;
+import net.digitalid.database.conversion.testenvironment.iterable.ReferencedCollectionClassConverter;
 import net.digitalid.database.conversion.testenvironment.iterable.SimpleCollectionsClassConverter;
-import net.digitalid.database.conversion.testenvironment.property.PropertyTable;
-import net.digitalid.database.conversion.testenvironment.property.PropertyTableConverter;
 import net.digitalid.database.conversion.testenvironment.referenced.Entity;
 import net.digitalid.database.conversion.testenvironment.referenced.EntityConverter;
-import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColumnTable;
 import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColumnTableConverter;
-import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTable;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
-import net.digitalid.database.core.table.Site;
+import net.digitalid.database.core.Site;
 import net.digitalid.database.dialect.annotations.References;
 import net.digitalid.database.dialect.table.Table;
 import net.digitalid.database.testing.SQLTestBase;
 import net.digitalid.database.testing.TestHost;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  */
@@ -167,42 +158,46 @@ public class SQLCreateTableTest extends SQLTestBase {
         assertTableReferences(tableName, site.toString(), "referencedentity", "referenced_table_1", "id", UpdateAction.RESTRICT, DeleteAction.CASCADE);
     }
     
-//    @Test
-//    public void shouldCreateTableWithSimpleCollectionClass() throws Exception {
-//        try {
-//            final @Nonnull String collectionTableName = "collection_table_1";
-//            final @Nonnull Table collectionTable = SQL.create(collectionTableName, site, SimpleCollectionsClassConverter.INSTANCE);
-//    
-//            Assert.assertEquals(site.toString() + "." + collectionTableName, collectionTable.getName(site));
-//            Map<String, String[]> expectedResult = new HashMap<>();
-//            expectedResult.put("listofintegers", new String[]{"integer(10)"});
-//            expectedResult.put("_listofintegers_index", new String[]{"integer(10)"});
-//            assertTableHasColumns(collectionTableName, site.toString(), expectedResult);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//    
-//    @Test
-//    public void shouldCreateTableWithReferencedCollectionClass() throws Exception {
-//        final @Nonnull String collectionTableName = "collection_table_2";
-//        final @Nonnull Table collectionTable = SQL.create(collectionTableName, site, ReferencedCollectionClass.class);
-//    
-//        Assert.assertEquals(site.toString() + "." + collectionTableName, collectionTable.getName(site));
-//        {
-//            Map<String, String[]> expectedResult = new HashMap<>();
-//            expectedResult.put("additionalfield", new String[]{"integer(10)"});
-//            assertTableHasColumns(collectionTableName, site.toString(), expectedResult);
-//        }
-//        {
-//            assertTableExists("listofintegers", site.toString());
-//    
-//            Map<String, String[]> expectedResult = new HashMap<>();
-//            expectedResult.put("_collection_table_2_additionalfield", new String[]{"integer(10)"});
-//            expectedResult.put("listofintegers", new String[]{"integer(10)"});
-//            expectedResult.put("_listofintegers_index", new String[]{"integer(10)"});
-//            assertTableHasColumns("listofintegers", site.toString(), expectedResult);
-//        }
-//    }
-//    
+    @Test
+    public void shouldCreateTableWithSimpleCollectionClass() throws Exception {
+        try {
+            final @Nonnull String collectionTableName = "collection_table_1";
+            final @Nonnull Table collectionTable = SQL.create(collectionTableName, site, SimpleCollectionsClassConverter.INSTANCE);
+    
+            Assert.assertEquals(site.toString() + "." + collectionTableName, collectionTable.getName(site));
+            Map<String, String[]> expectedResult = new HashMap<>();
+            expectedResult.put("listofintegers", new String[]{"integer(10)"});
+            expectedResult.put("_listofintegers_index", new String[]{"integer(10)"});
+            assertTableHasColumns(collectionTableName, site.toString(), expectedResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @Test
+    public void shouldCreateTableWithReferencedCollectionClass() throws Exception {
+        try {
+            final @Nonnull String collectionTableName = "collection_table_2";
+            final @Nonnull Table collectionTable = SQL.create(collectionTableName, site, ReferencedCollectionClassConverter.INSTANCE);
+    
+            Assert.assertEquals(site.toString() + "." + collectionTableName, collectionTable.getName(site));
+            {
+                Map<String, String[]> expectedResult = new HashMap<>();
+                expectedResult.put("additionalfield", new String[]{"integer(10)"});
+                assertTableHasColumns(collectionTableName, site.toString(), expectedResult);
+            }
+            {
+                assertTableExists("collection_table_2_listofintegers", site.toString());
+        
+                Map<String, String[]> expectedResult = new HashMap<>();
+                expectedResult.put("additionalfield", new String[]{"integer(10)"});
+                expectedResult.put("listofintegers", new String[]{"integer(10)"});
+                expectedResult.put("_listofintegers_index", new String[]{"integer(10)"});
+                assertTableHasColumns("collection_table_2_listofintegers", site.toString(), expectedResult);
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    
 }

@@ -8,7 +8,7 @@ import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.immutable.ImmutableList;
 
-import net.digitalid.database.core.table.Site;
+import net.digitalid.database.core.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLNode;
 import net.digitalid.database.dialect.ast.Transcriber;
@@ -46,11 +46,11 @@ public class SQLColumnDeclaration implements SQLNode<SQLColumnDeclaration> {
     /**
      * Creates a new SQL column declaration with the given column name, sql type, column definitions and column constraints.
      */
-    private SQLColumnDeclaration(@Nonnull SQLColumnName columnName, @Nonnull SQLType type, @Nullable ReadOnlyList<@Nonnull SQLColumnDefinition> columnDefinitions, @Nullable ReadOnlyList<@Nonnull SQLColumnConstraint> columnConstraints) {
+    private SQLColumnDeclaration(@Nonnull SQLColumnName columnName, @Nonnull SQLType type, @Nullable ImmutableList<@Nonnull SQLColumnDefinition> columnDefinitions, @Nullable ImmutableList<@Nonnull SQLColumnConstraint> columnConstraints) {
         this.columnName = columnName;
         this.type = type;
-        this.columnDefinitions = ImmutableList.with(columnDefinitions);
-        this.columnConstraints = ImmutableList.with(columnConstraints);
+        this.columnDefinitions = columnDefinitions;
+        this.columnConstraints = columnConstraints;
     }
     
     /**
@@ -58,6 +58,14 @@ public class SQLColumnDeclaration implements SQLNode<SQLColumnDeclaration> {
      */
     @Pure
     public static @Nonnull SQLColumnDeclaration of(@Nonnull SQLColumnName columnName, @Nonnull SQLType type, @Nullable ReadOnlyList<@Nonnull SQLColumnDefinition> columnDefinitions, @Nullable ReadOnlyList<@Nonnull SQLColumnConstraint> columnConstraints) {
+        return new SQLColumnDeclaration(columnName, type, columnDefinitions == null ? null : ImmutableList.with(columnDefinitions), columnConstraints == null ? null : ImmutableList.with(columnConstraints));
+    }
+    
+    /**
+     * Returns an SQL column declaration with the given column name, sql type, column definitions and column constraints.
+     */
+    @Pure
+    public static @Nonnull SQLColumnDeclaration of(@Nonnull SQLColumnName columnName, @Nonnull SQLType type, @Nullable ImmutableList<@Nonnull SQLColumnDefinition> columnDefinitions, @Nullable ImmutableList<@Nonnull SQLColumnConstraint> columnConstraints) {
         return new SQLColumnDeclaration(columnName, type, columnDefinitions, columnConstraints);
     }
     

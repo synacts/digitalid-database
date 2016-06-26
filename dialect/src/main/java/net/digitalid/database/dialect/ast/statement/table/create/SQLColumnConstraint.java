@@ -14,7 +14,7 @@ import net.digitalid.utility.validation.annotations.math.NonPositive;
 import net.digitalid.utility.validation.annotations.math.Positive;
 import net.digitalid.utility.validation.annotations.math.modulo.MultipleOf;
 
-import net.digitalid.database.core.table.Site;
+import net.digitalid.database.core.Site;
 import net.digitalid.database.dialect.annotations.PrimaryKey;
 import net.digitalid.database.dialect.annotations.References;
 import net.digitalid.database.dialect.annotations.Unique;

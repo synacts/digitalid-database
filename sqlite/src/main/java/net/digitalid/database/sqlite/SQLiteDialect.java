@@ -12,7 +12,7 @@ import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLNode;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.bool.SQLBooleanLiteral;
-import net.digitalid.database.core.table.Site;
+import net.digitalid.database.core.Site;
 
 /**
  *

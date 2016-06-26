@@ -1,8 +1,10 @@
 package net.digitalid.database.conversion.collectors;
 
+import java.util.Collections;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
@@ -14,9 +16,12 @@ import net.digitalid.utility.conversion.converter.CustomField;
 import net.digitalid.utility.conversion.converter.Declaration;
 import net.digitalid.utility.conversion.converter.types.CustomType;
 import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.functional.iterables.FiniteIterable;
+import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.immutable.ImmutableMap;
 
 import net.digitalid.database.conversion.exceptions.ConformityViolationException;
-import net.digitalid.database.core.table.Site;
+import net.digitalid.database.core.Site;
 import net.digitalid.database.dialect.annotations.Embedd;
 import net.digitalid.database.dialect.annotations.References;
 import net.digitalid.database.dialect.ast.identifier.SQLColumnName;
@@ -25,6 +30,8 @@ import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnConstr
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDeclaration;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDefinition;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLCreateTableStatement;
+import net.digitalid.database.dialect.ast.statement.table.create.SQLForeignKeyConstraint;
+import net.digitalid.database.dialect.ast.statement.table.create.SQLPrimaryKeyConstraint;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLType;
 
 /**
@@ -55,8 +62,17 @@ public class SQLColumnDeclarations implements Declaration {
     
     private final @Nonnull Map<@Nonnull String, SQLColumnDeclarations> dependentTablesColumnDeclarations = FreezableHashMap.withDefaultCapacity();
     
-    @Pure
+    private boolean addedForeignKeyColumnsToMainTable = false;
+    
+    @Impure
     public @Nonnull Map<@Nonnull String, @Nonnull SQLColumnDeclarations> getDependentTablesColumnDeclarations() {
+        if (!addedForeignKeyColumnsToMainTable) {
+            for (Map.Entry<@Nonnull String, @Nonnull SQLColumnDeclarations> entry : dependentTablesColumnDeclarations.entrySet()) {
+                final @Nonnull FreezableArrayList<SQLColumnDeclaration> foreignKeyColumns = getForeignKeyColumnsToMainTable();
+                entry.getValue().columnDeclarationList.addAll(foreignKeyColumns);
+            }
+            addedForeignKeyColumnsToMainTable = true;
+        }
         return dependentTablesColumnDeclarations;
     }
     
@@ -92,14 +108,69 @@ public class SQLColumnDeclarations implements Declaration {
         } else if (field.getCustomType().isCompositeType()) {
             if (field.isAnnotatedWith(Embedd.class)) {
                 final @Nonnull SQLColumnDeclaration columnDeclaration = fromField(field);
+                final @Nonnull SQLColumnDeclaration indexColumnDeclaration = SQLColumnDeclaration.of(SQLColumnName.get("_" + field.getName() + "_index"), SQLType.INTEGER32, (ImmutableList<SQLColumnDefinition>) null, (ImmutableList<SQLColumnConstraint>) null);
+                columnDeclarationList.add(indexColumnDeclaration);
                 columnDeclarationList.add(columnDeclaration);
             } else {
                 final @Nonnull SQLColumnDeclarations dependentTableColumnDeclarations = SQLColumnDeclarations.get(tableName + "_" + field.getName());
+                // Remove the @References annotation and add the @Embedd annotation
+                final @Nonnull FreezableArrayList<CustomAnnotation> allOtherAnnotations = FreezableArrayList.withCapacity(field.getAnnotations().size() - 1);
+                for (@Nonnull CustomAnnotation annotation : field.getAnnotations()) {
+                    if (!annotation.getAnnotationType().isAssignableFrom(References.class)) {
+                        allOtherAnnotations.add(annotation);
+                    }
+                }
+                allOtherAnnotations.add(CustomAnnotation.with(Embedd.class, ImmutableMap.with(Collections.emptyMap())));
+                dependentTableColumnDeclarations.setField(CustomField.with(field.getCustomType(), field.getName(), ImmutableList.with(FiniteIterable.of(allOtherAnnotations))));
+                // add columns that reference the primary key(s) of the main table
                 dependentTablesColumnDeclarations.put(tableName + "_" + field.getName(), dependentTableColumnDeclarations);
             }
         } else {
             final @Nonnull SQLColumnDeclaration columnDeclaration = fromField(field);
             columnDeclarationList.add(columnDeclaration);
+        }
+    }
+    
+    @Pure
+    private boolean hasPrimaryKeyConstraint(@Nonnull SQLColumnDeclaration columnDeclaration) {
+        for (@Nonnull SQLColumnConstraint columnConstraint : columnDeclaration.columnConstraints) {
+            if (columnConstraint instanceof SQLPrimaryKeyConstraint) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    @Pure
+    private @Nonnull SQLColumnDeclaration getReferenceTo(@Nonnull SQLColumnDeclaration columnDeclaration) {
+        final @Nonnull FreezableArrayList<SQLColumnConstraint> columnConstraintsForReferencingColumn = FreezableArrayList.withNoElements();
+        for (@Nonnull SQLColumnConstraint columnConstraint : columnDeclaration.columnConstraints) {
+            if (!(columnConstraint instanceof SQLPrimaryKeyConstraint)) {
+                columnConstraintsForReferencingColumn.add(columnConstraint);
+            }
+        }
+        final @Nonnull FreezableHashMap<@Nonnull String, @Nullable Object> annotationEntries = FreezableHashMap.withDefaultCapacity();
+        annotationEntries.put("columnName", columnDeclaration.columnName.getValue());
+        annotationEntries.put("foreignTable", tableName);
+        annotationEntries.put("columnType", columnDeclaration.type);
+        columnConstraintsForReferencingColumn.add(SQLForeignKeyConstraint.with(CustomAnnotation.with(References.class, ImmutableMap.with(annotationEntries))));
+        return SQLColumnDeclaration.of(columnDeclaration.columnName, columnDeclaration.type, columnDeclaration.columnDefinitions, ImmutableList.with(FiniteIterable.of(columnConstraintsForReferencingColumn)));
+    }
+    
+    @Pure
+    private @Nonnull FreezableArrayList<SQLColumnDeclaration> getForeignKeyColumnsToMainTable() {
+        final @Nonnull FreezableArrayList<SQLColumnDeclaration> primaryKeyColumns = FreezableArrayList.withNoElements();
+        final @Nonnull FreezableArrayList<SQLColumnDeclaration> allColumns = FreezableArrayList.withNoElements();
+        for (@Nonnull SQLColumnDeclaration columnDeclaration : columnDeclarationList) {
+            if (hasPrimaryKeyConstraint(columnDeclaration)) {
+                primaryKeyColumns.add(getReferenceTo(columnDeclaration));
+            }
+            allColumns.add(getReferenceTo(columnDeclaration));
+        }
+        if (!primaryKeyColumns.isEmpty()) {
+            return primaryKeyColumns;
+        } else {
+            return allColumns;
         }
     }
     

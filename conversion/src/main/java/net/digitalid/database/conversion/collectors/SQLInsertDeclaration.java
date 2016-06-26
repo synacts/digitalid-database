@@ -14,7 +14,7 @@ import net.digitalid.utility.conversion.converter.Declaration;
 import net.digitalid.utility.conversion.converter.types.CustomType;
 
 import net.digitalid.database.conversion.exceptions.ConformityViolationException;
-import net.digitalid.database.core.table.Site;
+import net.digitalid.database.core.Site;
 import net.digitalid.database.dialect.annotations.Embedd;
 import net.digitalid.database.dialect.annotations.References;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;

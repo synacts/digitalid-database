@@ -9,7 +9,7 @@ import net.digitalid.utility.conversion.converter.CustomAnnotation;
 import net.digitalid.utility.exceptions.InternalException;
 
 import net.digitalid.database.core.interfaces.SQLValueCollector;
-import net.digitalid.database.core.table.Site;
+import net.digitalid.database.core.Site;
 import net.digitalid.database.dialect.annotations.References;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
@@ -27,6 +27,11 @@ public class SQLForeignKeyConstraint extends SQLColumnConstraint {
     }
     
     @Pure
+    public static @Nonnull SQLForeignKeyConstraint with(@Nonnull CustomAnnotation references) {
+        return new SQLForeignKeyConstraint(references);
+    }
+    
+    @Pure
     @Override
     public @Nonnull String getConstraintDeclaration(@Nonnull SQLDialect dialect, @Nonnull SQLColumnConstraint node, @Nonnull Site site) throws InternalException {
         final @Nonnull StringBuilder string = new StringBuilder();
@@ -36,9 +41,21 @@ public class SQLForeignKeyConstraint extends SQLColumnConstraint {
         string.append(" (");
         string.append(references.get("columnName", String.class));
         string.append(") ON DELETE ");
-        string.append(references.get("onDelete", References.Action.class).value);
+        final @Nonnull String onDelete;
+        if (references.get("onDelete", References.Action.class) != null) {
+            onDelete = references.get("onDelete", References.Action.class).value;
+        } else {
+            onDelete = References.Action.RESTRICT.value;
+        }
+        string.append(onDelete);
         string.append(" ON UPDATE ");
-        string.append(references.get("onUpdate", References.Action.class).value);
+        final @Nonnull String onUpdate;
+        if (references.get("onUpdate", References.Action.class) != null) {
+            onUpdate = references.get("onUpdate", References.Action.class).value;
+        } else {
+            onUpdate = References.Action.RESTRICT.value;
+        }
+        string.append(onUpdate);
         return string.toString();
     }
     

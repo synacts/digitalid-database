@@ -27,7 +27,7 @@ import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColu
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTable;
 import net.digitalid.database.core.Database;
 import net.digitalid.database.core.interfaces.DatabaseInstance;
-import net.digitalid.database.core.table.Site;
+import net.digitalid.database.core.Site;
 import net.digitalid.database.dialect.table.Table;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.operation.FailedUpdateExecutionException;

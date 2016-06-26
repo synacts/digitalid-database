@@ -3,10 +3,11 @@ package net.digitalid.database.dialect.ast.identifier;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.MinSize;
 
-import net.digitalid.database.core.table.Site;
+import net.digitalid.database.core.Site;
 import net.digitalid.database.dialect.ast.Transcriber;
 
 /**
@@ -48,7 +49,7 @@ public class SQLQualifiedTableName implements SQLIdentifier<SQLQualifiedTableNam
     @Override
     public @Nonnull @MaxSize(63) String getValue() {
         @Nonnull String qualifiedTableName = site.toString() + "." + tableName;
-        assert qualifiedTableName.length() <= 63;
+        Require.that(qualifiedTableName.length() <= 63).orThrow("The qualified name $ is bigger than allowed", qualifiedTableName);
         return qualifiedTableName;
     }
     

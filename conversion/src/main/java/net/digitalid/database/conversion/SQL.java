@@ -23,7 +23,7 @@ import net.digitalid.database.core.Database;
 import net.digitalid.database.core.interfaces.SQLSelectionResult;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.core.interfaces.SQLValueCollector;
-import net.digitalid.database.core.table.Site;
+import net.digitalid.database.core.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.expression.bool.SQLBooleanExpression;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
@@ -62,7 +62,9 @@ public final class SQL {
         for (Map.Entry<@Nonnull String, @Nonnull SQLColumnDeclarations> referencedTables : referencedTablesColumnDeclarations.entrySet()) {
             final @Nonnull SQLColumnDeclarations referencedColumnDeclarations = referencedTables.getValue();
             final @Nonnull SQLCreateTableStatement referencedTableStatement = referencedColumnDeclarations.getCreateTableStatement(site);
-            Database.getInstance().execute(SQLDialect.getDialect().transcribe(site, referencedTableStatement));
+            final @Nonnull String createTableStatementString = SQLDialect.getDialect().transcribe(site, referencedTableStatement);
+            Log.information("Create Statement (referenced tables): " + createTableStatementString);
+            Database.getInstance().execute(createTableStatementString);
         }
         final @Nonnull SQLCreateTableStatement createTableStatement = columnDeclarations.getCreateTableStatement(site);
         final @Nonnull String createTableStatementString = SQLDialect.getDialect().transcribe(site, createTableStatement);
@@ -76,6 +78,7 @@ public final class SQL {
             final @Nonnull SQLColumnDeclarations dependentColumnDeclarations = dependentTables.getValue();
             final @Nonnull SQLCreateTableStatement dependentCreateTableStatement = dependentColumnDeclarations.getCreateTableStatement(site);
             final @Nonnull String statement = SQLDialect.getDialect().transcribe(site, dependentCreateTableStatement);
+            Log.information("Create Statement (dependent tables): " + statement);
             Database.getInstance().execute(statement);
         }
         Database.commit();
