@@ -17,8 +17,27 @@
     
     <dependencies>
         <dependency>
+            <groupId>net.digitalid.utility</groupId>
+            <artifactId>utility-conversion</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>net.digitalid.database</groupId>
             <artifactId>database-dialect</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.digitalid.database</groupId>
+            <artifactId>database-testing</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.digitalid.utility</groupId>
+            <artifactId>utility-property</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

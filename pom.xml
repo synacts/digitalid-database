@@ -28,40 +28,53 @@
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.version>1.8</maven.compiler.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <tests.skip>false</tests.skip> <!-- To re-enable tests, run 'mvn install -Dtests.skip=false'. -->
     </properties>
     
     <modules>
         <module>exceptions</module>
+        <module>annotations</module>
         <module>core</module>
         <module>jdbc</module>
-        <module>apple</module>
-        <module>android</module>
+<!--        <module>apple</module>
+        <module>android</module>-->
         <module>dialect</module>
-        <module>mysql</module>
+<!--        <module>mysql</module>
         <module>sqlite</module>
-        <module>postgres</module>
+        <module>postgres</module>-->
+        <module>testing</module>
         <module>conversion</module>
     </modules>
     
     <dependencies>
         <dependency>
             <groupId>net.digitalid.utility</groupId>
-            <artifactId>utility</artifactId>
+            <artifactId>utility-collections</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>net.digitalid.utility</groupId>
+            <artifactId>utility-time</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <!-- Activate this dependency as soon as needed:
         <dependency>
             <groupId>com.google.j2objc</groupId>
             <artifactId>j2objc-annotations</artifactId>
             <version>0.9.8</version>
         </dependency>
+        -->
+        <!-- Add this dependency wherever you have testcases:
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <groupId>net.digitalid.utility</groupId>
+            <artifactId>utility-testing</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        -->
     </dependencies>
     
     <repositories>
@@ -93,28 +106,54 @@
     <build>
         <plugins>
             
+            <!-- If your IDE has difficulties in locating the generated sources:
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.10</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>target/generated-sources/annotations</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            -->
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
+                <version>3.5.1</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <fork>true</fork>
+                    <verbose>true</verbose>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <executable>${maven.compiler.executable}</executable>
+                    <compilerVersion>${maven.compiler.version}</compilerVersion>
+                    <compilerArguments>
+                        <bootclasspath>${compiler.bootclasspath.android}</bootclasspath>
+                    </compilerArguments>
+                    <!-- NetBeans seems to need the following line sometimes: -->
+                    <generatedSourcesDirectory>target/generated-sources/annotations</generatedSourcesDirectory>
                 </configuration>
             </plugin>
             
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.4</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                    <skipTests>${tests.skip}</skipTests>
+                </configuration>
             </plugin>
             
             <plugin>
@@ -128,7 +167,7 @@
                     <additionalparam>-Xdoclint:none</additionalparam>
                     <links>
                         <!-- TODO: Include all utility and database Javadocs here! -->
-                        <link>https://docs.digitalid.net/utility/logging/${project.version}/</link>
+                        <!--<link>https://docs.digitalid.net/utility/logging/${project.version}/</link>-->
                         <link>http://docs.oracle.com/javase/7/docs/api/</link>
                     </links>
                     <tagletArtifacts>
@@ -142,6 +181,22 @@
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
+                        <phase>none</phase> <!-- TODO: Remove this line again! -->
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>none</phase> <!-- TODO: Remove this line again! -->
                         <goals>
                             <goal>jar</goal>
                         </goals>
@@ -152,7 +207,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.5.201505241946</version>
+                <version>0.7.6.201602180812</version>
                 <configuration>
                     <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
                     <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
@@ -160,13 +215,14 @@
                 <executions>
                     <execution>
                         <id>jacoco-initialize</id>
+                        <phase>none</phase> <!-- TODO: Remove this line again! -->
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
                     <execution>
                         <id>jacoco-unit-test</id>
-                        <phase>test</phase>
+                        <phase>none</phase> <!-- TODO: Change back to 'test'! ('none' skips it.) -->
                         <goals>
                             <goal>report</goal>
                         </goals>

@@ -22,10 +22,10 @@ import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.validation.state.Validated;
 
 import net.digitalid.database.core.Database;
-import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.exceptions.operation.FailedOperationException;
-import net.digitalid.database.core.exceptions.operation.FailedUpdateExecutionException;
+import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.exceptions.operation.FailedOperationException;
+import net.digitalid.database.exceptions.operation.FailedUpdateExecutionException;
 import net.digitalid.database.core.interfaces.jdbc.JDBCDatabaseInstance;
 
 /**
@@ -90,7 +90,7 @@ public final class MySQLDatabaseInstance extends JDBCDatabaseInstance {
     private MySQLDatabaseInstance(@Nonnull @Validated String name, boolean reset) throws FailedUpdateExecutionException, IOException {
         super(new com.mysql.jdbc.Driver());
         
-        assert Configuration.isValidName(name) : "The name is valid for a database.";
+        Require.that(Configuration.isValidName(name)).orThrow("The name is valid for a database.");
         
         final @Nonnull File file = new File(Directory.getDataDirectory().getPath() + "/" + name + ".conf");
         if (file.exists()) {
@@ -328,7 +328,7 @@ public final class MySQLDatabaseInstance extends JDBCDatabaseInstance {
      */
     @Pure
     public @Nonnull String INDEX(@Nonnull String... columns) {
-        assert columns.length > 0 : "The columns are not empty.";
+        Require.that(columns.length > 0).orThrow("The columns are not empty.");
         
         final @Nonnull StringBuilder string = new StringBuilder(", INDEX(");
         for (final @Nonnull String column : columns) {
@@ -349,7 +349,7 @@ public final class MySQLDatabaseInstance extends JDBCDatabaseInstance {
      */
     @NonCommitting
     public void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) {
-        assert columns.length > 0 : "The columns are not empty.";
+        Require.that(columns.length > 0).orThrow("The columns are not empty.");
     }
     
 }

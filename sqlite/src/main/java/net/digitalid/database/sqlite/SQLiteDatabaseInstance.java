@@ -19,11 +19,11 @@ import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.validation.state.Validated;
 
 import net.digitalid.database.core.Database;
-import net.digitalid.database.core.annotations.Committing;
-import net.digitalid.database.core.annotations.NonCommitting;
-import net.digitalid.database.core.exceptions.operation.FailedConnectionException;
-import net.digitalid.database.core.exceptions.operation.FailedKeyGenerationException;
-import net.digitalid.database.core.exceptions.operation.FailedUpdateExecutionException;
+import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.exceptions.operation.FailedConnectionException;
+import net.digitalid.database.exceptions.operation.FailedKeyGenerationException;
+import net.digitalid.database.exceptions.operation.FailedUpdateExecutionException;
 import net.digitalid.database.core.interfaces.jdbc.JDBCDatabaseInstance;
 
 /**
@@ -78,7 +78,7 @@ public final class SQLiteDatabaseInstance extends JDBCDatabaseInstance {
     private SQLiteDatabaseInstance(@Nonnull @Validated String name, boolean reset) throws FailedConnectionException {
         super(new org.sqlite.JDBC());
         
-        assert Configuration.isValidName(name) : "The name is valid for a database.";
+        Require.that(Configuration.isValidName(name)).orThrow("The name is valid for a database.");
         
         this.name = name;
         if (reset) {
@@ -171,7 +171,7 @@ public final class SQLiteDatabaseInstance extends JDBCDatabaseInstance {
     @Locked
     @Override
     public void dropDatabase() {
-        assert Database.isLocked() : "The database is locked.";
+        Require.that(Database.isLocked()).orThrow("The database is locked.");
         
         new File(Directory.getDataDirectory().getPath() + File.separator + name + ".db").delete();
         new File(Directory.getDataDirectory().getPath() + File.separator + name + ".db-journal").delete();
@@ -291,7 +291,7 @@ public final class SQLiteDatabaseInstance extends JDBCDatabaseInstance {
     @Pure
     @Override
     public @Nonnull String INDEX(@Nonnull String... columns) {
-        assert columns.length > 0 : "The columns are not empty.";
+        Require.that(columns.length > 0).orThrow("The columns are not empty.");
         
         return "";
     }
@@ -301,7 +301,7 @@ public final class SQLiteDatabaseInstance extends JDBCDatabaseInstance {
     @Override
     @SuppressWarnings("StringEquality")
     public void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateExecutionException {
-        assert columns.length > 0 : "The columns are not empty.";
+        Require.that(columns.length > 0).orThrow("The columns are not empty.");
         
         final @Nonnull StringBuilder string = new StringBuilder("CREATE INDEX IF NOT EXISTS ").append(table).append("_index ON ").append(table).append(" (");
         for (final @Nonnull String column : columns) {
