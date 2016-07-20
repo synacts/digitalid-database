@@ -21,7 +21,7 @@ public interface Site extends RootInterface {
      * Returns the database name of this site.
      */
     @Pure
-    public @Nonnull @MaxSize(64) @CodeIdentifier @Unequal("general") String getDatabaseName();
+    public @Nonnull @CodeIdentifier @MaxSize(63) @Unequal("general") String getDatabaseName();
     
     /* -------------------------------------------------- Entity Reference -------------------------------------------------- */
         

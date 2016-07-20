@@ -39,7 +39,7 @@ public class SQLCreateTableStatement implements SQLNode<SQLCreateTableStatement>
      */
     private SQLCreateTableStatement(@Nonnull SQLQualifiedTableName qualifiedTableName, @Nonnull ReadOnlyList<@Nonnull SQLColumnDeclaration> columnDeclarations) {
         this.qualifiedTableName = qualifiedTableName;
-        this.columnDeclarations = ImmutableList.with(columnDeclarations);
+        this.columnDeclarations = ImmutableList.withElementsOf(columnDeclarations);
     }
     
     /**

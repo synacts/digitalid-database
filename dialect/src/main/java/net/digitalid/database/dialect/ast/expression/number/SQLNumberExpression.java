@@ -11,7 +11,7 @@ import net.digitalid.database.dialect.ast.expression.SQLExpression;
  * This class implements an expression that evaluates to a number.
  */
 @Immutable
-public abstract class SQLNumberExpression<T> implements SQLExpression<T> {
+public abstract class SQLNumberExpression<T extends SQLNumberExpression<T>> implements SQLExpression<T> {
     
     /* -------------------------------------------------- Unary Operations -------------------------------------------------- */
     
