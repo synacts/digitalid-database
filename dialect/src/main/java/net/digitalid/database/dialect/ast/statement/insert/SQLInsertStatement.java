@@ -45,7 +45,7 @@ public class SQLInsertStatement implements SQLNode<SQLInsertStatement> {
      */
     private SQLInsertStatement(@Nonnull SQLQualifiedTableName qualifiedTableName, @Nonnull @Frozen ReadOnlyList<@Nonnull ? extends SQLColumnName<?>> columnNames) {
         this.qualifiedTableName = qualifiedTableName;
-        this.columnNames = ImmutableList.with(columnNames);
+        this.columnNames = ImmutableList.withElementsOf(columnNames);
     }
     
     /**

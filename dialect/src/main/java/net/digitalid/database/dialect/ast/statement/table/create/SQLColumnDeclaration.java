@@ -58,7 +58,7 @@ public class SQLColumnDeclaration implements SQLNode<SQLColumnDeclaration> {
      */
     @Pure
     public static @Nonnull SQLColumnDeclaration of(@Nonnull SQLColumnName columnName, @Nonnull SQLType type, @Nullable ReadOnlyList<@Nonnull SQLColumnDefinition> columnDefinitions, @Nullable ReadOnlyList<@Nonnull SQLColumnConstraint> columnConstraints) {
-        return new SQLColumnDeclaration(columnName, type, columnDefinitions == null ? null : ImmutableList.with(columnDefinitions), columnConstraints == null ? null : ImmutableList.with(columnConstraints));
+        return new SQLColumnDeclaration(columnName, type, columnDefinitions == null ? null : ImmutableList.withElementsOf(columnDefinitions), columnConstraints == null ? null : ImmutableList.withElementsOf(columnConstraints));
     }
     
     /**

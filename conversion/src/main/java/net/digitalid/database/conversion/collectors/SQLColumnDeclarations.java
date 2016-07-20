@@ -120,8 +120,8 @@ public class SQLColumnDeclarations implements Declaration {
                         allOtherAnnotations.add(annotation);
                     }
                 }
-                allOtherAnnotations.add(CustomAnnotation.with(Embedd.class, ImmutableMap.with(Collections.emptyMap())));
-                dependentTableColumnDeclarations.setField(CustomField.with(field.getCustomType(), field.getName(), ImmutableList.with(FiniteIterable.of(allOtherAnnotations))));
+                allOtherAnnotations.add(CustomAnnotation.with(Embedd.class, ImmutableMap.withMappingsOf(Collections.emptyMap())));
+                dependentTableColumnDeclarations.setField(CustomField.with(field.getCustomType(), field.getName(), ImmutableList.withElementsOf(FiniteIterable.of(allOtherAnnotations))));
                 // add columns that reference the primary key(s) of the main table
                 dependentTablesColumnDeclarations.put(tableName + "_" + field.getName(), dependentTableColumnDeclarations);
             }
@@ -153,8 +153,8 @@ public class SQLColumnDeclarations implements Declaration {
         annotationEntries.put("columnName", columnDeclaration.columnName.getValue());
         annotationEntries.put("foreignTable", tableName);
         annotationEntries.put("columnType", columnDeclaration.type);
-        columnConstraintsForReferencingColumn.add(SQLForeignKeyConstraint.with(CustomAnnotation.with(References.class, ImmutableMap.with(annotationEntries))));
-        return SQLColumnDeclaration.of(columnDeclaration.columnName, columnDeclaration.type, columnDeclaration.columnDefinitions, ImmutableList.with(FiniteIterable.of(columnConstraintsForReferencingColumn)));
+        columnConstraintsForReferencingColumn.add(SQLForeignKeyConstraint.with(CustomAnnotation.with(References.class, ImmutableMap.withMappingsOf(annotationEntries))));
+        return SQLColumnDeclaration.of(columnDeclaration.columnName, columnDeclaration.type, columnDeclaration.columnDefinitions, ImmutableList.withElementsOf(FiniteIterable.of(columnConstraintsForReferencingColumn)));
     }
     
     @Pure
