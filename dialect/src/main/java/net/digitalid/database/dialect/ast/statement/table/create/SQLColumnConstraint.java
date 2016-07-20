@@ -15,9 +15,9 @@ import net.digitalid.utility.validation.annotations.math.Positive;
 import net.digitalid.utility.validation.annotations.math.modulo.MultipleOf;
 
 import net.digitalid.database.core.Site;
-import net.digitalid.database.dialect.annotations.PrimaryKey;
-import net.digitalid.database.dialect.annotations.References;
-import net.digitalid.database.dialect.annotations.Unique;
+import net.digitalid.database.annotations.metadata.PrimaryKey;
+import net.digitalid.database.annotations.metadata.References;
+import net.digitalid.database.annotations.metadata.Unique;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLParameterizableNode;
 import net.digitalid.database.dialect.ast.Transcriber;

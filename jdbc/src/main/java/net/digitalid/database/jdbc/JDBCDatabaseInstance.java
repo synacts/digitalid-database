@@ -14,12 +14,15 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.exceptions.UnexpectedFailureException;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.core.Table;
 import net.digitalid.database.core.interfaces.DatabaseInstance;
 import net.digitalid.database.core.interfaces.SQLSelectionResult;
 import net.digitalid.database.exceptions.operation.FailedCommitException;
@@ -197,8 +200,15 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
      * @return the prepared statement that is ready for execution.
      */
     @Pure
-    protected @Nonnull PreparedStatement prepare(@Nonnull String statement, boolean generatesKeys) throws FailedNonCommittingOperationException, InternalException {
+    protected @Nonnull PreparedStatement prepare(@Nonnull String statement, boolean generatesKeys, @Nullable FreezableArrayList<@Nonnull Table> tables) throws FailedNonCommittingOperationException, InternalException {
         try {
+            int numberOfValues = 0;
+            for (char c : statement.toCharArray()) {
+                if (c == '?') {
+                    numberOfValues++;
+                }
+            }
+            
             final @Nonnull PreparedStatement preparedStatement = getConnection().prepareStatement(statement, generatesKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS);
             return preparedStatement;
         } catch (@Nonnull SQLException exception) {
@@ -241,7 +251,8 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
     @Impure
     protected int executeUpdate(@Nonnull String statement) throws FailedNonCommittingOperationException, InternalException {
         try {
-            return prepare(statement, false).executeUpdate();
+            return getConnection().createStatement().executeUpdate(statement);
+            //prepare(statement, false, tables).executeUpdate();
         } catch (@Nonnull SQLException exception) {
             throw FailedUpdateExecutionException.get(exception);
         }
@@ -257,6 +268,26 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
             return result;
         } catch (@Nonnull SQLException exception) {
             throw FailedUpdateExecutionException.get(exception);
+        }
+    }
+    
+    @Impure
+    protected int executeBatch(@Nonnull JDBCValueCollector valueCollector) throws FailedNonCommittingOperationException, InternalException {
+        try {
+            int result = 0;
+            for (@Nonnull PreparedStatement preparedStatement : valueCollector.getPreparedStatements()) {
+                int[] updatedRows = preparedStatement.executeBatch();
+                for (int updatedRowCount : updatedRows) {
+                    result += updatedRowCount;
+                }
+                commit();
+            }
+            return result;
+        } catch (@Nonnull SQLException exception) {
+            throw FailedUpdateExecutionException.get(exception);
+        } catch (FailedCommitException exception) {
+            // TODO: exception
+            throw UnexpectedFailureException.with(exception);
         }
     }
     
@@ -289,9 +320,8 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
     @Impure
     @Override
     public @Nonnull SQLSelectionResult executeSelect(@Nonnull String selectStatement) throws FailedNonCommittingOperationException, InternalException {
-        final @Nonnull PreparedStatement preparedStatement = prepare(selectStatement, false);
         try {
-            final @Nonnull ResultSet resultSet = preparedStatement.executeQuery();
+            final @Nonnull ResultSet resultSet = getConnection().createStatement().executeQuery(selectStatement);
             return JDBCSelectionResult.get(resultSet);
         } catch (@Nonnull SQLException exception) {
             throw FailedQueryExecutionException.get(exception);
@@ -301,8 +331,8 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
     @Impure
     public @Nonnull SQLSelectionResult executeSelect(@Nonnull JDBCValueCollector valueCollector) throws FailedNonCommittingOperationException, InternalException {
         // TODO: Implement wrapper around ResultSet such that multiple result-sets can be retrieved. Alternatively, make sure that only one prepared statement exists.
-        final @Nonnull PreparedStatement preparedStatement = valueCollector.getPreparedStatements().getFirst();
         try {
+            final @Nonnull PreparedStatement preparedStatement = valueCollector.getPreparedStatements().getFirst();
             final @Nonnull ResultSet resultSet = preparedStatement.executeQuery();
             return JDBCSelectionResult.get(resultSet);
         } catch (@Nonnull SQLException exception) {
@@ -313,17 +343,17 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
     @Impure
     @Override
     public long executeAndReturnGeneratedKey(@Nonnull String insertStatement) throws FailedNonCommittingOperationException, InternalException {
-        final @Nonnull PreparedStatement preparedStatement = prepare(insertStatement, true);
         try {
-            preparedStatement.executeUpdate();
+            final @Nonnull Statement statement = getConnection().createStatement();
+            statement.executeUpdate(insertStatement);
+            try (@Nonnull ResultSet resultSet = statement.getGeneratedKeys()) {
+                if (resultSet.next()) { return resultSet.getLong(1); }
+                else { throw new SQLException("The prepared statement did not generate a key."); }
+            } catch (@Nonnull SQLException exception) {
+                throw FailedKeyGenerationException.get(exception);
+            }
         } catch (@Nonnull SQLException exception) {
             throw FailedUpdateExecutionException.get(exception);
-        }
-        try (@Nonnull ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
-            if (resultSet.next()) { return resultSet.getLong(1); }
-            else { throw new SQLException("The prepared statement did not generate a key."); }
-        } catch (@Nonnull SQLException exception) {
-            throw FailedKeyGenerationException.get(exception);
         }
     }
     

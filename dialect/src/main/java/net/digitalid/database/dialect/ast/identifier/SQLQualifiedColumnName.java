@@ -32,9 +32,16 @@ public class SQLQualifiedColumnName extends SQLColumnName<SQLQualifiedColumnName
     @Pure
     @Override
     public @Nonnull @MaxSize(63) String getValue() {
-        String qualifiedColumnName = (tableName ==null ? "" : tableName + ".") + columnName;
+        final @Nonnull String qualifiedColumnName = (tableName ==null ? "" : tableName + ".") + columnName;
         assert qualifiedColumnName.length() <= 63;
         return qualifiedColumnName;
+    }
+    
+    @Pure
+    public @Nonnull String getUnqualifiedValue() {
+        final @Nonnull String unqualifiedColumnName = columnName;
+        assert unqualifiedColumnName.length() <= 63;
+        return unqualifiedColumnName;
     }
     
 }

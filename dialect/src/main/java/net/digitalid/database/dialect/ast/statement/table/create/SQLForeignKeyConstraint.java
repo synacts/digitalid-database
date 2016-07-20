@@ -10,7 +10,7 @@ import net.digitalid.utility.exceptions.InternalException;
 
 import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.core.Site;
-import net.digitalid.database.dialect.annotations.References;
+import net.digitalid.database.annotations.metadata.References;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 
@@ -20,7 +20,7 @@ import net.digitalid.database.exceptions.operation.FailedSQLValueConversionExcep
  */
 public class SQLForeignKeyConstraint extends SQLColumnConstraint {
     
-    private final @Nonnull CustomAnnotation references;
+    public final @Nonnull CustomAnnotation references;
     
     SQLForeignKeyConstraint(@Nonnull CustomAnnotation references) {
         this.references = references;

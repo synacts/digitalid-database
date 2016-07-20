@@ -1,4 +1,4 @@
-package net.digitalid.database.dialect.table;
+package net.digitalid.database.core;
 
 import javax.annotation.Nonnull;
 
@@ -8,7 +8,7 @@ import net.digitalid.utility.conversion.converter.types.CustomType;
 /**
  *
  */
-public class PrimaryKey {
+public class SQLKey {
     
     /* -------------------------------------------------- Type -------------------------------------------------- */
     
@@ -34,15 +34,15 @@ public class PrimaryKey {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
-    private PrimaryKey(@Nonnull CustomType type, @Nonnull String columnName, int columnPosition) {
+    private SQLKey(@Nonnull CustomType type, @Nonnull String columnName, int columnPosition) {
         this.type = type;
         this.columnName = columnName;
         this.columnPosition = columnPosition;
     }
     
     @Pure
-    public static @Nonnull PrimaryKey with(@Nonnull CustomType type, @Nonnull String columnName, int columnPosition) {
-        return new PrimaryKey(type, columnName, columnPosition);
+    public static @Nonnull SQLKey with(@Nonnull CustomType type, @Nonnull String columnName, int columnPosition) {
+        return new SQLKey(type, columnName, columnPosition);
     }
     
 }

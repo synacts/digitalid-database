@@ -29,7 +29,7 @@ public class SQLColumnDeclaration implements SQLNode<SQLColumnDeclaration> {
     /**
      * The column type of the column declaration.
      */
-    public final @Nonnull SQLType type;
+    public final @Nonnull SQLTypeNode typeNode;
     
     /**
      * The column definitions of the column declaration.
@@ -46,9 +46,9 @@ public class SQLColumnDeclaration implements SQLNode<SQLColumnDeclaration> {
     /**
      * Creates a new SQL column declaration with the given column name, sql type, column definitions and column constraints.
      */
-    private SQLColumnDeclaration(@Nonnull SQLColumnName columnName, @Nonnull SQLType type, @Nullable ImmutableList<@Nonnull SQLColumnDefinition> columnDefinitions, @Nullable ImmutableList<@Nonnull SQLColumnConstraint> columnConstraints) {
+    protected SQLColumnDeclaration(@Nonnull SQLColumnName columnName, @Nonnull SQLTypeNode typeNode, @Nullable ImmutableList<@Nonnull SQLColumnDefinition> columnDefinitions, @Nullable ImmutableList<@Nonnull SQLColumnConstraint> columnConstraints) {
         this.columnName = columnName;
-        this.type = type;
+        this.typeNode = typeNode;
         this.columnDefinitions = columnDefinitions;
         this.columnConstraints = columnConstraints;
     }
@@ -57,7 +57,7 @@ public class SQLColumnDeclaration implements SQLNode<SQLColumnDeclaration> {
      * Returns an SQL column declaration with the given column name, sql type, column definitions and column constraints.
      */
     @Pure
-    public static @Nonnull SQLColumnDeclaration of(@Nonnull SQLColumnName columnName, @Nonnull SQLType type, @Nullable ReadOnlyList<@Nonnull SQLColumnDefinition> columnDefinitions, @Nullable ReadOnlyList<@Nonnull SQLColumnConstraint> columnConstraints) {
+    public static @Nonnull SQLColumnDeclaration of(@Nonnull SQLColumnName columnName, @Nonnull SQLTypeNode type, @Nullable ReadOnlyList<@Nonnull SQLColumnDefinition> columnDefinitions, @Nullable ReadOnlyList<@Nonnull SQLColumnConstraint> columnConstraints) {
         return new SQLColumnDeclaration(columnName, type, columnDefinitions == null ? null : ImmutableList.with(columnDefinitions), columnConstraints == null ? null : ImmutableList.with(columnConstraints));
     }
     
@@ -65,7 +65,7 @@ public class SQLColumnDeclaration implements SQLNode<SQLColumnDeclaration> {
      * Returns an SQL column declaration with the given column name, sql type, column definitions and column constraints.
      */
     @Pure
-    public static @Nonnull SQLColumnDeclaration of(@Nonnull SQLColumnName columnName, @Nonnull SQLType type, @Nullable ImmutableList<@Nonnull SQLColumnDefinition> columnDefinitions, @Nullable ImmutableList<@Nonnull SQLColumnConstraint> columnConstraints) {
+    public static @Nonnull SQLColumnDeclaration of(@Nonnull SQLColumnName columnName, @Nonnull SQLTypeNode type, @Nullable ImmutableList<@Nonnull SQLColumnDefinition> columnDefinitions, @Nullable ImmutableList<@Nonnull SQLColumnConstraint> columnConstraints) {
         return new SQLColumnDeclaration(columnName, type, columnDefinitions, columnConstraints);
     }
     
@@ -81,7 +81,7 @@ public class SQLColumnDeclaration implements SQLNode<SQLColumnDeclaration> {
             final @Nonnull StringBuilder string = new StringBuilder();
             string.append(dialect.transcribe(site, node.columnName));
             string.append(" ");
-            string.append(dialect.transcribe(site, node.type));
+            string.append(dialect.transcribe(site, node.typeNode));
             if (node.columnDefinitions != null) {
                 for (SQLColumnDefinition columnDefinition : node.columnDefinitions) {
                     string.append(" ").append(dialect.transcribe(site, columnDefinition));

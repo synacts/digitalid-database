@@ -7,8 +7,6 @@ import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.conversion.converter.CustomAnnotation;
 import net.digitalid.utility.exceptions.InternalException;
 
-import net.digitalid.database.dialect.annotations.Default;
-
 /**
  * Description.
  */

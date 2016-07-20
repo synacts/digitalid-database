@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.dialect.table.Table;
+import net.digitalid.database.dialect.table.TableImplementation;
 
 /**
  * This class models single-column foreign key references.
@@ -18,7 +18,7 @@ public class SQLReference {
     /**
      * Stores the database table whose column is referenced.
      */
-    private final @Nonnull Table table;
+    private final @Nonnull TableImplementation table;
     
     /**
      * Returns the database table whose column is referenced.
@@ -26,7 +26,7 @@ public class SQLReference {
      * @return the database table whose column is referenced.
      */
     @Pure
-    public final @Nonnull Table getTable() {
+    public final @Nonnull TableImplementation getTable() {
         return table;
     }
     
@@ -91,7 +91,7 @@ public class SQLReference {
      * @param updateOption the referential action triggered on update.
      */
 //    protected SQLReference(@Nonnull Table table, @Nonnull ColumnDeclaration column, @Nonnull SQLReferenceOption deleteOption, @Nonnull SQLReferenceOption updateOption) {
-    protected SQLReference(@Nonnull Table table, @Nonnull SQLReferenceOption deleteOption, @Nonnull SQLReferenceOption updateOption) {
+    protected SQLReference(@Nonnull TableImplementation table, @Nonnull SQLReferenceOption deleteOption, @Nonnull SQLReferenceOption updateOption) {
         this.table = table;
         this.deleteOption = deleteOption;
         this.updateOption = updateOption;
