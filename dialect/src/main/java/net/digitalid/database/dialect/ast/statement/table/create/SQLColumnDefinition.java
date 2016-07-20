@@ -13,7 +13,7 @@ import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.immutable.ImmutableList;
 
 import net.digitalid.database.core.Site;
-import net.digitalid.database.dialect.annotations.Default;
+import net.digitalid.database.annotations.metadata.Default;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLNode;
 import net.digitalid.database.dialect.ast.Transcriber;

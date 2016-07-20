@@ -1,4 +1,4 @@
-package net.digitalid.database.dialect.annotations;
+package net.digitalid.database.annotations.metadata;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

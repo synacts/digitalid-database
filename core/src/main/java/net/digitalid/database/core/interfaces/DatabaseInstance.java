@@ -1,15 +1,17 @@
 package net.digitalid.database.core.interfaces;
 
-import java.util.Queue;
-
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
-import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collections.list.FreezableArrayList;
+import net.digitalid.utility.collections.list.ReadOnlyList;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
+import net.digitalid.utility.tuples.Pair;
 
 import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.database.core.Table;
 import net.digitalid.database.exceptions.operation.FailedCommitException;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 
@@ -55,7 +57,7 @@ public interface DatabaseInstance extends AutoCloseable {
     public abstract void execute(@Nonnull SQLValueCollector valueCollector) throws InternalException, FailedNonCommittingOperationException;
     
     @Impure
-    public abstract @Nonnull SQLValueCollector getValueCollector(@Nonnull FiniteIterable<String> preparedStatements, @Nonnull Queue<Integer> orderOfExecution) throws FailedNonCommittingOperationException;
+    public abstract @Nonnull SQLValueCollector getValueCollector(@Nonnull FiniteIterable<@Nonnull Pair<@Nonnull String, @Nonnull Table>> preparedStatements, @Nonnull FreezableArrayList<@Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Integer, @Nonnull Integer>>> orderOfExecution, ReadOnlyList<@Nonnull Integer> columnCountForGroup) throws FailedNonCommittingOperationException;
     
     @Impure
     public @Nonnull SQLSelectionResult executeSelect(@Nonnull String selectStatement) throws FailedNonCommittingOperationException, InternalException;

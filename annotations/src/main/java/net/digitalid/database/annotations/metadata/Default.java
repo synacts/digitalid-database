@@ -1,14 +1,18 @@
-package net.digitalid.database.dialect.annotations;
+package net.digitalid.database.annotations.metadata;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javax.annotation.Nonnull;
+
 /**
- * TODO: Rename to either @Embed or @Embedded!
+ *
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.FIELD})
-public @interface Embedd {
+@Target(ElementType.FIELD)
+public @interface Default {
+    
+    @Nonnull String value();
 }

@@ -1,15 +1,18 @@
 package net.digitalid.database.testing.h2;
 
 import java.util.Properties;
-import java.util.Queue;
 
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collections.list.FreezableArrayList;
+import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
+import net.digitalid.utility.tuples.Pair;
 
+import net.digitalid.database.core.Table;
 import net.digitalid.database.core.interfaces.SQLSelectionResult;
 import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
@@ -47,7 +50,7 @@ public class H2JDBCDatabaseInstance extends JDBCDatabaseInstance {
     protected @Nonnull Properties getProperties() {
         final @Nonnull Properties properties = new Properties();
         properties.setProperty("user", "sa");
-        properties.setProperty("password", "");
+        properties.setProperty("password", "sa");
         return properties;
     }
     
@@ -72,13 +75,13 @@ public class H2JDBCDatabaseInstance extends JDBCDatabaseInstance {
     @Impure
     @Override
     public void execute(@Nonnull SQLValueCollector valueCollector) throws InternalException, FailedNonCommittingOperationException {
-        executeUpdate((JDBCValueCollector) valueCollector);
+        executeBatch((JDBCValueCollector) valueCollector);
     }
     
     @Pure
     @Override
-    public @Nonnull SQLValueCollector getValueCollector(@Nonnull FiniteIterable<String> preparedStatements, @Nonnull Queue<Integer> orderOfExecution) throws FailedNonCommittingOperationException {
-        return JDBCValueCollector.get(preparedStatements.map(preparedStatementString -> prepare(preparedStatementString, false)), orderOfExecution);
+    public @Nonnull SQLValueCollector getValueCollector(@Nonnull FiniteIterable<@Nonnull Pair<@Nonnull String, @Nonnull Table>> preparedStatements, @Nonnull FreezableArrayList<@Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Integer, @Nonnull Integer>>> orderOfExecution, ReadOnlyList<@Nonnull Integer> columnCountForGroup) throws FailedNonCommittingOperationException {
+        return JDBCValueCollector.get(preparedStatements.map(pair -> prepare(pair.get0(), false, FreezableArrayList.withElement(pair.get1()))), orderOfExecution, columnCountForGroup);
     }
     
     @Impure

@@ -1,4 +1,4 @@
-package net.digitalid.database.dialect.annotations;
+package net.digitalid.database.annotations.metadata;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,8 +9,6 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
-import net.digitalid.database.dialect.ast.statement.table.create.SQLType;
-
 /**
  *
  */
@@ -20,7 +18,8 @@ public @interface References {
     
     @Nonnull String foreignTable();
     
-    @Nonnull SQLType columnType();
+    // We would have SQLType here, but SQLType is in the dialect package, which cannot be referenced from here.
+    int columnType();
     
     @Nonnull @NonNullableElements String columnName();
     

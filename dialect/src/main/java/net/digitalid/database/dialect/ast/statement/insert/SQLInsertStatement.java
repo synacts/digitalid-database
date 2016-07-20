@@ -36,14 +36,14 @@ public class SQLInsertStatement implements SQLNode<SQLInsertStatement> {
     /**
      * A list of column names.
      */
-    private final @Nonnull ImmutableList<@Nonnull ? extends SQLColumnName<?>> columnNames;
+    private final @Nonnull ImmutableList<@Nonnull SQLColumnName<?>> columnNames;
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Creates a new SQL insert statement node.
      */
-    private SQLInsertStatement(@Nonnull SQLQualifiedTableName qualifiedTableName, @Nonnull @Frozen ReadOnlyList<@Nonnull ? extends SQLColumnName<?>> columnNames) {
+    private SQLInsertStatement(@Nonnull SQLQualifiedTableName qualifiedTableName, @Nonnull @Frozen ReadOnlyList<@Nonnull SQLColumnName<?>> columnNames) {
         this.qualifiedTableName = qualifiedTableName;
         this.columnNames = ImmutableList.withElementsOf(columnNames);
     }
@@ -52,7 +52,7 @@ public class SQLInsertStatement implements SQLNode<SQLInsertStatement> {
      * Returns an SQL insert statement node.
      */
     @Pure
-    public static @Nonnull SQLInsertStatement get(@Nonnull SQLQualifiedTableName qualifiedTableName, @Nonnull @NonNullableElements @Frozen ReadOnlyList<? extends SQLColumnName<?>> columnNames) {
+    public static @Nonnull SQLInsertStatement get(@Nonnull SQLQualifiedTableName qualifiedTableName, @Nonnull @NonNullableElements @Frozen ReadOnlyList<SQLColumnName<?>> columnNames) {
         return new SQLInsertStatement(qualifiedTableName, columnNames);
     }
     

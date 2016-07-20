@@ -1,4 +1,4 @@
-package net.digitalid.database.dialect.ast.statement.table.create;
+package net.digitalid.database.core;
 
 import java.sql.Types;
 
@@ -7,20 +7,11 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.circumfixes.Quotes;
 import net.digitalid.utility.conversion.converter.types.CustomType;
-import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.exceptions.UnexpectedValueException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
-
-import net.digitalid.database.core.Site;
-import net.digitalid.database.dialect.ast.SQLDialect;
-import net.digitalid.database.dialect.ast.SQLNode;
-import net.digitalid.database.dialect.ast.Transcriber;
 
 /**
- * This class enumerates the supported SQL types.
+ *
  */
-@Immutable
-public enum SQLType implements SQLNode {
+public enum SQLType {
     
     /* -------------------------------------------------- Constants -------------------------------------------------- */
     
@@ -156,40 +147,17 @@ public enum SQLType implements SQLNode {
         throw new UnsupportedOperationException("SQL type can only be a primitive type, but Digital ID custom type was " + Quotes.inSingle(type));
     }
     
-    /* -------------------------------------------------- SQLNode -------------------------------------------------- */
-    
     /**
-     * The transcriber that stores a string representation of this SQL node in the string builder.
+     * Returns an SQL type for a given Digital ID custom type, or throws an exception
+     * if the type cannot be mapped.
      */
-    private static final @Nonnull Transcriber<SQLType> transcriber = new Transcriber<SQLType>() {
-        
-        @Override
-        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLType type, @Nonnull Site site) throws InternalException {
-            switch (type) {
-                case EMPTY: return "BOOLEAN";
-                case BOOLEAN: return "BOOLEAN";
-                case INTEGER08: return "TINYINT";
-                case INTEGER16: return "SMALLINT";
-                case INTEGER32: return "INT";
-                case INTEGER64: return "BIGINT";
-                case INTEGER: return "BLOB";
-                case DECIMAL32: return "FLOAT";
-                case DECIMAL64: return "DOUBLE";
-                case STRING01: return "CHAR(1)";
-                case STRING64: return "VARCHAR(64) COLLATE utf16_bin";
-                case STRING: return "TEXT";
-                case BINARY128: return "BINARY(16)";
-                case BINARY256: return "BINARY(32)";
-                case BINARY: return "MEDIUMBLOB";
-                default: throw UnexpectedValueException.with("type", type);
+    public static @Nonnull SQLType of(@Nonnull int code) {
+        for (@Nonnull SQLType sqlType : values()) {
+            if (sqlType.code == code) {
+                return sqlType;
             }
         }
-        
-    };
-    
-    @Override
-    public @Nonnull Transcriber<SQLType> getTranscriber() {
-        return transcriber;
+        throw new UnsupportedOperationException("SQL type does not support the type code " + Quotes.inSingle(code));
     }
     
 }

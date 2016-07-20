@@ -24,7 +24,7 @@ import net.digitalid.database.core.Database;
 import net.digitalid.database.core.interfaces.DatabaseInstance;
 import net.digitalid.database.core.interfaces.SQLSelectionResult;
 import net.digitalid.database.dialect.ast.SQLDialect;
-import net.digitalid.database.dialect.table.Table;
+import net.digitalid.database.dialect.table.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
 import net.digitalid.database.testing.h2.H2Dialect;
@@ -43,8 +43,8 @@ public class SQLTestBase extends CustomTest {
         SQLDialect.dialect.set(new H2Dialect());
         server = Server.createTcpServer();
         server.start();
-        //H2JDBCDatabaseInstance h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:tcp://localhost:9092/mem:test;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS " + TestHost.SCHEMA_NAME + ";mode=MySQL;");
-        H2JDBCDatabaseInstance h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:mem:test;INIT=CREATE SCHEMA IF NOT EXISTS " + TestHost.SCHEMA_NAME + ";mode=MySQL;");
+        H2JDBCDatabaseInstance h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:tcp://localhost:9092/mem:test;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS " + TestHost.SCHEMA_NAME + ";mode=MySQL;");
+//        H2JDBCDatabaseInstance h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:mem:test;INIT=CREATE SCHEMA IF NOT EXISTS " + TestHost.SCHEMA_NAME + ";mode=MySQL;");
         Database.initialize(h2Database);
     }
     
@@ -196,7 +196,7 @@ public class SQLTestBase extends CustomTest {
     }
     
     @Pure
-    protected void assertRowCount(@Nonnull Table table, long rowCount) throws FailedNonCommittingOperationException, EntryNotFoundException {
+    protected void assertRowCount(@Nonnull TableImplementation table, long rowCount) throws FailedNonCommittingOperationException, EntryNotFoundException {
         assertRowCount(table.getName().getValue(), rowCount);
     }
     
@@ -227,7 +227,7 @@ public class SQLTestBase extends CustomTest {
     }
     
     @Pure
-    protected void assertTableContains(@Nonnull Table table, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException {
+    protected void assertTableContains(@Nonnull TableImplementation table, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException {
         final @Nonnull String tableName = table.getName().getValue();
         assertTableContains(tableName, expectedArray);
     }

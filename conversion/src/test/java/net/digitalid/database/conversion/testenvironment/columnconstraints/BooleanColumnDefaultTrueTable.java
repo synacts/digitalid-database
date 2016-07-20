@@ -8,7 +8,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 
 
-import net.digitalid.database.dialect.annotations.Default;
+import net.digitalid.database.annotations.metadata.Default;
 
 /**
  *
