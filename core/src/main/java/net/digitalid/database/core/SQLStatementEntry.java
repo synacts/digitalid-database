@@ -65,7 +65,7 @@ class SQLStatementEntry<P> {
      * Multiplies a specific row by a given number.
      */
     @Impure
-    public void multiplyRow(@NonNegative Integer row, @Positive int number) {
+    public void multiplyRow(@NonNegative int row, @Positive int number) {
         sqlStatementProcessing.multiplyRow(row, number);
     }
 }
