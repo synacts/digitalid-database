@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 /**
@@ -33,6 +34,7 @@ public final class Purger {
      * @param table the name of the table which is to be purged regularly.
      * @param time the time after which entries in the given table can be purged.
      */
+    @Impure
     public static void addRegularPurging(@Nonnull String table, long time) {
         tables.put(table, time);
     }
@@ -42,6 +44,7 @@ public final class Purger {
      * 
      * @param table the name of the table which is no longer to be purged.
      */
+    @Impure
     public static void removeRegularPurging(@Nonnull String table) {
         tables.remove(table);
     }
@@ -49,6 +52,7 @@ public final class Purger {
     /**
      * Starts the timer for purging.
      */
+    @Impure
     public static void startPurging() {
         // TODO: If several processes access the database, it's enough when one of them does the purging.
         timer.schedule(new TimerTask() {
@@ -75,6 +79,7 @@ public final class Purger {
     /**
      * Stops the timer for purging.
      */
+    @Impure
     public static void stopPurging() {
         timer.cancel();
     }
