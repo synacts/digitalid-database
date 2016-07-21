@@ -2,6 +2,7 @@ package net.digitalid.database.dialect.ast.utility.binary;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.InternalException;
 
 import net.digitalid.database.core.Site;
@@ -18,6 +19,7 @@ public final class SQLBinaryExpressionTranscriber {
     /**
      * Transcribes binary expressions and stores them in the given string.
      */
+    @Pure
     public static String transcribeNode(@Nonnull SQLBinaryExpression<?, ?> sqlBinaryExpression, @Nonnull SQLDialect dialect, @Nonnull Site site) throws InternalException {
         final @Nonnull StringBuilder string = new StringBuilder();
         string.append("(");

@@ -151,7 +151,7 @@ public enum SQLType {
      * Returns an SQL type for a given Digital ID custom type, or throws an exception
      * if the type cannot be mapped.
      */
-    public static @Nonnull SQLType of(@Nonnull int code) {
+    public static @Nonnull SQLType of(int code) {
         for (@Nonnull SQLType sqlType : values()) {
             if (sqlType.code == code) {
                 return sqlType;

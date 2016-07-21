@@ -53,6 +53,7 @@ public enum SQLBinaryBooleanOperator implements SQLBinaryOperator {
      */
     private static final @Nonnull Transcriber<SQLBinaryBooleanOperator> transcriber = new Transcriber<SQLBinaryBooleanOperator>() {
         
+        @Pure
         @Override
         protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBinaryBooleanOperator node, @Nonnull Site site)  throws InternalException {
             switch (node) {

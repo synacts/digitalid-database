@@ -15,7 +15,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 @GenerateConverter
 public class PropertyTable  {
     
-    public final @Nonnull TestProperty myProperty = TestPropertyBuilder.get().build();
+    public final @Nonnull TestProperty myProperty = TestPropertyBuilder.build();
     
     PropertyTable() {}
     

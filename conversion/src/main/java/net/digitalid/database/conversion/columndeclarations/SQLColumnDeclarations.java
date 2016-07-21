@@ -251,7 +251,7 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
                 int i = 0;
                 while (fieldType.isCompositeType()) {
                     fieldType = ((CustomType.CompositeType) fieldType).getCompositeType();
-                    final @Nonnull Pair<@Nonnull CD, @Nonnull ImmutableList<@Nonnull CustomAnnotation>> indexColumnDeclaration = getColumnDeclaration("_" + field.getName() + "_index_" + i, SQLTypeNode.of(SQLType.INTEGER32), ImmutableList.with(Collections.emptyList()));
+                    final @Nonnull Pair<@Nonnull CD, @Nonnull ImmutableList<@Nonnull CustomAnnotation>> indexColumnDeclaration = getColumnDeclaration("_" + field.getName() + "_index_" + i, SQLTypeNode.of(SQLType.INTEGER32), ImmutableList.withElementsOfCollection(Collections.emptyList()));
                     addColumnDeclarationToList(indexColumnDeclaration);
                     i++;
                 }
@@ -267,8 +267,8 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
                         allOtherAnnotations.add(annotation);
                     }
                 }
-                allOtherAnnotations.add(CustomAnnotation.with(Embedd.class, ImmutableMap.with(Collections.emptyMap())));
-                dependentTableColumnDeclarations.setField(CustomField.with(field.getCustomType(), field.getName(), ImmutableList.with(FiniteIterable.of(allOtherAnnotations))));
+                allOtherAnnotations.add(CustomAnnotation.with(Embedd.class, ImmutableMap.withMappingsOf(Collections.emptyMap())));
+                dependentTableColumnDeclarations.setField(CustomField.with(field.getCustomType(), field.getName(), ImmutableList.withElementsOf(allOtherAnnotations)));
                 // add columns that reference the primary key(s) of the main table
                 dependentTablesColumnDeclarations.put(tableName + "_" + field.getName(), dependentTableColumnDeclarations);
                 columnCountForGroup.add(dependentTableColumnDeclarations.currentColumn - currentColumn);
@@ -324,8 +324,8 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
             annotationFields.put("columnName", getColumnName(primaryKeyColumnDeclaration));
             annotationFields.put("foreignTable", tableName);
             annotationFields.put("columnType", getColumnType(primaryKeyColumnDeclaration));
-            foreignKeyAnnotations.add(CustomAnnotation.with(References.class, ImmutableMap.with(annotationFields)));
-            @Nonnull final Pair<@Nonnull CD, @Nonnull ImmutableList<@Nonnull CustomAnnotation>> foreignKeyColumnDeclaration = getColumnDeclaration(getColumnName(primaryKeyColumnDeclaration), getColumnType(primaryKeyColumnDeclaration), ImmutableList.with((FiniteIterable<? extends CustomAnnotation>) foreignKeyAnnotations));
+            foreignKeyAnnotations.add(CustomAnnotation.with(References.class, ImmutableMap.withMappingsOf(annotationFields)));
+            @Nonnull final Pair<@Nonnull CD, @Nonnull ImmutableList<@Nonnull CustomAnnotation>> foreignKeyColumnDeclaration = getColumnDeclaration(getColumnName(primaryKeyColumnDeclaration), getColumnType(primaryKeyColumnDeclaration), ImmutableList.withElementsOf(foreignKeyAnnotations));
             foreignKeys.add(Pair.of(foreignKeyColumnDeclaration, primaryKey.get1()));
         }
         return foreignKeys;

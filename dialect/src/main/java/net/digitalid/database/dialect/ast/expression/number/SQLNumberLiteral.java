@@ -54,7 +54,8 @@ public final class SQLNumberLiteral extends SQLNumberExpression<SQLNumberLiteral
      * The transcriber that stores a string representation of this SQL node in the string builder.
      */
     private static final @Nonnull Transcriber<SQLNumberLiteral> transcriber = new Transcriber<SQLNumberLiteral>() {
-        
+    
+        @Pure
         @Override
         protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLNumberLiteral node, @Nonnull Site site)  throws InternalException {
             return Long.toString(node.value);
@@ -62,11 +63,13 @@ public final class SQLNumberLiteral extends SQLNumberExpression<SQLNumberLiteral
         
     };
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLNumberLiteral> getTranscriber() {
         return transcriber;
     }
     
+    @Pure
     @Override
     public void storeValues(@NonCaptured @Nonnull SQLValueCollector collector) throws FailedSQLValueConversionException {
         collector.setInteger64(value);

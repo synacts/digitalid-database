@@ -46,7 +46,7 @@ public class SQLColumnDeclaration implements SQLNode<SQLColumnDeclaration> {
     /**
      * Creates a new SQL column declaration with the given column name, sql type, column definitions and column constraints.
      */
-    protected SQLColumnDeclaration(@Nonnull SQLColumnName columnName, @Nonnull SQLTypeNode typeNode, @Nullable ImmutableList<@Nonnull SQLColumnDefinition> columnDefinitions, @Nullable ImmutableList<@Nonnull SQLColumnConstraint> columnConstraints) {
+    private SQLColumnDeclaration(@Nonnull SQLColumnName columnName, @Nonnull SQLTypeNode typeNode, @Nullable ImmutableList<@Nonnull SQLColumnDefinition> columnDefinitions, @Nullable ImmutableList<@Nonnull SQLColumnConstraint> columnConstraints) {
         this.columnName = columnName;
         this.typeNode = typeNode;
         this.columnDefinitions = columnDefinitions;
@@ -58,7 +58,7 @@ public class SQLColumnDeclaration implements SQLNode<SQLColumnDeclaration> {
      */
     @Pure
     public static @Nonnull SQLColumnDeclaration of(@Nonnull SQLColumnName columnName, @Nonnull SQLTypeNode type, @Nullable ReadOnlyList<@Nonnull SQLColumnDefinition> columnDefinitions, @Nullable ReadOnlyList<@Nonnull SQLColumnConstraint> columnConstraints) {
-        return new SQLColumnDeclaration(columnName, type, columnDefinitions == null ? null : ImmutableList.with(columnDefinitions), columnConstraints == null ? null : ImmutableList.with(columnConstraints));
+        return new SQLColumnDeclaration(columnName, type, columnDefinitions == null ? null : ImmutableList.withElementsOf(columnDefinitions), columnConstraints == null ? null : ImmutableList.withElementsOf(columnConstraints));
     }
     
     /**
