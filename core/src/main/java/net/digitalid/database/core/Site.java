@@ -3,17 +3,33 @@ package net.digitalid.database.core;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.rootclass.RootInterface;
+import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.equality.Unequal;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 /**
- * This interface allows the same code to work on both hosts and clients.
+ * This class allows the same code to work on both hosts and clients.
  */
 @Mutable
-public interface Site extends RootInterface {
+public abstract class Site extends RootClass {
+    
+    /* -------------------------------------------------- Queries -------------------------------------------------- */
+    
+    /**
+     * Returns whether this site is a host.
+     */
+    @Pure
+    public abstract boolean isHost();
+    
+    /**
+     * Returns whether this site is a client.
+     */
+    @Pure
+    public final boolean isClient() {
+        return !isHost();
+    }
     
     /* -------------------------------------------------- Database Name -------------------------------------------------- */
     
@@ -21,7 +37,7 @@ public interface Site extends RootInterface {
      * Returns the database name of this site.
      */
     @Pure
-    public @Nonnull @CodeIdentifier @MaxSize(63) @Unequal("general") String getDatabaseName();
+    public abstract @Nonnull @CodeIdentifier @MaxSize(63) @Unequal("general") String getDatabaseName();
     
     /* -------------------------------------------------- Entity Reference -------------------------------------------------- */
         
@@ -31,6 +47,6 @@ public interface Site extends RootInterface {
      * TODO: The return type probably shouldn't be a string but rather an SQL syntax node?
      */
     @Pure
-    public @Nonnull String getEntityReference();
+    public abstract @Nonnull String getEntityReference();
     
 }

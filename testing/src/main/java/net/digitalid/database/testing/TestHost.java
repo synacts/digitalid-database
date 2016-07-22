@@ -11,7 +11,13 @@ import net.digitalid.database.core.Site;
 /**
  *
  */
-public class TestHost implements Site {
+public class TestHost extends Site {
+    
+    @Pure
+    @Override
+    public boolean isHost() {
+        return true;
+    }
     
     public static final @Nonnull String SCHEMA_NAME = "test_host";
     
@@ -34,6 +40,18 @@ public class TestHost implements Site {
     @Override
     public @Nonnull String getEntityReference() {
         return "REFERENCES general_identity (identity) ON DELETE RESTRICT ON UPDATE RESTRICT";
+    }
+    
+    @Pure
+    @Override
+    public boolean equals(Object object) {
+        throw new UnsupportedOperationException("equals in TestHost is not supported yet.");
+    }
+    
+    @Pure
+    @Override
+    public int hashCode() {
+        throw new UnsupportedOperationException("hashCode in TestHost is not supported yet.");
     }
     
 }
