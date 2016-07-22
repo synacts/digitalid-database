@@ -37,6 +37,7 @@ public enum SQLVariadicNumberOperator implements SQLVariadicOperator {
      */
     private static final @Nonnull Transcriber<SQLVariadicNumberOperator> transcriber = new Transcriber<SQLVariadicNumberOperator>() {
         
+        @Pure
         @Override
         protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLVariadicNumberOperator operator, @Nonnull Site site) throws InternalException {
             switch (operator) {

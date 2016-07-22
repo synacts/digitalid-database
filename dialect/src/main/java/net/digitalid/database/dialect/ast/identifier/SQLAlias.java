@@ -56,6 +56,7 @@ public final class SQLAlias implements SQLIdentifier<SQLAlias> {
     
     private static final @Nonnull Transcriber<SQLAlias> transcriber = new SQLIdentifierTranscriber<>();
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLAlias> getTranscriber() {
         return transcriber;

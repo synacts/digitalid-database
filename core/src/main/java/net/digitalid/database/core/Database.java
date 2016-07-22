@@ -3,6 +3,7 @@ package net.digitalid.database.core;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCapturable;
 import net.digitalid.utility.contracts.Require;
@@ -82,6 +83,7 @@ public final class Database {
      * @param instance the instance with which the database is configured.
      * @param singleAccess whether the database is accessed by a single process.
      */
+    @Impure
     public static void initialize(@Nonnull DatabaseInstance instance, boolean singleAccess) {
         Database.instance = instance;
         Database.singleAccess = singleAccess;
@@ -94,6 +96,7 @@ public final class Database {
      * 
      * @param instance the instance with which the database is configured.
      */
+    @Impure
     public static void initialize(@Nonnull DatabaseInstance instance) {
         initialize(instance, true);
     }
@@ -114,6 +117,7 @@ public final class Database {
      * Commits all changes of the current thread since the last commit or rollback.
      * (On the server, this method should only be called by the worker.)
      */
+    @Impure
     @Committing
     public static void commit() throws FailedCommitException {
         getInstance().commit();
@@ -123,6 +127,7 @@ public final class Database {
      * Rolls back all changes of the current thread since the last commit or rollback.
      * (On the server, this method should only be called by the worker.)
      */
+    @Impure
     @Committing
     public static void rollback() {
         getInstance().rollback();

@@ -56,9 +56,9 @@ public final class SQLPrefix implements SQLIdentifier<SQLPrefix> {
     
     private static final @Nonnull Transcriber<SQLPrefix> transcriber = new SQLIdentifierTranscriber<>();
     
+    @Pure
     @Override
-    public @Nonnull
-    Transcriber<SQLPrefix> getTranscriber() {
+    public @Nonnull Transcriber<SQLPrefix> getTranscriber() {
         return transcriber;
     }
     

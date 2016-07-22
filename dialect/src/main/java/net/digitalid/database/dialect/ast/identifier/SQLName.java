@@ -73,6 +73,7 @@ public final class SQLName implements SQLIdentifier<SQLName> {
     
     private static final @Nonnull Transcriber<SQLName> transcriber = new SQLIdentifierTranscriber<>();
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLName> getTranscriber() {
         return transcriber;
