@@ -261,7 +261,7 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
             } else {
                 final @Nonnull I dependentTableColumnDeclarations = getInstance(tableName + "_" + field.getName(), site, currentColumn);
                 // Remove the @References annotation and add the @Embedd annotation
-                final @Nonnull FreezableArrayList<CustomAnnotation> allOtherAnnotations = FreezableArrayList.withCapacity(field.getAnnotations().size() - 1);
+                final @Nonnull FreezableArrayList<CustomAnnotation> allOtherAnnotations = FreezableArrayList.withInitialCapacity(field.getAnnotations().size() - 1);
                 for (@Nonnull CustomAnnotation annotation : field.getAnnotations()) {
                     if (!annotation.getAnnotationType().isAssignableFrom(References.class)) {
                         allOtherAnnotations.add(annotation);
@@ -310,10 +310,10 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
      */
     @Pure
     private @Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Pair<@Nonnull CD, @Nonnull ImmutableList<@Nonnull CustomAnnotation>>, @Nonnull Integer>> toForeignKeys(@Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Pair<@Nonnull CD, @Nonnull ImmutableList<@Nonnull CustomAnnotation>>, @Nonnull Integer>> primaryKeys) {
-        final @Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Pair<@Nonnull CD, @Nonnull ImmutableList<@Nonnull CustomAnnotation>>, @Nonnull Integer>> foreignKeys = FreezableArrayList.withCapacity(primaryKeys.size());
+        final @Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Pair<@Nonnull CD, @Nonnull ImmutableList<@Nonnull CustomAnnotation>>, @Nonnull Integer>> foreignKeys = FreezableArrayList.withInitialCapacity(primaryKeys.size());
         for (@Nonnull Pair<@Nonnull Pair<@Nonnull CD, @Nonnull ImmutableList<@Nonnull CustomAnnotation>>, @Nonnull Integer> primaryKey : primaryKeys) {
             final @Nonnull ImmutableList<@Nonnull CustomAnnotation> primaryKeyAnnotations = primaryKey.get0().get1();
-            @Nonnull FreezableArrayList<@Nonnull CustomAnnotation> foreignKeyAnnotations = FreezableArrayList.withCapacity(primaryKeyAnnotations.size());
+            @Nonnull FreezableArrayList<@Nonnull CustomAnnotation> foreignKeyAnnotations = FreezableArrayList.withInitialCapacity(primaryKeyAnnotations.size());
             for (@Nonnull CustomAnnotation primaryKeyAnnotation : primaryKeyAnnotations) {
                 if (!primaryKeyAnnotation.getAnnotationType().isAssignableFrom(PrimaryKey.class)) {
                     foreignKeyAnnotations.add(primaryKeyAnnotation);

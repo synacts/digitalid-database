@@ -70,7 +70,7 @@ public class SQLOrderedStatements<S, I extends SQLColumnDeclarations<I, ?, S>> {
     
     protected SQLOrderedStatements(@Nonnull I columnDeclarations) {
         int numColumns = getAmountOfAllColumns(columnDeclarations);
-        this.orderByColumn = FreezableArrayList.withCapacity(numColumns);
+        this.orderByColumn = FreezableArrayList.withInitialCapacity(numColumns);
         for (int i = 0; i < numColumns; i++) {
             orderByColumn.add(null);
         }

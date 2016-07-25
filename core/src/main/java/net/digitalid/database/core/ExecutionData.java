@@ -139,7 +139,7 @@ public class ExecutionData<P> {
     public @Frozen @Nonnull ReadOnlyList<P> getPreparedStatements() throws SQLException {
         Require.that(preparedStatementEntryQueue.isEmpty()).orThrow("Not all columns have been processed");
         
-        final @Nonnull FreezableArrayList<P> preparedStatements = FreezableArrayList.withCapacity(rowsOfOrderedStatements.size());
+        final @Nonnull FreezableArrayList<P> preparedStatements = FreezableArrayList.withInitialCapacity(rowsOfOrderedStatements.size());
         for (@Nonnull SQLStatementProcessing<P> SQLStatementProcessing : rowsOfOrderedStatements) {
             SQLStatementProcessing.addRowsToPreparedStatementBatch();
             preparedStatements.add(SQLStatementProcessing.getPreparedStatement());
@@ -201,7 +201,7 @@ public class ExecutionData<P> {
     private @Nonnull LinkedList<@Nonnull FreezableArrayList<@Nonnull SQLStatementEntry<P>>> initializePreparedStatementEntryQueue(FreezableArrayList<@Nonnull ? extends SQLStatementProcessing<P>> rowsOfOrderedStatements, @Nonnull FreezableArrayList<@Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Integer, @Nonnull Integer>>> orderOfExecution) {
         final LinkedList<@Nonnull FreezableArrayList<@Nonnull SQLStatementEntry<P>>> result = FreezableLinkedList.withNoElements();
         for (@Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Integer, @Nonnull Integer>> statementIndices : orderOfExecution) {
-            final @Nonnull FreezableArrayList<@Nonnull SQLStatementEntry<P>> preparedStatementEntries = FreezableArrayList.withCapacity(statementIndices.size());
+            final @Nonnull FreezableArrayList<@Nonnull SQLStatementEntry<P>> preparedStatementEntries = FreezableArrayList.withInitialCapacity(statementIndices.size());
             for (@Nonnull Pair<@Nonnull Integer, @Nonnull Integer> statementIndex : statementIndices) {
                 preparedStatementEntries.add(new SQLStatementEntry<>(rowsOfOrderedStatements.get(statementIndex.get0()), statementIndex.get1()));
             }

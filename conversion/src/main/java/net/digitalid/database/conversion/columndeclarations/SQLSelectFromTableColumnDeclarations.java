@@ -91,12 +91,12 @@ public class SQLSelectFromTableColumnDeclarations extends SQLColumnDeclarations<
     @Pure
     @SuppressWarnings("unchecked")
     public SQLSelectStatement getSelectStatement(@Nullable SQLWhereClause whereClause) {
-        final @Nonnull FreezableArrayList<SQLResultColumn> resultColumns = FreezableArrayList.withCapacity(getColumnDeclarationList().size());
+        final @Nonnull FreezableArrayList<SQLResultColumn> resultColumns = FreezableArrayList.withInitialCapacity(getColumnDeclarationList().size());
         for (@Nonnull SQLQualifiedColumnName columnName : getColumnDeclarationList().map(Pair::get0)) {
             resultColumns.add(SQLResultColumn.get(columnName, null));
         }
         final @Nonnull SQLSource<?> source = SQLQualifiedTableNameSource.get(SQLQualifiedTableName.get(tableName, site), null);
-        final @Nonnull FreezableArrayList<SQLSource<?>> sources = FreezableArrayList.withCapacity(1);
+        final @Nonnull FreezableArrayList<SQLSource<?>> sources = FreezableArrayList.withInitialCapacity(1);
         sources.add(source);
         
         return SQLSelectStatement.get(resultColumns, sources, whereClause, null, null, null, null);

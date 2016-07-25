@@ -85,7 +85,7 @@ public class SQLRow<P> {
      * Creates a new SQL row with a fixed amount of columns.
      */
     private SQLRow(int columnCount) {
-        this.columns = FreezableArrayList.withCapacity(columnCount);
+        this.columns = FreezableArrayList.withInitialCapacity(columnCount);
         for (int i = 0; i < columnCount; i++) {
             columns.add(null);
         }
@@ -113,7 +113,7 @@ public class SQLRow<P> {
      * Copy constructor.
      */
     private SQLRow(@Nonnull SQLRow<P> sqlRow) {
-        this.columns = FreezableArrayList.withCapacity(sqlRow.columns.size());
+        this.columns = FreezableArrayList.withInitialCapacity(sqlRow.columns.size());
         for (@Nonnull SQLPreparedColumn<P, ?> sqlPreparedColumn : sqlRow.columns) {
             columns.add(sqlPreparedColumn);
         }

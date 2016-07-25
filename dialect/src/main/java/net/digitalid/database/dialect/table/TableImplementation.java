@@ -192,7 +192,7 @@ public class TableImplementation implements Table {
     
     @Pure
     private static @Nonnull ReadOnlyMap<@Nonnull String, @Nonnull Integer> initializeTypesForColumns(@Nonnull SQLCreateTableStatement createTableStatement) {
-        @Nonnull FreezableHashMap<@Nonnull String, @Nonnull Integer> typesForColumns = FreezableHashMap.withCapacity(createTableStatement.columnDeclarations.size());
+        @Nonnull FreezableHashMap<@Nonnull String, @Nonnull Integer> typesForColumns = FreezableHashMap.withInitialCapacity(createTableStatement.columnDeclarations.size());
         for (@Nonnull SQLColumnDeclaration columnDeclaration : createTableStatement.columnDeclarations) {
             typesForColumns.put(columnDeclaration.columnName.getValue(), columnDeclaration.typeNode.getSQLType().getCode());
         }
