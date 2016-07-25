@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.map.FreezableHashMap;
+import net.digitalid.utility.collections.map.FreezableHashMapBuilder;
 import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.conversion.exceptions.FailedValueRecoveryException;
 import net.digitalid.utility.exceptions.InternalException;
@@ -60,7 +61,7 @@ public final class SQL {
         final @Nonnull SQLOrderedStatements<SQLCreateTableStatement, ? extends SQLCreateTableColumnDeclarations> orderedCreateStatements = columnDeclarations.getOrderedStatements();
     
         @Nullable TableImplementation mainTable = null;
-        final @Nonnull FreezableHashMap<@Nonnull String, @Nonnull TableImplementation> constructedTables = FreezableHashMap.withDefaultCapacity();
+        final @Nonnull FreezableHashMap<@Nonnull String, @Nonnull TableImplementation> constructedTables = FreezableHashMapBuilder.build();
         for (@Nonnull SQLCreateTableStatement sqlCreateTableStatement : orderedCreateStatements.getStatementsOrderedByExecution()) {
             final @Nonnull String createTableStatementString = SQLDialect.getDialect().transcribe(site, sqlCreateTableStatement);
             sqlCreateTableStatement.columnDeclarations.size();

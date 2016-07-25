@@ -8,6 +8,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.collections.map.FreezableHashMap;
+import net.digitalid.utility.collections.map.FreezableHashMapBuilder;
 import net.digitalid.utility.collections.map.ReadOnlyMap;
 import net.digitalid.utility.conversion.converter.CustomAnnotation;
 import net.digitalid.utility.conversion.converter.types.CustomType;
@@ -127,7 +128,7 @@ public class TableImplementation implements Table {
     
     @Pure
     private static @Nonnull @Frozen ReadOnlyMap<@Nonnull SQLKey, @Nonnull TableImplementation> initializeForeignKeys(@Nonnull SQLCreateTableStatement createTableStatement, @Nonnull ReadOnlyMap<@Nonnull String, @Nonnull TableImplementation> preConstructedTables, @Nonnull Site site) {
-        final @Nonnull FreezableHashMap<@Nonnull SQLKey, @Nonnull TableImplementation> foreignKeys = FreezableHashMap.withDefaultCapacity();
+        final @Nonnull FreezableHashMap<@Nonnull SQLKey, @Nonnull TableImplementation> foreignKeys = FreezableHashMapBuilder.build();
         int position = 0;
         for (SQLColumnDeclaration columnDeclaration : createTableStatement.columnDeclarations) {
             final CustomType type = columnDeclaration.typeNode.getSQLType().getCustomType();
@@ -192,7 +193,7 @@ public class TableImplementation implements Table {
     
     @Pure
     private static @Nonnull ReadOnlyMap<@Nonnull String, @Nonnull Integer> initializeTypesForColumns(@Nonnull SQLCreateTableStatement createTableStatement) {
-        @Nonnull FreezableHashMap<@Nonnull String, @Nonnull Integer> typesForColumns = FreezableHashMap.withInitialCapacity(createTableStatement.columnDeclarations.size());
+        @Nonnull FreezableHashMap<@Nonnull String, @Nonnull Integer> typesForColumns = FreezableHashMapBuilder.buildWithInitialCapacity(createTableStatement.columnDeclarations.size());
         for (@Nonnull SQLColumnDeclaration columnDeclaration : createTableStatement.columnDeclarations) {
             typesForColumns.put(columnDeclaration.columnName.getValue(), columnDeclaration.typeNode.getSQLType().getCode());
         }

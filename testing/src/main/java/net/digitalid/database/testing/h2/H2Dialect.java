@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.map.FreezableHashMap;
+import net.digitalid.utility.collections.map.FreezableHashMapBuilder;
 import net.digitalid.utility.exceptions.InternalException;
 
 import net.digitalid.database.core.Site;
@@ -22,7 +23,7 @@ import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
  */
 public class H2Dialect extends SQLDialect {
     
-    private final @Nonnull FreezableHashMap<@Nonnull Class<?>, @Nonnull Transcriber<?>> transcribers = FreezableHashMap.withDefaultCapacity();
+    private final @Nonnull FreezableHashMap<@Nonnull Class<?>, @Nonnull Transcriber<?>> transcribers = FreezableHashMapBuilder.build();
     
     public H2Dialect() {
         transcribers.put(SQLIdentifier.class, new H2SQLIdentifierTranscriber<>(SQLIdentifier.class));

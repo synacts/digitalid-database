@@ -12,6 +12,7 @@ import net.digitalid.utility.circumfixes.Quotes;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.map.FreezableHashMap;
+import net.digitalid.utility.collections.map.FreezableHashMapBuilder;
 import net.digitalid.utility.collections.map.ReadOnlyMap;
 import net.digitalid.utility.conversion.converter.CustomAnnotation;
 import net.digitalid.utility.conversion.converter.CustomField;
@@ -64,7 +65,7 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
     /**
      * The column declarations for referenced objects.
      */
-    private final @Nonnull Map<@Nonnull String, @Nonnull I> referencedTablesColumnDeclarations = FreezableHashMap.withDefaultCapacity();
+    private final @Nonnull Map<@Nonnull String, @Nonnull I> referencedTablesColumnDeclarations = FreezableHashMapBuilder.build();
     
     /**
      * Returns the column declarations for referenced objects.
@@ -79,7 +80,7 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
     /**
      * The column declarations for objects that are outsourced in other tables.
      */
-    private final @Nonnull Map<@Nonnull String, @Nonnull I> dependentTablesColumnDeclarations = FreezableHashMap.withDefaultCapacity();
+    private final @Nonnull Map<@Nonnull String, @Nonnull I> dependentTablesColumnDeclarations = FreezableHashMapBuilder.build();
     
     /**
      * Returns the column declarations for objects that are outsourced in other tables.
@@ -94,7 +95,7 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
     /**
      * Stores the number of columns for each field.
      */
-    private final @Nonnull FreezableHashMap<@Nonnull String, @Nonnull Integer> numberOfColumnsForField = FreezableHashMap.withDefaultCapacity();
+    private final @Nonnull FreezableHashMap<@Nonnull String, @Nonnull Integer> numberOfColumnsForField = FreezableHashMapBuilder.build();
     
     /**
      * Returns the number of columns for each field.
@@ -319,7 +320,7 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
                     foreignKeyAnnotations.add(primaryKeyAnnotation);
                 }
             }
-            final @Nonnull Map<@Nonnull String, @Nullable Object> annotationFields = FreezableHashMap.withDefaultCapacity();
+            final @Nonnull Map<@Nonnull String, @Nullable Object> annotationFields = FreezableHashMapBuilder.build();
             final @Nonnull CD primaryKeyColumnDeclaration = primaryKey.get0().get0();
             annotationFields.put("columnName", getColumnName(primaryKeyColumnDeclaration));
             annotationFields.put("foreignTable", tableName);

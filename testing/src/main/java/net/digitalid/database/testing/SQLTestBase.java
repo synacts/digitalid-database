@@ -1,10 +1,5 @@
 package net.digitalid.database.testing;
 
-import org.h2.tools.Server;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +10,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collections.set.FreezableHashSet;
+import net.digitalid.utility.collections.set.FreezableHashSetBuilder;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.testing.CustomTest;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
@@ -29,6 +24,12 @@ import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationE
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
 import net.digitalid.database.testing.h2.H2Dialect;
 import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
+
+import org.h2.tools.Server;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *
@@ -146,7 +147,7 @@ public class SQLTestBase extends CustomTest {
     
         tableColumnsQuery.moveToFirstRow();
         final @Nonnull String constraintQuery = "SELECT CHECK_CONSTRAINT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tableName.toUpperCase() + "' AND COLUMN_NAME = ";
-        final @Nonnull Set<String> checkedSet = FreezableHashSet.withDefaultCapacity();
+        final @Nonnull Set<String> checkedSet = FreezableHashSetBuilder.build();
         do {
             @Nullable String field = tableColumnsQuery.getString();
             Assert.assertNotNull("A column name was expected, but none defined", field);
