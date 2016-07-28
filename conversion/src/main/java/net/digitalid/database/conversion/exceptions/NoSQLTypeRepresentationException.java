@@ -36,7 +36,7 @@ public class NoSQLTypeRepresentationException extends InternalException {
     }
     
     @Pure
-    public static @Nonnull NoSQLTypeRepresentationException with(@Nonnull Converter<?> converter) {
+    public static @Nonnull NoSQLTypeRepresentationException with(@Nonnull Converter<?, ?> converter) {
         return new NoSQLTypeRepresentationException("The type represented by the converter '" + converter.getClass().getSimpleName() + "' cannot be represented as an SQL type", null);
     }
     

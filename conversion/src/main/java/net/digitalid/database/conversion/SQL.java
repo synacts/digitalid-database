@@ -54,7 +54,7 @@ public final class SQL {
      */
     @Pure
     @Committing
-    public static @Nonnull TableImplementation create(@Nonnull String tableName, @Nonnull Site site, @Nonnull Converter<?> converter) throws InternalException, FailedNonCommittingOperationException, FailedCommitException {
+    public static @Nonnull TableImplementation create(@Nonnull String tableName, @Nonnull Site site, @Nonnull Converter<?, ?> converter) throws InternalException, FailedNonCommittingOperationException, FailedCommitException {
         final @Nonnull SQLCreateTableColumnDeclarations columnDeclarations = SQLCreateTableColumnDeclarations.get(tableName, site);
         converter.declare(columnDeclarations);
         
@@ -89,7 +89,7 @@ public final class SQL {
      * Inserts a given object with a matching converter into a given table by constructing an SQL insert statement and collecting the values of the object.
      */
     @Pure
-    public static <T> void insert(@Nullable T object, @Nonnull Converter<T> converter, @Nonnull TableImplementation table) throws ExternalException {
+    public static <T> void insert(@Nullable T object, @Nonnull Converter<T, ?> converter, @Nonnull TableImplementation table) throws ExternalException {
         final @Nonnull SQLQualifiedTableName qualifiedTableName = table.getName();
         final @Nonnull Site site = qualifiedTableName.site;
         
@@ -112,7 +112,7 @@ public final class SQL {
      * Builds and executes an SQL select statement based on the given convertible and site.
      */
     @Pure
-    public static <T> T select(@Nonnull Converter<T> converter, @Nonnull SQLBooleanExpression whereClauseExpression, @Nonnull TableImplementation table) throws FailedNonCommittingOperationException, FailedValueRecoveryException {
+    public static <T> T select(@Nonnull Converter<T, ?> converter, @Nonnull SQLBooleanExpression whereClauseExpression, @Nonnull TableImplementation table) throws FailedNonCommittingOperationException, FailedValueRecoveryException {
         final @Nonnull SQLQualifiedTableName qualifiedTableName = table.getName();
         final @Nonnull Site site = table.getName().site;
         
@@ -125,7 +125,8 @@ public final class SQL {
     
         final @Nonnull String selectIntoTableStatementString = selectStatement.toPreparedStatement(SQLDialect.getDialect(), site);
         final @Nonnull SQLSelectionResult selectionResult = Database.getInstance().executeSelect(selectIntoTableStatementString);
-        return converter.recover(selectionResult);
+        // TODO: allow externally provided object.
+        return converter.recover(selectionResult, null);
     }
     
 }
