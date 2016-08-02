@@ -21,7 +21,7 @@ import net.digitalid.database.conversion.columndeclarations.SQLInsertIntoTableCo
 import net.digitalid.database.conversion.columndeclarations.SQLOrderedStatements;
 import net.digitalid.database.conversion.columndeclarations.SQLSelectFromTableColumnDeclarations;
 import net.digitalid.database.core.Database;
-import net.digitalid.database.core.Site;
+import net.digitalid.database.storage.Site;
 import net.digitalid.database.core.Tables;
 import net.digitalid.database.core.interfaces.SQLSelectionResult;
 import net.digitalid.database.core.interfaces.SQLValueCollector;

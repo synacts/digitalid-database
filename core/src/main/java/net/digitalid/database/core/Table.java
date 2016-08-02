@@ -5,6 +5,8 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.map.ReadOnlyMap;
 
+import net.digitalid.database.storage.Site;
+
 /**
  *
  */

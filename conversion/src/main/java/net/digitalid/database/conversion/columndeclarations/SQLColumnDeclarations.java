@@ -30,7 +30,7 @@ import net.digitalid.database.annotations.metadata.PrimaryKey;
 import net.digitalid.database.annotations.metadata.References;
 import net.digitalid.database.conversion.exceptions.ConformityViolationException;
 import net.digitalid.database.core.SQLType;
-import net.digitalid.database.core.Site;
+import net.digitalid.database.storage.Site;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLTypeNode;
 
 /**

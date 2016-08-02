@@ -26,6 +26,12 @@
             <artifactId>database-annotations</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- The following dependency is only temporary: -->
+        <dependency>
+            <groupId>net.digitalid.database</groupId>
+            <artifactId>database-storage</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     
 </project>

@@ -17,7 +17,7 @@ import net.digitalid.utility.validation.annotations.elements.NonNullableElements
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.SQLKey;
-import net.digitalid.database.core.Site;
+import net.digitalid.database.storage.Site;
 import net.digitalid.database.core.Table;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
 import net.digitalid.database.dialect.ast.statement.insert.SQLValues;

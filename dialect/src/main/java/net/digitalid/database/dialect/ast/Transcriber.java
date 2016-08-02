@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.InternalException;
 
-import net.digitalid.database.core.Site;
+import net.digitalid.database.storage.Site;
 
 /**
  * Transcribes an SQL AST node into a string for a certain dialect.

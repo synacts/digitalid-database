@@ -14,7 +14,7 @@ import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
 
 import net.digitalid.database.core.SQLType;
-import net.digitalid.database.core.Site;
+import net.digitalid.database.storage.Site;
 import net.digitalid.database.dialect.ast.identifier.SQLColumnName;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnConstraint;

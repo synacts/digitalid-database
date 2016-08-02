@@ -12,7 +12,7 @@ import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
 
 import net.digitalid.database.core.SQLType;
-import net.digitalid.database.core.Site;
+import net.digitalid.database.storage.Site;
 import net.digitalid.database.core.Table;
 import net.digitalid.database.core.Tables;
 import net.digitalid.database.dialect.ast.identifier.SQLColumnName;

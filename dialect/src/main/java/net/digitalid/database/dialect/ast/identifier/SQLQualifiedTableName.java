@@ -7,7 +7,7 @@ import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.MinSize;
 
-import net.digitalid.database.core.Site;
+import net.digitalid.database.storage.Site;
 import net.digitalid.database.dialect.ast.Transcriber;
 
 /**

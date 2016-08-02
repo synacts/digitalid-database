@@ -1,4 +1,4 @@
-package net.digitalid.database.core;
+package net.digitalid.database.storage;
 
 import javax.annotation.Nonnull;
 

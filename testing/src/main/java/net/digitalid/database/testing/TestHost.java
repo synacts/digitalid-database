@@ -6,7 +6,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 
-import net.digitalid.database.core.Site;
+import net.digitalid.database.storage.Site;
 
 /**
  *
