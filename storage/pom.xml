@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     
     <groupId>net.digitalid.database</groupId>
-    <artifactId>database-apple</artifactId>
+    <artifactId>database-storage</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
     
@@ -18,7 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>net.digitalid.database</groupId>
-            <artifactId>database-core</artifactId>
+            <artifactId>database-exceptions</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

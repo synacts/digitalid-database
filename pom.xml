@@ -37,16 +37,17 @@
     <modules>
         <module>exceptions</module>
         <module>annotations</module>
+        <module>storage</module>
         <module>core</module>
         <module>jdbc</module>
-<!--        <module>apple</module>
-        <module>android</module>-->
+<!--        <module>android</module>-->
         <module>dialect</module>
 <!--        <module>mysql</module>
         <module>sqlite</module>
         <module>postgres</module>-->
         <module>testing</module>
         <module>conversion</module>
+        <module>property</module>
     </modules>
     
     <dependencies>
