@@ -22,10 +22,23 @@ database-storage with:
 - Module implements Storage with @Nonnull Set<@Nonnull Storage> get[Sub]Storages()
 
 database-property with (per kind of property):
-- PersistentWritableProperty with getKey/getObject(), getTime(), reset(), getPropertyInfo() and direct storing on set(value) (and getValueValidator() returning the validator in the info object?)
-- PropertyInfo with getName(), getKey/ObjectConverter(), getValueConverter(), getValueValidator(), getPropertyTable() (and getDefaultValue() in case of NonNullableProperty)
+- PersistentWritableProperty with getObject(), getTime(), reset(), getPropertyInfo() and direct storing on set(value) (and getValueValidator() returning the validator in the info object?)
+- PropertyInfo with getName(), getObjectConverter(), getValueConverter(), getValueValidator(), getPropertyTable() (and getDefaultValue() in case of NonNullableProperty)
 - PropertyTable with getPropertyInfo(), load[ValueAndTime](), replace(oldValue, newValue) [depending on the kind of property]
 - @GenerateProperty that generates the PropertyInfo object.
 
 Also have an ObjectInfo with @Generate[Object]Info to have/generate a module, to which the tables of the properties (of that object) belong? If yes, introduce an "ObjectWithProperties" class?
 Such a module would register itself in the site class (with static methods)…? What about modules/tables that should only exist on either hosts or clients?
+
+Property
+ExtensibleProperty
+IndexedProperty
+SimpleProperty
+
+Property
+SetProperty
+MapProperty
+ObjectProperty
+
+SimplePropertyEntry<O, V> extends PropertyEntry<O, V>
+SimplePropertyEntryConverter<SimplePropertyEntry<O, V>, ?> extends DynamicConverter

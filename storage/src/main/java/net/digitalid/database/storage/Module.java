@@ -1,5 +1,6 @@
 package net.digitalid.database.storage;
 
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -28,22 +29,22 @@ public abstract class Module extends RootClass implements Storage {
     
     /* -------------------------------------------------- Substorages -------------------------------------------------- */
     
-    private final @Nonnull @NonFrozen FreezableList<@Nonnull Storage> substorages = FreezableLinkedList.withNoElements();
+    private final @Nonnull @NonFrozen FreezableList<@Nonnull Storage> childStorages = FreezableLinkedList.withNoElements();
     
     /**
-     * Returns the substorages of this storage.
+     * Returns the child storages of this storage.
      */
     @Pure
-    public @Nonnull @NonFrozen ReadOnlyList<@Nonnull Storage> getSubstorages() {
-        return substorages;
+    public @Nonnull @NonFrozen ReadOnlyList<@Nonnull Storage> getChildStorages() {
+        return childStorages;
     }
     
     /**
-     * Registers the given substorage at this storage.
+     * Registers the given child storage at this storage.
      */
     @Impure
-    final void addSubstorage(@Nonnull Storage substorage) {
-        substorages.add(substorage);
+    void addSubstorage(@Nonnull Storage childStorage) {
+        childStorages.add(childStorage);
     }
     
     /* -------------------------------------------------- Initialization -------------------------------------------------- */
@@ -52,8 +53,9 @@ public abstract class Module extends RootClass implements Storage {
     @Override
     @CallSuper
     protected void initialize() {
-        final @Nullable Module module = getModule();
+        final @Nullable Module module = getParentModule();
         if (module != null) { module.addSubstorage(this); }
+        else { Site.addStorage(this); }
         super.initialize();
     }
     
@@ -63,8 +65,8 @@ public abstract class Module extends RootClass implements Storage {
     @Override
     @NonCommitting
     public void createTables(@Nonnull Site site) throws DatabaseException {
-        for (@Nonnull Storage substorage : substorages) {
-            substorage.createTables(site);
+        for (@Nonnull Storage childStorage : childStorages) {
+            childStorage.createTables(site);
         }
     }
     
@@ -72,8 +74,8 @@ public abstract class Module extends RootClass implements Storage {
     @Override
     @NonCommitting
     public void deleteTables(@Nonnull Site site) throws DatabaseException {
-        for (@Nonnull Storage substorage : substorages) {
-            substorage.deleteTables(site);
+        for (@Nonnull Storage childStorage : childStorages) {
+            childStorage.deleteTables(site);
         }
     }
     
