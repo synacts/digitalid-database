@@ -12,9 +12,6 @@ import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
 
 import net.digitalid.database.core.SQLType;
-import net.digitalid.database.storage.Site;
-import net.digitalid.database.core.Table;
-import net.digitalid.database.core.Tables;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
 import net.digitalid.database.dialect.ast.statement.select.SQLQualifiedTableNameSource;
@@ -33,19 +30,19 @@ public class SQLSelectFromTableColumnDeclarations extends SQLColumnDeclarations<
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
-    private SQLSelectFromTableColumnDeclarations(@Nonnull String tableName, @Nonnull Site site, @NonNegative int columnCount) {
-        super(tableName, site, columnCount);
+    private SQLSelectFromTableColumnDeclarations(@Nonnull String tableName, @NonNegative int columnCount) {
+        super(tableName, columnCount);
     }
     
     @Pure
-    public static @Nonnull SQLSelectFromTableColumnDeclarations get(@Nonnull String tableName, @Nonnull Site site) {
-        return new SQLSelectFromTableColumnDeclarations(tableName, site, 0);
+    public static @Nonnull SQLSelectFromTableColumnDeclarations get(@Nonnull String tableName) {
+        return new SQLSelectFromTableColumnDeclarations(tableName, 0);
     }
     
     @Pure
     @Override
-    public @Nonnull SQLSelectFromTableColumnDeclarations getInstance(@Nonnull String tableName, @Nonnull Site site, @NonNegative int columnCount) {
-        return new SQLSelectFromTableColumnDeclarations(tableName, site, columnCount);
+    public @Nonnull SQLSelectFromTableColumnDeclarations getInstance(@Nonnull String tableName, @NonNegative int columnCount) {
+        return new SQLSelectFromTableColumnDeclarations(tableName, columnCount);
     }
     
     /* -------------------------------------------------- Column Declaration -------------------------------------------------- */
@@ -72,9 +69,8 @@ public class SQLSelectFromTableColumnDeclarations extends SQLColumnDeclarations<
     
     @Pure
     @Override
-    protected @Nonnull SQLTypeNode getColumnType(@Nonnull SQLQualifiedColumnName columnDeclaration) {
-        final @Nonnull Table table = Tables.get(site.getDatabaseName() + "." + tableName);
-        return SQLTypeNode.of(SQLType.of(table.getTypeOfColumn(columnDeclaration.getUnqualifiedValue())));
+    protected @Nullable SQLTypeNode getColumnType(@Nonnull SQLQualifiedColumnName columnDeclaration) {
+        return null;
     }
     
     @Pure
@@ -95,7 +91,7 @@ public class SQLSelectFromTableColumnDeclarations extends SQLColumnDeclarations<
         for (@Nonnull SQLQualifiedColumnName columnName : getColumnDeclarationList().map(Pair::get0)) {
             resultColumns.add(SQLResultColumn.get(columnName, null));
         }
-        final @Nonnull SQLSource<?> source = SQLQualifiedTableNameSource.get(SQLQualifiedTableName.get(tableName, site), null);
+        final @Nonnull SQLSource<?> source = SQLQualifiedTableNameSource.get(SQLQualifiedTableName.get(tableName), null);
         final @Nonnull FreezableArrayList<SQLSource<?>> sources = FreezableArrayList.withInitialCapacity(1);
         sources.add(source);
         

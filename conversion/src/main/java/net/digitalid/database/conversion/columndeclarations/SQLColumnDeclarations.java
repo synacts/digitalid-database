@@ -30,7 +30,6 @@ import net.digitalid.database.annotations.metadata.PrimaryKey;
 import net.digitalid.database.annotations.metadata.References;
 import net.digitalid.database.conversion.exceptions.ConformityViolationException;
 import net.digitalid.database.core.SQLType;
-import net.digitalid.database.storage.Site;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLTypeNode;
 
 /**
@@ -125,21 +124,13 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
      */
     protected final @Nonnull String tableName;
     
-    /* -------------------------------------------------- Site -------------------------------------------------- */
-    
-    /**
-     * The database site.
-     */
-    protected final @Nonnull Site site;
-    
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new column declarations object with a given table name for a given site. The current column number indicates how many fields have been processed previously.
+     * Creates a new column declarations object with a given table name. The current column number indicates how many fields have been processed previously.
      */
-    protected SQLColumnDeclarations(@Nonnull String tableName, @Nonnull Site site, @NonNegative int currentColumn) {
+    protected SQLColumnDeclarations(@Nonnull String tableName, @NonNegative int currentColumn) {
         this.tableName = tableName;
-        this.site = site;
         this.currentColumn = currentColumn;
     }
     
@@ -147,9 +138,10 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
     
     /**
      * Returns a pair of the column and the field annotations for a given column name, SQL type and a list of annotations.
+     * Additional remark: Not all column declarations have or require the type (e.g. the insert or select declaration). Thus, it is nullable.
      */
     @Pure
-    protected abstract @Nonnull Pair<@Nonnull CD, @Nonnull ImmutableList<@Nonnull CustomAnnotation>> getColumnDeclaration(@Nonnull String columnName, @Nonnull SQLTypeNode type, @Nonnull ImmutableList<@Nonnull CustomAnnotation> annotations);
+    protected abstract @Nonnull Pair<@Nonnull CD, @Nonnull ImmutableList<@Nonnull CustomAnnotation>> getColumnDeclaration(@Nonnull String columnName, @Nullable SQLTypeNode type, @Nonnull ImmutableList<@Nonnull CustomAnnotation> annotations);
     
     /**
      * Returns a pair of the column and the field annotations for a given field.
@@ -161,7 +153,7 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
      * Returns a new instance of the column declarations type.
      */
     @Pure
-    protected abstract @Nonnull I getInstance(@Nonnull String tableName, @Nonnull Site site, @NonNegative int currentColumn);
+    protected abstract @Nonnull I getInstance(@Nonnull String tableName, @NonNegative int currentColumn);
     
     /**
      * Returns whether the column declaration matches the given column name.
@@ -170,10 +162,10 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
     protected abstract boolean isColumnDeclaration(@Nonnull String columnName, @Nonnull CD columnDeclaration);
     
     /**
-     * Returns the column type for a given column declaration.
+     * Returns the column type for a given column declaration if the information is available for the declarations instance.
      */
     @Pure
-    protected abstract @Nonnull SQLTypeNode getColumnType(@Nonnull CD columnDeclaration);
+    protected abstract @Nullable SQLTypeNode getColumnType(@Nonnull CD columnDeclaration);
     
     /**
      * Returns the column name of a given column declaration.
@@ -235,7 +227,7 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
             } else if (field.isAnnotatedWith(References.class)) {
                 final @Nonnull CustomAnnotation references = field.getAnnotation(References.class);
                 // TODO: prevent naming conflicts.
-                final @Nonnull I referencedTableColumnDeclarations = getInstance(references.get("foreignTable", String.class), site, currentColumn);
+                final @Nonnull I referencedTableColumnDeclarations = getInstance(references.get("foreignTable", String.class), currentColumn);
                 ((CustomType.CustomConverterType) tupleType).getConverter().declare(referencedTableColumnDeclarations);
                 referencedTablesColumnDeclarations.put(references.get("foreignTable", String.class), referencedTableColumnDeclarations);
                 columnCountForGroup.addAll(referencedTableColumnDeclarations.getColumnCountForGroup());
@@ -260,7 +252,7 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
                 addColumnDeclarationToList(columnDeclaration);
                 columnCountForGroup.add(currentColumn - columnCount);
             } else {
-                final @Nonnull I dependentTableColumnDeclarations = getInstance(tableName + "_" + field.getName(), site, currentColumn);
+                final @Nonnull I dependentTableColumnDeclarations = getInstance(tableName + "_" + field.getName(), currentColumn);
                 // Remove the @References annotation and add the @Embedd annotation
                 final @Nonnull FreezableArrayList<CustomAnnotation> allOtherAnnotations = FreezableArrayList.withInitialCapacity(field.getAnnotations().size() - 1);
                 for (@Nonnull CustomAnnotation annotation : field.getAnnotations()) {

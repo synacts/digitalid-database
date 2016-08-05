@@ -1,10 +1,12 @@
 package net.digitalid.database.conversion.columndeclarations;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
+import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.converter.CustomAnnotation;
 import net.digitalid.utility.conversion.converter.CustomField;
 import net.digitalid.utility.conversion.converter.types.CustomType;
@@ -14,7 +16,6 @@ import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
 
 import net.digitalid.database.core.SQLType;
-import net.digitalid.database.storage.Site;
 import net.digitalid.database.dialect.ast.identifier.SQLColumnName;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnConstraint;
@@ -32,26 +33,28 @@ public class SQLCreateTableColumnDeclarations extends SQLColumnDeclarations<SQLC
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
-    private SQLCreateTableColumnDeclarations(@Nonnull String tableName, @Nonnull Site site, int columnCount) {
-        super(tableName, site, columnCount);
+    private SQLCreateTableColumnDeclarations(@Nonnull String tableName, int columnCount) {
+        super(tableName, columnCount);
     }
     
     @Pure
-    public static @Nonnull SQLCreateTableColumnDeclarations get(@Nonnull String tableName, @Nonnull Site site) {
-        return new SQLCreateTableColumnDeclarations(tableName, site, 0);
+    public static @Nonnull SQLCreateTableColumnDeclarations get(@Nonnull String tableName) {
+        return new SQLCreateTableColumnDeclarations(tableName, 0);
     }
     
     @Pure
     @Override
-    protected @Nonnull SQLCreateTableColumnDeclarations getInstance(@Nonnull String tableName, @Nonnull Site site, @NonNegative int columnCount) {
-        return new SQLCreateTableColumnDeclarations(tableName, site, columnCount);
+    protected @Nonnull SQLCreateTableColumnDeclarations getInstance(@Nonnull String tableName, @NonNegative int columnCount) {
+        return new SQLCreateTableColumnDeclarations(tableName, columnCount);
     }
     
     /* -------------------------------------------------- Get Column Declaration -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull Pair<@Nonnull SQLColumnDeclaration, @Nonnull ImmutableList<@Nonnull CustomAnnotation>> getColumnDeclaration(@Nonnull String columnName, @Nonnull SQLTypeNode type, @Nonnull ImmutableList<@Nonnull CustomAnnotation> annotations) {
+    public @Nonnull Pair<@Nonnull SQLColumnDeclaration, @Nonnull ImmutableList<@Nonnull CustomAnnotation>> getColumnDeclaration(@Nonnull String columnName, @Nullable SQLTypeNode type, @Nonnull ImmutableList<@Nonnull CustomAnnotation> annotations) {
+        Require.that(type != null).orThrow("The create table column declarations require information about the type of the column");
+        
         final @Nonnull ReadOnlyList<SQLColumnDefinition> columnDefinitions = SQLColumnDefinition.of(annotations);
         final @Nonnull ReadOnlyList<SQLColumnConstraint> columnConstraints = SQLColumnConstraint.of(annotations, columnName);
         final @Nonnull SQLColumnDeclaration columnDeclaration = SQLColumnDeclaration.of(SQLColumnName.get(columnName), type, columnDefinitions, columnConstraints);
@@ -95,7 +98,7 @@ public class SQLCreateTableColumnDeclarations extends SQLColumnDeclarations<SQLC
     @Pure
     @Override
     protected SQLCreateTableStatement getStatement() {
-        final @Nonnull SQLQualifiedTableName qualifiedTableName = SQLQualifiedTableName.get(tableName, site);
+        final @Nonnull SQLQualifiedTableName qualifiedTableName = SQLQualifiedTableName.get(tableName);
         final @Nonnull FiniteIterable<@Nonnull Pair<@Nonnull SQLColumnDeclaration, @Nonnull Integer>> columnDeclarationList = getColumnDeclarationList();
         try {
             final FiniteIterable<@Nonnull SQLColumnDeclaration> columnDeclarationList2 = columnDeclarationList.map(Pair::get0);

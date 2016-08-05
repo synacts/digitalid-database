@@ -200,15 +200,8 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
      * @return the prepared statement that is ready for execution.
      */
     @Pure
-    protected @Nonnull PreparedStatement prepare(@Nonnull String statement, boolean generatesKeys, @Nullable FreezableArrayList<@Nonnull Table> tables) throws FailedNonCommittingOperationException, InternalException {
+    protected @Nonnull PreparedStatement prepare(@Nonnull String statement, boolean generatesKeys) throws FailedNonCommittingOperationException, InternalException {
         try {
-            int numberOfValues = 0;
-            for (char c : statement.toCharArray()) {
-                if (c == '?') {
-                    numberOfValues++;
-                }
-            }
-            
             final @Nonnull PreparedStatement preparedStatement = getConnection().prepareStatement(statement, generatesKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS);
             return preparedStatement;
         } catch (@Nonnull SQLException exception) {

@@ -18,8 +18,8 @@ public class Tables {
     private final static @Nonnull FreezableHashMap<@Nonnull String, @Nonnull Table> tables = FreezableHashMapBuilder.build();
     
     @Impure
-    public static @Nullable Table add(@Nonnull Table table, @Nonnull Site site) {
-        return tables.put(table.getName(site), table);
+    public static @Nullable Table add(@Nonnull Table table) {
+        return tables.put(table.getName(), table);
     }
     
     @Pure

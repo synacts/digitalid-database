@@ -57,7 +57,7 @@ public interface DatabaseInstance extends AutoCloseable {
     public abstract void execute(@Nonnull SQLValueCollector valueCollector) throws InternalException, FailedNonCommittingOperationException;
     
     @Impure
-    public abstract @Nonnull SQLValueCollector getValueCollector(@Nonnull FiniteIterable<@Nonnull Pair<@Nonnull String, @Nonnull Table>> preparedStatements, @Nonnull FreezableArrayList<@Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Integer, @Nonnull Integer>>> orderOfExecution, ReadOnlyList<@Nonnull Integer> columnCountForGroup) throws FailedNonCommittingOperationException;
+    public abstract @Nonnull SQLValueCollector getValueCollector(@Nonnull FiniteIterable<@Nonnull String> preparedStatements, @Nonnull FreezableArrayList<@Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Integer, @Nonnull Integer>>> orderOfExecution, ReadOnlyList<@Nonnull Integer> columnCountForGroup) throws FailedNonCommittingOperationException;
     
     @Impure
     public @Nonnull SQLSelectionResult executeSelect(@Nonnull String selectStatement) throws FailedNonCommittingOperationException, InternalException;

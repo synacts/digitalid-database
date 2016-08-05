@@ -61,7 +61,7 @@ public class SQLCreateTableStatement implements SQLNode<SQLCreateTableStatement>
         protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLCreateTableStatement node, @Nonnull Site site) throws InternalException {
             StringBuilder string = new StringBuilder();
             string.append("CREATE TABLE ");
-            string.append(node.qualifiedTableName.getValue());
+            string.append(dialect.transcribe(site, node.qualifiedTableName));
             string.append(" ");
             if (node.columnDeclarations.size() > 0) {
                 string.append(node.columnDeclarations.map(column -> dialect.transcribe(site, column)).join(Brackets.ROUND));

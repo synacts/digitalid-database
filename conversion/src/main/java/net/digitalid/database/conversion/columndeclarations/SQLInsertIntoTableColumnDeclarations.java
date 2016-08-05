@@ -11,10 +11,6 @@ import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
 
-import net.digitalid.database.core.SQLType;
-import net.digitalid.database.storage.Site;
-import net.digitalid.database.core.Table;
-import net.digitalid.database.core.Tables;
 import net.digitalid.database.dialect.ast.identifier.SQLColumnName;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
 import net.digitalid.database.dialect.ast.statement.insert.SQLInsertStatement;
@@ -43,19 +39,19 @@ public class SQLInsertIntoTableColumnDeclarations extends SQLColumnDeclarations<
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
-    private SQLInsertIntoTableColumnDeclarations(@Nonnull String tableName, @Nonnull Site site, @NonNegative int currentColumn) {
-        super(tableName, site, currentColumn);
+    private SQLInsertIntoTableColumnDeclarations(@Nonnull String tableName, @NonNegative int currentColumn) {
+        super(tableName, currentColumn);
     }
     
     @Pure
-    public static @Nonnull SQLInsertIntoTableColumnDeclarations get(@Nonnull String tableName, @Nonnull Site site) {
-        return new SQLInsertIntoTableColumnDeclarations(tableName, site, 0);
+    public static @Nonnull SQLInsertIntoTableColumnDeclarations get(@Nonnull String tableName) {
+        return new SQLInsertIntoTableColumnDeclarations(tableName, 0);
     }
     
     @Pure
     @Override
-    protected @Nonnull SQLInsertIntoTableColumnDeclarations getInstance(@Nonnull String tableName, @Nonnull Site site, @NonNegative int currentColumn) {
-        return new SQLInsertIntoTableColumnDeclarations(tableName, site, currentColumn);
+    protected @Nonnull SQLInsertIntoTableColumnDeclarations getInstance(@Nonnull String tableName, @NonNegative int currentColumn) {
+        return new SQLInsertIntoTableColumnDeclarations(tableName, currentColumn);
     }
     
     /* -------------------------------------------------- Helper Methods -------------------------------------------------- */
@@ -68,9 +64,8 @@ public class SQLInsertIntoTableColumnDeclarations extends SQLColumnDeclarations<
     
     @Pure
     @Override
-    protected @Nonnull SQLTypeNode getColumnType(@Nonnull SQLColumnName<?> columnDeclaration) {
-        final @Nonnull Table table = Tables.get(site.getDatabaseName() + "." + tableName);
-        return SQLTypeNode.of(SQLType.of(table.getTypeOfColumn(columnDeclaration.getValue())));
+    protected @Nullable SQLTypeNode getColumnType(@Nonnull SQLColumnName<?> columnDeclaration) {
+        return null;
     }
     
     @Pure
@@ -85,7 +80,7 @@ public class SQLInsertIntoTableColumnDeclarations extends SQLColumnDeclarations<
     @Override
     @SuppressWarnings("unchecked")
     public @Nonnull SQLInsertStatement getStatement() {
-        return SQLInsertStatement.get(SQLQualifiedTableName.get(tableName, site), FreezableArrayList.withElementsOf(getColumnDeclarationList().map(Pair::get0)));
+        return SQLInsertStatement.get(SQLQualifiedTableName.get(tableName), FreezableArrayList.withElementsOf(getColumnDeclarationList().map(Pair::get0)));
     }
     
 }

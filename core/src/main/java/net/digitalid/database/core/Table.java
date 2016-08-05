@@ -13,7 +13,7 @@ import net.digitalid.database.storage.Site;
 public interface Table {
     
     @Pure
-    public @Nonnull String getName(@Nonnull Site site);
+    public @Nonnull String getName();
     
     @Pure
     public @Nonnull ReadOnlyMap<@Nonnull SQLKey, @Nonnull ? extends Table> getForeignKeys();

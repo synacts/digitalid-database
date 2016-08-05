@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.set.FreezableHashSetBuilder;
+import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.testing.CustomTest;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
@@ -22,6 +23,7 @@ import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.table.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
+import net.digitalid.database.storage.Site;
 import net.digitalid.database.testing.h2.H2Dialect;
 import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
 
@@ -44,9 +46,20 @@ public class SQLTestBase extends CustomTest {
         SQLDialect.dialect.set(new H2Dialect());
         server = Server.createTcpServer();
         server.start();
-        H2JDBCDatabaseInstance h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:tcp://localhost:9092/mem:test;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS " + TestHost.SCHEMA_NAME + ";mode=MySQL;");
-//        H2JDBCDatabaseInstance h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:mem:test;INIT=CREATE SCHEMA IF NOT EXISTS " + TestHost.SCHEMA_NAME + ";mode=MySQL;");
+//        H2JDBCDatabaseInstance h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:tcp://localhost:9092/mem:test;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS " + TestHost.SCHEMA_NAME + ";mode=MySQL;");
+        H2JDBCDatabaseInstance h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:mem:test;INIT=CREATE SCHEMA IF NOT EXISTS " + TestHost.SCHEMA_NAME + ";mode=MySQL;");
         Database.initialize(h2Database);
+    }
+    
+    @Impure
+    public static void dropTable(@Nonnull String tableName, @Nonnull Site site) throws FailedNonCommittingOperationException {
+        DatabaseInstance instance = Database.getInstance();
+        instance.execute("DROP TABLE " + site.getDatabaseName() + "." + tableName.toLowerCase());
+    }
+    
+    @Impure
+    public static void dropTable(@Nonnull Converter<?, ?> converter, @Nonnull Site site) throws FailedNonCommittingOperationException {
+        dropTable(converter.getName(), site);
     }
     
     @Impure
@@ -70,7 +83,7 @@ public class SQLTestBase extends CustomTest {
     
     @Pure
     protected void assertTableExists(@Nonnull String tableName, @Nonnull String schema) throws EntryNotFoundException, FailedNonCommittingOperationException {
-        final @Nonnull String query = "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = '" + tableName.toUpperCase() + "' and table_schema = '" + schema.toUpperCase() + "'";
+        final @Nonnull String query = "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = '" + tableName.toLowerCase() + "' and table_schema = '" + schema.toLowerCase() + "'";
         DatabaseInstance instance = Database.getInstance();
         SQLSelectionResult tableExistsQuery = instance.executeSelect(query);
         tableExistsQuery.moveToFirstRow();
@@ -141,12 +154,12 @@ public class SQLTestBase extends CustomTest {
     
     @Pure
     protected void assertTableHasColumns(@Nonnull String tableName, @Nonnull String schema, @Nonnull Map<@Nonnull String, @Nonnull String[]> expectedResults) throws FailedNonCommittingOperationException, EntryNotFoundException {
-        final @Nonnull String query = "SHOW COLUMNS FROM " + schema.toUpperCase() + "." + tableName.toUpperCase();
+        final @Nonnull String query = "SHOW COLUMNS FROM " + schema.toLowerCase() + "." + tableName.toLowerCase();
         final @Nonnull DatabaseInstance instance = Database.getInstance();
         final @Nonnull SQLSelectionResult tableColumnsQuery = instance.executeSelect(query);
     
         tableColumnsQuery.moveToFirstRow();
-        final @Nonnull String constraintQuery = "SELECT CHECK_CONSTRAINT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tableName.toUpperCase() + "' AND COLUMN_NAME = ";
+        final @Nonnull String constraintQuery = "SELECT CHECK_CONSTRAINT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tableName.toLowerCase() + "' AND COLUMN_NAME = ";
         final @Nonnull Set<String> checkedSet = FreezableHashSetBuilder.build();
         do {
             @Nullable String field = tableColumnsQuery.getString();
@@ -189,7 +202,7 @@ public class SQLTestBase extends CustomTest {
     
     @Pure
     protected void assertRowCount(@Nonnull String tableName, long rowCount) throws FailedNonCommittingOperationException, EntryNotFoundException {
-        final @Nonnull String rowCountQuery = "SELECT COUNT(*) AS count FROM " + tableName.toUpperCase();
+        final @Nonnull String rowCountQuery = "SELECT COUNT(*) AS count FROM " + tableName.toLowerCase();
         final @Nonnull DatabaseInstance instance = Database.getInstance();
         final @Nonnull SQLSelectionResult rowCountResult = instance.executeSelect(rowCountQuery);
         rowCountResult.moveToFirstRow();
@@ -197,15 +210,15 @@ public class SQLTestBase extends CustomTest {
     }
     
     @Pure
-    protected void assertRowCount(@Nonnull TableImplementation table, long rowCount) throws FailedNonCommittingOperationException, EntryNotFoundException {
-        assertRowCount(table.getName().getValue(), rowCount);
+    protected void assertRowCount(@Nonnull TableImplementation table, @Nonnull Site site, long rowCount) throws FailedNonCommittingOperationException, EntryNotFoundException {
+        assertRowCount(site.getDatabaseName() + "." + table.getName(), rowCount);
     }
     
     @Pure
     protected void assertTableContains(@Nonnull String tableName, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException {
         final @Nonnull DatabaseInstance instance = Database.getInstance();
         for (@Nonnull Expected expected : expectedArray) {
-            @Nonnull String rowCountQuery = "SELECT COUNT(*) AS count FROM " + tableName.toUpperCase() ;
+            @Nonnull String rowCountQuery = "SELECT COUNT(*) AS count FROM " + tableName.toLowerCase() ;
             if (expected.expectedColumnClauses.size() > 0) {
                 rowCountQuery += " WHERE ";
             }
@@ -228,9 +241,9 @@ public class SQLTestBase extends CustomTest {
     }
     
     @Pure
-    protected void assertTableContains(@Nonnull TableImplementation table, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException {
-        final @Nonnull String tableName = table.getName().getValue();
-        assertTableContains(tableName, expectedArray);
+    protected void assertTableContains(@Nonnull TableImplementation table, @Nonnull Site site, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException {
+        final @Nonnull String tableName = table.getName();
+        assertTableContains(site.getDatabaseName() + "." + tableName, expectedArray);
     }
     
     // TODO: the following is still very ugly. Improve!

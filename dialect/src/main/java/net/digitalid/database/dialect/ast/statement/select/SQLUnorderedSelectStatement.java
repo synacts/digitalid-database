@@ -3,12 +3,14 @@ package net.digitalid.database.dialect.ast.statement.select;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.size.MinSize;
+import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.dialect.ast.SQLParameterizableNode;
@@ -17,6 +19,7 @@ import net.digitalid.database.exceptions.operation.FailedSQLValueConversionExcep
 /**
  * Creates an SQL select statement node without ORDER BY clause.
  */
+@Mutable
 public abstract class SQLUnorderedSelectStatement<T extends SQLUnorderedSelectStatement<T>> implements SQLParameterizableNode<T> {
     
     /**
@@ -32,7 +35,15 @@ public abstract class SQLUnorderedSelectStatement<T extends SQLUnorderedSelectSt
     /**
      * An optional where clause.
      */
-    public final @Nullable SQLWhereClause whereClause;
+    private @Nullable SQLWhereClause whereClause;
+    
+    /**
+     * Returns an optional where clause.
+     */
+    @Pure
+    public @Nullable SQLWhereClause getWhereClause() {
+        return whereClause;
+    }
     
     /**
      * An optional group-by clause.
@@ -74,4 +85,8 @@ public abstract class SQLUnorderedSelectStatement<T extends SQLUnorderedSelectSt
         this.compoundOperator = compoundOperator;
     }
     
+    @Impure
+    public void setWhereClause(@Nullable SQLWhereClause whereClause) {
+        this.whereClause = whereClause;
+    }
 }

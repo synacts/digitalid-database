@@ -3,17 +3,20 @@ package net.digitalid.database.dialect.ast.identifier;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.circumfixes.Quotes;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.validation.annotations.size.MaxSize;
+import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.size.MinSize;
 
-import net.digitalid.database.storage.Site;
+import net.digitalid.database.dialect.ast.SQLDialect;
+import net.digitalid.database.dialect.ast.SQLNode;
 import net.digitalid.database.dialect.ast.Transcriber;
+import net.digitalid.database.storage.Site;
 
 /**
  * The SQL node that represents the qualified table name.
  */
-public class SQLQualifiedTableName implements SQLIdentifier<SQLQualifiedTableName> {
+public class SQLQualifiedTableName implements SQLNode<SQLQualifiedTableName> {
     
     /* -------------------------------------------------- Final Fields -------------------------------------------------- */
     
@@ -22,35 +25,21 @@ public class SQLQualifiedTableName implements SQLIdentifier<SQLQualifiedTableNam
      */
     public final @Nonnull @MinSize(1) String tableName;
     
-    /**
-     * The site that qualifies the table name.
-     */
-    public final @Nonnull Site site;
-    
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new qualified table name for a given table name and site.
+     * Creates a new qualified table name for a given table name.
      */
-    private SQLQualifiedTableName(@Nonnull @MinSize(1) String tableName, @Nonnull Site site) {
+    private SQLQualifiedTableName(@Nonnull @MinSize(1) String tableName) {
         this.tableName = tableName;
-        this.site = site;
     }
     
     /**
-     * Returns a qualified table name for a given table name and site.
+     * Returns a qualified table name for a given table name.
      */
     @Pure
-    public static @Nonnull SQLQualifiedTableName get(@Nonnull @MinSize(1) String tableName, @Nonnull Site site) {
-        return new SQLQualifiedTableName(tableName, site);
-    }
-    
-    @Pure
-    @Override
-    public @Nonnull @MaxSize(63) String getValue() {
-        @Nonnull String qualifiedTableName = site.toString() + "." + tableName;
-        Require.that(qualifiedTableName.length() <= 63).orThrow("The qualified name $ is bigger than allowed", qualifiedTableName);
-        return qualifiedTableName;
+    public static @Nonnull SQLQualifiedTableName get(@Nonnull @MinSize(1) String tableName) {
+        return new SQLQualifiedTableName(tableName);
     }
     
     /* -------------------------------------------------- SQL Node -------------------------------------------------- */
@@ -58,7 +47,17 @@ public class SQLQualifiedTableName implements SQLIdentifier<SQLQualifiedTableNam
     /**
      * The transcriber that return a string representation of this SQL node.
      */
-    private static final @Nonnull Transcriber<SQLQualifiedTableName> transcriber = new SQLIdentifierTranscriber<>();
+    private static final @Nonnull Transcriber<SQLQualifiedTableName> transcriber = new Transcriber<SQLQualifiedTableName>() {
+        
+        @Override
+        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLQualifiedTableName node, @Nonnull Site site) throws InternalException {
+            final @Nonnull String qualifiedTableName = (site.getDatabaseName().isEmpty() ? "" : site.getDatabaseName() + ".") + node.tableName.length();
+            Require.that(qualifiedTableName.length() <= 63).orThrow("The qualified table name $ is bigger than allowed");
+            
+            return Quotes.inDouble(qualifiedTableName);
+        }
+        
+    };
     
     @Pure
     @Override

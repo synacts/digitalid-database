@@ -12,7 +12,6 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.tuples.Pair;
 
-import net.digitalid.database.core.Table;
 import net.digitalid.database.core.interfaces.SQLSelectionResult;
 import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
@@ -80,8 +79,8 @@ public class H2JDBCDatabaseInstance extends JDBCDatabaseInstance {
     
     @Pure
     @Override
-    public @Nonnull SQLValueCollector getValueCollector(@Nonnull FiniteIterable<@Nonnull Pair<@Nonnull String, @Nonnull Table>> preparedStatements, @Nonnull FreezableArrayList<@Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Integer, @Nonnull Integer>>> orderOfExecution, ReadOnlyList<@Nonnull Integer> columnCountForGroup) throws FailedNonCommittingOperationException {
-        return JDBCValueCollector.get(preparedStatements.map(pair -> prepare(pair.get0(), false, FreezableArrayList.withElement(pair.get1()))), orderOfExecution, columnCountForGroup);
+    public @Nonnull SQLValueCollector getValueCollector(@Nonnull FiniteIterable<@Nonnull String> preparedStatements, @Nonnull FreezableArrayList<@Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Integer, @Nonnull Integer>>> orderOfExecution, ReadOnlyList<@Nonnull Integer> columnCountForGroup) throws FailedNonCommittingOperationException {
+        return JDBCValueCollector.get(preparedStatements.map(preparedStatement -> prepare(preparedStatement, false)), orderOfExecution, columnCountForGroup);
     }
     
     @Impure

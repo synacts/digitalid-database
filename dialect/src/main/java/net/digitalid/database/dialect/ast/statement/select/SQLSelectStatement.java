@@ -4,17 +4,16 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.size.MinSize;
 
-import net.digitalid.database.storage.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.statement.insert.SQLValuesOrStatement;
+import net.digitalid.database.storage.Site;
 
 /**
  * This SQL node represents an SQL select statement.
@@ -68,8 +67,8 @@ public class SQLSelectStatement extends SQLUnorderedSelectStatement<SQLSelectSta
             string.append(node.resultColumns.map((resultColumn) -> dialect.transcribe(site, resultColumn)).join(", "));
             string.append(" ");
             string.append(node.sources.map((source) -> dialect.transcribe(site, source)).join(", "));
-            if (node.whereClause != null) {
-                string.append(" ").append(dialect.transcribe(site, node.whereClause));
+            if (node.getWhereClause() != null) {
+                string.append(" ").append(dialect.transcribe(site, node.getWhereClause()));
             }
             if (node.groupByClause != null) {
                 string.append(" ").append(dialect.transcribe(site, node.groupByClause));

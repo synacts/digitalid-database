@@ -40,16 +40,6 @@ public class TableImplementation implements Table {
      */
     private final @Nonnull SQLQualifiedTableName name;
     
-    /**
-     * Returns the name of this table.
-     * 
-     * @return the name of this table.
-     */
-    @Pure
-    public final @Nonnull SQLQualifiedTableName getName() {
-        return name;
-    }
-    
     /* -------------------------------------------------- Primary Keys -------------------------------------------------- */
     
     private final @Nonnull ReadOnlyList<@Nonnull SQLKey> primaryKeys;
@@ -156,10 +146,10 @@ public class TableImplementation implements Table {
      * Returns a new table with the given name and declaration.
      */
     @Pure
-    public static @Nonnull TableImplementation get(@Nonnull SQLCreateTableStatement createTableStatement, @Nonnull ReadOnlyMap<@Nonnull String, @Nonnull TableImplementation> preConstructedTables, @Nonnull ReadOnlyMap<@Nonnull String, @Nonnull Integer> numberOfColumnsForField) {
+    public static @Nonnull TableImplementation get(@Nonnull SQLCreateTableStatement createTableStatement, @Nonnull ReadOnlyMap<@Nonnull String, @Nonnull TableImplementation> preConstructedTables, @Nonnull ReadOnlyMap<@Nonnull String, @Nonnull Integer> numberOfColumnsForField, @Nonnull Site site) {
         final @Nonnull SQLQualifiedTableName name = createTableStatement.qualifiedTableName;
         final @Nonnull ReadOnlyList<@Nonnull SQLKey> primaryKeys = initializePrimaryKeys(createTableStatement);
-        final @Nonnull ReadOnlyMap<@Nonnull SQLKey, @Nonnull TableImplementation> foreignKeys = initializeForeignKeys(createTableStatement, preConstructedTables, name.site);
+        final @Nonnull ReadOnlyMap<@Nonnull SQLKey, @Nonnull TableImplementation> foreignKeys = initializeForeignKeys(createTableStatement, preConstructedTables, site);
         @Nonnull ReadOnlyMap<@Nonnull  String, @Nonnull Integer> typesForColumns = initializeTypesForColumns(createTableStatement);
         return new TableImplementation(name, primaryKeys, foreignKeys, typesForColumns, numberOfColumnsForField);
     }
@@ -168,14 +158,11 @@ public class TableImplementation implements Table {
     
     /**
      * Returns the name of this table with the prefix of the given site.
-     * 
-     * @param site the site whose prefix is to be used for the returned name.
-     * 
-     * @return the name of this table with the prefix of the given site.
      */
     @Pure
-    public final @Nonnull String getName(@Nonnull Site site) {
-        return name.getValue();
+    @Override
+    public final @Nonnull String getName() {
+        return name.tableName;
     }
     
     @Pure
