@@ -1,6 +1,5 @@
 package net.digitalid.database.storage;
 
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

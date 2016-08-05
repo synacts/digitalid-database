@@ -10,6 +10,7 @@ import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.rootclass.RootClass;
+import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -37,7 +38,7 @@ public abstract class Table extends RootClass implements Storage {
         super.initialize();
     }
     
-    /* -------------------------------------------------- Converters -------------------------------------------------- */
+    /* -------------------------------------------------- Converter -------------------------------------------------- */
     
     /**
      * Returns the converter that models the columns of this table.
@@ -45,7 +46,13 @@ public abstract class Table extends RootClass implements Storage {
     @Pure
     public abstract @Nonnull Converter<?, ?> getConverter();
     
-    // TODO: Override getName() as soon as the converter has such a method by either delegatig or deriving the value.
+    /* -------------------------------------------------- Name -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull @CodeIdentifier String getName() {
+        return getConverter().getName();
+    }
     
     /* -------------------------------------------------- Tables -------------------------------------------------- */
     
