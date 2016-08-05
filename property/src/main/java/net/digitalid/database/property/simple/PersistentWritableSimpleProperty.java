@@ -9,6 +9,11 @@ import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.Captured;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
+import net.digitalid.utility.annotations.parameter.Unmodified;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.collaboration.enumerations.Priority;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -109,6 +114,15 @@ public abstract class PersistentWritableSimpleProperty<O, V> extends WritableSim
         } else {
             this.loaded = false;
         }
+    }
+    
+    /* -------------------------------------------------- Temporary -------------------------------------------------- */
+    
+    @Impure
+    @Override
+    @TODO(task = "Remove this overriding once the subclass generator can handle generic exception types.", date = "2016-08-05", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.MIDDLE)
+    protected void notifyObservers(@NonCaptured @Unmodified @Valid V oldValue, @NonCaptured @Unmodified @Valid V newValue) throws DatabaseException {
+        super.notifyObservers(oldValue, newValue);
     }
     
 }
