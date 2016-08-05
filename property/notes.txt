@@ -11,8 +11,8 @@ ClientStorage -> Storage, ClientTable -> Table (has a dependency on the site typ
 HostStorage -> ExportableStorage, HostTable -> ExportableTable (has a dependency on the block class)
 SiteStorage -> SynchronizableStorage/SynchronizedStorage, SiteTable -> SynchronizableTable/SynchronizedTable (has dependencies on entity, permissions, restrictions and agent)
 
-ValueCollector -> [Value]Collector or [Conversion]Collector
-SelectionResult -> [Value]Distributor or [Conversion]Distributor
+ValueCollector -> [Value]Collector or [Conversion]Collector -> Encoder
+SelectionResult -> [Value]Distributor or [Conversion]Distributor -> ValueRestorer/ValueRecoverer -> Decoder
 
 
 database-storage with:
