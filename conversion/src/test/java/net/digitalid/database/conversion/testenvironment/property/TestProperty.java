@@ -10,7 +10,7 @@ import net.digitalid.utility.functional.interfaces.Predicate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.property.nonnullable.WritableNonNullableProperty;
+import net.digitalid.utility.property.simple.WritableSimpleProperty;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
 /**
@@ -19,7 +19,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 @GenerateBuilder
 @GenerateSubclass
 @GenerateConverter
-public abstract class TestProperty extends WritableNonNullableProperty<Boolean> {
+public abstract class TestProperty extends WritableSimpleProperty<Boolean> {
     
     private Boolean flag;
     

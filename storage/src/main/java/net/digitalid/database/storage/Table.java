@@ -9,12 +9,13 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.storage.injections.TableCreator;
+import net.digitalid.database.storage.injections.TableDeleter;
 
 /**
  * This class implements a database table that can be created and deleted.
@@ -30,18 +31,21 @@ public abstract class Table extends RootClass implements Storage {
     @Override
     @CallSuper
     protected void initialize() {
-        final @Nullable Module module = getModule();
+        final @Nullable Module module = getParentModule();
         if (module != null) { module.addSubstorage(this); }
+        else { Site.addStorage(this); }
         super.initialize();
     }
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     
     /**
-     * Returns the converters that declare the columns of this table.
+     * Returns the converter that models the columns of this table.
      */
     @Pure
-    public abstract @Nonnull ImmutableList<@Nonnull Converter<?, ?>> getConverters();
+    public abstract @Nonnull Converter<?, ?> getConverter();
+    
+    // TODO: Override getName() as soon as the converter has such a method by either delegatig or deriving the value.
     
     /* -------------------------------------------------- Tables -------------------------------------------------- */
     
@@ -49,14 +53,14 @@ public abstract class Table extends RootClass implements Storage {
     @Override
     @NonCommitting
     public void createTables(@Nonnull Site site) throws DatabaseException {
-        // TODO: Implement!
+        TableCreator.create(this, site);
     }
     
     @Impure
     @Override
     @NonCommitting
     public void deleteTables(@Nonnull Site site) throws DatabaseException {
-        // TODO: Implement!
+        TableDeleter.delete(this, site);
     }
     
 }
