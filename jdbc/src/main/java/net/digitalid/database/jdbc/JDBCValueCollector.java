@@ -328,6 +328,7 @@ public class JDBCValueCollector implements SQLValueCollector {
     public <T> @Nonnull Integer setList(@Nonnull List<@Nullable T> list, @Nonnull UnaryFunction<T, @Nonnull Integer> entityCollector) {
         executionData.multiplyRows(list.size());
         int insertedRows = executionData.getCurrentRowIndex();
+        final int initialRow = insertedRows;
         executionData.setRowIndex(insertedRows);
         
         for (int j = 0; j < list.size(); j++) {
@@ -341,7 +342,7 @@ public class JDBCValueCollector implements SQLValueCollector {
         }
         
         executionData.popPreparedStatementEntriesOfGroup();
-        return list.size();
+        return insertedRows - initialRow;
     }
     
     // TODO: implement
