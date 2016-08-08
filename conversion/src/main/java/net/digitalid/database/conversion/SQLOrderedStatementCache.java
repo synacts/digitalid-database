@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.converter.Converter;
+import net.digitalid.utility.conversion.converter.CustomField;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.generator.annotations.interceptors.Cached;
 
@@ -24,7 +25,9 @@ public abstract class SQLOrderedStatementCache {
     
     @Pure
     private <S, CD extends SQLColumnDeclarations<CD, ?, S>> @Nonnull SQLOrderedStatements<S, CD> getOrderedStatements(@Nonnull Converter<?, ?> converter, @Nonnull SQLColumnDeclarations<CD, ?, S> insertDeclaration) {
-        converter.declare(insertDeclaration);
+        for (@Nonnull CustomField field : converter.getFields()) {
+            insertDeclaration.setField(field);
+        }
         return insertDeclaration.getOrderedStatements();
     }
     

@@ -12,6 +12,7 @@ import net.digitalid.utility.collections.map.FreezableHashMapBuilder;
 import net.digitalid.utility.collections.set.FreezableHashSet;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.converter.Converter;
+import net.digitalid.utility.conversion.converter.CustomField;
 import net.digitalid.utility.conversion.converter.SelectionResult;
 import net.digitalid.utility.conversion.exceptions.FailedValueRecoveryException;
 import net.digitalid.utility.exceptions.InternalException;
@@ -62,7 +63,9 @@ public final class SQL {
     public static @Nonnull TableImplementation create(@Nonnull Converter<?, ?> converter, @Nonnull Site site) throws InternalException, FailedNonCommittingOperationException, FailedCommitException {
         final @Nonnull String tableName = converter.getName();
         final @Nonnull SQLCreateTableColumnDeclarations columnDeclarations = SQLCreateTableColumnDeclarations.get(tableName);
-        converter.declare(columnDeclarations);
+        for (@Nonnull CustomField field : converter.getFields()) {
+            columnDeclarations.setField(field);
+        }
         
         final @Nonnull SQLOrderedStatements<SQLCreateTableStatement, ? extends SQLCreateTableColumnDeclarations> orderedCreateStatements = columnDeclarations.getOrderedStatements();
     
@@ -98,7 +101,7 @@ public final class SQL {
     public static <T> void insert(@Nullable T object, @Nonnull Converter<T, ?> converter, @Nonnull Site site) throws ExternalException {
         final @Nonnull SQLOrderedStatements<@Nonnull SQLInsertStatement, @Nonnull SQLInsertIntoTableColumnDeclarations> orderedInsertStatements = SQLOrderedStatementCache.INSTANCE.getOrderedInsertStatements(converter);
         
-        final @Nonnull SQLValueCollector<?> valueCollector = Database.getInstance().getValueCollector(orderedInsertStatements.getStatementsOrderedByExecution().map(insertStatement -> 
+        final @Nonnull SQLValueCollector valueCollector = Database.getInstance().getValueCollector(orderedInsertStatements.getStatementsOrderedByExecution().map(insertStatement -> 
                 insertStatement.toPreparedStatement(SQLDialect.getDialect(), site)
                ), orderedInsertStatements.getOrderByColumn(), orderedInsertStatements.getColumnCountForGroup());
         converter.convert(object, valueCollector);

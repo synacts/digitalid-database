@@ -14,6 +14,7 @@ import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.map.FreezableHashMap;
 import net.digitalid.utility.collections.map.FreezableHashMapBuilder;
 import net.digitalid.utility.collections.map.ReadOnlyMap;
+import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.conversion.converter.CustomAnnotation;
 import net.digitalid.utility.conversion.converter.CustomField;
 import net.digitalid.utility.conversion.converter.Declaration;
@@ -216,6 +217,14 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
     /* -------------------------------------------------- Set Field -------------------------------------------------- */
     
     @Impure
+    void declareColumns(Converter<?, ?> converter) {
+        final @Nonnull ImmutableList<@Nonnull CustomField> fields = converter.getFields();
+        for (@Nonnull CustomField field : fields) {
+            setField(field);
+        }
+    }
+    
+    @Impure
     @Override
     @SuppressWarnings("unchecked")
     public void setField(@Nonnull CustomField field) {
@@ -223,12 +232,12 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
         if (field.getCustomType().isObjectType()) {
             final CustomType.@Nonnull TupleType tupleType = (CustomType.@Nonnull TupleType) field.getCustomType();
             if (field.isAnnotatedWith(Embedd.class)) {
-                ((CustomType.CustomConverterType) tupleType).getConverter().declare(this);
+                declareColumns(((CustomType.CustomConverterType) tupleType).getConverter());
             } else if (field.isAnnotatedWith(References.class)) {
                 final @Nonnull CustomAnnotation references = field.getAnnotation(References.class);
                 // TODO: prevent naming conflicts.
                 final @Nonnull I referencedTableColumnDeclarations = getInstance(references.get("foreignTable", String.class), currentColumn);
-                ((CustomType.CustomConverterType) tupleType).getConverter().declare(referencedTableColumnDeclarations);
+                referencedTableColumnDeclarations.declareColumns(((CustomType.CustomConverterType) tupleType).getConverter());
                 referencedTablesColumnDeclarations.put(references.get("foreignTable", String.class), referencedTableColumnDeclarations);
                 columnCountForGroup.addAll(referencedTableColumnDeclarations.getColumnCountForGroup());
                 currentColumn = referencedTableColumnDeclarations.currentColumn;

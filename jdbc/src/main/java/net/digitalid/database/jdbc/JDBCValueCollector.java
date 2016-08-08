@@ -19,7 +19,6 @@ import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.converter.types.CustomType;
 import net.digitalid.utility.functional.failable.FailableConsumer;
-import net.digitalid.utility.functional.interfaces.Consumer;
 import net.digitalid.utility.functional.interfaces.UnaryFunction;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.tuples.Pair;
@@ -38,7 +37,7 @@ import net.digitalid.database.jdbc.preparedstatement.SQLStatementProcessingImple
 /**
  * This classes uses the JDBC prepared statement to collect the values.
  */
-public class JDBCValueCollector implements SQLValueCollector<Integer> {
+public class JDBCValueCollector implements SQLValueCollector {
     
     /**
      * The execution data object that is used to store the data that will be put into the prepared statement when the collection is ready.
@@ -320,7 +319,7 @@ public class JDBCValueCollector implements SQLValueCollector<Integer> {
     // TODO: implement
     @Impure
     @Override
-    public <T> @Nonnull Integer setArray(@Nonnull T[] value, @Nonnull Consumer<T> entityCollector) {
+    public <T> @Nonnull Integer setArray(@Nonnull T[] value, @Nonnull UnaryFunction<T, @Nonnull Integer> entityCollector) {
         return 0;
     }
     
@@ -348,14 +347,14 @@ public class JDBCValueCollector implements SQLValueCollector<Integer> {
     // TODO: implement
     @Impure
     @Override
-    public <T> @Nonnull Integer setSet(@Nonnull Set<T> value, @Nonnull Consumer<T> entityCollector) {
+    public <T> @Nonnull Integer setSet(@Nonnull Set<T> value, @Nonnull UnaryFunction<T, @Nonnull Integer> entityCollector) {
         return 0;
     }
     
     // TODO: implement
     @Impure
     @Override
-    public <K, V> @Nonnull Integer setMap(@Nonnull Map<K, V> value, @Nonnull Consumer<K> genericTypeKey, Consumer<V> genericTypeValue) {
+    public <K, V> @Nonnull Integer setMap(@Nonnull Map<K, V> value, @Nonnull UnaryFunction<K, @Nonnull Integer> genericTypeKey, UnaryFunction<V, @Nonnull Integer> genericTypeValue) {
         return 0;
     }
     

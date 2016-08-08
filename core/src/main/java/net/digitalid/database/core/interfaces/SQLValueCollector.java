@@ -17,7 +17,7 @@ import net.digitalid.database.exceptions.operation.FailedSQLValueConversionExcep
  * This interface allows to set the values of an SQL statement.
  * Advancing the parameter index is left to the implementation.
  */
-public interface SQLValueCollector<R> extends AutoCloseable, ValueCollector<R> {
+public interface SQLValueCollector extends AutoCloseable, ValueCollector {
     
     /* -------------------------------------------------- Setters -------------------------------------------------- */
     
@@ -25,91 +25,91 @@ public interface SQLValueCollector<R> extends AutoCloseable, ValueCollector<R> {
      * Sets the next parameter to empty.
      */
     @Impure
-    public R setEmpty() throws FailedSQLValueConversionException;
+    public @Nonnull Integer setEmpty() throws FailedSQLValueConversionException;
     
     /**
      * Sets the next parameter to the given boolean value.
      */
     @Impure
-    public R setBoolean(boolean value) throws FailedSQLValueConversionException;
+    public @Nonnull Integer setBoolean(boolean value) throws FailedSQLValueConversionException;
     
     /**
      * Sets the next parameter to the given byte value.
      */
     @Impure
-    public R setInteger08(byte value) throws FailedSQLValueConversionException;
+    public @Nonnull Integer setInteger08(byte value) throws FailedSQLValueConversionException;
     
     /**
      * Sets the next parameter to the given short value.
      */
     @Impure
-    public R setInteger16(short value) throws FailedSQLValueConversionException;
+    public @Nonnull Integer setInteger16(short value) throws FailedSQLValueConversionException;
     
     /**
      * Sets the next parameter to the given int value.
      */
     @Impure
-    public R setInteger32(int value) throws FailedSQLValueConversionException;
+    public @Nonnull Integer setInteger32(int value) throws FailedSQLValueConversionException;
     
     /**
      * Sets the next parameter to the given long value.
      */
     @Impure
-    public R setInteger64(long value) throws FailedSQLValueConversionException;
+    public @Nonnull Integer setInteger64(long value) throws FailedSQLValueConversionException;
     
     /**
      * Sets the next parameter to the given integer value.
      */
     @Impure
-    public R setInteger(@Nonnull BigInteger value) throws FailedSQLValueConversionException;
+    public @Nonnull Integer setInteger(@Nonnull BigInteger value) throws FailedSQLValueConversionException;
     
     /**
      * Sets the next parameter to the given float value.
      */
     @Impure
-    public R setDecimal32(float value) throws FailedSQLValueConversionException;
+    public @Nonnull Integer setDecimal32(float value) throws FailedSQLValueConversionException;
     
     /**
      * Sets the next parameter to the given double value.
      */
     @Impure
-    public R setDecimal64(double value) throws FailedSQLValueConversionException;
+    public @Nonnull Integer setDecimal64(double value) throws FailedSQLValueConversionException;
     
     /**
      * Sets the next parameter to the given char value.
      */
     @Impure
-    public R setString01(char value) throws FailedSQLValueConversionException;
+    public @Nonnull Integer setString01(char value) throws FailedSQLValueConversionException;
     
     /**
      * Sets the next parameter to the given string value.
      */
     @Impure
-    public R setString64(@Nonnull @MaxSize(64) String value) throws FailedSQLValueConversionException;
+    public @Nonnull Integer setString64(@Nonnull @MaxSize(64) String value) throws FailedSQLValueConversionException;
     
     /**
      * Sets the next parameter to the given string value.
      */
     @Impure
-    public R setString(@Nonnull String value) throws FailedSQLValueConversionException;
+    public @Nonnull Integer setString(@Nonnull String value) throws FailedSQLValueConversionException;
     
     /**
      * Sets the next parameter to the given binary value.
      */
     @Impure
-    public R setBinary128(@Nonnull @Size(16) byte[] value) throws FailedSQLValueConversionException;
+    public @Nonnull Integer setBinary128(@Nonnull @Size(16) byte[] value) throws FailedSQLValueConversionException;
     
     /**
      * Sets the next parameter to the given binary value.
      */
     @Impure
-    public R setBinary256(@Nonnull @Size(32) byte[] value) throws FailedSQLValueConversionException;
+    public @Nonnull Integer setBinary256(@Nonnull @Size(32) byte[] value) throws FailedSQLValueConversionException;
     
     /**
      * Sets the next parameter to the given binary value.
      */
     @Impure
-    public R setBinary(@Nonnull byte[] value) throws FailedSQLValueConversionException;
+    public @Nonnull Integer setBinary(@Nonnull byte[] value) throws FailedSQLValueConversionException;
     
     /**
      * Sets the next parameter to the given input stream.
@@ -120,7 +120,7 @@ public interface SQLValueCollector<R> extends AutoCloseable, ValueCollector<R> {
      * @require Database.getInstance().supportsBinaryStreams() : "The database supports binary streams.";
      */
     @Impure
-    public R setBinaryStream(@Nonnull InputStream stream, int length) throws FailedSQLValueConversionException;
+    public @Nonnull Integer setBinaryStream(@Nonnull InputStream stream, int length) throws FailedSQLValueConversionException;
     
     /* -------------------------------------------------- Null -------------------------------------------------- */
     
@@ -130,7 +130,7 @@ public interface SQLValueCollector<R> extends AutoCloseable, ValueCollector<R> {
      * @param typeCode the SQL type of the next parameter which is to be set to null.
      */
     @Impure
-    public R setNull(int typeCode) throws FailedSQLValueConversionException;
+    public @Nonnull Integer setNull(int typeCode) throws FailedSQLValueConversionException;
     
     /* -------------------------------------------------- Batching -------------------------------------------------- */
     
