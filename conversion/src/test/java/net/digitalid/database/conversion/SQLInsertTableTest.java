@@ -7,7 +7,6 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
-import net.digitalid.database.conversion.testenvironment.columnconstraints.BooleanColumnDefaultTrueTableConverter;
 import net.digitalid.database.conversion.testenvironment.columnconstraints.ConstraintIntegerColumnTable;
 import net.digitalid.database.conversion.testenvironment.columnconstraints.ConstraintIntegerColumnTableConverter;
 import net.digitalid.database.conversion.testenvironment.embedded.Convertible1;
@@ -17,8 +16,6 @@ import net.digitalid.database.conversion.testenvironment.embedded.Convertible2Bu
 import net.digitalid.database.conversion.testenvironment.embedded.EmbeddedConvertibles;
 import net.digitalid.database.conversion.testenvironment.embedded.EmbeddedConvertiblesBuilder;
 import net.digitalid.database.conversion.testenvironment.embedded.EmbeddedConvertiblesConverter;
-import net.digitalid.database.conversion.testenvironment.empty.EmptyClassConverter;
-import net.digitalid.database.conversion.testenvironment.inherited.SubClassConverter;
 import net.digitalid.database.conversion.testenvironment.iterable.CollectionAndAdditionalFieldClass;
 import net.digitalid.database.conversion.testenvironment.iterable.CollectionAndAdditionalFieldClassBuilder;
 import net.digitalid.database.conversion.testenvironment.iterable.CollectionAndAdditionalFieldClassConverter;
@@ -31,18 +28,17 @@ import net.digitalid.database.conversion.testenvironment.iterable.ReferencedColl
 import net.digitalid.database.conversion.testenvironment.iterable.SimpleCollectionsClass;
 import net.digitalid.database.conversion.testenvironment.iterable.SimpleCollectionsClassBuilder;
 import net.digitalid.database.conversion.testenvironment.iterable.SimpleCollectionsClassConverter;
-import net.digitalid.database.conversion.testenvironment.referenced.EntityConverter;
 import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColumnTable;
 import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColumnTableConverter;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTable;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
 import net.digitalid.database.core.Database;
-import net.digitalid.database.storage.Site;
 import net.digitalid.database.core.interfaces.DatabaseInstance;
 import net.digitalid.database.dialect.table.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.operation.FailedUpdateExecutionException;
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
+import net.digitalid.database.storage.Site;
 import net.digitalid.database.testing.SQLTestBase;
 import net.digitalid.database.testing.TestHost;
 

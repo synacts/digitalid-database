@@ -56,6 +56,7 @@ public class SQLSelectFromTableTest extends SQLTestBase {
     public static void tearDown() throws FailedNonCommittingOperationException {
         dropTable(SingleBooleanColumnTableConverter.INSTANCE, site);
         dropTable(SimpleCollectionsClassConverter.INSTANCE, site);
+        dropTable(CollectionAndAdditionalFieldClassConverter.INSTANCE, site);
     }
     
     @Impure
