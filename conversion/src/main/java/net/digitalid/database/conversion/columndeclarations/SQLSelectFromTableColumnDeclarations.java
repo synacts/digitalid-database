@@ -49,14 +49,14 @@ public class SQLSelectFromTableColumnDeclarations extends SQLColumnDeclarations<
     
     @Pure
     @Override
-    protected @Nonnull Pair<@Nonnull SQLQualifiedColumnName, @Nonnull ImmutableList<@Nonnull CustomAnnotation>> getColumnDeclaration(@Nonnull String columnName, @Nonnull SQLTypeNode type, @Nonnull ImmutableList<@Nonnull CustomAnnotation> annotations) {
+    protected @Nonnull Pair<@Nonnull SQLQualifiedColumnName, @Nonnull ImmutableList<@Nonnull CustomAnnotation>> getColumnDeclaration(@Nonnull String columnName, @Nullable SQLTypeNode type, @Nonnull ImmutableList<@Nonnull CustomAnnotation> annotations) {
         return Pair.of(SQLQualifiedColumnName.get(columnName, tableName), annotations);
     }
     
     @Pure
     @Override
     protected @Nonnull Pair<@Nonnull SQLQualifiedColumnName, @Nonnull ImmutableList<@Nonnull CustomAnnotation>> fromField(@Nonnull CustomField field) {
-        return getColumnDeclaration(field.getName(), SQLTypeNode.of(SQLType.of(field.getCustomType())), field.getAnnotations());
+        return getColumnDeclaration(field.getName(), null, field.getAnnotations());
     }
     
     /* -------------------------------------------------- Helper Methods -------------------------------------------------- */

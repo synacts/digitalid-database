@@ -9,7 +9,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
-import net.digitalid.database.annotations.metadata.Embedd;
+import net.digitalid.database.annotations.metadata.Embedded;
 
 /**
  *
@@ -18,7 +18,7 @@ import net.digitalid.database.annotations.metadata.Embedd;
 @GenerateConverter
 public class SimpleCollectionsClass  {
     
-    @Embedd
+    @Embedded
     @GenericTypes(Integer.class)
     public final @Nonnull @NonNullableElements FreezableArrayList<Integer> listOfIntegers;
     

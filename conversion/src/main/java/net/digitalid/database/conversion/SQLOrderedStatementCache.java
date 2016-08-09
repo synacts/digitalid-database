@@ -24,11 +24,11 @@ public abstract class SQLOrderedStatementCache {
     public static SQLOrderedStatementCache INSTANCE = new SQLOrderedStatementCacheSubclass();
     
     @Pure
-    private <S, CD extends SQLColumnDeclarations<CD, ?, S>> @Nonnull SQLOrderedStatements<S, CD> getOrderedStatements(@Nonnull Converter<?, ?> converter, @Nonnull SQLColumnDeclarations<CD, ?, S> insertDeclaration) {
+    private <S, CD extends SQLColumnDeclarations<CD, ?, S>> @Nonnull SQLOrderedStatements<S, CD> getOrderedStatements(@Nonnull Converter<?, ?> converter, @Nonnull SQLColumnDeclarations<CD, ?, S> declarations) {
         for (@Nonnull CustomField field : converter.getFields()) {
-            insertDeclaration.setField(field);
+            declarations.setField(field);
         }
-        return insertDeclaration.getOrderedStatements();
+        return declarations.getOrderedStatements();
     }
     
     @Pure

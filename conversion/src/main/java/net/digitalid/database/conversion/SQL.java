@@ -81,7 +81,7 @@ public final class SQL {
                 mainTable = table;
             }
             Tables.add(table);
-            Log.debugging("Create Statement: " + createTableStatementString);
+            Log.debugging(createTableStatementString);
             Database.getInstance().execute(createTableStatementString);
         }
         if (mainTable == null) {
@@ -121,10 +121,13 @@ public final class SQL {
             throw new UnsupportedOperationException("Querying referenced tables is not yet supported.");
         }
         
-        final @Nonnull SQLWhereClause whereClause = SQLWhereClause.get(whereClauseExpression);
-        selectStatement.setWhereClause(whereClause);
+        if (whereClauseExpression != null) {
+            final @Nonnull SQLWhereClause whereClause = SQLWhereClause.get(whereClauseExpression);
+            selectStatement.setWhereClause(whereClause);
+        }
     
         final @Nonnull String selectIntoTableStatementString = selectStatement.toPreparedStatement(SQLDialect.getDialect(), site);
+        Log.debugging(selectIntoTableStatementString);
         final @Nonnull SQLSelectionResult selectionResult = Database.getInstance().executeSelect(selectIntoTableStatementString);
         return selectionResult;
     }
@@ -136,8 +139,11 @@ public final class SQL {
     public static <T, E> T select(@Nonnull Converter<T, E> converter, @Nullable SQLBooleanExpression whereClauseExpression, @Nonnull Site site) throws FailedNonCommittingOperationException, FailedValueRecoveryException {
         final @Nonnull SelectionResult selectionResult = getSelectionResult(converter, whereClauseExpression, site);
         
+        if (!selectionResult.moveToNextRow()) {
+            return null;
+        }
         final @Nonnull T recoveredObject = converter.recover(selectionResult, null);
-        Require.that(selectionResult.moveToNextRow()).orThrow("Not all of the rows have been processed.");
+        Require.that(!selectionResult.moveToNextRow()).orThrow("Not all of the rows have been processed.");
         
         return recoveredObject;
     }
@@ -150,10 +156,11 @@ public final class SQL {
         final @Nonnull SelectionResult selectionResult = getSelectionResult(converter, null, site);
         
         Set<T> recoveredObjects = FreezableHashSet.withElements();
-        do {
+        while (selectionResult.moveToNextRow()) {
+            selectionResult.moveToFirstColumn();
             final @Nonnull T recoveredObject = converter.recover(selectionResult, null);
             recoveredObjects.add(recoveredObject);
-        } while (selectionResult.moveToNextRow());
+        }
         
         return recoveredObjects;
     }

@@ -8,7 +8,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
-import net.digitalid.database.annotations.metadata.Embedd;
+import net.digitalid.database.annotations.metadata.Embedded;
 
 /**
  *
@@ -17,10 +17,10 @@ import net.digitalid.database.annotations.metadata.Embedd;
 @GenerateConverter
 public class CompositeCollectionsClass  {
     
-    @Embedd
+    @Embedded
     static class ListOfIntegers extends FreezableArrayList<Integer> {}
     
-    @Embedd
+    @Embedded
     public final @Nonnull @NonNullableElements FreezableArrayList<FreezableArrayList<Integer>> listOfListOfIntegers;
     
     CompositeCollectionsClass(@Nonnull @NonNullableElements FreezableArrayList<FreezableArrayList<Integer>> listOfListOfIntegers) {

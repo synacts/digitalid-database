@@ -65,7 +65,7 @@ public class SQLSelectStatement extends SQLUnorderedSelectStatement<SQLSelectSta
             final @Nonnull StringBuilder string = new StringBuilder();
             string.append("SELECT ");
             string.append(node.resultColumns.map((resultColumn) -> dialect.transcribe(site, resultColumn)).join(", "));
-            string.append(" ");
+            string.append(" FROM ");
             string.append(node.sources.map((source) -> dialect.transcribe(site, source)).join(", "));
             if (node.getWhereClause() != null) {
                 string.append(" ").append(dialect.transcribe(site, node.getWhereClause()));

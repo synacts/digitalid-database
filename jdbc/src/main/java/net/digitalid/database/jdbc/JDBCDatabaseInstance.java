@@ -196,13 +196,14 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
      * 
      * @param statement the statement which is to be prepared.
      * @param generatesKeys whether the statement generates keys.
+     *                      TODO: instead of allowing to set generatesKeys here, we need to adjust the insert statements where generated keys are expected to query with statement.getGeneratedKeys().
      * 
      * @return the prepared statement that is ready for execution.
      */
     @Pure
     protected @Nonnull PreparedStatement prepare(@Nonnull String statement, boolean generatesKeys) throws FailedNonCommittingOperationException, InternalException {
         try {
-            final @Nonnull PreparedStatement preparedStatement = getConnection().prepareStatement(statement, generatesKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS);
+            final @Nonnull PreparedStatement preparedStatement = getConnection().prepareStatement(statement, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             return preparedStatement;
         } catch (@Nonnull SQLException exception) {
             throw FailedStatementCreationException.get(exception);
@@ -314,7 +315,7 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
     @Override
     public @Nonnull SQLSelectionResult executeSelect(@Nonnull String selectStatement) throws FailedNonCommittingOperationException, InternalException {
         try {
-            final @Nonnull ResultSet resultSet = getConnection().createStatement().executeQuery(selectStatement);
+            final @Nonnull ResultSet resultSet = getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(selectStatement);
             return JDBCSelectionResult.get(resultSet);
         } catch (@Nonnull SQLException exception) {
             throw FailedQueryExecutionException.get(exception);

@@ -3,6 +3,7 @@ package net.digitalid.database.jdbc;
 import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,6 +13,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.functional.interfaces.Producer;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;
@@ -90,9 +92,14 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
+    public void moveToFirstColumn() {
+        columnIndex = 1;
+    }
+    
+    @Impure
+    @Override
     public boolean moveToNextRow() {
         try {
-            columnIndex = 1;
             return resultSet.next();
         } catch (@Nonnull SQLException exception) {
             throw FailedSQLValueRecoveryException.get(exception);
@@ -112,7 +119,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     public void moveToColumn(int columnIndex) {
-        columnIndex = 1;
+        this.columnIndex = columnIndex;
     }
     
     /* -------------------------------------------------- Getters -------------------------------------------------- */
@@ -277,15 +284,43 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     }
     
     @Impure
-    // TODO: implement
-    @Override public <T> List<T> getList(Producer<T> function) {
-        return null;
+    @Override
+    public <T> @Nullable List<T> getList(@Nonnull Producer<@Nullable T> function) {
+        try {
+            final @Nonnull ArrayList<@Nullable T> result = FreezableArrayList.withNoElements();
+            final int beginsAtColumn = columnIndex;
+            int listIndex = resultSet.getInt(columnIndex++);
+            int last = listIndex;
+            boolean hasAnotherRow = true;
+            while (hasAnotherRow && !resultSet.wasNull()) {
+                while (last < listIndex) {
+                    result.add(null);
+                    last++;
+                }
+                final @Nullable T object = function.produce();
+                result.add(object);
+                last++;
+                hasAnotherRow = moveToNextRow();
+                if (hasAnotherRow) {
+                    moveToColumn(beginsAtColumn);
+                    listIndex = resultSet.getInt(columnIndex++);
+                    if (listIndex < last) {
+                        hasAnotherRow = false;
+                    }
+                } else {
+                    // move one row back
+                    resultSet.relative(-1);
+                }
+            }
+            return result;
+        } catch (@Nonnull SQLException exception) {
+            throw FailedSQLValueRecoveryException.get(exception);
+        }
     }
     
     @Impure
-    // TODO: implement
     @Override public <T> T[] getArray(Producer<T> function) {
-        return null;
+        return (T[]) getList(function).toArray();
     }
     
     @Impure

@@ -11,7 +11,7 @@ import net.digitalid.database.dialect.ast.expression.SQLExpression;
  * This class implements an expression that evaluates to a boolean.
  */
 @Immutable
-public abstract class SQLBooleanExpression implements SQLExpression {
+public abstract class SQLBooleanExpression<T extends SQLExpression<T>> implements SQLExpression<T> {
     
     /* -------------------------------------------------- Unary Operations -------------------------------------------------- */
     

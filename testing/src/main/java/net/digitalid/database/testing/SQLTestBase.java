@@ -40,6 +40,8 @@ public class SQLTestBase extends CustomTest {
     
     private static Server server;
     
+    /* -------------------------------------------------- Set Up -------------------------------------------------- */
+    
     @Impure
     @BeforeClass
     public static void setUpSQL() throws Exception {
@@ -51,6 +53,8 @@ public class SQLTestBase extends CustomTest {
         Database.initialize(h2Database);
     }
     
+    /* -------------------------------------------------- Drop Table -------------------------------------------------- */
+    
     @Impure
     public static void dropTable(@Nonnull String tableName, @Nonnull Site site) throws FailedNonCommittingOperationException {
         DatabaseInstance instance = Database.getInstance();
@@ -61,6 +65,21 @@ public class SQLTestBase extends CustomTest {
     public static void dropTable(@Nonnull Converter<?, ?> converter, @Nonnull Site site) throws FailedNonCommittingOperationException {
         dropTable(converter.getName(), site);
     }
+    
+    /* -------------------------------------------------- Delete -------------------------------------------------- */
+    
+    @Impure
+    public static void deleteFromTable(@Nonnull String tableName, @Nonnull Site site) throws FailedNonCommittingOperationException {
+        DatabaseInstance instance = Database.getInstance();
+        instance.execute("DELETE FROM " + site.getDatabaseName() + "." + tableName.toLowerCase());
+    }
+    
+    @Impure
+    public static void deleteFromTable(@Nonnull Converter<?, ?> converter, @Nonnull Site site) throws FailedNonCommittingOperationException {
+        deleteFromTable(converter.getName(), site);
+    }
+    
+    /* -------------------------------------------------- Tear Down -------------------------------------------------- */
     
     @Impure
     @AfterClass
@@ -162,6 +181,7 @@ public class SQLTestBase extends CustomTest {
         final @Nonnull String constraintQuery = "SELECT CHECK_CONSTRAINT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tableName.toLowerCase() + "' AND COLUMN_NAME = ";
         final @Nonnull Set<String> checkedSet = FreezableHashSetBuilder.build();
         do {
+            tableColumnsQuery.moveToFirstColumn();
             @Nullable String field = tableColumnsQuery.getString();
             Assert.assertNotNull("A column name was expected, but none defined", field);
             Assert.assertTrue("Column name '" + field + "' is unexpected", expectedResults.containsKey(field));
@@ -201,7 +221,7 @@ public class SQLTestBase extends CustomTest {
     }
     
     @Pure
-    protected void assertRowCount(@Nonnull String tableName, long rowCount) throws FailedNonCommittingOperationException, EntryNotFoundException {
+    protected static void assertRowCount(@Nonnull String tableName, long rowCount) throws FailedNonCommittingOperationException, EntryNotFoundException {
         final @Nonnull String rowCountQuery = "SELECT COUNT(*) AS count FROM " + tableName.toLowerCase();
         final @Nonnull DatabaseInstance instance = Database.getInstance();
         final @Nonnull SQLSelectionResult rowCountResult = instance.executeSelect(rowCountQuery);
@@ -210,12 +230,12 @@ public class SQLTestBase extends CustomTest {
     }
     
     @Pure
-    protected void assertRowCount(@Nonnull TableImplementation table, @Nonnull Site site, long rowCount) throws FailedNonCommittingOperationException, EntryNotFoundException {
+    protected static void assertRowCount(@Nonnull TableImplementation table, @Nonnull Site site, long rowCount) throws FailedNonCommittingOperationException, EntryNotFoundException {
         assertRowCount(site.getDatabaseName() + "." + table.getName(), rowCount);
     }
     
     @Pure
-    protected void assertTableContains(@Nonnull String tableName, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException {
+    protected static void assertTableContains(@Nonnull String tableName, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException {
         final @Nonnull DatabaseInstance instance = Database.getInstance();
         for (@Nonnull Expected expected : expectedArray) {
             @Nonnull String rowCountQuery = "SELECT COUNT(*) AS count FROM " + tableName.toLowerCase() ;
@@ -236,12 +256,12 @@ public class SQLTestBase extends CustomTest {
             }
             final @Nonnull SQLSelectionResult rowCountResult = instance.executeSelect(rowCountQuery);
             rowCountResult.moveToFirstRow();
-            Assert.assertSame("Table '" + tableName + "' does not contain column(s) " + columnsInfo, 1L, rowCountResult.getInteger64());
+            Assert.assertTrue("Table '" + tableName + "' does not contain column(s) " + columnsInfo, rowCountResult.getInteger64() >= 1L);
         }
     }
     
     @Pure
-    protected void assertTableContains(@Nonnull TableImplementation table, @Nonnull Site site, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException {
+    protected static void assertTableContains(@Nonnull TableImplementation table, @Nonnull Site site, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException {
         final @Nonnull String tableName = table.getName();
         assertTableContains(site.getDatabaseName() + "." + tableName, expectedArray);
     }
