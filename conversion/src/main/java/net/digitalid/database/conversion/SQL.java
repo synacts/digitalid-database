@@ -40,7 +40,7 @@ import net.digitalid.database.dialect.ast.statement.table.create.SQLCreateTableS
 import net.digitalid.database.dialect.table.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedCommitException;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
-import net.digitalid.database.storage.Site;
+import net.digitalid.database.core.Site;
 
 /**
  * This class serves as an entry point for simple conversion of Java objects to SQL.

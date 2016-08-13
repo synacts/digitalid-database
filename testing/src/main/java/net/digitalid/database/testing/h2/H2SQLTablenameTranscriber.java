@@ -8,7 +8,7 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
-import net.digitalid.database.storage.Site;
+import net.digitalid.database.core.Site;
 
 /**
  *
@@ -22,7 +22,7 @@ public class H2SQLTablenameTranscriber extends Transcriber<SQLQualifiedTableName
     @Pure
     @Override
     protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLQualifiedTableName node, @Nonnull Site site) throws InternalException {
-        return (site.getDatabaseName().isEmpty() ? "" : site.getDatabaseName() + ".") + node.tableName.toUpperCase();
+        return (site.getName().isEmpty() ? "" : site.getName() + ".") + node.tableName.toUpperCase();
     }
     
 }

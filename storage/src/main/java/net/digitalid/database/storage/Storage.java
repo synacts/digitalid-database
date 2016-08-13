@@ -1,27 +1,24 @@
 package net.digitalid.database.storage;
 
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.digitalid.utility.annotations.method.Impure;
+import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.rootclass.RootInterface;
+import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Derive;
+import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
-import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.exceptions.DatabaseException;
-
 /**
- * This interface models a storage whose tables can be created and deleted.
+ * This class models a node in the storage tree.
  * 
  * @see Module
  * @see Table
  */
 @Mutable
-public interface Storage extends RootInterface {
+public abstract class Storage extends RootClass {
     
     /* -------------------------------------------------- Module -------------------------------------------------- */
     
@@ -29,7 +26,18 @@ public interface Storage extends RootInterface {
      * Returns the parent module to which this storage belongs.
      */
     @Pure
-    public @Nullable Module getParentModule();
+    public abstract @Nullable Module getParentModule();
+    
+    /* -------------------------------------------------- Initialization -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    @CallSuper
+    protected void initialize() {
+        final @Nullable Module module = getParentModule();
+        if (module != null) { module.addChildStorage(this); }
+        super.initialize();
+    }
     
     /* -------------------------------------------------- Name -------------------------------------------------- */
     
@@ -37,13 +45,13 @@ public interface Storage extends RootInterface {
      * Returns the name of this storage.
      */
     @Pure
-    public @Nonnull @CodeIdentifier String getName();
+    public abstract @Nonnull @CodeIdentifier @MaxSize(63) String getName();
     
     /**
      * Returns the full name of this storage with the given delimiter between the names of the parent modules in the given direction.
      */
     @Pure
-    public default @Nonnull @CodeIdentifier String getFullName(@Nonnull @CodeIdentifier String delimiter, boolean rootToLeaf) {
+    public @Nonnull String getFullName(@Nonnull String delimiter, boolean rootToLeaf) {
         if (getParentModule() != null) {
             final @Nonnull String parentName = getParentModule().getFullName(delimiter, rootToLeaf);
             return rootToLeaf ? parentName + delimiter + getName() : getName() + delimiter + parentName;
@@ -57,29 +65,13 @@ public interface Storage extends RootInterface {
      */
     @Pure
     @Derive("getFullName(\".\", false)")
-    public @Nonnull @CodeIdentifier String getFullNameWithPeriods();
+    public abstract @Nonnull String getFullNameWithPeriods();
     
     /**
      * Returns the full name of this storage with underlines between the names of the parent modules from root to leaf.
      */
     @Pure
     @Derive("getFullName(\"_\", true)")
-    public @Nonnull @CodeIdentifier String getFullNameWithUnderlines();
-    
-    /* -------------------------------------------------- Tables -------------------------------------------------- */
-    
-    /**
-     * Creates the database tables of this storage on the given site.
-     */
-    @Impure
-    @NonCommitting
-    public void createTables(@Nonnull Site site) throws DatabaseException;
-    
-    /**
-     * Deletes the database tables of this storage on the given site.
-     */
-    @Impure
-    @NonCommitting
-    public void deleteTables(@Nonnull Site site) throws DatabaseException;
+    public abstract @Nonnull @CodeIdentifier String getFullNameWithUnderlines();
     
 }

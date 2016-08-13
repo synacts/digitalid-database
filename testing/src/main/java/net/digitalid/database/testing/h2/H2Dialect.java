@@ -8,7 +8,7 @@ import net.digitalid.utility.collections.map.FreezableHashMapBuilder;
 import net.digitalid.utility.exceptions.InternalException;
 
 import net.digitalid.database.dialect.ast.identifier.SQLBooleanAlias;
-import net.digitalid.database.storage.Site;
+import net.digitalid.database.core.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLNode;
 import net.digitalid.database.dialect.ast.Transcriber;

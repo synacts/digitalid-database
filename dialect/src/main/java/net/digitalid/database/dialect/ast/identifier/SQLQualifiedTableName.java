@@ -11,7 +11,7 @@ import net.digitalid.utility.validation.annotations.size.MinSize;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLNode;
 import net.digitalid.database.dialect.ast.Transcriber;
-import net.digitalid.database.storage.Site;
+import net.digitalid.database.core.Site;
 
 /**
  * The SQL node that represents the qualified table name.
@@ -51,7 +51,7 @@ public class SQLQualifiedTableName implements SQLNode<SQLQualifiedTableName> {
         
         @Override
         protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLQualifiedTableName node, @Nonnull Site site) throws InternalException {
-            final @Nonnull String qualifiedTableName = (site.getDatabaseName().isEmpty() ? "" : site.getDatabaseName() + ".") + node.tableName.length();
+            final @Nonnull String qualifiedTableName = (site.getName().isEmpty() ? "" : site.getName() + ".") + node.tableName.length();
             Require.that(qualifiedTableName.length() <= 63).orThrow("The qualified table name $ is bigger than allowed");
             
             return Quotes.inDouble(qualifiedTableName);

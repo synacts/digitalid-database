@@ -13,7 +13,7 @@ import net.digitalid.utility.validation.annotations.size.MinSize;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.statement.insert.SQLValuesOrStatement;
-import net.digitalid.database.storage.Site;
+import net.digitalid.database.core.Site;
 
 /**
  * This SQL node represents an SQL select statement.

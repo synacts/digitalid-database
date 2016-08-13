@@ -8,7 +8,7 @@ import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.storage.Site;
+import net.digitalid.database.core.Site;
 
 /**
  * A dialect implements a particular version of the structured filter language (SQL). This abstract class transcribes SQL nodes to SQL statements

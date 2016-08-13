@@ -12,7 +12,7 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.elements.NullableElements;
 
 import net.digitalid.database.core.interfaces.SQLValueCollector;
-import net.digitalid.database.storage.Site;
+import net.digitalid.database.core.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLParameterizableNode;
 import net.digitalid.database.dialect.ast.Transcriber;

@@ -38,7 +38,7 @@ import net.digitalid.database.dialect.table.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.operation.FailedUpdateExecutionException;
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
-import net.digitalid.database.storage.Site;
+import net.digitalid.database.core.Site;
 import net.digitalid.database.testing.SQLTestBase;
 import net.digitalid.database.testing.TestHost;
 
@@ -105,7 +105,7 @@ public class SQLInsertTableTest extends SQLTestBase {
     @Before
     public void deleteTableContent() throws FailedNonCommittingOperationException, EntryNotFoundException {
         DatabaseInstance instance = Database.getInstance();
-        instance.execute("DELETE FROM " + site.getDatabaseName() + "." + simpleBooleanTable.getName().toUpperCase());
+        instance.execute("DELETE FROM " + site.getName() + "." + simpleBooleanTable.getName().toUpperCase());
     }
     
     @Test

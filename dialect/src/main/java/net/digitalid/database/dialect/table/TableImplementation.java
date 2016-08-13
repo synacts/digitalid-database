@@ -17,7 +17,7 @@ import net.digitalid.utility.validation.annotations.elements.NonNullableElements
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.SQLKey;
-import net.digitalid.database.storage.Site;
+import net.digitalid.database.core.Site;
 import net.digitalid.database.core.Table;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
 import net.digitalid.database.dialect.ast.statement.insert.SQLValues;
@@ -126,7 +126,7 @@ public class TableImplementation implements Table {
                 for (SQLColumnConstraint columnConstraint : columnDeclaration.columnConstraints) {
                     if (columnConstraint instanceof SQLForeignKeyConstraint) {
                         @Nonnull final CustomAnnotation references = ((SQLForeignKeyConstraint) columnConstraint).references;
-                        final @Nonnull String foreignTable = site.getDatabaseName() + "." + references.get("foreignTable", String.class);
+                        final @Nonnull String foreignTable = site.getName() + "." + references.get("foreignTable", String.class);
                         for (Map.@Nonnull Entry<@Nonnull String, @Nonnull TableImplementation> preConstructedTableName : preConstructedTables.entrySet()) {
                             if (preConstructedTableName.getKey().equals(foreignTable)) {
                                 foreignKeys.put(SQLKey.with(type, columnDeclaration.columnName.getValue(), position), preConstructedTableName.getValue());

@@ -14,7 +14,7 @@ import net.digitalid.database.exceptions.DatabaseException;
  * A persistent property stores its value(s) in the database.
  */
 @Mutable
-public interface PersistentProperty<O, V> {
+public interface ObjectProperty<O, V> {
     
     /**
      * Returns the property table that contains the property name, object and value converters, the required authorization and the value validator.

@@ -26,7 +26,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.property.PersistentProperty;
+import net.digitalid.database.property.ObjectProperty;
 
 /**
  * This writable property stores a simple value in the database.
@@ -34,7 +34,7 @@ import net.digitalid.database.property.PersistentProperty;
 @Mutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class PersistentWritableSimpleProperty<O, V> extends WritableSimpleProperty<V, DatabaseException> implements PersistentProperty<O, V> {
+public abstract class PersistentWritableSimpleProperty<O, V> extends WritableSimpleProperty<V, DatabaseException> implements ObjectProperty<O, V> {
     
     /* -------------------------------------------------- Loading -------------------------------------------------- */
     

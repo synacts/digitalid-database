@@ -23,7 +23,7 @@ import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.table.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
-import net.digitalid.database.storage.Site;
+import net.digitalid.database.core.Site;
 import net.digitalid.database.testing.h2.H2Dialect;
 import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
 
@@ -58,7 +58,7 @@ public class SQLTestBase extends CustomTest {
     @Impure
     public static void dropTable(@Nonnull String tableName, @Nonnull Site site) throws FailedNonCommittingOperationException {
         DatabaseInstance instance = Database.getInstance();
-        instance.execute("DROP TABLE " + site.getDatabaseName() + "." + tableName.toLowerCase());
+        instance.execute("DROP TABLE " + site.getName() + "." + tableName.toLowerCase());
     }
     
     @Impure
@@ -71,7 +71,7 @@ public class SQLTestBase extends CustomTest {
     @Impure
     public static void deleteFromTable(@Nonnull String tableName, @Nonnull Site site) throws FailedNonCommittingOperationException {
         DatabaseInstance instance = Database.getInstance();
-        instance.execute("DELETE FROM " + site.getDatabaseName() + "." + tableName.toLowerCase());
+        instance.execute("DELETE FROM " + site.getName() + "." + tableName.toLowerCase());
     }
     
     @Impure
@@ -231,7 +231,7 @@ public class SQLTestBase extends CustomTest {
     
     @Pure
     protected static void assertRowCount(@Nonnull TableImplementation table, @Nonnull Site site, long rowCount) throws FailedNonCommittingOperationException, EntryNotFoundException {
-        assertRowCount(site.getDatabaseName() + "." + table.getName(), rowCount);
+        assertRowCount(site.getName() + "." + table.getName(), rowCount);
     }
     
     @Pure
@@ -263,7 +263,7 @@ public class SQLTestBase extends CustomTest {
     @Pure
     protected static void assertTableContains(@Nonnull TableImplementation table, @Nonnull Site site, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException {
         final @Nonnull String tableName = table.getName();
-        assertTableContains(site.getDatabaseName() + "." + tableName, expectedArray);
+        assertTableContains(site.getName() + "." + tableName, expectedArray);
     }
     
     // TODO: the following is still very ugly. Improve!
