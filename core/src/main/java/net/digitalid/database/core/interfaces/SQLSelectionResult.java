@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.converter.SelectionResult;
+import net.digitalid.utility.conversion.exceptions.FailedValueRecoveryException;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;
 
@@ -17,7 +18,7 @@ import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
  * This interface allows to get the values of an SQL result.
  * Advancing the column index is left to the implementation.
  */
-public interface SQLSelectionResult extends AutoCloseable, SelectionResult {
+public interface SQLSelectionResult extends AutoCloseable, SelectionResult<FailedValueRecoveryException> {
     
     /* -------------------------------------------------- Iteration -------------------------------------------------- */
     
@@ -50,6 +51,9 @@ public interface SQLSelectionResult extends AutoCloseable, SelectionResult {
      */
     @Impure
     public void moveToColumn(int columnIndex);
+    
+    @Impure
+    public void moveToFirstColumn();
     
     /* -------------------------------------------------- Getters -------------------------------------------------- */
     

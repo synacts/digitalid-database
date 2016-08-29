@@ -112,7 +112,7 @@ public final class SQL {
     /* -------------------------------------------------- Select -------------------------------------------------- */
     
     @Pure
-    private static <T> @Nonnull SelectionResult getSelectionResult(@Nonnull Converter<T, ?> converter, @Nullable SQLBooleanExpression whereClauseExpression, @Nonnull Site site) throws FailedNonCommittingOperationException {
+    private static <T> @Nonnull SQLSelectionResult getSelectionResult(@Nonnull Converter<T, ?> converter, @Nullable SQLBooleanExpression whereClauseExpression, @Nonnull Site site) throws FailedNonCommittingOperationException {
         final @Nonnull SQLOrderedStatements<@Nonnull SQLSelectStatement, @Nonnull SQLSelectFromTableColumnDeclarations> orderedSelectStatements = SQLOrderedStatementCache.INSTANCE.getOrderedSelectStatements(converter);
         final @Nonnull @NonEmpty ReadOnlyList<@Nonnull SQLSelectStatement> statementsOrderedByExecution = orderedSelectStatements.getStatementsOrderedByExecution();
         final @Nonnull SQLSelectStatement selectStatement = statementsOrderedByExecution.getFirst();
@@ -137,7 +137,7 @@ public final class SQL {
      */
     @Pure
     public static <T, E> T select(@Nonnull Converter<T, E> converter, @Nullable SQLBooleanExpression whereClauseExpression, @Nonnull Site site) throws FailedNonCommittingOperationException, FailedValueRecoveryException {
-        final @Nonnull SelectionResult selectionResult = getSelectionResult(converter, whereClauseExpression, site);
+        final @Nonnull SQLSelectionResult selectionResult = getSelectionResult(converter, whereClauseExpression, site);
         
         if (!selectionResult.moveToNextRow()) {
             return null;
@@ -153,7 +153,7 @@ public final class SQL {
      */
     @Pure
     public static <T, E> Set<T> export(@Nonnull Converter<T, E> converter, @Nonnull Site site) throws FailedNonCommittingOperationException, FailedValueRecoveryException {
-        final @Nonnull SelectionResult selectionResult = getSelectionResult(converter, null, site);
+        final @Nonnull SQLSelectionResult selectionResult = getSelectionResult(converter, null, site);
         
         Set<T> recoveredObjects = FreezableHashSet.withElements();
         while (selectionResult.moveToNextRow()) {

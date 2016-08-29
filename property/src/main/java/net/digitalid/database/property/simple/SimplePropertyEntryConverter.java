@@ -17,6 +17,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.immutable.ImmutableMap;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeConverter;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -42,7 +43,7 @@ public abstract class SimplePropertyEntryConverter<O, V> extends PropertyEntryCo
     
     @Pure
     @Override
-    public int convert(@Nullable @NonCaptured @Unmodified SimplePropertyEntry<O, V> object, @Nonnull @NonCaptured @Modified ValueCollector valueCollector) {
+    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified SimplePropertyEntry<O, V> object, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws X {
         int i = 1;
         i *= getObjectConverter().convert(object == null ? null : object.getObject(), valueCollector);
         i *= TimeConverter.INSTANCE.convert(object == null ? null : object.getTime(), valueCollector);
@@ -52,7 +53,7 @@ public abstract class SimplePropertyEntryConverter<O, V> extends PropertyEntryCo
     
     @Pure
     @Override
-    public @Nonnull @Capturable SimplePropertyEntry<O, V> recover(@Nonnull @NonCaptured @Modified SelectionResult selectionResult, @Nullable Object externallyProvided) {
+    public @Capturable <X extends ExternalException> @Nonnull SimplePropertyEntry<O, V> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, @Nullable Object externallyProvided) throws X {
         final @Nonnull O object = getObjectConverter().recover(selectionResult, externallyProvided);
         final @Nonnull Time time = TimeConverter.INSTANCE.recover(selectionResult, null);
         final @Nonnull V value = getValueConverter().recover(selectionResult, externallyProvided); // TODO: @Nullable?

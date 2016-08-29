@@ -2,14 +2,20 @@ package net.digitalid.database.jdbc;
 
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.security.DigestOutputStream;
+import java.security.MessageDigest;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.crypto.Cipher;
+import javax.crypto.CipherOutputStream;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
@@ -17,9 +23,10 @@ import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.conversion.converter.ValueCollectorImplementation;
 import net.digitalid.utility.conversion.converter.types.CustomType;
 import net.digitalid.utility.functional.failable.FailableConsumer;
-import net.digitalid.utility.functional.interfaces.UnaryFunction;
+import net.digitalid.utility.functional.failable.FailableUnaryFunction;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
@@ -37,7 +44,7 @@ import net.digitalid.database.jdbc.preparedstatement.SQLStatementProcessingImple
 /**
  * This classes uses the JDBC prepared statement to collect the values.
  */
-public class JDBCValueCollector implements SQLValueCollector {
+public class JDBCValueCollector extends ValueCollectorImplementation<FailedSQLValueConversionException> implements SQLValueCollector {
     
     /**
      * The execution data object that is used to store the data that will be put into the prepared statement when the collection is ready.
@@ -319,13 +326,13 @@ public class JDBCValueCollector implements SQLValueCollector {
     // TODO: implement
     @Impure
     @Override
-    public <T> @Nonnull Integer setArray(@Nonnull T[] value, @Nonnull UnaryFunction<T, @Nonnull Integer> entityCollector) {
+    public <T> @Nonnull Integer setArray(@Nonnull T[] value, @Nonnull FailableUnaryFunction<T, @Nonnull Integer, FailedSQLValueConversionException> entityCollector) throws FailedSQLValueConversionException {
         return 0;
     }
     
     @Impure
     @Override
-    public <T> @Nonnull Integer setList(@Nonnull List<@Nullable T> list, @Nonnull UnaryFunction<T, @Nonnull Integer> entityCollector) {
+    public <T> @Nonnull Integer setList(@Nonnull List<@Nullable T> list, @Nonnull FailableUnaryFunction<T, @Nonnull Integer, FailedSQLValueConversionException> entityCollector) throws FailedSQLValueConversionException {
         executionData.multiplyRows(list.size());
         int insertedRows = executionData.getCurrentRowIndex();
         final int initialRow = insertedRows;
@@ -348,14 +355,14 @@ public class JDBCValueCollector implements SQLValueCollector {
     // TODO: implement
     @Impure
     @Override
-    public <T> @Nonnull Integer setSet(@Nonnull Set<T> value, @Nonnull UnaryFunction<T, @Nonnull Integer> entityCollector) {
+    public <T> @Nonnull Integer setSet(@Nonnull Set<T> value, @Nonnull FailableUnaryFunction<T, @Nonnull Integer, FailedSQLValueConversionException> entityCollector) throws FailedSQLValueConversionException {
         return 0;
     }
     
     // TODO: implement
     @Impure
     @Override
-    public <K, V> @Nonnull Integer setMap(@Nonnull Map<K, V> value, @Nonnull UnaryFunction<K, @Nonnull Integer> genericTypeKey, UnaryFunction<V, @Nonnull Integer> genericTypeValue) {
+    public <K, V> @Nonnull Integer setMap(@Nonnull Map<K, V> value, @Nonnull FailableUnaryFunction<K, @Nonnull Integer, FailedSQLValueConversionException> genericTypeKey, @Nonnull FailableUnaryFunction<V, @Nonnull Integer, FailedSQLValueConversionException> genericTypeValue) throws FailedSQLValueConversionException {
         return 0;
     }
     
@@ -374,7 +381,7 @@ public class JDBCValueCollector implements SQLValueCollector {
     
     @Impure
     @Override
-    public @Nonnull Integer setNull(@Nonnull CustomType customType) {
+    public @Nonnull Integer setNull(@Nonnull CustomType customType) throws FailedSQLValueConversionException {
         executionData.setColumnData(setNullWithTypeCodeInPreparedStatementFunction, SQLType.of(customType).getCode());
         return 1;
     }
@@ -384,6 +391,47 @@ public class JDBCValueCollector implements SQLValueCollector {
     public @Nonnull Integer setNull(int typeCode) throws FailedSQLValueConversionException {
         executionData.setColumnData(setNullWithTypeCodeInPreparedStatementFunction, typeCode);
         return 1;
+    }
+    
+    /* -------------------------------------------------- Transformational Types -------------------------------------------------- */
+    
+    @Impure
+    @Override
+    public void setEncryptionCipher(@Nonnull Cipher cipher) {
+        // TODO: implement this is if we need it in the database as well.
+    }
+    
+    @Impure
+    @Override
+    public @Nonnull CipherOutputStream popEncryptionCipher() {
+        // TODO: implement this is if we need it in the database as well.
+        return null;
+    }
+    
+    @Impure
+    @Override
+    public void setSignatureDigest(@Nonnull MessageDigest digest) {
+        // TODO: implement this is if we need it in the database as well.
+    }
+    
+    @Impure
+    @Override
+    public @Nonnull DigestOutputStream popSignatureDigest() {
+        // TODO: implement this is if we need it in the database as well.
+        return null;
+    }
+    
+    @Impure
+    @Override
+    public void setCompression(@Nonnull Deflater deflater) {
+        // TODO: implement this is if we need it in the database as well.
+    }
+    
+    @Impure
+    @Override
+    public @Nonnull DeflaterOutputStream popCompression() throws FailedSQLValueConversionException {
+        // TODO: implement this is if we need it in the database as well.
+        return null;
     }
     
     /* -------------------------------------------------- Batching -------------------------------------------------- */

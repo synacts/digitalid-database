@@ -1,20 +1,25 @@
 package net.digitalid.database.jdbc;
 
 import java.math.BigInteger;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.Inflater;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.crypto.Cipher;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.FreezableArrayList;
-import net.digitalid.utility.functional.interfaces.Producer;
+import net.digitalid.utility.conversion.exceptions.FailedValueRecoveryException;
+import net.digitalid.utility.functional.failable.FailableProducer;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;
 
@@ -285,7 +290,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
-    public <T> @Nullable List<T> getList(@Nonnull Producer<@Nullable T> function) {
+    public <T> @Nullable List<T> getList(@Nonnull FailableProducer<@Nullable T, FailedValueRecoveryException> function) throws FailedValueRecoveryException {
         try {
             final @Nonnull ArrayList<@Nullable T> result = FreezableArrayList.withNoElements();
             final int beginsAtColumn = columnIndex;
@@ -319,19 +324,61 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     }
     
     @Impure
-    @Override public <T> T[] getArray(Producer<T> function) {
+    @Override
+    public <T> T[] getArray(@Nonnull FailableProducer<T, FailedValueRecoveryException> function) throws FailedValueRecoveryException {
         return (T[]) getList(function).toArray();
     }
     
     @Impure
     // TODO: implement
-    @Override public <T> Set<T> getSet(Producer<T> function) {
+    @Override
+    public <T> Set<T> getSet(@Nonnull FailableProducer<T, FailedValueRecoveryException> function) {
         return null;
     }
     
     @Impure
     // TODO: implement
-    @Override public <K, V> Map<K, V> getMap(Producer<K> keyFunction, Producer<V> valueFunction) {
+    @Override
+    public <K, V> Map<K, V> getMap(@Nonnull FailableProducer<K, FailedValueRecoveryException> keyFunction, @Nonnull FailableProducer<V, FailedValueRecoveryException> valueFunction) {
+        return null;
+    }
+    
+    /* -------------------------------------------------- Transformational Types -------------------------------------------------- */
+    
+    @Impure
+    @Override
+    public void setDecryptionCipher(@Nonnull Cipher cipher) {
+        // TODO: implement this if we allow encryption in the database.
+    }
+    
+    @Impure
+    @Override
+    public void popDecryptionCipher() {
+        // TODO: implement this if we allow encryption in the database.
+    }
+    
+    @Impure
+    @Override
+    public void setDecompression(@Nonnull Inflater inflater) {
+        // TODO: implement this if we allow compression in the database.
+    }
+    
+    @Impure
+    @Override
+    public void popDecompression() {
+        // TODO: implement this if we allow compression in the database.
+    }
+    
+    @Impure
+    @Override
+    public void setSignatureDigest(@Nonnull MessageDigest digest) {
+        // TODO: implement this if we allow signatures in the database.
+    }
+    
+    @Impure
+    @Override
+    public @Nonnull DigestInputStream popSignatureDigest() {
+        // TODO: implement this if we allow signatures in the database.
         return null;
     }
     

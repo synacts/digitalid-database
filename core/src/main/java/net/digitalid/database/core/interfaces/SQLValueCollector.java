@@ -17,7 +17,7 @@ import net.digitalid.database.exceptions.operation.FailedSQLValueConversionExcep
  * This interface allows to set the values of an SQL statement.
  * Advancing the parameter index is left to the implementation.
  */
-public interface SQLValueCollector extends AutoCloseable, ValueCollector {
+public interface SQLValueCollector extends AutoCloseable, ValueCollector<FailedSQLValueConversionException> {
     
     /* -------------------------------------------------- Setters -------------------------------------------------- */
     
