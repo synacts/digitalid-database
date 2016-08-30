@@ -2,19 +2,20 @@ package net.digitalid.database.property;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
-import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.property.simple.SimpleObjectProperty;
 
 /**
- * A persistent property stores its value(s) in the database.
+ * An object property belongs to an object and stores its value(s) in the database with the object used as the key.
+ * 
+ * @see SimpleObjectProperty
  */
 @Mutable
 public interface ObjectProperty<O, V> {
+    
+    /* -------------------------------------------------- Table -------------------------------------------------- */
     
     /**
      * Returns the property table that contains the property name, object and value converters, the required authorization and the value validator.
@@ -22,24 +23,12 @@ public interface ObjectProperty<O, V> {
     @Pure
     public @Nonnull PropertyTable<O, V> getTable();
     
+    /* -------------------------------------------------- Object -------------------------------------------------- */
+    
     /**
      * Returns the object to which this property belongs.
      */
     @Pure
     public @Nonnull O getObject();
-    
-    /**
-     * Returns the time of the last modification.
-     */
-    @Pure
-    @NonCommitting
-    public @Nonnull Time getTime() throws DatabaseException;
-    
-    /**
-     * Resets the time and value of this property.
-     */
-    @Impure
-    @NonCommitting
-    public void reset() throws DatabaseException;
     
 }

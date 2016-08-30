@@ -12,20 +12,26 @@ import net.digitalid.utility.validation.annotations.type.Mutable;
 import net.digitalid.database.storage.Table;
 
 /**
- * Description.
+ * A property table stores the {@link PropertyEntry property entries} and belongs to a {@link ObjectModule}.
  */
 @Mutable
 @GenerateBuilder
 @GenerateSubclass
 public abstract class PropertyTable<O, V> extends Table {
     
+    /* -------------------------------------------------- Module -------------------------------------------------- */
+    
     @Pure
     @Override
     public abstract @Nonnull ObjectModule<O> getParentModule();
     
+    /* -------------------------------------------------- Converter -------------------------------------------------- */
+    
     @Pure
     @Override
     public abstract @Nonnull PropertyEntryConverter<O, V, ?> getConverter();
+    
+    /* -------------------------------------------------- Validator -------------------------------------------------- */
     
     /**
      * Returns the validator which validates the encapsulated value(s).

@@ -7,11 +7,13 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.property.PropertyEntry;
 
 /**
- * Description.
+ * This class models a database entry of the {@link SimpleObjectProperty}.
  */
 @Immutable
 @GenerateSubclass
 public interface SimplePropertyEntry<O, V> extends PropertyEntry<O, V> {
+    
+    /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Returns the value to which the property belongs.

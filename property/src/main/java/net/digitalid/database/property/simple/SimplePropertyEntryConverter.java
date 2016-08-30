@@ -16,7 +16,6 @@ import net.digitalid.utility.conversion.converter.types.CustomType;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
-import net.digitalid.utility.immutable.ImmutableMap;
 import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeConverter;
@@ -26,20 +25,27 @@ import net.digitalid.database.annotations.metadata.PrimaryKey;
 import net.digitalid.database.property.PropertyEntryConverter;
 
 /**
- * Description.
+ * This class converts the {@link SimplePropertyEntry entries} of the {@link SimpleObjectProperty}.
  */
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
 public abstract class SimplePropertyEntryConverter<O, V> extends PropertyEntryConverter<O, V, SimplePropertyEntry<O, V>> {
     
+    /* -------------------------------------------------- Fields -------------------------------------------------- */
+    
     @Pure
+    // TODO: Allow @Cached on methods without parameters?
     @Override
     public @Nonnull ImmutableList<@Nonnull CustomField> getFields() {
-        return ImmutableList.withElements(CustomField.with(CustomType.TUPLE.of(getObjectConverter()), "object" /* TODO: Use the name of the subject's type instead. */, ImmutableList.withElements(CustomAnnotation.with(PrimaryKey.class, ImmutableMap.withNoEntries()), CustomAnnotation.with(Nonnull.class, ImmutableMap.withNoEntries()))),
-                CustomField.with(CustomType.TUPLE.of(TimeConverter.INSTANCE), "time", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class, ImmutableMap.withNoEntries()))),
-                CustomField.with(CustomType.TUPLE.of(getValueConverter()), "value", ImmutableList.withElements(/* TODO: Pass them? Probably pass the whole custom field instead. */)));
+        return ImmutableList.withElements(
+                CustomField.with(CustomType.TUPLE.of(getObjectConverter()), getObjectConverter().getName(), ImmutableList.withElements(CustomAnnotation.with(PrimaryKey.class), CustomAnnotation.with(Nonnull.class))),
+                CustomField.with(CustomType.TUPLE.of(TimeConverter.INSTANCE), "time", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class))),
+                CustomField.with(CustomType.TUPLE.of(getValueConverter()), "value", ImmutableList.withElements(/* TODO: Pass them? Probably pass the whole custom field instead. */))
+        );
     }
+    
+    /* -------------------------------------------------- Convert -------------------------------------------------- */
     
     @Pure
     @Override
@@ -51,12 +57,14 @@ public abstract class SimplePropertyEntryConverter<O, V> extends PropertyEntryCo
         return i;
     }
     
+    /* -------------------------------------------------- Recover -------------------------------------------------- */
+    
     @Pure
     @Override
-    public @Capturable <X extends ExternalException> @Nonnull SimplePropertyEntry<O, V> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, @Nullable Object externallyProvided) throws ExternalException {
-        final @Nonnull O object = getObjectConverter().recover(selectionResult, externallyProvided);
+    public @Capturable <X extends ExternalException> @Nonnull SimplePropertyEntry<O, V> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, Void none) throws ExternalException {
+        final @Nonnull O object = getObjectConverter().recover(selectionResult, null);
         final @Nonnull Time time = TimeConverter.INSTANCE.recover(selectionResult, null);
-        final @Nonnull V value = getValueConverter().recover(selectionResult, externallyProvided); // TODO: @Nullable?
+        final V value = getValueConverter().recover(selectionResult, null);
         return new SimplePropertyEntrySubclass<>(object, time, value);
     }
     
