@@ -43,7 +43,7 @@ public abstract class SimplePropertyEntryConverter<O, V> extends PropertyEntryCo
     
     @Pure
     @Override
-    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified SimplePropertyEntry<O, V> object, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws X {
+    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified SimplePropertyEntry<O, V> object, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws ExternalException {
         int i = 1;
         i *= getObjectConverter().convert(object == null ? null : object.getObject(), valueCollector);
         i *= TimeConverter.INSTANCE.convert(object == null ? null : object.getTime(), valueCollector);
@@ -53,7 +53,7 @@ public abstract class SimplePropertyEntryConverter<O, V> extends PropertyEntryCo
     
     @Pure
     @Override
-    public @Capturable <X extends ExternalException> @Nonnull SimplePropertyEntry<O, V> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, @Nullable Object externallyProvided) throws X {
+    public @Capturable <X extends ExternalException> @Nonnull SimplePropertyEntry<O, V> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, @Nullable Object externallyProvided) throws ExternalException {
         final @Nonnull O object = getObjectConverter().recover(selectionResult, externallyProvided);
         final @Nonnull Time time = TimeConverter.INSTANCE.recover(selectionResult, null);
         final @Nonnull V value = getValueConverter().recover(selectionResult, externallyProvided); // TODO: @Nullable?

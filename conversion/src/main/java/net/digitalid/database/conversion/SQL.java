@@ -13,8 +13,6 @@ import net.digitalid.utility.collections.set.FreezableHashSet;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.conversion.converter.CustomField;
-import net.digitalid.utility.conversion.converter.SelectionResult;
-import net.digitalid.utility.conversion.exceptions.FailedValueRecoveryException;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.UnexpectedFailureException;
 import net.digitalid.utility.logging.Log;
@@ -28,6 +26,7 @@ import net.digitalid.database.conversion.columndeclarations.SQLInsertIntoTableCo
 import net.digitalid.database.conversion.columndeclarations.SQLOrderedStatements;
 import net.digitalid.database.conversion.columndeclarations.SQLSelectFromTableColumnDeclarations;
 import net.digitalid.database.core.Database;
+import net.digitalid.database.core.Site;
 import net.digitalid.database.core.Tables;
 import net.digitalid.database.core.interfaces.SQLSelectionResult;
 import net.digitalid.database.core.interfaces.SQLValueCollector;
@@ -40,7 +39,6 @@ import net.digitalid.database.dialect.ast.statement.table.create.SQLCreateTableS
 import net.digitalid.database.dialect.table.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedCommitException;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
-import net.digitalid.database.core.Site;
 
 /**
  * This class serves as an entry point for simple conversion of Java objects to SQL.
@@ -136,7 +134,7 @@ public final class SQL {
      * Builds and executes an SQL select statement based on the given converter, site and where clause expression. Returns exactly one recovered object.
      */
     @Pure
-    public static <T, E> T select(@Nonnull Converter<T, E> converter, @Nullable SQLBooleanExpression whereClauseExpression, @Nonnull Site site) throws FailedNonCommittingOperationException, FailedValueRecoveryException {
+    public static <T, E> T select(@Nonnull Converter<T, E> converter, @Nullable SQLBooleanExpression whereClauseExpression, @Nonnull Site site) throws ExternalException {
         final @Nonnull SQLSelectionResult selectionResult = getSelectionResult(converter, whereClauseExpression, site);
         
         if (!selectionResult.moveToNextRow()) {
@@ -152,7 +150,7 @@ public final class SQL {
      * Builds and executes an SQL select statement based on the given converter and site. Returns a list of recovered objects.
      */
     @Pure
-    public static <T, E> Set<T> export(@Nonnull Converter<T, E> converter, @Nonnull Site site) throws FailedNonCommittingOperationException, FailedValueRecoveryException {
+    public static <T, E> Set<T> export(@Nonnull Converter<T, E> converter, @Nonnull Site site) throws ExternalException {
         final @Nonnull SQLSelectionResult selectionResult = getSelectionResult(converter, null, site);
         
         Set<T> recoveredObjects = FreezableHashSet.withElements();
