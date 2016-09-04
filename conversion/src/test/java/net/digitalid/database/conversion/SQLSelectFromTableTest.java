@@ -16,13 +16,10 @@ import net.digitalid.database.conversion.testenvironment.iterable.SimpleCollecti
 import net.digitalid.database.conversion.testenvironment.iterable.SimpleCollectionsClassConverter;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTable;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
-import net.digitalid.database.dialect.ast.expression.bool.SQLBinaryBooleanExpression;
-import net.digitalid.database.dialect.ast.expression.bool.SQLBinaryBooleanOperator;
-import net.digitalid.database.dialect.ast.expression.bool.SQLBooleanLiteral;
+import net.digitalid.database.core.Site;
 import net.digitalid.database.dialect.ast.identifier.SQLBooleanAlias;
 import net.digitalid.database.dialect.table.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
-import net.digitalid.database.core.Site;
 import net.digitalid.database.testing.SQLTestBase;
 import net.digitalid.database.testing.TestHost;
 
@@ -78,7 +75,8 @@ public class SQLSelectFromTableTest extends SQLTestBase {
 
         insertSingleBoolean(true);
         insertSingleBoolean(false);
-        @Nullable SingleBooleanColumnTable singleBooleanColumnTable2 = SQL.select(SingleBooleanColumnTableConverter.INSTANCE, SQLBinaryBooleanExpression.get(SQLBinaryBooleanOperator.EQUAL, SQLBooleanAlias.with("value"), SQLBooleanLiteral.get(false)), site);
+//        @Nullable SingleBooleanColumnTable singleBooleanColumnTable2 = SQL.select(SingleBooleanColumnTableConverter.INSTANCE, SQLBinaryBooleanExpression.get(SQLBinaryBooleanOperator.EQUAL, SQLBooleanAlias.with("value"), SQLBooleanLiteral.get(false)), site);
+        @Nullable SingleBooleanColumnTable singleBooleanColumnTable2 = SQL.select(SingleBooleanColumnTableConverter.INSTANCE, SQLBooleanAlias.with("value").negated(), site);
 
         Assert.assertNotNull("Expected an instance of the SingleBooleanColumnTable type, but got null.", singleBooleanColumnTable2);
         Assert.assertEquals(false, singleBooleanColumnTable2.value);

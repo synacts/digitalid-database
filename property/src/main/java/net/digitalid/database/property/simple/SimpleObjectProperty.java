@@ -12,6 +12,7 @@ import net.digitalid.utility.annotations.ownership.Captured;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
 import net.digitalid.utility.validation.annotations.type.Mutable;
@@ -19,8 +20,13 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.conversion.SQL;
+import net.digitalid.database.dialect.ast.identifier.SQLBooleanAlias;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.ObjectProperty;
+import net.digitalid.database.property.PropertyEntry;
+import net.digitalid.database.property.PropertyEntryConverter;
+import net.digitalid.database.testing.TestHost;
 
 /**
  * A simple object property stores a simple value that is associated with an object in the database.
@@ -40,11 +46,17 @@ public abstract class SimpleObjectProperty<O, V> extends PersistentWritableSimpl
     @Pure
     @NonCommitting
     protected void load() throws DatabaseException {
-        // TODO: Use the getTable() to load the time and value of this property from the database.
-//        final @Nonnull @NonNullableElements ReadOnlyPair<Time, V> pair = propertySetup.getPropertyTable().load(this, propertySetup);
-//        this.time = pair.getNonNullableElement0();
-//        this.value = pair.getNonNullableElement1();
-        this.loaded = true;
+        try {
+            PropertyEntryConverter<O, V, ?> converter = getTable().getConverter();
+            final @Nullable PropertyEntry<O, V> entry = SQL.select(converter, SQLBooleanAlias.with("CLASSWITHSIMPLEPROPERTY_NAME.KEY = 123"), new TestHost() /* getObject().getSite() */);
+            if (entry != null) {
+                this.time = entry.getTime();
+    //            this.value = entry.getValue(); TODO: Make sure to get a SimplePropertyEntry.
+                this.loaded = true;
+            }
+        } catch (ExternalException ex) {
+            throw new RuntimeException(ex);
+        }
     }
     
     /* -------------------------------------------------- Time -------------------------------------------------- */
@@ -82,8 +94,15 @@ public abstract class SimpleObjectProperty<O, V> extends PersistentWritableSimpl
         if (!Objects.equals(newValue, oldValue)) {
             final @Nullable Time oldTime = getTime();
             final @Nonnull Time newTime = TimeBuilder.build();
-            // TODO: getTable().replace(this, oldTime, newTime, oldValue, newValue);
-            // TODO: The old time and value might not be needed for this update.
+            final @Nonnull SimplePropertyEntrySubclass<O, V> entry = new SimplePropertyEntrySubclass<>(getObject(), newTime, newValue);
+            try {
+                // TODO: The old time and value might not be needed for this update.
+                // TODO: getTable().replace(this, oldTime, newTime, oldValue, newValue);
+                // TODO: Update instead of insert:
+                SQL.insert(entry, (SimplePropertyEntryConverter<O, V>) getTable().getConverter(), new TestHost() /* getObject().getSite() */);
+            } catch (ExternalException ex) {
+                throw new RuntimeException(ex);
+            }
             this.time = newTime;
             this.value = newValue;
             notifyObservers(oldValue, newValue);

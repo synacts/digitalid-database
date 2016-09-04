@@ -22,10 +22,15 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>net.digitalid.utility</groupId>
-            <artifactId>utility-testing</artifactId>
+            <groupId>net.digitalid.database</groupId>
+            <artifactId>database-conversion</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.digitalid.database</groupId>
+            <artifactId>database-testing</artifactId>
+            <version>${project.version}</version>
+<!--            <scope>test</scope>-->
         </dependency>
     </dependencies>
     

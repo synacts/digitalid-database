@@ -21,6 +21,7 @@ import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeConverter;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.annotations.metadata.Embedded;
 import net.digitalid.database.annotations.metadata.PrimaryKey;
 import net.digitalid.database.property.PropertyEntryConverter;
 
@@ -39,9 +40,9 @@ public abstract class SimplePropertyEntryConverter<O, V> extends PropertyEntryCo
     @Override
     public @Nonnull ImmutableList<@Nonnull CustomField> getFields() {
         return ImmutableList.withElements(
-                CustomField.with(CustomType.TUPLE.of(getObjectConverter()), getObjectConverter().getName(), ImmutableList.withElements(CustomAnnotation.with(PrimaryKey.class), CustomAnnotation.with(Nonnull.class))),
-                CustomField.with(CustomType.TUPLE.of(TimeConverter.INSTANCE), "time", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class))),
-                CustomField.with(CustomType.TUPLE.of(getValueConverter()), "value", ImmutableList.withElements(/* TODO: Pass them? Probably pass the whole custom field instead. */))
+                CustomField.with(CustomType.TUPLE.of(getObjectConverter()), getObjectConverter().getName(), ImmutableList.withElements(CustomAnnotation.with(PrimaryKey.class), CustomAnnotation.with(Nonnull.class), CustomAnnotation.with(Embedded.class))),
+                CustomField.with(CustomType.TUPLE.of(TimeConverter.INSTANCE), "time", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class), CustomAnnotation.with(Embedded.class))),
+                CustomField.with(CustomType.TUPLE.of(getValueConverter()), "value", ImmutableList.withElements(CustomAnnotation.with(Embedded.class)/* TODO: Pass them? Probably pass the whole custom field instead. */))
         );
     }
     

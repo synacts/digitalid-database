@@ -245,7 +245,7 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
                 addReferenceColumnDeclarationToList(columnDeclaration, getIndexOfReferencedColumnDeclaration(references.get("columnName", String.class), referencedTableColumnDeclarations));
                 columnCountForGroup.add(1);
             } else {
-                throw ConformityViolationException.with("Expected @" + Embedded.class.getSimpleName() + " or @" + References.class.getSimpleName() + " annotation on non-primitive field type");
+                throw ConformityViolationException.with("Expected @$ or @$ annotation on non-primitive field $", Embedded.class.getSimpleName(), References.class.getSimpleName(), field.getName());
             }
         } else if (field.getCustomType().isCompositeType()) {
             if (field.isAnnotatedWith(Embedded.class)) {

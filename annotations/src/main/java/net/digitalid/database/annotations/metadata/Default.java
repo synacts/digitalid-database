@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 /**
  *
  */
+@Deprecated // TODO: There is already another Default annotation!
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Default {

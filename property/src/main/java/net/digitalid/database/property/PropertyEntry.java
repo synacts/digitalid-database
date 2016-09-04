@@ -6,6 +6,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.annotations.metadata.Embedded;
 import net.digitalid.database.annotations.metadata.PrimaryKey;
 import net.digitalid.database.property.simple.SimplePropertyEntry;
 
@@ -23,6 +24,7 @@ public interface PropertyEntry<O, V> {
      * Returns the object to which the property belongs.
      */
     @Pure
+    @Embedded
     @PrimaryKey
     public @Nonnull O getObject();
     
@@ -32,6 +34,7 @@ public interface PropertyEntry<O, V> {
      * Returns the time of the last modification.
      */
     @Pure
+    @Embedded
     public @Nonnull Time getTime();
     
 }

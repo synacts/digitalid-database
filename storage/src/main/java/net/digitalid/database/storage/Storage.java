@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.rootclass.RootClass;
+import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
@@ -26,6 +27,7 @@ public abstract class Storage extends RootClass {
      * Returns the parent module to which this storage belongs.
      */
     @Pure
+    @Default("null") // TODO: Is this necessary?
     public abstract @Nullable Module getParentModule();
     
     /* -------------------------------------------------- Initialization -------------------------------------------------- */

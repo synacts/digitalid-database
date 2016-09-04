@@ -17,13 +17,13 @@ import net.digitalid.utility.testing.CustomTest;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
 import net.digitalid.database.core.Database;
+import net.digitalid.database.core.Site;
 import net.digitalid.database.core.interfaces.DatabaseInstance;
 import net.digitalid.database.core.interfaces.SQLSelectionResult;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.table.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
-import net.digitalid.database.core.Site;
 import net.digitalid.database.testing.h2.H2Dialect;
 import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
 
