@@ -3,38 +3,29 @@ package net.digitalid.database.property;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.time.Time;
+import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.metadata.Embedded;
 import net.digitalid.database.annotations.metadata.PrimaryKey;
-import net.digitalid.database.property.simple.SimplePropertyEntry;
+import net.digitalid.database.property.value.ValuePropertyEntry;
 
 /**
- * This class models an entry in the {@link PropertyTable}.
+ * This class models an entry in the {@link PropertyTable property table}.
  * 
- * @see SimplePropertyEntry
+ * @see ValuePropertyEntry
  */
 @Immutable
-public interface PropertyEntry<O, V> {
+public abstract class PropertyEntry<S extends Subject> extends RootClass {
     
-    /* -------------------------------------------------- Object -------------------------------------------------- */
+    /* -------------------------------------------------- Subject -------------------------------------------------- */
     
     /**
-     * Returns the object to which the property belongs.
+     * Returns the subject to which the property belongs.
      */
     @Pure
     @Embedded
     @PrimaryKey
-    public @Nonnull O getObject();
-    
-    /* -------------------------------------------------- Time -------------------------------------------------- */
-    
-    /**
-     * Returns the time of the last modification.
-     */
-    @Pure
-    @Embedded
-    public @Nonnull Time getTime();
+    public abstract @Nonnull S getSubject();
     
 }

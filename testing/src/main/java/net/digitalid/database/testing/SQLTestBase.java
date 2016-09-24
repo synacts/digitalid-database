@@ -42,14 +42,25 @@ public class SQLTestBase extends CustomTest {
     
     /* -------------------------------------------------- Set Up -------------------------------------------------- */
     
+    /**
+     * In order to inspect the database during debugging, set this boolean to false in a static block of the subclass.
+     * Start '~/.m2/repository/com/h2database/h2/1.4.190/h2-1.4.190.jar' before running the test cases, which opens a
+     * browser window, and connect to the database with the address below and both user and password set to 'sa'.
+     */
+    protected static boolean inMemory = true;
+    
     @Impure
     @BeforeClass
     public static void setUpSQL() throws Exception {
         SQLDialect.dialect.set(new H2Dialect());
         server = Server.createTcpServer();
         server.start();
-//        H2JDBCDatabaseInstance h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:tcp://localhost:9092/mem:test;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS " + TestHost.SCHEMA_NAME + ";mode=MySQL;");
-        H2JDBCDatabaseInstance h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:mem:test;INIT=CREATE SCHEMA IF NOT EXISTS " + TestHost.SCHEMA_NAME + ";mode=MySQL;");
+        final @Nonnull H2JDBCDatabaseInstance h2Database;
+        if (inMemory) {
+            h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:mem:test;INIT=CREATE SCHEMA IF NOT EXISTS " + TestHost.SCHEMA_NAME + ";mode=MySQL;");
+        } else {
+            h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:tcp://localhost:9092/mem:test;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS " + TestHost.SCHEMA_NAME + ";mode=MySQL;");
+        }
         Database.initialize(h2Database);
     }
     

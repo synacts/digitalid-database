@@ -30,7 +30,7 @@
             <groupId>net.digitalid.database</groupId>
             <artifactId>database-testing</artifactId>
             <version>${project.version}</version>
-<!--            <scope>test</scope>-->
+            <scope>test</scope>
         </dependency>
     </dependencies>
     

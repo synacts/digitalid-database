@@ -25,11 +25,7 @@ public class FailedCommitException extends FailedOperationException {
     }
     
     /**
-     * Returns a new failed commit exception.
-     * 
-     * @param cause the cause of the failed commit.
-     * 
-     * @return a new failed commit exception.
+     * Returns a new failed commit exception with the given cause.
      */
     @Pure
     public static @Nonnull FailedCommitException get(@Nonnull SQLException cause) {

@@ -10,7 +10,7 @@ import net.digitalid.database.core.Site;
 
 public class TestHost implements Site {
     
-    public static final @Nonnull String SCHEMA_NAME = "test_host";
+    public static final @Nonnull String SCHEMA_NAME = "default";
     
     @Pure
     @Override

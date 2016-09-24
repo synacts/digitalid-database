@@ -21,7 +21,7 @@ import net.digitalid.utility.validation.annotations.type.Mutable;
 @Mutable
 public abstract class Storage extends RootClass {
     
-    /* -------------------------------------------------- Module -------------------------------------------------- */
+    /* -------------------------------------------------- Parent Module -------------------------------------------------- */
     
     /**
      * Returns the parent module to which this storage belongs.

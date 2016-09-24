@@ -2,41 +2,46 @@ package net.digitalid.database.property;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
-import net.digitalid.utility.time.Time;
+import net.digitalid.utility.property.Property;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.property.simple.PersistentWritableSimpleProperty;
+import net.digitalid.database.property.value.ReadOnlyPersistentValueProperty;
 
 /**
- * A persistent property has a time of last modification and can be reset.
+ * A persistent property belongs to a subject and stores its values in the database with the subject used as the key.
  * 
- * @see PersistentWritableSimpleProperty
+ * @see ReadOnlyPersistentValueProperty
  */
 @Mutable
-public interface PersistentProperty {
+public interface PersistentProperty<S extends Subject, E extends PropertyEntry<S>, O extends Property.Observer> extends Property<O> {
     
-    /* -------------------------------------------------- Time -------------------------------------------------- */
+    /* -------------------------------------------------- Subject -------------------------------------------------- */
     
     /**
-     * Returns the time of the last modification.
+     * Returns the subject to which this property belongs.
      */
     @Pure
-    @NonCommitting
-    @TODO(task = "It might make sense to have a time of last modification only for simple properties.", date = "2016-08-30", author = Author.KASPAR_ETTER)
-    public @Nonnull Time getTime() throws DatabaseException;
+    public @Nonnull S getSubject();
+    
+    /* -------------------------------------------------- Table -------------------------------------------------- */
+    
+    /**
+     * Returns the property table that contains the property name, subject module and entry converter.
+     */
+    @Pure
+    public @Nonnull PropertyTable<S, E> getTable();
     
     /* -------------------------------------------------- Reset -------------------------------------------------- */
     
     /**
-     * Resets the time and value of this property.
+     * Resets the values of this property so that they have to be reloaded from the database on the next retrieval.
+     * If the state of the database changed in the meantime, then this method is impure.
+     * However, read-only properties must be able to expose this method as well.
      */
-    @Impure
+    @Pure
     @NonCommitting
     public void reset() throws DatabaseException;
     

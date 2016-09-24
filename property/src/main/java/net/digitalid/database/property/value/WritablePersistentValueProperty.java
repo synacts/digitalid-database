@@ -1,4 +1,4 @@
-package net.digitalid.database.property.simple;
+package net.digitalid.database.property.value;
 
 import java.util.Objects;
 
@@ -9,10 +9,13 @@ import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.Captured;
-import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.functional.interfaces.Predicate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.property.value.WritableValuePropertyImplementation;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
 import net.digitalid.utility.validation.annotations.type.Mutable;
@@ -23,18 +26,23 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.dialect.ast.identifier.SQLBooleanAlias;
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.property.ObjectProperty;
-import net.digitalid.database.property.PropertyEntry;
-import net.digitalid.database.property.PropertyEntryConverter;
-import net.digitalid.database.testing.TestHost;
+import net.digitalid.database.property.Subject;
 
 /**
- * A simple object property stores a simple value that is associated with an object in the database.
+ * This writable property stores a value in the persistent database.
  */
-@Mutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class SimpleObjectProperty<O, V> extends PersistentWritableSimpleProperty<V> implements ObjectProperty<O, V> {
+@Mutable(ReadOnlyPersistentValueProperty.class)
+public abstract class WritablePersistentValueProperty<S extends Subject, V> extends WritableValuePropertyImplementation<V, DatabaseException, ReadOnlyPersistentValueProperty.Observer<S, V>, ReadOnlyPersistentValueProperty<S, V>> implements ReadOnlyPersistentValueProperty<S, V> {
+    
+    /* -------------------------------------------------- Validator -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull Predicate<? super V> getValueValidator() {
+        return getTable().getValueValidator();
+    }
     
     /* -------------------------------------------------- Loading -------------------------------------------------- */
     
@@ -47,14 +55,15 @@ public abstract class SimpleObjectProperty<O, V> extends PersistentWritableSimpl
     @NonCommitting
     protected void load() throws DatabaseException {
         try {
-            PropertyEntryConverter<O, V, ?> converter = getTable().getConverter();
-            final @Nullable PropertyEntry<O, V> entry = SQL.select(converter, SQLBooleanAlias.with("CLASSWITHSIMPLEPROPERTY_NAME.KEY = 123"), new TestHost() /* getObject().getSite() */);
+            final @Nonnull ValuePropertyEntryConverter<S, V> converter = getTable().getEntryConverter();
+            final @Nullable ValuePropertyEntry<S, V> entry = SQL.select(converter, SQLBooleanAlias.with("key = 123"), getSubject().getSite());
             if (entry != null) {
                 this.time = entry.getTime();
-    //            this.value = entry.getValue(); TODO: Make sure to get a SimplePropertyEntry.
+                this.value = entry.getValue();
                 this.loaded = true;
-            }
+            } // TODO: Set loaded in any case and use some default value instead?
         } catch (ExternalException ex) {
+            // TODO: Make sure that SQL.select throws a DatabaseException instead of an ExternalException.
             throw new RuntimeException(ex);
         }
     }
@@ -66,6 +75,7 @@ public abstract class SimpleObjectProperty<O, V> extends PersistentWritableSimpl
     @Pure
     @Override
     @NonCommitting
+    @TODO(task = "Determine whether to return null or the earliest time if no value was set and make sure that the read-only version has the same contract.", date = "2016-09-24", author = Author.KASPAR_ETTER)
     public @Nullable Time getTime() throws DatabaseException {
         if (!loaded) { load(); }
         return time;
@@ -87,20 +97,19 @@ public abstract class SimpleObjectProperty<O, V> extends PersistentWritableSimpl
     @Override
     @Committing
     public @Capturable @Valid V set(@Captured @Valid V newValue) throws DatabaseException {
-        Require.that(getTable().getValueValidator().evaluate(newValue)).orThrow("The new value has to be valid but was $.", newValue);
-        
         final @Valid V oldValue = get();
         
         if (!Objects.equals(newValue, oldValue)) {
             final @Nullable Time oldTime = getTime();
             final @Nonnull Time newTime = TimeBuilder.build();
-            final @Nonnull SimplePropertyEntrySubclass<O, V> entry = new SimplePropertyEntrySubclass<>(getObject(), newTime, newValue);
+            final @Nonnull ValuePropertyEntry<S, V> entry = new ValuePropertyEntrySubclass<>(getSubject(), newTime, newValue);
             try {
                 // TODO: The old time and value might not be needed for this update.
                 // TODO: getTable().replace(this, oldTime, newTime, oldValue, newValue);
                 // TODO: Update instead of insert:
-                SQL.insert(entry, (SimplePropertyEntryConverter<O, V>) getTable().getConverter(), new TestHost() /* getObject().getSite() */);
+                SQL.insert(entry, getTable().getEntryConverter(), getSubject().getSite());
             } catch (ExternalException ex) {
+                // TODO: SQL.insert throws the wrong exception as well.
                 throw new RuntimeException(ex);
             }
             this.time = newTime;

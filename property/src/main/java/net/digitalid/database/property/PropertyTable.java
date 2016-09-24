@@ -3,41 +3,29 @@ package net.digitalid.database.property;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.functional.interfaces.Predicate;
-import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
-import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.validation.annotations.generation.Default;
-import net.digitalid.utility.validation.annotations.type.Mutable;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.property.value.ValuePropertyTable;
 import net.digitalid.database.storage.Table;
 
 /**
- * A property table stores the {@link PropertyEntry property entries} and belongs to a {@link ObjectModule}.
+ * A property table belongs to a {@link SubjectModule subject module} and stores the {@link PropertyEntry property entries}.
+ * 
+ * @see ValuePropertyTable
  */
-@Mutable
-@GenerateBuilder
-@GenerateSubclass
-public abstract class PropertyTable<O, V> extends Table {
+@Immutable
+public abstract class PropertyTable<S extends Subject, E extends PropertyEntry<S>> extends Table<E> {
     
-    /* -------------------------------------------------- Module -------------------------------------------------- */
+    /* -------------------------------------------------- Parent Module -------------------------------------------------- */
     
     @Pure
     @Override
-    public abstract @Nonnull ObjectModule<O> getParentModule();
+    public abstract @Nonnull SubjectModule<S> getParentModule();
     
-    /* -------------------------------------------------- Converter -------------------------------------------------- */
+    /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
     @Pure
     @Override
-    public abstract @Nonnull PropertyEntryConverter<O, V, ?> getConverter();
-    
-    /* -------------------------------------------------- Validator -------------------------------------------------- */
-    
-    /**
-     * Returns the validator which validates the encapsulated value(s).
-     */
-    @Pure
-    @Default("object -> true")
-    public abstract @Nonnull Predicate<? super V> getValueValidator();
+    public abstract @Nonnull PropertyEntryConverter<S, E> getEntryConverter();
     
 }
