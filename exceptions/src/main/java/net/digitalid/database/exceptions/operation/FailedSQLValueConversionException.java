@@ -4,17 +4,18 @@ import java.sql.SQLException;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Captured;
-import net.digitalid.utility.conversion.exceptions.FailedValueConversionException;
 import net.digitalid.utility.validation.annotations.elements.NullableElements;
 import net.digitalid.utility.validation.annotations.type.Immutable;
-import net.digitalid.utility.annotations.method.Pure;
+
+import net.digitalid.database.exceptions.DatabaseException;
 
 /**
  * This exception is thrown when an object could not be stored into the database.
  */
 @Immutable
-public class FailedSQLValueConversionException extends FailedValueConversionException {
+public class FailedSQLValueConversionException extends DatabaseException { // TODO: What are the implications of changing the hierarchy? Former parent class: FailedValueConversionException {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     

@@ -3,7 +3,9 @@ package net.digitalid.database.exceptions;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.ownership.Captured;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.validation.annotations.elements.NullableElements;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.exceptions.operation.FailedOperationException;
@@ -18,23 +20,16 @@ import net.digitalid.database.exceptions.state.CorruptStateException;
 @Immutable
 public abstract class DatabaseException extends ExternalException {
     
-    /**
-     * Creates a new database exception with the given message and cause.
-     * 
-     * @param message a string explaining the problem which has occurred.
-     * @param cause the exception that caused this problem, if available.
-     */
-    protected DatabaseException(@Nonnull String message, @Nullable Exception cause) {
-        super(message, cause);
+    protected DatabaseException(@Nullable String message, @Nullable Exception cause, @Captured @Nonnull @NullableElements Object... arguments) {
+        super(message, cause, arguments);
     }
     
-    /**
-     * Creates a new database exception with the given message.
-     * 
-     * @param message a string explaining the problem which has occurred.
-     */
-    protected DatabaseException(@Nonnull String message) {
-        super(message);
+    protected DatabaseException(@Nullable String message, @Captured @Nonnull @NullableElements Object... arguments) {
+        super(message, arguments);
+    }
+    
+    protected DatabaseException(@Nullable Exception cause) {
+        super(cause);
     }
     
 }

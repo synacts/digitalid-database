@@ -16,7 +16,6 @@ import net.digitalid.utility.conversion.converter.CustomField;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.UnexpectedFailureException;
 import net.digitalid.utility.logging.Log;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
@@ -37,8 +36,7 @@ import net.digitalid.database.dialect.ast.statement.select.SQLSelectStatement;
 import net.digitalid.database.dialect.ast.statement.select.SQLWhereClause;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLCreateTableStatement;
 import net.digitalid.database.dialect.table.TableImplementation;
-import net.digitalid.database.exceptions.operation.FailedCommitException;
-import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
+import net.digitalid.database.exceptions.DatabaseException;
 
 /**
  * This class serves as an entry point for simple conversion of Java objects to SQL.
@@ -58,7 +56,7 @@ public final class SQL {
      */
     @Pure
     @Committing
-    public static @Nonnull TableImplementation create(@Nonnull Converter<?, ?> converter, @Nonnull Site site) throws InternalException, FailedNonCommittingOperationException, FailedCommitException {
+    public static @Nonnull TableImplementation create(@Nonnull Converter<?, ?> converter, @Nonnull Site site) throws InternalException, DatabaseException {
         final @Nonnull String tableName = converter.getName();
         final @Nonnull SQLCreateTableColumnDeclarations columnDeclarations = SQLCreateTableColumnDeclarations.get(tableName);
         for (@Nonnull CustomField field : converter.getFields()) {
@@ -96,7 +94,7 @@ public final class SQL {
      * Inserts a given object with a matching converter into a given table by constructing an SQL insert statement and collecting the values of the object.
      */
     @Pure
-    public static <T> void insert(@Nullable T object, @Nonnull Converter<T, ?> converter, @Nonnull Site site) throws ExternalException {
+    public static <T> void insert(@Nullable T object, @Nonnull Converter<T, ?> converter, @Nonnull Site site) throws DatabaseException {
         final @Nonnull SQLOrderedStatements<@Nonnull SQLInsertStatement, @Nonnull SQLInsertIntoTableColumnDeclarations> orderedInsertStatements = SQLOrderedStatementCache.INSTANCE.getOrderedInsertStatements(converter);
         
         final @Nonnull SQLValueCollector valueCollector = Database.getInstance().getValueCollector(orderedInsertStatements.getStatementsOrderedByExecution().map(insertStatement -> 
@@ -110,7 +108,7 @@ public final class SQL {
     /* -------------------------------------------------- Select -------------------------------------------------- */
     
     @Pure
-    private static <T> @Nonnull SQLSelectionResult getSelectionResult(@Nonnull Converter<T, ?> converter, @Nullable SQLBooleanExpression whereClauseExpression, @Nonnull Site site) throws FailedNonCommittingOperationException {
+    private static <T> @Nonnull SQLSelectionResult getSelectionResult(@Nonnull Converter<T, ?> converter, @Nullable SQLBooleanExpression whereClauseExpression, @Nonnull Site site) throws DatabaseException {
         final @Nonnull SQLOrderedStatements<@Nonnull SQLSelectStatement, @Nonnull SQLSelectFromTableColumnDeclarations> orderedSelectStatements = SQLOrderedStatementCache.INSTANCE.getOrderedSelectStatements(converter);
         final @Nonnull @NonEmpty ReadOnlyList<@Nonnull SQLSelectStatement> statementsOrderedByExecution = orderedSelectStatements.getStatementsOrderedByExecution();
         final @Nonnull SQLSelectStatement selectStatement = statementsOrderedByExecution.getFirst();
@@ -134,7 +132,7 @@ public final class SQL {
      * Builds and executes an SQL select statement based on the given converter, site and where clause expression. Returns exactly one recovered object.
      */
     @Pure
-    public static <T, E> T select(@Nonnull Converter<T, E> converter, @Nullable SQLBooleanExpression whereClauseExpression, @Nonnull Site site) throws ExternalException {
+    public static <T, E> T select(@Nonnull Converter<T, E> converter, @Nullable SQLBooleanExpression whereClauseExpression, @Nonnull Site site) throws DatabaseException {
         final @Nonnull SQLSelectionResult selectionResult = getSelectionResult(converter, whereClauseExpression, site);
         
         if (!selectionResult.moveToNextRow()) {
@@ -150,7 +148,7 @@ public final class SQL {
      * Builds and executes an SQL select statement based on the given converter and site. Returns a list of recovered objects.
      */
     @Pure
-    public static <T, E> Set<T> export(@Nonnull Converter<T, E> converter, @Nonnull Site site) throws ExternalException {
+    public static <T, E> Set<T> export(@Nonnull Converter<T, E> converter, @Nonnull Site site) throws DatabaseException {
         final @Nonnull SQLSelectionResult selectionResult = getSelectionResult(converter, null, site);
         
         Set<T> recoveredObjects = FreezableHashSet.withElements();

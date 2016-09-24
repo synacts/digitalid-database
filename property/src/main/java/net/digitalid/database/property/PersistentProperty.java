@@ -11,7 +11,7 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.value.ReadOnlyPersistentValueProperty;
 
 /**
- * A persistent property belongs to a subject and stores its values in the database with the subject used as the key.
+ * A persistent property belongs to a {@link Subject subject} and stores its values in the database with the subject used as the key.
  * 
  * @see ReadOnlyPersistentValueProperty
  */

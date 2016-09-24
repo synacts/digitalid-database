@@ -23,6 +23,7 @@ import net.digitalid.database.core.interfaces.SQLSelectionResult;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.table.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
+import net.digitalid.database.exceptions.operation.FailedSQLValueRecoveryException;
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
 import net.digitalid.database.testing.h2.H2Dialect;
 import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
@@ -34,7 +35,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- *
+ * The base class for all unit tests that interact with a database.
  */
 public class SQLTestBase extends CustomTest {
     
@@ -112,7 +113,7 @@ public class SQLTestBase extends CustomTest {
     }
     
     @Pure
-    protected void assertTableExists(@Nonnull String tableName, @Nonnull String schema) throws EntryNotFoundException, FailedNonCommittingOperationException {
+    protected void assertTableExists(@Nonnull String tableName, @Nonnull String schema) throws EntryNotFoundException, FailedNonCommittingOperationException, FailedSQLValueRecoveryException {
         final @Nonnull String query = "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = '" + tableName.toLowerCase() + "' and table_schema = '" + schema.toLowerCase() + "'";
         DatabaseInstance instance = Database.getInstance();
         SQLSelectionResult tableExistsQuery = instance.executeSelect(query);
@@ -163,7 +164,7 @@ public class SQLTestBase extends CustomTest {
     }
     
     @Pure
-    protected void assertTableReferences(@Nonnull String tableName, @Nonnull String schema, @Nonnull String column, @Nonnull String referencedTable, @Nonnull String referencedColumn, @Nonnull UpdateAction updateAction, @Nonnull DeleteAction deleteAction) throws FailedNonCommittingOperationException, EntryNotFoundException {
+    protected void assertTableReferences(@Nonnull String tableName, @Nonnull String schema, @Nonnull String column, @Nonnull String referencedTable, @Nonnull String referencedColumn, @Nonnull UpdateAction updateAction, @Nonnull DeleteAction deleteAction) throws FailedNonCommittingOperationException, EntryNotFoundException, FailedSQLValueRecoveryException {
         final @Nonnull String query = "SELECT PKTABLE_NAME, PKCOLUMN_NAME, FKCOLUMN_NAME, UPDATE_RULE, DELETE_RULE FROM INFORMATION_SCHEMA.CROSS_REFERENCES WHERE FKTABLE_SCHEMA = '" + schema.toUpperCase() + "' AND FKTABLE_NAME = '" + tableName.toUpperCase() + "'";
         final @Nonnull DatabaseInstance instance = Database.getInstance();
         final @Nonnull SQLSelectionResult tableReferencesResult = instance.executeSelect(query);
@@ -183,7 +184,7 @@ public class SQLTestBase extends CustomTest {
     }
     
     @Pure
-    protected void assertTableHasColumns(@Nonnull String tableName, @Nonnull String schema, @Nonnull Map<@Nonnull String, @Nonnull String[]> expectedResults) throws FailedNonCommittingOperationException, EntryNotFoundException {
+    protected void assertTableHasColumns(@Nonnull String tableName, @Nonnull String schema, @Nonnull Map<@Nonnull String, @Nonnull String[]> expectedResults) throws FailedNonCommittingOperationException, EntryNotFoundException, FailedSQLValueRecoveryException {
         final @Nonnull String query = "SHOW COLUMNS FROM " + schema.toLowerCase() + "." + tableName.toLowerCase();
         final @Nonnull DatabaseInstance instance = Database.getInstance();
         final @Nonnull SQLSelectionResult tableColumnsQuery = instance.executeSelect(query);
@@ -232,7 +233,7 @@ public class SQLTestBase extends CustomTest {
     }
     
     @Pure
-    protected static void assertRowCount(@Nonnull String tableName, long rowCount) throws FailedNonCommittingOperationException, EntryNotFoundException {
+    protected static void assertRowCount(@Nonnull String tableName, long rowCount) throws FailedNonCommittingOperationException, EntryNotFoundException, FailedSQLValueRecoveryException {
         final @Nonnull String rowCountQuery = "SELECT COUNT(*) AS count FROM " + tableName.toLowerCase();
         final @Nonnull DatabaseInstance instance = Database.getInstance();
         final @Nonnull SQLSelectionResult rowCountResult = instance.executeSelect(rowCountQuery);
@@ -241,12 +242,12 @@ public class SQLTestBase extends CustomTest {
     }
     
     @Pure
-    protected static void assertRowCount(@Nonnull TableImplementation table, @Nonnull Site site, long rowCount) throws FailedNonCommittingOperationException, EntryNotFoundException {
+    protected static void assertRowCount(@Nonnull TableImplementation table, @Nonnull Site site, long rowCount) throws FailedNonCommittingOperationException, EntryNotFoundException, FailedSQLValueRecoveryException {
         assertRowCount(site.getName() + "." + table.getName(), rowCount);
     }
     
     @Pure
-    protected static void assertTableContains(@Nonnull String tableName, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException {
+    protected static void assertTableContains(@Nonnull String tableName, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException, FailedSQLValueRecoveryException {
         final @Nonnull DatabaseInstance instance = Database.getInstance();
         for (@Nonnull Expected expected : expectedArray) {
             @Nonnull String rowCountQuery = "SELECT COUNT(*) AS count FROM " + tableName.toLowerCase() ;
@@ -272,7 +273,7 @@ public class SQLTestBase extends CustomTest {
     }
     
     @Pure
-    protected static void assertTableContains(@Nonnull TableImplementation table, @Nonnull Site site, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException {
+    protected static void assertTableContains(@Nonnull TableImplementation table, @Nonnull Site site, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException, FailedSQLValueRecoveryException {
         final @Nonnull String tableName = table.getName();
         assertTableContains(site.getName() + "." + tableName, expectedArray);
     }

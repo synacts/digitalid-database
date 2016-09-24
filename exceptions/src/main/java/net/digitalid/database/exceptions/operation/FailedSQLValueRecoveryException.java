@@ -4,16 +4,17 @@ import java.sql.SQLException;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
+
+import net.digitalid.database.exceptions.DatabaseException;
 
 /**
  * This exception is thrown when a value could not be restored from the database.
  */
 @Immutable
 // TODO: improve exception hierarchy
-public class FailedSQLValueRecoveryException extends RuntimeException {
+public class FailedSQLValueRecoveryException extends DatabaseException {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     

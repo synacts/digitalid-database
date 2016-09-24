@@ -18,7 +18,6 @@ import javax.crypto.Cipher;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.FreezableArrayList;
-import net.digitalid.utility.conversion.exceptions.FailedValueRecoveryException;
 import net.digitalid.utility.functional.failable.FailableProducer;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;
@@ -103,7 +102,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
-    public boolean moveToNextRow() {
+    public boolean moveToNextRow() throws FailedSQLValueRecoveryException {
         try {
             return resultSet.next();
         } catch (@Nonnull SQLException exception) {
@@ -113,7 +112,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
-    public void moveToFirstRow() {
+    public void moveToFirstRow() throws FailedSQLValueRecoveryException {
         try {
             columnIndex = 1;
             if (!resultSet.first()) { throw EntryNotFoundException.get(); }
@@ -131,7 +130,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
-    public void getEmpty() {
+    public void getEmpty() throws FailedSQLValueRecoveryException {
         try {
             resultSet.getBoolean(columnIndex++);
         } catch (@Nonnull SQLException exception) {
@@ -141,7 +140,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
-    public boolean getBoolean() {
+    public boolean getBoolean() throws FailedSQLValueRecoveryException {
         try {
             return resultSet.getBoolean(columnIndex++);
         } catch (@Nonnull SQLException exception) {
@@ -151,7 +150,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
-    public byte getInteger08() {
+    public byte getInteger08() throws FailedSQLValueRecoveryException {
         try {
             return resultSet.getByte(columnIndex++);
         } catch (@Nonnull SQLException exception) {
@@ -161,7 +160,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
-    public short getInteger16() {
+    public short getInteger16() throws FailedSQLValueRecoveryException {
         try {
             return resultSet.getShort(columnIndex++);
         } catch (@Nonnull SQLException exception) {
@@ -171,7 +170,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
-    public int getInteger32() {
+    public int getInteger32() throws FailedSQLValueRecoveryException {
         try {
             return resultSet.getInt(columnIndex++);
         } catch (@Nonnull SQLException exception) {
@@ -181,7 +180,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
-    public long getInteger64() {
+    public long getInteger64() throws FailedSQLValueRecoveryException {
         try {
             return resultSet.getLong(columnIndex++);
         } catch (@Nonnull SQLException exception) {
@@ -191,7 +190,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
-    public @Nullable BigInteger getInteger() {
+    public @Nullable BigInteger getInteger() throws FailedSQLValueRecoveryException {
         try {
             final @Nullable byte [] bytes = resultSet.getBytes(columnIndex++);
             return bytes == null ? null : new BigInteger(bytes);
@@ -202,7 +201,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
-    public float getDecimal32() {
+    public float getDecimal32() throws FailedSQLValueRecoveryException {
         try {
             return resultSet.getFloat(columnIndex++);
         } catch (@Nonnull SQLException exception) {
@@ -212,7 +211,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
-    public double getDecimal64() {
+    public double getDecimal64() throws FailedSQLValueRecoveryException {
         try {
             return resultSet.getDouble(columnIndex++);
         } catch (@Nonnull SQLException exception) {
@@ -222,7 +221,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
-    public char getString01() {
+    public char getString01() throws FailedSQLValueRecoveryException {
         try {
             final @Nullable String value = resultSet.getString(columnIndex++);
             if (value == null) { throw CorruptNullValueException.get(); }
@@ -234,7 +233,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
-    public @Nullable @MaxSize(64) String getString64() {
+    public @Nullable @MaxSize(64) String getString64() throws FailedSQLValueRecoveryException {
         try {
             final @Nullable String value = resultSet.getString(columnIndex++);
             if (value != null && value.length() > 64) { throw CorruptParameterValueException.get("string length", value.length()); }
@@ -246,7 +245,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
-    public @Nullable String getString() {
+    public @Nullable String getString() throws FailedSQLValueRecoveryException {
         try {
             return resultSet.getString(columnIndex++);
         } catch (@Nonnull SQLException exception) {
@@ -256,7 +255,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
-    public @Nullable @Size(16) byte[] getBinary128() {
+    public @Nullable @Size(16) byte[] getBinary128() throws FailedSQLValueRecoveryException {
         try {
             final @Nullable byte[] value = resultSet.getBytes(columnIndex++);
             if (value != null && value.length != 16) { throw CorruptParameterValueException.get("binary length", value.length); }
@@ -268,7 +267,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
-    public @Nullable @Size(32) byte[] getBinary256() {
+    public @Nullable @Size(32) byte[] getBinary256() throws FailedSQLValueRecoveryException {
         try {
             final @Nullable byte[] value = resultSet.getBytes(columnIndex++);
             if (value != null && value.length != 32) { throw CorruptParameterValueException.get("binary length", value.length); }
@@ -280,7 +279,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
-    public @Nullable byte[] getBinary() {
+    public @Nullable byte[] getBinary() throws FailedSQLValueRecoveryException {
         try {
             return resultSet.getBytes(columnIndex++);
         } catch (@Nonnull SQLException exception) {
@@ -290,7 +289,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
-    public <T> @Nullable List<T> getList(@Nonnull FailableProducer<@Nullable T, FailedValueRecoveryException> function) throws FailedValueRecoveryException {
+    public <T> @Nullable List<T> getList(@Nonnull FailableProducer<@Nullable T, FailedSQLValueRecoveryException> function) throws FailedSQLValueRecoveryException {
         try {
             final @Nonnull ArrayList<@Nullable T> result = FreezableArrayList.withNoElements();
             final int beginsAtColumn = columnIndex;
@@ -325,21 +324,21 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Impure
     @Override
-    public <T> T[] getArray(@Nonnull FailableProducer<T, FailedValueRecoveryException> function) throws FailedValueRecoveryException {
+    public <T> T[] getArray(@Nonnull FailableProducer<T, FailedSQLValueRecoveryException> function) throws FailedSQLValueRecoveryException {
         return (T[]) getList(function).toArray();
     }
     
     @Impure
     // TODO: implement
     @Override
-    public <T> Set<T> getSet(@Nonnull FailableProducer<T, FailedValueRecoveryException> function) {
+    public <T> Set<T> getSet(@Nonnull FailableProducer<T, FailedSQLValueRecoveryException> function) {
         return null;
     }
     
     @Impure
     // TODO: implement
     @Override
-    public <K, V> Map<K, V> getMap(@Nonnull FailableProducer<K, FailedValueRecoveryException> keyFunction, @Nonnull FailableProducer<V, FailedValueRecoveryException> valueFunction) {
+    public <K, V> Map<K, V> getMap(@Nonnull FailableProducer<K, FailedSQLValueRecoveryException> keyFunction, @Nonnull FailableProducer<V, FailedSQLValueRecoveryException> valueFunction) {
         return null;
     }
     
@@ -386,7 +385,7 @@ public class JDBCSelectionResult implements SQLSelectionResult {
     
     @Pure
     @Override
-    public boolean wasNull() {
+    public boolean wasNull() throws FailedSQLValueRecoveryException {
         try {
             return resultSet.wasNull();
         } catch (@Nonnull SQLException exception) {

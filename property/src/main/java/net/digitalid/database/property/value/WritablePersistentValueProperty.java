@@ -14,7 +14,6 @@ import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.functional.interfaces.Predicate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.property.value.WritableValuePropertyImplementation;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
@@ -54,18 +53,13 @@ public abstract class WritablePersistentValueProperty<S extends Subject, V> exte
     @Pure
     @NonCommitting
     protected void load() throws DatabaseException {
-        try {
-            final @Nonnull ValuePropertyEntryConverter<S, V> converter = getTable().getEntryConverter();
-            final @Nullable ValuePropertyEntry<S, V> entry = SQL.select(converter, SQLBooleanAlias.with("key = 123"), getSubject().getSite());
-            if (entry != null) {
-                this.time = entry.getTime();
-                this.value = entry.getValue();
-                this.loaded = true;
-            } // TODO: Set loaded in any case and use some default value instead?
-        } catch (ExternalException ex) {
-            // TODO: Make sure that SQL.select throws a DatabaseException instead of an ExternalException.
-            throw new RuntimeException(ex);
-        }
+        final @Nonnull ValuePropertyEntryConverter<S, V> converter = getTable().getEntryConverter();
+        final @Nullable ValuePropertyEntry<S, V> entry = SQL.select(converter, SQLBooleanAlias.with("key = 123"), getSubject().getSite());
+        if (entry != null) {
+            this.time = entry.getTime();
+            this.value = entry.getValue();
+            this.loaded = true;
+        } // TODO: Set loaded in any case and use some default value instead?
     }
     
     /* -------------------------------------------------- Time -------------------------------------------------- */
@@ -103,15 +97,10 @@ public abstract class WritablePersistentValueProperty<S extends Subject, V> exte
             final @Nullable Time oldTime = getTime();
             final @Nonnull Time newTime = TimeBuilder.build();
             final @Nonnull ValuePropertyEntry<S, V> entry = new ValuePropertyEntrySubclass<>(getSubject(), newTime, newValue);
-            try {
-                // TODO: The old time and value might not be needed for this update.
-                // TODO: getTable().replace(this, oldTime, newTime, oldValue, newValue);
-                // TODO: Update instead of insert:
-                SQL.insert(entry, getTable().getEntryConverter(), getSubject().getSite());
-            } catch (ExternalException ex) {
-                // TODO: SQL.insert throws the wrong exception as well.
-                throw new RuntimeException(ex);
-            }
+            // TODO: The old time and value might not be needed for this update.
+            // TODO: getTable().replace(this, oldTime, newTime, oldValue, newValue);
+            // TODO: Update instead of insert:
+            SQL.insert(entry, getTable().getEntryConverter(), getSubject().getSite());
             this.time = newTime;
             this.value = newValue;
             notifyObservers(oldValue, newValue);
