@@ -4,8 +4,6 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -49,23 +47,20 @@ abstract class ClassWithValueProperty extends RootClass implements Subject {
     
     /* -------------------------------------------------- Module -------------------------------------------------- */
     
-    @TODO(task = "Why is the parent module not optional?", date = "2016-08-30", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA)
     protected static final @Nonnull SubjectModule<ClassWithValueProperty> MODULE = SubjectModuleBuilder.<ClassWithValueProperty>withName("ClassWithValueProperty").withSubjectConverter(ClassWithValuePropertyConverter.INSTANCE).build();
     
     @Pure
-//    @GenerateModul
+//    @GenerateSubjectModule
     protected void generateModule() {}
     
     /* -------------------------------------------------- Property -------------------------------------------------- */
     
-    protected static final @Nonnull ValuePropertyTable<ClassWithValueProperty, CustomString> table = ValuePropertyTableBuilder.<ClassWithValueProperty, CustomString>withName("name").withParentModule(MODULE).withValueConverter(CustomStringConverter.INSTANCE).withValueValidator(value -> value != null).build();
+    protected static final @Nonnull ValuePropertyTable<ClassWithValueProperty, CustomString> table = ValuePropertyTableBuilder.<ClassWithValueProperty, CustomString>withName("name").withParentModule(MODULE).withValueConverter(CustomStringConverter.INSTANCE).withDefaultValue(CustomStringBuilder.withContent("default").build()).withValueValidator(value -> value != null).build();
     
     protected final @Nonnull WritablePersistentValueProperty<ClassWithValueProperty, @Nonnull CustomString> name = WritablePersistentValuePropertyBuilder.<ClassWithValueProperty, CustomString>withSubject(this).withTable(table).build();
     
-    // TODO: Where can we specify the default value?
-    
     @Pure
-//    @GenerateProperty
+//    @GeneratePersistentProperty
     public @Nonnull WritablePersistentValueProperty<ClassWithValueProperty, @Nonnull CustomString> name() {
         return name;
     }

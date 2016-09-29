@@ -15,7 +15,7 @@ import net.digitalid.database.property.PropertyEntry;
 import net.digitalid.database.property.Subject;
 
 /**
- * This class models a database entry of the {@link WritablePersistentValueProperty}.
+ * This class models an entry in the {@link ValuePropertyTable value property table}.
  */
 @Immutable
 @GenerateSubclass

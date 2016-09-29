@@ -16,7 +16,7 @@ import net.digitalid.database.property.PropertyTable;
 import net.digitalid.database.property.Subject;
 
 /**
- * Description.
+ * The value property table stores the {@link ValuePropertyEntry value property entries}.
  */
 @Immutable
 @GenerateBuilder
@@ -38,5 +38,13 @@ public abstract class ValuePropertyTable<S extends Subject, V> extends PropertyT
     @Pure
     @TODO(task = "Support externally provided recover information, maybe with another generic type and a function that can extract it from the object.", date = "2016-08-30", author = Author.KASPAR_ETTER)
     public abstract @Nonnull Converter<V, Void> getValueConverter();
+    
+    /* -------------------------------------------------- Default Value -------------------------------------------------- */
+    
+    /**
+     * Returns the default value of the property.
+     */
+    @Pure
+    public abstract @Valid V getDefaultValue();
     
 }
