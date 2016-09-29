@@ -17,6 +17,8 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.Subject;
 import net.digitalid.database.property.SubjectModule;
 import net.digitalid.database.property.SubjectModuleBuilder;
+import net.digitalid.database.property.annotations.GeneratePersistentProperty;
+import net.digitalid.database.property.annotations.GenerateSubjectModule;
 import net.digitalid.database.testing.SQLTestBase;
 
 import org.junit.BeforeClass;
@@ -50,7 +52,7 @@ abstract class ClassWithValueProperty extends RootClass implements Subject {
     protected static final @Nonnull SubjectModule<ClassWithValueProperty> MODULE = SubjectModuleBuilder.<ClassWithValueProperty>withName("ClassWithValueProperty").withSubjectConverter(ClassWithValuePropertyConverter.INSTANCE).build();
     
     @Pure
-//    @GenerateSubjectModule
+    @GenerateSubjectModule
     protected void generateModule() {}
     
     /* -------------------------------------------------- Property -------------------------------------------------- */
@@ -60,7 +62,7 @@ abstract class ClassWithValueProperty extends RootClass implements Subject {
     protected final @Nonnull WritablePersistentValueProperty<ClassWithValueProperty, @Nonnull CustomString, Void> name = WritablePersistentValuePropertyBuilder.<ClassWithValueProperty, CustomString, Void>withSubject(this).withTable(table).build();
     
     @Pure
-//    @GeneratePersistentProperty
+    @GeneratePersistentProperty
     public @Nonnull WritablePersistentValueProperty<ClassWithValueProperty, @Nonnull CustomString, Void> name() {
         return name;
     }
