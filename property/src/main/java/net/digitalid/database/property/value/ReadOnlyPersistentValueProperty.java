@@ -27,7 +27,7 @@ import net.digitalid.database.property.Subject;
  */
 @ThreadSafe
 @ReadOnly(WritablePersistentValueProperty.class)
-public interface ReadOnlyPersistentValueProperty<S extends Subject, V> extends ReadOnlyValueProperty<V, DatabaseException, ReadOnlyPersistentValueProperty.Observer<S, V>, ReadOnlyPersistentValueProperty<S, V>>, PersistentProperty<S, ValuePropertyEntry<S, V>, ReadOnlyPersistentValueProperty.Observer<S, V>> {
+public interface ReadOnlyPersistentValueProperty<S extends Subject, V, E> extends ReadOnlyValueProperty<V, DatabaseException, ReadOnlyPersistentValueProperty.Observer<S, V, E>, ReadOnlyPersistentValueProperty<S, V, E>>, PersistentProperty<S, ValuePropertyEntry<S, V>, ReadOnlyPersistentValueProperty.Observer<S, V, E>> {
     
     /* -------------------------------------------------- Observer -------------------------------------------------- */
     
@@ -36,7 +36,7 @@ public interface ReadOnlyPersistentValueProperty<S extends Subject, V> extends R
      */
     @Mutable
     @Functional
-    public static interface Observer<S extends Subject, V> extends ReadOnlyValueProperty.Observer<V, DatabaseException, ReadOnlyPersistentValueProperty.Observer<S, V>, ReadOnlyPersistentValueProperty<S, V>> {}
+    public static interface Observer<S extends Subject, V, E> extends ReadOnlyValueProperty.Observer<V, DatabaseException, ReadOnlyPersistentValueProperty.Observer<S, V, E>, ReadOnlyPersistentValueProperty<S, V, E>> {}
     
     /* -------------------------------------------------- Getter -------------------------------------------------- */
     
@@ -49,7 +49,7 @@ public interface ReadOnlyPersistentValueProperty<S extends Subject, V> extends R
     
     @Pure
     @Override
-    public @Nonnull ValuePropertyTable<S, V> getTable();
+    public @Nonnull ValuePropertyTable<S, V, E> getTable();
     
     /* -------------------------------------------------- Time -------------------------------------------------- */
     

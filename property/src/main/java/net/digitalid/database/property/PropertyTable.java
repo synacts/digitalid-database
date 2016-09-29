@@ -14,7 +14,7 @@ import net.digitalid.database.storage.Table;
  * @see ValuePropertyTable
  */
 @Immutable
-public abstract class PropertyTable<S extends Subject, E extends PropertyEntry<S>> extends Table<E> {
+public abstract class PropertyTable<S extends Subject, N extends PropertyEntry<S>> extends Table<N> {
     
     /* -------------------------------------------------- Parent Module -------------------------------------------------- */
     
@@ -26,6 +26,6 @@ public abstract class PropertyTable<S extends Subject, E extends PropertyEntry<S
     
     @Pure
     @Override
-    public abstract @Nonnull PropertyEntryConverter<S, E> getEntryConverter();
+    public abstract @Nonnull PropertyEntryConverter<S, N> getEntryConverter();
     
 }

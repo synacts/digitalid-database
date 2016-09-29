@@ -15,7 +15,7 @@ import net.digitalid.database.property.value.ValuePropertyEntryConverter;
  * @see ValuePropertyEntryConverter
  */
 @Immutable
-public abstract class PropertyEntryConverter<S extends Subject, E extends PropertyEntry<S>> extends RootClass implements Converter<E, Void> {
+public abstract class PropertyEntryConverter<S extends Subject, N extends PropertyEntry<S>> extends RootClass implements Converter<N, Void> {
     
     /* -------------------------------------------------- Property Table -------------------------------------------------- */
     
@@ -23,6 +23,6 @@ public abstract class PropertyEntryConverter<S extends Subject, E extends Proper
      * Returns the property table to which this entry converter belongs.
      */
     @Pure
-    public abstract @Nonnull PropertyTable<S, E> getPropertyTable();
+    public abstract @Nonnull PropertyTable<S, N> getPropertyTable();
     
 }

@@ -35,13 +35,13 @@ import net.digitalid.database.property.Subject;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class ValuePropertyEntryConverter<S extends Subject, V> extends PropertyEntryConverter<S, ValuePropertyEntry<S, V>> {
+public abstract class ValuePropertyEntryConverter<S extends Subject, V, E> extends PropertyEntryConverter<S, ValuePropertyEntry<S, V>> {
     
     /* -------------------------------------------------- Property Table -------------------------------------------------- */
     
     @Pure
     @Override
-    public abstract @Nonnull ValuePropertyTable<S, V> getPropertyTable();
+    public abstract @Nonnull ValuePropertyTable<S, V, E> getPropertyTable();
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
@@ -60,11 +60,11 @@ public abstract class ValuePropertyEntryConverter<S extends Subject, V> extends 
     
     @Pure
     @Override
-    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified ValuePropertyEntry<S, V> object, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws ExternalException {
+    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified ValuePropertyEntry<S, V> entry, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws X {
         int i = 1;
-        i *= getPropertyTable().getParentModule().getSubjectConverter().convert(object == null ? null : object.getSubject(), valueCollector);
-        i *= TimeConverter.INSTANCE.convert(object == null ? null : object.getTime(), valueCollector);
-        i *= getPropertyTable().getValueConverter().convert(object == null ? null : object.getValue(), valueCollector);
+        i *= getPropertyTable().getParentModule().getSubjectConverter().convert(entry == null ? null : entry.getSubject(), valueCollector);
+        i *= TimeConverter.INSTANCE.convert(entry == null ? null : entry.getTime(), valueCollector);
+        i *= getPropertyTable().getValueConverter().convert(entry == null ? null : entry.getValue(), valueCollector);
         return i;
     }
     
@@ -72,11 +72,11 @@ public abstract class ValuePropertyEntryConverter<S extends Subject, V> extends 
     
     @Pure
     @Override
-    public @Capturable <X extends ExternalException> @Nonnull ValuePropertyEntry<S, V> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, Void none) throws ExternalException {
-        final @Nonnull S object = getPropertyTable().getParentModule().getSubjectConverter().recover(selectionResult, null);
+    public @Capturable <X extends ExternalException> @Nonnull ValuePropertyEntry<S, V> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, Void none) throws X {
+        final @Nonnull S subject = getPropertyTable().getParentModule().getSubjectConverter().recover(selectionResult, null);
         final @Nonnull Time time = TimeConverter.INSTANCE.recover(selectionResult, null);
-        final V value = getPropertyTable().getValueConverter().recover(selectionResult, null);
-        return new ValuePropertyEntrySubclass<>(object, time, value);
+        final V value = getPropertyTable().getValueConverter().recover(selectionResult, getPropertyTable().getProvidedObjectExtractor().evaluate(subject));
+        return new ValuePropertyEntrySubclass<>(subject, time, value);
     }
     
 }

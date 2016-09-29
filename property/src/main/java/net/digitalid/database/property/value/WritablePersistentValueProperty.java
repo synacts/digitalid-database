@@ -38,7 +38,7 @@ import net.digitalid.database.property.Subject;
 @GenerateBuilder
 @GenerateSubclass
 @Mutable(ReadOnlyPersistentValueProperty.class)
-public abstract class WritablePersistentValueProperty<S extends Subject, V> extends WritableValuePropertyImplementation<V, DatabaseException, ReadOnlyPersistentValueProperty.Observer<S, V>, ReadOnlyPersistentValueProperty<S, V>> implements ReadOnlyPersistentValueProperty<S, V> {
+public abstract class WritablePersistentValueProperty<S extends Subject, V, E> extends WritableValuePropertyImplementation<V, DatabaseException, ReadOnlyPersistentValueProperty.Observer<S, V, E>, ReadOnlyPersistentValueProperty<S, V, E>> implements ReadOnlyPersistentValueProperty<S, V, E> {
     
     /* -------------------------------------------------- Validator -------------------------------------------------- */
     
