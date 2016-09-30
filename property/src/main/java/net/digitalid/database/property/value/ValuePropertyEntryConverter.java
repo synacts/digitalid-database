@@ -72,11 +72,11 @@ public abstract class ValuePropertyEntryConverter<S extends Subject, V, E> exten
     
     @Pure
     @Override
-    public @Capturable <X extends ExternalException> @Nonnull ValuePropertyEntry<S, V> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, Void none) throws X {
-        final @Nonnull S subject = getPropertyTable().getParentModule().getSubjectConverter().recover(selectionResult, null);
-        final @Nonnull Time time = TimeConverter.INSTANCE.recover(selectionResult, null);
+    public @Capturable <X extends ExternalException> @Nullable ValuePropertyEntry<S, V> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, Void none) throws X {
+        final @Nullable S subject = getPropertyTable().getParentModule().getSubjectConverter().recover(selectionResult, null);
+        final @Nullable Time time = TimeConverter.INSTANCE.recover(selectionResult, null);
         final V value = getPropertyTable().getValueConverter().recover(selectionResult, getPropertyTable().getProvidedObjectExtractor().evaluate(subject));
-        return new ValuePropertyEntrySubclass<>(subject, time, value);
+        return subject != null && time != null ? new ValuePropertyEntrySubclass<>(subject, time, value) : null;
     }
     
 }

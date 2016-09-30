@@ -20,6 +20,7 @@ import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.columndeclarations.SQLCreateTableColumnDeclarations;
 import net.digitalid.database.conversion.columndeclarations.SQLInsertIntoTableColumnDeclarations;
 import net.digitalid.database.conversion.columndeclarations.SQLOrderedStatements;
@@ -94,6 +95,7 @@ public final class SQL {
      * Inserts a given object with a matching converter into a given table by constructing an SQL insert statement and collecting the values of the object.
      */
     @Pure
+    @Committing
     public static <T> void insert(@Nullable T object, @Nonnull Converter<T, ?> converter, @Nonnull Site site) throws DatabaseException {
         final @Nonnull SQLOrderedStatements<@Nonnull SQLInsertStatement, @Nonnull SQLInsertIntoTableColumnDeclarations> orderedInsertStatements = SQLOrderedStatementCache.INSTANCE.getOrderedInsertStatements(converter);
         
@@ -108,6 +110,7 @@ public final class SQL {
     /* -------------------------------------------------- Select -------------------------------------------------- */
     
     @Pure
+    @NonCommitting
     private static <T> @Nonnull SQLSelectionResult getSelectionResult(@Nonnull Converter<T, ?> converter, @Nullable SQLBooleanExpression whereClauseExpression, @Nonnull Site site) throws DatabaseException {
         final @Nonnull SQLOrderedStatements<@Nonnull SQLSelectStatement, @Nonnull SQLSelectFromTableColumnDeclarations> orderedSelectStatements = SQLOrderedStatementCache.INSTANCE.getOrderedSelectStatements(converter);
         final @Nonnull @NonEmpty ReadOnlyList<@Nonnull SQLSelectStatement> statementsOrderedByExecution = orderedSelectStatements.getStatementsOrderedByExecution();
@@ -132,6 +135,7 @@ public final class SQL {
      * Builds and executes an SQL select statement based on the given converter, site and where clause expression. Returns exactly one recovered object.
      */
     @Pure
+    @NonCommitting
     public static <T, E> T select(@Nonnull Converter<T, E> converter, @Nullable SQLBooleanExpression whereClauseExpression, @Nonnull Site site) throws DatabaseException {
         final @Nonnull SQLSelectionResult selectionResult = getSelectionResult(converter, whereClauseExpression, site);
         
@@ -148,6 +152,7 @@ public final class SQL {
      * Builds and executes an SQL select statement based on the given converter and site. Returns a list of recovered objects.
      */
     @Pure
+    @NonCommitting
     public static <T, E> Set<T> export(@Nonnull Converter<T, E> converter, @Nonnull Site site) throws DatabaseException {
         final @Nonnull SQLSelectionResult selectionResult = getSelectionResult(converter, null, site);
         

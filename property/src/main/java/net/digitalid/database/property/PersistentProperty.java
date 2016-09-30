@@ -19,7 +19,7 @@ import net.digitalid.database.property.value.ReadOnlyPersistentValueProperty;
  */
 @Mutable
 @ThreadSafe
-public interface PersistentProperty<S extends Subject, E extends PropertyEntry<S>, O extends Property.Observer> extends Property<O> {
+public interface PersistentProperty<S extends Subject, N extends PropertyEntry<S>, O extends Property.Observer> extends Property<O> {
     
     /* -------------------------------------------------- Subject -------------------------------------------------- */
     
@@ -35,7 +35,7 @@ public interface PersistentProperty<S extends Subject, E extends PropertyEntry<S
      * Returns the property table that contains the property name, subject module and entry converter.
      */
     @Pure
-    public @Nonnull PropertyTable<S, E> getTable();
+    public @Nonnull PropertyTable<S, N> getTable();
     
     /* -------------------------------------------------- Reset -------------------------------------------------- */
     
