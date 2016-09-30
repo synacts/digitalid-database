@@ -47,7 +47,7 @@ import net.digitalid.database.property.Subject;
 @GenerateBuilder
 @GenerateSubclass
 @Mutable(ReadOnlyPersistentSetProperty.class)
-public abstract class WritablePersistentSetProperty<S extends Subject, V, R extends ReadOnlySet<@Nonnull @Valid V>, F extends FreezableSet<@Nonnull @Valid V>, E> extends WritableSetPropertyImplementation<V, R, DatabaseException, ReadOnlyPersistentSetProperty.Observer<S, V, R, E>, ReadOnlyPersistentSetProperty<S, V, R, E>> implements ReadOnlyPersistentSetProperty<S, V, R, E> {
+public abstract class WritablePersistentSetProperty<S extends Subject, V, R extends ReadOnlySet<@Nonnull @Valid V>, F extends FreezableSet<@Nonnull @Valid V>> extends WritableSetPropertyImplementation<V, R, DatabaseException, ReadOnlyPersistentSetProperty.Observer<S, V, R>, ReadOnlyPersistentSetProperty<S, V, R>> implements ReadOnlyPersistentSetProperty<S, V, R> {
     
     /* -------------------------------------------------- Validator -------------------------------------------------- */
     
@@ -78,7 +78,7 @@ public abstract class WritablePersistentSetProperty<S extends Subject, V, R exte
         if (locking) { lock.lock(); }
         try {
             getSet().clear();
-            final @Nullable SetPropertyEntry<S, V> entry = SQL.select(getTable().getEntryConverter(), SQLBooleanAlias.with("key = 123"), getSubject().getSite());
+            final @Nullable SetPropertyEntry<S, V> entry = SQL.select(getTable().getEntryConverter(), SQLBooleanAlias.with("key = 'TODO'"), getSubject().getSite());
             if (entry != null) {
                 getSet().add(entry.getValue());
             }
@@ -95,7 +95,7 @@ public abstract class WritablePersistentSetProperty<S extends Subject, V, R exte
     @NonCommitting
     @SuppressWarnings("unchecked")
     public @Nonnull @NonFrozen R get() throws DatabaseException {
-        if (!loaded) { load(true); } // This should never trigger a reentrance exception as both set(value) and reset() that call external code ensure that the value is loaded.
+        if (!loaded) { load(true); } // This should never trigger a reentrance exception as add(value), remove(value) and reset() that call external code ensure that the set is loaded.
         return (R) getSet();
     }
     
@@ -153,7 +153,9 @@ public abstract class WritablePersistentSetProperty<S extends Subject, V, R exte
         lock.lock();
         try {
             if (loaded) {
-                if (!observers.isEmpty()) {
+                if (observers.isEmpty()) {
+                    this.loaded = false;
+                } else {
                     final @Nonnull FreezableSet<V> oldSet = getSet().clone();
                     load(false);
                     final @Nonnull FreezableSet<V> newSet = getSet();
@@ -164,7 +166,6 @@ public abstract class WritablePersistentSetProperty<S extends Subject, V, R exte
                         notifyObservers(value, false);
                     }
                 }
-                this.loaded = false;
             }
         } finally {
             lock.unlock();

@@ -38,7 +38,7 @@ import net.digitalid.database.property.Subject;
 @GenerateBuilder
 @GenerateSubclass
 @Mutable(ReadOnlyPersistentValueProperty.class)
-public abstract class WritablePersistentValueProperty<S extends Subject, V, E> extends WritableValuePropertyImplementation<V, DatabaseException, ReadOnlyPersistentValueProperty.Observer<S, V, E>, ReadOnlyPersistentValueProperty<S, V, E>> implements ReadOnlyPersistentValueProperty<S, V, E> {
+public abstract class WritablePersistentValueProperty<S extends Subject, V> extends WritableValuePropertyImplementation<V, DatabaseException, ReadOnlyPersistentValueProperty.Observer<S, V>, ReadOnlyPersistentValueProperty<S, V>> implements ReadOnlyPersistentValueProperty<S, V> {
     
     /* -------------------------------------------------- Validator -------------------------------------------------- */
     
@@ -147,7 +147,9 @@ public abstract class WritablePersistentValueProperty<S extends Subject, V, E> e
         lock.lock();
         try {
             if (loaded) {
-                if (!observers.isEmpty()) {
+                if (observers.isEmpty()) {
+                    this.loaded = false;
+                } else {
                     final @Valid V oldValue = value;
                     load(false);
                     final @Valid V newValue = value;
@@ -155,7 +157,6 @@ public abstract class WritablePersistentValueProperty<S extends Subject, V, E> e
                         notifyObservers(oldValue, newValue);
                     }
                 }
-                this.loaded = false;
             }
         } finally {
             lock.unlock();

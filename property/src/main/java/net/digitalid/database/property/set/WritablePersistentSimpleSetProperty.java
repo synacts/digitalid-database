@@ -22,7 +22,7 @@ import net.digitalid.database.property.Subject;
 @GenerateBuilder
 @GenerateSubclass
 @Mutable(ReadOnlyPersistentSimpleSetProperty.class)
-public abstract class WritablePersistentSimpleSetProperty<S extends Subject, V> extends WritablePersistentSetProperty<S, V, ReadOnlySet<@Nonnull @Valid V>, FreezableSet<@Nonnull @Valid V>, Void> implements ReadOnlyPersistentSimpleSetProperty<S, V> {
+public abstract class WritablePersistentSimpleSetProperty<S extends Subject, V> extends WritablePersistentSetProperty<S, V, ReadOnlySet<@Nonnull @Valid V>, FreezableSet<@Nonnull @Valid V>> implements ReadOnlyPersistentSimpleSetProperty<S, V> {
     
     @Pure
     @Override

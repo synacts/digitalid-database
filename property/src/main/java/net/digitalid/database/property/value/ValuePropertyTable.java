@@ -36,8 +36,8 @@ public abstract class ValuePropertyTable<S extends Subject, V, E> extends Proper
      * Returns the function that extracts the externally provided object from the subject.
      */
     @Pure
-    @Default("object -> null")
-    public abstract @Nonnull UnaryFunction<S, E> getProvidedObjectExtractor();
+    @Default("subject -> null")
+    public abstract @Nonnull UnaryFunction<@Nonnull S, E> getProvidedObjectExtractor();
     
     /* -------------------------------------------------- Value Converter -------------------------------------------------- */
     

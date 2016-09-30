@@ -25,7 +25,7 @@ import net.digitalid.database.property.Subject;
  */
 @ThreadSafe
 @ReadOnly(WritablePersistentSetProperty.class)
-public interface ReadOnlyPersistentSetProperty<S extends Subject, V, R extends ReadOnlySet<@Nonnull @Valid V>, E> extends ReadOnlySetProperty<V, R, DatabaseException, ReadOnlyPersistentSetProperty.Observer<S, V, R, E>, ReadOnlyPersistentSetProperty<S, V, R, E>>, PersistentProperty<S, SetPropertyEntry<S, V>, ReadOnlyPersistentSetProperty.Observer<S, V, R, E>> {
+public interface ReadOnlyPersistentSetProperty<S extends Subject, V, R extends ReadOnlySet<@Nonnull @Valid V>> extends ReadOnlySetProperty<V, R, DatabaseException, ReadOnlyPersistentSetProperty.Observer<S, V, R>, ReadOnlyPersistentSetProperty<S, V, R>>, PersistentProperty<S, SetPropertyEntry<S, V>, ReadOnlyPersistentSetProperty.Observer<S, V, R>> {
     
     /* -------------------------------------------------- Observer -------------------------------------------------- */
     
@@ -34,7 +34,7 @@ public interface ReadOnlyPersistentSetProperty<S extends Subject, V, R extends R
      */
     @Mutable
     @Functional
-    public static interface Observer<S extends Subject, V, R extends ReadOnlySet<@Nonnull @Valid V>, E> extends ReadOnlySetProperty.Observer<V, R, DatabaseException, ReadOnlyPersistentSetProperty.Observer<S, V, R, E>, ReadOnlyPersistentSetProperty<S, V, R, E>> {}
+    public static interface Observer<S extends Subject, V, R extends ReadOnlySet<@Nonnull @Valid V>> extends ReadOnlySetProperty.Observer<V, R, DatabaseException, ReadOnlyPersistentSetProperty.Observer<S, V, R>, ReadOnlyPersistentSetProperty<S, V, R>> {}
     
     /* -------------------------------------------------- Getter -------------------------------------------------- */
     
@@ -47,6 +47,6 @@ public interface ReadOnlyPersistentSetProperty<S extends Subject, V, R extends R
     
     @Pure
     @Override
-    public @Nonnull SetPropertyTable<S, V, E> getTable();
+    public @Nonnull SetPropertyTable<S, V, ?> getTable();
     
 }

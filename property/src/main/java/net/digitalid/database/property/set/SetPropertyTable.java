@@ -36,8 +36,8 @@ public abstract class SetPropertyTable<S extends Subject, V, E> extends Property
      * Returns the function that extracts the externally provided object from the subject.
      */
     @Pure
-    @Default("object -> null")
-    public abstract @Nonnull UnaryFunction<S, E> getProvidedObjectExtractor();
+    @Default("subject -> null")
+    public abstract @Nonnull UnaryFunction<@Nonnull S, E> getProvidedObjectExtractor();
     
     /* -------------------------------------------------- Value Converter -------------------------------------------------- */
     

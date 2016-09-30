@@ -72,8 +72,12 @@ public abstract class SetPropertyEntryConverter<S extends Subject, V, E> extends
     @Review(comment = "How would you handle the nullable recovered objects?", date = "2016-09-30", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.LOW)
     public @Capturable <X extends ExternalException> @Nullable SetPropertyEntry<S, V> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, Void none) throws X {
         final @Nullable S subject = getPropertyTable().getParentModule().getSubjectConverter().recover(selectionResult, null);
-        final @Nullable V value = getPropertyTable().getValueConverter().recover(selectionResult, getPropertyTable().getProvidedObjectExtractor().evaluate(subject));
-        return subject != null && value != null ? new SetPropertyEntrySubclass<>(subject, value) : null;
+        if (subject != null) {
+            final @Nullable V value = getPropertyTable().getValueConverter().recover(selectionResult, getPropertyTable().getProvidedObjectExtractor().evaluate(subject));
+            return value != null ? new SetPropertyEntrySubclass<>(subject, value) : null;
+        } else {
+            return null;
+        }
     }
     
 }

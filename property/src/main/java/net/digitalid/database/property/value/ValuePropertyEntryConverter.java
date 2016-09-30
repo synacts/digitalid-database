@@ -8,6 +8,7 @@ import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.annotations.parameter.Unmodified;
+import net.digitalid.utility.collaboration.annotations.Review;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collaboration.enumerations.Priority;
@@ -72,11 +73,16 @@ public abstract class ValuePropertyEntryConverter<S extends Subject, V, E> exten
     
     @Pure
     @Override
+    @Review(comment = "How would you handle the nullable recovered objects?", date = "2016-09-30", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.LOW)
     public @Capturable <X extends ExternalException> @Nullable ValuePropertyEntry<S, V> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, Void none) throws X {
         final @Nullable S subject = getPropertyTable().getParentModule().getSubjectConverter().recover(selectionResult, null);
         final @Nullable Time time = TimeConverter.INSTANCE.recover(selectionResult, null);
-        final V value = getPropertyTable().getValueConverter().recover(selectionResult, getPropertyTable().getProvidedObjectExtractor().evaluate(subject));
-        return subject != null && time != null ? new ValuePropertyEntrySubclass<>(subject, time, value) : null;
+        if (subject != null && time != null) {
+            final V value = getPropertyTable().getValueConverter().recover(selectionResult, getPropertyTable().getProvidedObjectExtractor().evaluate(subject));
+            return new ValuePropertyEntrySubclass<>(subject, time, value);
+        } else {
+            return null;
+        }
     }
     
 }

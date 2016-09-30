@@ -16,4 +16,4 @@ import net.digitalid.database.property.Subject;
  */
 @ThreadSafe
 @ReadOnly(WritablePersistentSimpleSetProperty.class)
-public interface ReadOnlyPersistentSimpleSetProperty<S extends Subject, V> extends ReadOnlyPersistentSetProperty<S, V, ReadOnlySet<@Nonnull @Valid V>, Void> {}
+public interface ReadOnlyPersistentSimpleSetProperty<S extends Subject, V> extends ReadOnlyPersistentSetProperty<S, V, ReadOnlySet<@Nonnull @Valid V>> {}
