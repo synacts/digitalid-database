@@ -20,7 +20,7 @@ import net.digitalid.utility.collaboration.enumerations.Priority;
 import net.digitalid.utility.collections.map.FreezableMap;
 import net.digitalid.utility.collections.map.ReadOnlyMap;
 import net.digitalid.utility.concurrency.exceptions.ReentranceException;
-import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.functional.interfaces.Predicate;
@@ -198,10 +198,10 @@ public abstract class WritablePersistentMapProperty<S extends Subject, K, V, R e
     @CallSuper
     public void validate() {
         super.validate();
-        Require.that(!getMap().keySet().containsNull()).orThrow("None of the keys may be null.");
-        Require.that(!getMap().values().containsNull()).orThrow("None of the values may be null.");
-        Require.that(getMap().keySet().matchAll(getKeyValidator())).orThrow("Each key has to be valid.");
-        Require.that(getMap().values().matchAll(getValueValidator())).orThrow("Each value has to be valid.");
+        Validate.that(!getMap().keySet().containsNull()).orThrow("None of the keys may be null.");
+        Validate.that(!getMap().values().containsNull()).orThrow("None of the values may be null.");
+        Validate.that(getMap().keySet().matchAll(getKeyValidator())).orThrow("Each key has to be valid.");
+        Validate.that(getMap().values().matchAll(getValueValidator())).orThrow("Each value has to be valid.");
     }
     
 }

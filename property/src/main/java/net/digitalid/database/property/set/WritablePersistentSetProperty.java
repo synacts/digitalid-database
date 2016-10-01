@@ -16,7 +16,7 @@ import net.digitalid.utility.collaboration.enumerations.Priority;
 import net.digitalid.utility.collections.set.FreezableSet;
 import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.concurrency.exceptions.ReentranceException;
-import net.digitalid.utility.contracts.Require;
+import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.functional.interfaces.Predicate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
@@ -179,8 +179,8 @@ public abstract class WritablePersistentSetProperty<S extends Subject, V, R exte
     @CallSuper
     public void validate() {
         super.validate();
-        Require.that(!getSet().containsNull()).orThrow("None of the values may be null.");
-        Require.that(getSet().matchAll(getValueValidator())).orThrow("Each value has to be valid.");
+        Validate.that(!getSet().containsNull()).orThrow("None of the values may be null.");
+        Validate.that(getSet().matchAll(getValueValidator())).orThrow("Each value has to be valid.");
     }
     
 }
