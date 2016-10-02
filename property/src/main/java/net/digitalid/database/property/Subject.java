@@ -4,6 +4,8 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.rootclass.RootInterface;
+import net.digitalid.utility.validation.annotations.generation.Default;
+import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.core.Site;
@@ -26,8 +28,8 @@ public interface Subject extends RootInterface {
      * Returns the site of this subject.
      */
     @Pure
-    public default @Nonnull Site getSite() {
-        return DEFAULT_SITE;
-    }
+    @Provided
+    @Default("net.digitalid.database.property.Subject.DEFAULT_SITE")
+    public @Nonnull Site getSite();
     
 }

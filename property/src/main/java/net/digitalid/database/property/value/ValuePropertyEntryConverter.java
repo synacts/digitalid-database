@@ -27,6 +27,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.metadata.Embedded;
 import net.digitalid.database.annotations.metadata.PrimaryKey;
+import net.digitalid.database.core.Site;
 import net.digitalid.database.property.PropertyEntryConverter;
 import net.digitalid.database.property.Subject;
 
@@ -74,8 +75,8 @@ public abstract class ValuePropertyEntryConverter<S extends Subject, V, E> exten
     @Pure
     @Override
     @Review(comment = "How would you handle the nullable recovered objects?", date = "2016-09-30", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.LOW)
-    public @Capturable <X extends ExternalException> @Nullable ValuePropertyEntry<S, V> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, Void none) throws X {
-        final @Nullable S subject = getPropertyTable().getParentModule().getSubjectConverter().recover(selectionResult, null);
+    public @Capturable <X extends ExternalException> @Nullable ValuePropertyEntry<S, V> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, @Nonnull Site site) throws X {
+        final @Nullable S subject = getPropertyTable().getParentModule().getSubjectConverter().recover(selectionResult, site);
         final @Nullable Time time = TimeConverter.INSTANCE.recover(selectionResult, null);
         if (subject != null && time != null) {
             final V value = getPropertyTable().getValueConverter().recover(selectionResult, getPropertyTable().getProvidedObjectExtractor().evaluate(subject));

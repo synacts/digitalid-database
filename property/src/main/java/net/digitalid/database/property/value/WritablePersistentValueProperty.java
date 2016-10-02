@@ -62,7 +62,7 @@ public abstract class WritablePersistentValueProperty<S extends Subject, V> exte
     protected void load(final boolean locking) throws DatabaseException, ReentranceException {
         if (locking) { lock.lock(); }
         try {
-            final @Nullable ValuePropertyEntry<S, V> entry = SQL.select(getTable().getEntryConverter(), SQLBooleanAlias.with("key = 123"), getSubject().getSite());
+            final @Nullable ValuePropertyEntry<S, V> entry = SQL.select(getTable().getEntryConverter(), SQLBooleanAlias.with("key = 123"), getSubject().getSite(), getSubject().getSite());
             if (entry != null) {
                 this.time = entry.getTime();
                 this.value = entry.getValue();

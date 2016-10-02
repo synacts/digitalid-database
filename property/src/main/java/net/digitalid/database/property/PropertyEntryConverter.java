@@ -7,6 +7,7 @@ import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.core.Site;
 import net.digitalid.database.property.value.ValuePropertyEntryConverter;
 
 /**
@@ -15,7 +16,7 @@ import net.digitalid.database.property.value.ValuePropertyEntryConverter;
  * @see ValuePropertyEntryConverter
  */
 @Immutable
-public abstract class PropertyEntryConverter<S extends Subject, N extends PropertyEntry<S>> extends RootClass implements Converter<N, Void> {
+public abstract class PropertyEntryConverter<S extends Subject, N extends PropertyEntry<S>> extends RootClass implements Converter<N, @Nonnull Site> {
     
     /* -------------------------------------------------- Property Table -------------------------------------------------- */
     

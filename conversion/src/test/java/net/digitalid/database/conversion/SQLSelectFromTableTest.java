@@ -67,7 +67,7 @@ public class SQLSelectFromTableTest extends SQLTestBase {
     @Test
     public void testSelectSingleBoolean() throws Exception {
         insertSingleBoolean(true);
-        @Nullable SingleBooleanColumnTable singleBooleanColumnTable = SQL.select(SingleBooleanColumnTableConverter.INSTANCE, null, site);
+        @Nullable SingleBooleanColumnTable singleBooleanColumnTable = SQL.select(SingleBooleanColumnTableConverter.INSTANCE, null, site, null);
 
         Assert.assertNotNull("Expected an instance of the SingleBooleanColumnTable type, but got null.", singleBooleanColumnTable);
         Assert.assertEquals(true, singleBooleanColumnTable.value);
@@ -76,7 +76,7 @@ public class SQLSelectFromTableTest extends SQLTestBase {
         insertSingleBoolean(true);
         insertSingleBoolean(false);
 //        @Nullable SingleBooleanColumnTable singleBooleanColumnTable2 = SQL.select(SingleBooleanColumnTableConverter.INSTANCE, SQLBinaryBooleanExpression.get(SQLBinaryBooleanOperator.EQUAL, SQLBooleanAlias.with("value"), SQLBooleanLiteral.get(false)), site);
-        @Nullable SingleBooleanColumnTable singleBooleanColumnTable2 = SQL.select(SingleBooleanColumnTableConverter.INSTANCE, SQLBooleanAlias.with("value").negated(), site);
+        @Nullable SingleBooleanColumnTable singleBooleanColumnTable2 = SQL.select(SingleBooleanColumnTableConverter.INSTANCE, SQLBooleanAlias.with("value").negated(), site, null);
 
         Assert.assertNotNull("Expected an instance of the SingleBooleanColumnTable type, but got null.", singleBooleanColumnTable2);
         Assert.assertEquals(false, singleBooleanColumnTable2.value);
@@ -101,7 +101,7 @@ public class SQLSelectFromTableTest extends SQLTestBase {
     @Test
     public void testEmbeddedList() throws Exception {
         insertSimpleCollection();
-        @Nullable SimpleCollectionsClass simpleCollectionsClass = SQL.select(SimpleCollectionsClassConverter.INSTANCE, null, site);
+        @Nullable SimpleCollectionsClass simpleCollectionsClass = SQL.select(SimpleCollectionsClassConverter.INSTANCE, null, site, null);
 
         Assert.assertNotNull("Expected an instance of the SingleBooleanColumnTable type, but got null.", simpleCollectionsClass);
         Assert.assertSame(5, simpleCollectionsClass.listOfIntegers.size());
@@ -126,7 +126,7 @@ public class SQLSelectFromTableTest extends SQLTestBase {
     @Test
     public void testEmbeddedListAndAdditionalField() throws Exception {
         insertCollectionAndAdditionalField();
-        final @Nullable CollectionAndAdditionalFieldClass collectionAndAdditionalFieldClass = SQL.select(CollectionAndAdditionalFieldClassConverter.INSTANCE, null, site);
+        final @Nullable CollectionAndAdditionalFieldClass collectionAndAdditionalFieldClass = SQL.select(CollectionAndAdditionalFieldClassConverter.INSTANCE, null, site, null);
 
         Assert.assertNotNull("Expected an instance of the CollectionAndAdditionalFieldClass type, but got null.", collectionAndAdditionalFieldClass);
         Assert.assertSame(5, collectionAndAdditionalFieldClass.listOfIntegers.size());

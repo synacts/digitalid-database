@@ -136,13 +136,13 @@ public final class SQL {
      */
     @Pure
     @NonCommitting
-    public static <T, E> T select(@Nonnull Converter<T, E> converter, @Nullable SQLBooleanExpression whereClauseExpression, @Nonnull Site site) throws DatabaseException {
+    public static <T, E> T select(@Nonnull Converter<T, E> converter, @Nullable SQLBooleanExpression whereClauseExpression, @Nonnull Site site, E externallyProvided) throws DatabaseException {
         final @Nonnull SQLSelectionResult selectionResult = getSelectionResult(converter, whereClauseExpression, site);
         
         if (!selectionResult.moveToNextRow()) {
             return null;
         }
-        final @Nonnull T recoveredObject = converter.recover(selectionResult, null);
+        final @Nonnull T recoveredObject = converter.recover(selectionResult, externallyProvided);
         Require.that(!selectionResult.moveToNextRow()).orThrow("Not all of the rows have been processed.");
         
         return recoveredObject;
@@ -153,13 +153,13 @@ public final class SQL {
      */
     @Pure
     @NonCommitting
-    public static <T, E> Set<T> export(@Nonnull Converter<T, E> converter, @Nonnull Site site) throws DatabaseException {
+    public static <T, E> Set<T> export(@Nonnull Converter<T, E> converter, @Nonnull Site site, E externallyProvided) throws DatabaseException {
         final @Nonnull SQLSelectionResult selectionResult = getSelectionResult(converter, null, site);
         
         Set<T> recoveredObjects = FreezableHashSet.withElements();
         while (selectionResult.moveToNextRow()) {
             selectionResult.moveToFirstColumn();
-            final @Nonnull T recoveredObject = converter.recover(selectionResult, null);
+            final @Nonnull T recoveredObject = converter.recover(selectionResult, externallyProvided);
             recoveredObjects.add(recoveredObject);
         }
         

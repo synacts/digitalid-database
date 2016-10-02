@@ -78,7 +78,7 @@ public abstract class WritablePersistentSetProperty<S extends Subject, V, R exte
         if (locking) { lock.lock(); }
         try {
             getSet().clear();
-            final @Nullable SetPropertyEntry<S, V> entry = SQL.select(getTable().getEntryConverter(), SQLBooleanAlias.with("key = 'TODO'"), getSubject().getSite());
+            final @Nullable SetPropertyEntry<S, V> entry = SQL.select(getTable().getEntryConverter(), SQLBooleanAlias.with("key = 'TODO'"), getSubject().getSite(), getSubject().getSite());
             if (entry != null) {
                 getSet().add(entry.getValue());
             }

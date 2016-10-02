@@ -26,4 +26,22 @@ public interface Site extends RootInterface {
     @Pure
     public abstract @Nonnull @CodeIdentifier @MaxSize(63) String getName();
     
+    /* -------------------------------------------------- Queries -------------------------------------------------- */
+    
+    /**
+     * Returns whether this site is a host.
+     */
+    @Pure
+    public default boolean isHost() {
+        return true;
+    }
+    
+    /**
+     * Returns whether this site is a client.
+     */
+    @Pure
+    public default boolean isClient() {
+        return !isHost();
+    }
+    
 }

@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.core.Site;
 import net.digitalid.database.property.value.ValuePropertyTable;
 import net.digitalid.database.storage.Table;
 
@@ -14,7 +15,7 @@ import net.digitalid.database.storage.Table;
  * @see ValuePropertyTable
  */
 @Immutable
-public abstract class PropertyTable<S extends Subject, N extends PropertyEntry<S>> extends Table<N> {
+public abstract class PropertyTable<S extends Subject, N extends PropertyEntry<S>> extends Table<N, Site> {
     
     /* -------------------------------------------------- Parent Module -------------------------------------------------- */
     
