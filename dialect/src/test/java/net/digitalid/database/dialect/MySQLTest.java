@@ -1,6 +1,6 @@
 package net.digitalid.database.dialect;
 
-import net.digitalid.database.core.Database;
+import net.digitalid.database.interfaces.Database;
 
 /**
  * Unit testing of the {@link Database} with the MySQLConfiguration.

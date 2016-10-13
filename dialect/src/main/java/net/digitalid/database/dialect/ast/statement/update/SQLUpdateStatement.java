@@ -6,10 +6,10 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 
-import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.dialect.ast.SQLParameterizableNode;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
+import net.digitalid.database.interfaces.SQLValueCollector;
 
 /**
  * Description.

@@ -8,12 +8,12 @@ import net.digitalid.utility.circumfixes.Brackets;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.interfaces.SQLValueCollector;
-import net.digitalid.database.core.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLUnaryExpression;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
+import net.digitalid.database.interfaces.SQLValueCollector;
+import net.digitalid.database.interfaces.Site;
 
 /**
  * This class implements a unary boolean expression.

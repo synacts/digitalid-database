@@ -25,11 +25,6 @@ import net.digitalid.database.conversion.columndeclarations.SQLCreateTableColumn
 import net.digitalid.database.conversion.columndeclarations.SQLInsertIntoTableColumnDeclarations;
 import net.digitalid.database.conversion.columndeclarations.SQLOrderedStatements;
 import net.digitalid.database.conversion.columndeclarations.SQLSelectFromTableColumnDeclarations;
-import net.digitalid.database.core.Database;
-import net.digitalid.database.core.Site;
-import net.digitalid.database.core.Tables;
-import net.digitalid.database.core.interfaces.SQLSelectionResult;
-import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.expression.bool.SQLBooleanExpression;
 import net.digitalid.database.dialect.ast.statement.insert.SQLInsertStatement;
@@ -38,6 +33,11 @@ import net.digitalid.database.dialect.ast.statement.select.SQLWhereClause;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLCreateTableStatement;
 import net.digitalid.database.dialect.table.TableImplementation;
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.interfaces.SQLSelectionResult;
+import net.digitalid.database.interfaces.SQLValueCollector;
+import net.digitalid.database.interfaces.Site;
+import net.digitalid.database.interfaces.Tables;
 
 /**
  * This class serves as an entry point for simple conversion of Java objects to SQL.

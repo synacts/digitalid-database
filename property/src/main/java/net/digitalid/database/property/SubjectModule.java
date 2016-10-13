@@ -8,7 +8,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.Site;
+import net.digitalid.database.interfaces.Site;
 import net.digitalid.database.storage.Module;
 
 /**
@@ -25,6 +25,6 @@ public abstract class SubjectModule<S extends Subject> extends Module {
      * Returns the converter used to convert and recover the subject.
      */
     @Pure
-    public abstract @Nonnull Converter<S, Site> getSubjectConverter();
+    public abstract @Nonnull Converter<S, @Nonnull Site> getSubjectConverter();
     
 }

@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.Site;
+import net.digitalid.database.interfaces.Site;
 import net.digitalid.database.property.value.ValuePropertyTable;
 import net.digitalid.database.storage.Table;
 

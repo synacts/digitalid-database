@@ -2,9 +2,9 @@ package net.digitalid.database.exceptions.state.value;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.type.Immutable;
-import net.digitalid.utility.annotations.method.Pure;
 
 /**
  * This exception allows to mask other exceptions as a corrupt value exception.

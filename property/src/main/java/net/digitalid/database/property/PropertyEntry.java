@@ -6,8 +6,8 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.annotations.metadata.Embedded;
-import net.digitalid.database.annotations.metadata.PrimaryKey;
+import net.digitalid.database.annotations.constraints.PrimaryKey;
+import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.property.value.ValuePropertyEntry;
 
 /**

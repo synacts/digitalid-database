@@ -15,22 +15,4 @@
         <version>1.0.0</version>
     </parent>
     
-    <dependencies>
-        <dependency>
-            <groupId>net.digitalid.database</groupId>
-            <artifactId>database-exceptions</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.digitalid.database</groupId>
-            <artifactId>database-annotations</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.digitalid.database</groupId>
-            <artifactId>database-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
-    
 </project>

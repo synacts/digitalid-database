@@ -8,12 +8,12 @@ import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
-import net.digitalid.database.core.interfaces.SQLValueCollector;
-import net.digitalid.database.core.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLParameterizableNode;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
+import net.digitalid.database.interfaces.SQLValueCollector;
+import net.digitalid.database.interfaces.Site;
 
 /**
  * This SQL node represents the SQL limit clause of an SQL select statement.

@@ -14,13 +14,13 @@ import net.digitalid.utility.validation.annotations.math.NonPositive;
 import net.digitalid.utility.validation.annotations.math.Positive;
 import net.digitalid.utility.validation.annotations.math.modulo.MultipleOf;
 
-import net.digitalid.database.core.Site;
-import net.digitalid.database.annotations.metadata.PrimaryKey;
-import net.digitalid.database.annotations.metadata.References;
-import net.digitalid.database.annotations.metadata.Unique;
+import net.digitalid.database.annotations.constraints.ForeignKey;
+import net.digitalid.database.annotations.constraints.PrimaryKey;
+import net.digitalid.database.annotations.constraints.Unique;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLParameterizableNode;
 import net.digitalid.database.dialect.ast.Transcriber;
+import net.digitalid.database.interfaces.Site;
 
 /**
  * This SQL node represents an SQL column constraint.
@@ -44,7 +44,7 @@ public abstract class SQLColumnConstraint implements SQLParameterizableNode<SQLC
                 columnConstraints.add(new SQLUniqueConstraint());
             } else if (annotation.getAnnotationType().equals(PrimaryKey.class)) {
                 columnConstraints.add(new SQLPrimaryKeyConstraint());
-            } else if (annotation.getAnnotationType().equals(References.class)) {
+            } else if (annotation.getAnnotationType().equals(ForeignKey.class)) {
                 columnConstraints.add(new SQLForeignKeyConstraint(annotation));
             } else if (annotation.getAnnotationType().equals(MultipleOf.class)) {
                 columnConstraints.add(new SQLCheckMultipleOfConstraint(annotation, columnName));

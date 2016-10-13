@@ -8,11 +8,11 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
-import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.identifier.SQLIdentifier;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
+import net.digitalid.database.interfaces.SQLValueCollector;
 
 /**
  *

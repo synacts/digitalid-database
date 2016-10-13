@@ -16,9 +16,6 @@ import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.SQLKey;
-import net.digitalid.database.core.Site;
-import net.digitalid.database.core.Table;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
 import net.digitalid.database.dialect.ast.statement.insert.SQLValues;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnConstraint;
@@ -26,6 +23,9 @@ import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDeclar
 import net.digitalid.database.dialect.ast.statement.table.create.SQLCreateTableStatement;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLForeignKeyConstraint;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLPrimaryKeyConstraint;
+import net.digitalid.database.interfaces.SQLKey;
+import net.digitalid.database.interfaces.Site;
+import net.digitalid.database.interfaces.Table;
 
 /**
  * This class models a database table.

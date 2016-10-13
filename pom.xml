@@ -35,35 +35,27 @@
     </properties>
     
     <modules>
-        <module>exceptions</module>
+        <module>enumerations</module>
         <module>annotations</module>
-        <module>storage</module>
-        <module>core</module>
+        <module>exceptions</module>
+        <module>interfaces</module>
         <module>jdbc</module>
 <!--        <module>android</module>-->
         <module>dialect</module>
-<!--        <module>mysql</module>
-        <module>sqlite</module>
-        <module>postgres</module>-->
+<!--        <module>mysql</module>-->
+<!--        <module>sqlite</module>-->
+<!--        <module>postgres</module>-->
         <module>testing</module>
         <module>conversion</module>
+        <module>auxiliary</module>
+        <module>storage</module>
         <module>property</module>
     </modules>
     
     <dependencies>
         <dependency>
             <groupId>net.digitalid.utility</groupId>
-            <artifactId>utility-collections</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.digitalid.utility</groupId>
-            <artifactId>utility-property</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.digitalid.utility</groupId>
-            <artifactId>utility-time</artifactId>
+            <artifactId>utility-parent</artifactId>
             <version>1.0.0</version>
         </dependency>
         <!-- Activate this dependency as soon as needed:
@@ -158,6 +150,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.19.1</version>
                 <configuration>
+                    <testFailureIgnore>false</testFailureIgnore>
+                    <trimStackTrace>false</trimStackTrace>
                     <skipTests>${tests.skip}</skipTests>
                 </configuration>
             </plugin>

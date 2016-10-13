@@ -12,10 +12,10 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.tuples.Pair;
 
-import net.digitalid.database.core.interfaces.SQLSelectionResult;
-import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.operation.FailedOperationException;
+import net.digitalid.database.interfaces.SQLSelectionResult;
+import net.digitalid.database.interfaces.SQLValueCollector;
 import net.digitalid.database.jdbc.JDBCDatabaseInstance;
 import net.digitalid.database.jdbc.JDBCValueCollector;
 

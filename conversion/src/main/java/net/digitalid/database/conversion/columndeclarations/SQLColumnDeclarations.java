@@ -26,12 +26,12 @@ import net.digitalid.utility.immutable.ImmutableMap;
 import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
 
-import net.digitalid.database.annotations.metadata.Embedded;
-import net.digitalid.database.annotations.metadata.PrimaryKey;
-import net.digitalid.database.annotations.metadata.References;
+import net.digitalid.database.annotations.constraints.ForeignKey;
+import net.digitalid.database.annotations.constraints.PrimaryKey;
+import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.conversion.exceptions.ConformityViolationException;
-import net.digitalid.database.core.SQLType;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLTypeNode;
+import net.digitalid.database.enumerations.SQLType;
 
 /**
  * The SQL column declarations class collects information about the SQL table columns that are required to convert an object to SQL.
@@ -233,19 +233,19 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
             final CustomType.@Nonnull TupleType tupleType = (CustomType.@Nonnull TupleType) field.getCustomType();
             if (field.isAnnotatedWith(Embedded.class)) {
                 declareColumns(((CustomType.CustomConverterType) tupleType).getConverter());
-            } else if (field.isAnnotatedWith(References.class)) {
-                final @Nonnull CustomAnnotation references = field.getAnnotation(References.class);
+            } else if (field.isAnnotatedWith(ForeignKey.class)) {
+                final @Nonnull CustomAnnotation references = field.getAnnotation(ForeignKey.class);
                 // TODO: prevent naming conflicts.
                 final @Nonnull I referencedTableColumnDeclarations = getInstance(references.get("foreignTable", String.class), currentColumn);
                 referencedTableColumnDeclarations.declareColumns(((CustomType.CustomConverterType) tupleType).getConverter());
                 referencedTablesColumnDeclarations.put(references.get("foreignTable", String.class), referencedTableColumnDeclarations);
                 columnCountForGroup.addAll(referencedTableColumnDeclarations.getColumnCountForGroup());
                 currentColumn = referencedTableColumnDeclarations.currentColumn;
-                final @Nonnull Pair<@Nonnull CD, @Nonnull ImmutableList<@Nonnull CustomAnnotation>> columnDeclaration = getColumnDeclaration(field.getName(), SQLTypeNode.of(SQLType.of(references.get("columnType", int.class))), field.getAnnotations());
+                final @Nonnull Pair<@Nonnull CD, @Nonnull ImmutableList<@Nonnull CustomAnnotation>> columnDeclaration = getColumnDeclaration(field.getName(), SQLTypeNode.of(references.get("columnType", SQLType.class)), field.getAnnotations());
                 addReferenceColumnDeclarationToList(columnDeclaration, getIndexOfReferencedColumnDeclaration(references.get("columnName", String.class), referencedTableColumnDeclarations));
                 columnCountForGroup.add(1);
             } else {
-                throw ConformityViolationException.with("Expected @$ or @$ annotation on non-primitive field $", Embedded.class.getSimpleName(), References.class.getSimpleName(), field.getName());
+                throw ConformityViolationException.with("Expected @$ or @$ annotation on non-primitive field $", Embedded.class.getSimpleName(), ForeignKey.class.getSimpleName(), field.getName());
             }
         } else if (field.getCustomType().isCompositeType()) {
             if (field.isAnnotatedWith(Embedded.class)) {
@@ -265,7 +265,7 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
                 // Remove the @References annotation and add the @Embedd annotation
                 final @Nonnull FreezableArrayList<CustomAnnotation> allOtherAnnotations = FreezableArrayList.withInitialCapacity(field.getAnnotations().size() - 1);
                 for (@Nonnull CustomAnnotation annotation : field.getAnnotations()) {
-                    if (!annotation.getAnnotationType().isAssignableFrom(References.class)) {
+                    if (!annotation.getAnnotationType().isAssignableFrom(ForeignKey.class)) {
                         allOtherAnnotations.add(annotation);
                     }
                 }
@@ -326,7 +326,7 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
             annotationFields.put("columnName", getColumnName(primaryKeyColumnDeclaration));
             annotationFields.put("foreignTable", tableName);
             annotationFields.put("columnType", getColumnType(primaryKeyColumnDeclaration));
-            foreignKeyAnnotations.add(CustomAnnotation.with(References.class, ImmutableMap.withMappingsOf(annotationFields)));
+            foreignKeyAnnotations.add(CustomAnnotation.with(ForeignKey.class, ImmutableMap.withMappingsOf(annotationFields)));
             @Nonnull final Pair<@Nonnull CD, @Nonnull ImmutableList<@Nonnull CustomAnnotation>> foreignKeyColumnDeclaration = getColumnDeclaration(getColumnName(primaryKeyColumnDeclaration), getColumnType(primaryKeyColumnDeclaration), ImmutableList.withElementsOf(foreignKeyAnnotations));
             foreignKeys.add(Pair.of(foreignKeyColumnDeclaration, primaryKey.get1()));
         }

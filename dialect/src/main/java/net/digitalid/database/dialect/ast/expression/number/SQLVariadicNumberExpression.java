@@ -13,13 +13,13 @@ import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.interfaces.SQLValueCollector;
-import net.digitalid.database.core.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLExpression;
 import net.digitalid.database.dialect.ast.expression.SQLVariadicExpression;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
+import net.digitalid.database.interfaces.SQLValueCollector;
+import net.digitalid.database.interfaces.Site;
 
 /**
  * This class implements a variadic number expression.

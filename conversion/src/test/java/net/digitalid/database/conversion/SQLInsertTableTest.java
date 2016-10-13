@@ -32,15 +32,15 @@ import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColu
 import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColumnTableConverter;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTable;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
-import net.digitalid.database.core.Database;
-import net.digitalid.database.core.Site;
-import net.digitalid.database.core.interfaces.DatabaseInstance;
 import net.digitalid.database.dialect.table.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.operation.FailedUpdateExecutionException;
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
+import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.interfaces.DatabaseInstance;
+import net.digitalid.database.interfaces.Site;
 import net.digitalid.database.testing.SQLTestBase;
-import net.digitalid.database.testing.TestHost;
+import net.digitalid.database.testing.TestSite;
 
 import org.h2.jdbc.JdbcBatchUpdateException;
 import org.hamcrest.BaseMatcher;
@@ -70,7 +70,7 @@ public class SQLInsertTableTest extends SQLTestBase {
     private static TableImplementation compositeCollectionTable;
     private static TableImplementation referencedCollectionFieldTable;
     
-    private static final Site site = new TestHost();
+    private static final Site site = new TestSite();
     
     @Impure
     @BeforeClass
@@ -249,8 +249,8 @@ public class SQLInsertTableTest extends SQLTestBase {
         );
         final @Nonnull String referencedColumnName = "additionalfield";
 
-        assertRowCount(TestHost.SCHEMA_NAME + "." + ReferencedCollectionClassConverter.INSTANCE.getName() + "_LISTOFINTEGERS", 5L);
-        assertTableContains(TestHost.SCHEMA_NAME + "." + ReferencedCollectionClassConverter.INSTANCE.getName() + "_LISTOFINTEGERS",
+        assertRowCount(TestSite.SCHEMA_NAME + "." + ReferencedCollectionClassConverter.INSTANCE.getName() + "_LISTOFINTEGERS", 5L);
+        assertTableContains(TestSite.SCHEMA_NAME + "." + ReferencedCollectionClassConverter.INSTANCE.getName() + "_LISTOFINTEGERS",
                 Expected.column("listofintegers").value("1").and(referencedColumnName).value("99"),
                 Expected.column("listofintegers").value("2").and(referencedColumnName).value("99"),
                 Expected.column("listofintegers").value("3").and(referencedColumnName).value("99"),

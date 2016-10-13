@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 
-import net.digitalid.database.annotations.metadata.Embedded;
+import net.digitalid.database.annotations.type.Embedded;
 
 
 /**

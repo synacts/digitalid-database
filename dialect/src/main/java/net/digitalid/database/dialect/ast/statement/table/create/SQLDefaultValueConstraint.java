@@ -22,7 +22,7 @@ public class SQLDefaultValueConstraint extends SQLColumnDefinition {
     @Override
     public void getColumnDefinition(@Nonnull @NonCaptured StringBuilder string) throws InternalException {
         string.append("DEFAULT ");
-        string.append(defaultValue);
+        string.append(defaultValue.toUpperCase());
     }
     
 }

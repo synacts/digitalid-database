@@ -1,9 +1,6 @@
 package net.digitalid.database.dialect.ast.statement.table.create;
 
-import java.lang.annotation.Annotation;
-
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
@@ -12,7 +9,6 @@ import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.converter.CustomAnnotation;
 import net.digitalid.utility.validation.annotations.math.modulo.MultipleOf;
 
-import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.dialect.ast.expression.SQLExpression;
 import net.digitalid.database.dialect.ast.expression.bool.SQLComparisonOperator;
 import net.digitalid.database.dialect.ast.expression.bool.SQLNumberComparisonBooleanExpression;
@@ -21,6 +17,7 @@ import net.digitalid.database.dialect.ast.expression.number.SQLBinaryNumberOpera
 import net.digitalid.database.dialect.ast.expression.number.SQLNumberLiteral;
 import net.digitalid.database.dialect.ast.expression.number.SQLNumberReference;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
+import net.digitalid.database.interfaces.SQLValueCollector;
 
 /**
  * This SQL node represents the multiple-of constraint for a database column.

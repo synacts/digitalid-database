@@ -7,11 +7,11 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.SQLType;
-import net.digitalid.database.core.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLNode;
 import net.digitalid.database.dialect.ast.Transcriber;
+import net.digitalid.database.enumerations.SQLType;
+import net.digitalid.database.interfaces.Site;
 
 /**
  * This class enumerates the supported SQL types.
@@ -47,7 +47,6 @@ public class SQLTypeNode implements SQLNode<SQLTypeNode> {
         @Override
         protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLTypeNode type, @Nonnull Site site) throws InternalException {
             switch (type.sqlType) {
-                case EMPTY: return "BOOLEAN";
                 case BOOLEAN: return "BOOLEAN";
                 case INTEGER08: return "TINYINT";
                 case INTEGER16: return "SMALLINT";

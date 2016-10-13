@@ -2,8 +2,8 @@ package net.digitalid.database.exceptions.state.row;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 /**
  * This exception is thrown when a filter has not found the desired entry.

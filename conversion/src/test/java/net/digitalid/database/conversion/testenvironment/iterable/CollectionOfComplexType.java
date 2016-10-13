@@ -6,7 +6,6 @@ import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 
-import net.digitalid.database.conversion.testenvironment.AnotherClass;
 import net.digitalid.database.conversion.testenvironment.referenced.ReferencedEntity;
 
 /**

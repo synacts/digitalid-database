@@ -22,12 +22,12 @@ import net.digitalid.utility.functional.failable.FailableProducer;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;
 
-import net.digitalid.database.core.interfaces.SQLSelectionResult;
 import net.digitalid.database.exceptions.operation.FailedResourceClosingException;
 import net.digitalid.database.exceptions.operation.FailedSQLValueRecoveryException;
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
 import net.digitalid.database.exceptions.state.value.CorruptNullValueException;
 import net.digitalid.database.exceptions.state.value.CorruptParameterValueException;
+import net.digitalid.database.interfaces.SQLSelectionResult;
 
 /**
  * This classes uses the JDBC result set to retrieve the values.

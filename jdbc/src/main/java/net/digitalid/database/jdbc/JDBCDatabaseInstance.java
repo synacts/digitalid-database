@@ -14,7 +14,6 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.UnexpectedFailureException;
 import net.digitalid.utility.logging.Log;
@@ -22,9 +21,6 @@ import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.core.Table;
-import net.digitalid.database.core.interfaces.DatabaseInstance;
-import net.digitalid.database.core.interfaces.SQLSelectionResult;
 import net.digitalid.database.exceptions.operation.FailedCommitException;
 import net.digitalid.database.exceptions.operation.FailedConnectionException;
 import net.digitalid.database.exceptions.operation.FailedKeyGenerationException;
@@ -33,6 +29,8 @@ import net.digitalid.database.exceptions.operation.FailedOperationException;
 import net.digitalid.database.exceptions.operation.FailedQueryExecutionException;
 import net.digitalid.database.exceptions.operation.FailedStatementCreationException;
 import net.digitalid.database.exceptions.operation.FailedUpdateExecutionException;
+import net.digitalid.database.interfaces.DatabaseInstance;
+import net.digitalid.database.interfaces.SQLSelectionResult;
 
 /**
  * This classes uses the JDBC connection to execute the statements.

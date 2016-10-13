@@ -11,7 +11,6 @@ import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
 
-import net.digitalid.database.core.SQLType;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
 import net.digitalid.database.dialect.ast.statement.select.SQLQualifiedTableNameSource;

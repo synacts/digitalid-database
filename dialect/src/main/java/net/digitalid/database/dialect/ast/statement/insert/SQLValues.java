@@ -9,15 +9,14 @@ import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.circumfixes.Brackets;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.validation.annotations.elements.NullableElements;
 
-import net.digitalid.database.core.interfaces.SQLValueCollector;
-import net.digitalid.database.core.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLParameterizableNode;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLExpression;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
+import net.digitalid.database.interfaces.SQLValueCollector;
+import net.digitalid.database.interfaces.Site;
 
 /**
  *

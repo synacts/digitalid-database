@@ -11,7 +11,7 @@ import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.annotations.metadata.PrimaryKey;
+import net.digitalid.database.annotations.constraints.PrimaryKey;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.Subject;
@@ -71,7 +71,7 @@ abstract class ClassWithValueProperty extends RootClass implements Subject {
 
 public class ValuePropertyTest extends SQLTestBase {
     
-    static { inMemory = true; }
+    static { runInMemory = true; }
     
     @Impure
     @BeforeClass

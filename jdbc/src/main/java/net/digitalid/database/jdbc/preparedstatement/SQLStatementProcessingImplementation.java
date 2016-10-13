@@ -12,9 +12,9 @@ import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.functional.failable.FailableConsumer;
 import net.digitalid.utility.validation.annotations.size.MinSize;
 
-import net.digitalid.database.core.processing.ParameterFunctionData;
-import net.digitalid.database.core.processing.SQLRow;
-import net.digitalid.database.core.processing.SQLStatementProcessing;
+import net.digitalid.database.interfaces.processing.ParameterFunctionData;
+import net.digitalid.database.interfaces.processing.SQLRow;
+import net.digitalid.database.interfaces.processing.SQLStatementProcessing;
 
 /**
  * Implements the SQL statement processing for the JDBC provider via JDBC prepared statements.

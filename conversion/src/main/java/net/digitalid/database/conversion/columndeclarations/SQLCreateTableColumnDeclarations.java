@@ -15,7 +15,6 @@ import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
 
-import net.digitalid.database.core.SQLType;
 import net.digitalid.database.dialect.ast.identifier.SQLColumnName;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnConstraint;
@@ -23,6 +22,7 @@ import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDeclar
 import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDefinition;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLCreateTableStatement;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLTypeNode;
+import net.digitalid.database.enumerations.SQLType;
 
 /**
  * Implements column declarations for the creation of SQL tables. The column declaration is the {@link SQLColumnDeclaration SQL column declaration} type.

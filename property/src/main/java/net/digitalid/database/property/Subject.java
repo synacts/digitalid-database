@@ -8,8 +8,8 @@ import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.core.Site;
-import net.digitalid.database.core.SiteBuilder;
+import net.digitalid.database.interfaces.Site;
+import net.digitalid.database.interfaces.SiteBuilder;
 
 /**
  * A subject belongs to a {@link Site site} and can have {@link PersistentProperty persistent properties}.

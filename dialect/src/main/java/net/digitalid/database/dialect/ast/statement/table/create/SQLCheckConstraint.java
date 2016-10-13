@@ -3,12 +3,11 @@ package net.digitalid.database.dialect.ast.statement.table.create;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.exceptions.InternalException;
 
-import net.digitalid.database.core.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.expression.SQLExpression;
+import net.digitalid.database.interfaces.Site;
 
 /**
  * This SQL node represents an SQL check constraint node.

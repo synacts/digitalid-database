@@ -18,13 +18,13 @@ import net.digitalid.utility.validation.state.Immutable;
 import net.digitalid.utility.validation.state.Pure;
 import net.digitalid.utility.validation.state.Validated;
 
-import net.digitalid.database.core.Database;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.core.interfaces.jdbc.JDBCDatabaseInstance;
 import net.digitalid.database.exceptions.operation.FailedConnectionException;
 import net.digitalid.database.exceptions.operation.FailedKeyGenerationException;
 import net.digitalid.database.exceptions.operation.FailedUpdateExecutionException;
-import net.digitalid.database.core.interfaces.jdbc.JDBCDatabaseInstance;
+import net.digitalid.database.interfaces.Database;
 
 /**
  * This class configures a SQLite database.

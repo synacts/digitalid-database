@@ -1,14 +1,13 @@
 package net.digitalid.database.conversion.testenvironment.referenced;
 
-import java.sql.Types;
-
 import javax.annotation.Nonnull;
-
 
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 
-import net.digitalid.database.annotations.metadata.References;
+import net.digitalid.database.annotations.constraints.ForeignKey;
+import net.digitalid.database.enumerations.ForeignKeyAction;
+import net.digitalid.database.enumerations.SQLType;
 
 /**
  *
@@ -17,7 +16,7 @@ import net.digitalid.database.annotations.metadata.References;
 @GenerateConverter
 public class Entity  {
     
-    @References(foreignTable = "referenced_table_1", columnName = "id", onDelete = References.Action.CASCADE, columnType = Types.INTEGER)
+    @ForeignKey(foreignTable = "referenced_table_1", columnName = "id", onDelete = ForeignKeyAction.CASCADE, columnType = SQLType.INTEGER32)
     public final @Nonnull ReferencedEntity referencedEntity;
     
     Entity(@Nonnull ReferencedEntity referencedEntity) {

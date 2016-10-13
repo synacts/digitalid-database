@@ -23,6 +23,11 @@
         </dependency>
         <dependency>
             <groupId>net.digitalid.database</groupId>
+            <artifactId>database-auxiliary</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.digitalid.database</groupId>
             <artifactId>database-conversion</artifactId>
             <version>${project.version}</version>
         </dependency>

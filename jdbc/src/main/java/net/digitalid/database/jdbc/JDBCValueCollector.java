@@ -32,13 +32,13 @@ import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;
 
-import net.digitalid.database.core.Database;
-import net.digitalid.database.core.ExecutionData;
-import net.digitalid.database.core.SQLType;
-import net.digitalid.database.core.interfaces.SQLValueCollector;
-import net.digitalid.database.core.processing.ParameterFunctionData;
+import net.digitalid.database.enumerations.SQLType;
 import net.digitalid.database.exceptions.operation.FailedResourceClosingException;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
+import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.interfaces.ExecutionData;
+import net.digitalid.database.interfaces.SQLValueCollector;
+import net.digitalid.database.interfaces.processing.ParameterFunctionData;
 import net.digitalid.database.jdbc.preparedstatement.SQLStatementProcessingImplementation;
 
 /**

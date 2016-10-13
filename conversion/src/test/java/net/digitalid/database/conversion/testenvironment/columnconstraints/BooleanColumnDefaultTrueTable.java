@@ -6,9 +6,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.annotations.Constructing;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
-
-
-import net.digitalid.database.annotations.metadata.Default;
+import net.digitalid.utility.validation.annotations.generation.Default;
 
 /**
  *
@@ -17,7 +15,7 @@ import net.digitalid.database.annotations.metadata.Default;
 @GenerateConverter
 public class BooleanColumnDefaultTrueTable  {
     
-    @Default("TRUE")
+    @Default("true")
     public final @Nonnull Boolean value;
     
     protected BooleanColumnDefaultTrueTable(@Nonnull Boolean value) {

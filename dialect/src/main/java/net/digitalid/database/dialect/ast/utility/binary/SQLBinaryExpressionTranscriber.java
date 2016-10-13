@@ -5,11 +5,11 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.InternalException;
 
-import net.digitalid.database.core.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.expression.SQLBinaryExpression;
 import net.digitalid.database.dialect.ast.expression.SQLBinaryOperator;
 import net.digitalid.database.dialect.ast.expression.SQLExpression;
+import net.digitalid.database.interfaces.Site;
 
 /**
  * Helper class to transcribe binary expressions.

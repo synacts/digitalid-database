@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
 
-import net.digitalid.database.annotations.metadata.References;
+import net.digitalid.database.annotations.constraints.ForeignKey;
 import net.digitalid.database.conversion.testenvironment.columnconstraints.BooleanColumnDefaultTrueTableConverter;
 import net.digitalid.database.conversion.testenvironment.columnconstraints.ConstraintIntegerColumnTableConverter;
 import net.digitalid.database.conversion.testenvironment.embedded.EmbeddedConvertiblesConverter;
@@ -21,9 +21,9 @@ import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColu
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
 import net.digitalid.database.dialect.table.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
-import net.digitalid.database.core.Site;
+import net.digitalid.database.interfaces.Site;
 import net.digitalid.database.testing.SQLTestBase;
-import net.digitalid.database.testing.TestHost;
+import net.digitalid.database.testing.TestSite;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -33,7 +33,7 @@ import org.junit.Test;
  */
 public class SQLCreateTableTest extends SQLTestBase {
     
-    private static final @Nonnull Site site = new TestHost();
+    private static final @Nonnull Site site = new TestSite();
     
     @Impure
     @AfterClass
@@ -147,7 +147,7 @@ public class SQLCreateTableTest extends SQLTestBase {
         final @Nonnull TableImplementation table = SQL.create(EntityConverter.INSTANCE, site);
         Assert.assertEquals(EntityConverter.INSTANCE.getName(), table.getName());
         
-        final @Nonnull String referencedTableName = Entity.class.getField("referencedEntity").getAnnotation(References.class).foreignTable();
+        final @Nonnull String referencedTableName = Entity.class.getField("referencedEntity").getAnnotation(ForeignKey.class).foreignTable();
         
         assertTableExists(referencedTableName, site.toString());
         Map<String, String[]> expectedResult = new HashMap<>();

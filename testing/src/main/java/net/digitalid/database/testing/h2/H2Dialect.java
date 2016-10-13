@@ -7,21 +7,18 @@ import net.digitalid.utility.collections.map.FreezableHashMap;
 import net.digitalid.utility.collections.map.FreezableHashMapBuilder;
 import net.digitalid.utility.exceptions.InternalException;
 
-import net.digitalid.database.dialect.ast.identifier.SQLBooleanAlias;
-import net.digitalid.database.core.Site;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLNode;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.number.SQLNumberReference;
 import net.digitalid.database.dialect.ast.identifier.SQLAlias;
+import net.digitalid.database.dialect.ast.identifier.SQLBooleanAlias;
 import net.digitalid.database.dialect.ast.identifier.SQLColumnName;
 import net.digitalid.database.dialect.ast.identifier.SQLIdentifier;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
+import net.digitalid.database.interfaces.Site;
 
-/**
- *
- */
 public class H2Dialect extends SQLDialect {
     
     private final @Nonnull FreezableHashMap<@Nonnull Class<?>, @Nonnull Transcriber<?>> transcribers = FreezableHashMapBuilder.build();

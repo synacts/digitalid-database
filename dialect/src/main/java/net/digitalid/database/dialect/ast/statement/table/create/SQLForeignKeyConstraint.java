@@ -8,12 +8,11 @@ import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.conversion.converter.CustomAnnotation;
 import net.digitalid.utility.exceptions.InternalException;
 
-import net.digitalid.database.core.interfaces.SQLValueCollector;
-import net.digitalid.database.core.Site;
-import net.digitalid.database.annotations.metadata.References;
 import net.digitalid.database.dialect.ast.SQLDialect;
+import net.digitalid.database.enumerations.ForeignKeyAction;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
-
+import net.digitalid.database.interfaces.SQLValueCollector;
+import net.digitalid.database.interfaces.Site;
 
 /**
  *
@@ -42,18 +41,18 @@ public class SQLForeignKeyConstraint extends SQLColumnConstraint {
         string.append(references.get("columnName", String.class));
         string.append(") ON DELETE ");
         final @Nonnull String onDelete;
-        if (references.get("onDelete", References.Action.class) != null) {
-            onDelete = references.get("onDelete", References.Action.class).value;
+        if (references.get("onDelete", ForeignKeyAction.class) != null) {
+            onDelete = references.get("onDelete", ForeignKeyAction.class).value;
         } else {
-            onDelete = References.Action.RESTRICT.value;
+            onDelete = ForeignKeyAction.RESTRICT.value;
         }
         string.append(onDelete);
         string.append(" ON UPDATE ");
         final @Nonnull String onUpdate;
-        if (references.get("onUpdate", References.Action.class) != null) {
-            onUpdate = references.get("onUpdate", References.Action.class).value;
+        if (references.get("onUpdate", ForeignKeyAction.class) != null) {
+            onUpdate = references.get("onUpdate", ForeignKeyAction.class).value;
         } else {
-            onUpdate = References.Action.RESTRICT.value;
+            onUpdate = ForeignKeyAction.RESTRICT.value;
         }
         string.append(onUpdate);
         return string.toString();

@@ -13,18 +13,18 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.set.FreezableHashSetBuilder;
 import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
-import net.digitalid.utility.testing.CustomTest;
+import net.digitalid.utility.testing.RootTest;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
-import net.digitalid.database.core.Database;
-import net.digitalid.database.core.Site;
-import net.digitalid.database.core.interfaces.DatabaseInstance;
-import net.digitalid.database.core.interfaces.SQLSelectionResult;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.table.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.operation.FailedSQLValueRecoveryException;
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
+import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.interfaces.DatabaseInstance;
+import net.digitalid.database.interfaces.SQLSelectionResult;
+import net.digitalid.database.interfaces.Site;
 import net.digitalid.database.testing.h2.H2Dialect;
 import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
 
@@ -37,32 +37,32 @@ import org.junit.Test;
 /**
  * The base class for all unit tests that interact with a database.
  */
-public class SQLTestBase extends CustomTest {
+public class SQLTestBase extends RootTest {
     
     private static Server server;
     
     /* -------------------------------------------------- Set Up -------------------------------------------------- */
+    
+    private static boolean initialized = false;
     
     /**
      * In order to inspect the database during debugging, set this boolean to false in a static block of the subclass.
      * Start '~/.m2/repository/com/h2database/h2/1.4.190/h2-1.4.190.jar' before running the test cases, which opens a
      * browser window, and connect to the database with the address below and both user and password set to 'sa'.
      */
-    protected static boolean inMemory = true;
+    @SuppressWarnings("ProtectedField")
+    protected static boolean runInMemory = true;
     
     @Impure
     @BeforeClass
     public static void setUpSQL() throws Exception {
-        SQLDialect.dialect.set(new H2Dialect());
-        server = Server.createTcpServer();
-        server.start();
-        final @Nonnull H2JDBCDatabaseInstance h2Database;
-        if (inMemory) {
-            h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:mem:test;INIT=CREATE SCHEMA IF NOT EXISTS " + TestHost.SCHEMA_NAME + ";mode=MySQL;");
-        } else {
-            h2Database = H2JDBCDatabaseInstance.get("jdbc:h2:tcp://localhost:9092/mem:test;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS " + TestHost.SCHEMA_NAME + ";mode=MySQL;");
+        if (!initialized) {
+            SQLDialect.dialect.set(new H2Dialect());
+            Database.initialize(H2JDBCDatabaseInstance.get("jdbc:h2:" + (runInMemory ? "" : "tcp://localhost:9092/") + "mem:test;" + (runInMemory ? "" : "DB_CLOSE_DELAY=-1;") + "INIT=CREATE SCHEMA IF NOT EXISTS " + TestSite.SCHEMA_NAME + ";mode=MySQL;"));
+            server = Server.createTcpServer();
+            initialized = true;
         }
-        Database.initialize(h2Database);
+        server.start();
     }
     
     /* -------------------------------------------------- Drop Table -------------------------------------------------- */

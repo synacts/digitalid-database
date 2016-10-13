@@ -12,9 +12,9 @@ import net.digitalid.utility.validation.annotations.elements.NonNullableElements
 import net.digitalid.utility.validation.annotations.size.MinSize;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
-import net.digitalid.database.core.interfaces.SQLValueCollector;
 import net.digitalid.database.dialect.ast.SQLParameterizableNode;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
+import net.digitalid.database.interfaces.SQLValueCollector;
 
 /**
  * Creates an SQL select statement node without ORDER BY clause.
