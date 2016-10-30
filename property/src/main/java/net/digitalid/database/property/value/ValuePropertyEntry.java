@@ -7,10 +7,10 @@ import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collaboration.enumerations.Priority;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
-import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.type.Embedded;
+import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.property.PropertyEntry;
 import net.digitalid.database.property.Subject;
 

@@ -18,14 +18,14 @@ import net.digitalid.utility.functional.interfaces.Predicate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.property.value.WritableValuePropertyImplementation;
-import net.digitalid.utility.time.Time;
-import net.digitalid.utility.time.TimeBuilder;
 import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.auxiliary.Time;
+import net.digitalid.database.auxiliary.TimeBuilder;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.dialect.ast.identifier.SQLBooleanAlias;
 import net.digitalid.database.exceptions.DatabaseException;

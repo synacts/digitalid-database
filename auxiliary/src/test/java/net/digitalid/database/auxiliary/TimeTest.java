@@ -2,9 +2,6 @@ package net.digitalid.database.auxiliary;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.time.Time;
-import net.digitalid.utility.time.TimeBuilder;
-
 import org.junit.Assert;
 import org.junit.Test;
 

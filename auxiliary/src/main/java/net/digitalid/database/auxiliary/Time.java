@@ -1,4 +1,4 @@
-package net.digitalid.utility.time;
+package net.digitalid.database.auxiliary;
 
 import java.text.DateFormat;
 import java.util.Date;

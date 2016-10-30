@@ -8,7 +8,6 @@ import net.digitalid.utility.annotations.ownership.NonCapturable;
 import net.digitalid.utility.annotations.type.ThreadSafe;
 import net.digitalid.utility.concurrency.exceptions.ReentranceException;
 import net.digitalid.utility.property.value.ReadOnlyValueProperty;
-import net.digitalid.utility.time.Time;
 import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.type.Functional;
 import net.digitalid.utility.validation.annotations.type.Mutable;
@@ -16,6 +15,7 @@ import net.digitalid.utility.validation.annotations.type.ReadOnly;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.PersistentProperty;
 import net.digitalid.database.property.Subject;
