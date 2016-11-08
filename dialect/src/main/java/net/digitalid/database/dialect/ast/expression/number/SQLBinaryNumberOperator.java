@@ -2,6 +2,7 @@ package net.digitalid.database.dialect.ast.expression.number;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.UnexpectedValueException;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -56,6 +57,7 @@ public enum SQLBinaryNumberOperator implements SQLBinaryOperator {
      */
     private static final @Nonnull Transcriber<SQLBinaryNumberOperator> transcriber = new Transcriber<SQLBinaryNumberOperator>() {
         
+        @Pure
         @Override
         protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBinaryNumberOperator node, @Nonnull Site site)  throws InternalException {
             switch (node) {
@@ -71,6 +73,7 @@ public enum SQLBinaryNumberOperator implements SQLBinaryOperator {
         
     };
     
+    @Pure
     @Override
     public @Nonnull Transcriber<SQLBinaryNumberOperator> getTranscriber() {
         return transcriber;
