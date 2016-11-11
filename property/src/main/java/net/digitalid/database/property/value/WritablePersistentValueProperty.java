@@ -50,7 +50,7 @@ public abstract class WritablePersistentValueProperty<S extends Subject, V> exte
     
     /* -------------------------------------------------- Loading -------------------------------------------------- */
     
-    private boolean loaded = false;
+    protected boolean loaded = false;
     
     /**
      * Loads the time and value of this property from the database.
@@ -62,7 +62,7 @@ public abstract class WritablePersistentValueProperty<S extends Subject, V> exte
     protected void load(final boolean locking) throws DatabaseException, ReentranceException {
         if (locking) { lock.lock(); }
         try {
-            final @Nullable ValuePropertyEntry<S, V> entry = SQL.select(getTable().getEntryConverter(), SQLBooleanAlias.with("key = 123"), getSubject().getSite(), getSubject().getSite());
+            final @Nullable PersistentValuePropertyEntry<S, V> entry = SQL.select(getTable().getEntryConverter(), SQLBooleanAlias.with("key = 123"), getSubject().getSite(), getSubject().getSite());
             if (entry != null) {
                 this.time = entry.getTime();
                 this.value = entry.getValue();
@@ -78,7 +78,7 @@ public abstract class WritablePersistentValueProperty<S extends Subject, V> exte
     
     /* -------------------------------------------------- Time -------------------------------------------------- */
     
-    private @Nullable Time time;
+    protected @Nullable Time time;
     
     @Pure
     @Override
@@ -90,7 +90,7 @@ public abstract class WritablePersistentValueProperty<S extends Subject, V> exte
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
     
-    private @Nullable @Valid V value;
+    protected @Nullable @Valid V value;
     
     @Pure
     @Override
@@ -103,7 +103,7 @@ public abstract class WritablePersistentValueProperty<S extends Subject, V> exte
     @Impure
     @Override
     @Committing
-    @TODO(task = "Implement and use SQL.update() instead of using SQL.insert().", date = "2016-09-27", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.HIGH)
+    @TODO(task = "Implement and use SQL.insertOrUpdate() instead of using SQL.insert().", date = "2016-09-27", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.HIGH)
     public @Capturable @Valid V set(@Captured @Valid V newValue) throws DatabaseException, ReentranceException {
         lock.lock();
         try {
@@ -111,7 +111,7 @@ public abstract class WritablePersistentValueProperty<S extends Subject, V> exte
             final @Valid V oldValue = value;
             if (!Objects.equals(newValue, oldValue)) {
                 final @Nonnull Time newTime = TimeBuilder.build();
-                final @Nonnull ValuePropertyEntry<S, V> entry = new ValuePropertyEntrySubclass<>(getSubject(), newTime, newValue);
+                final @Nonnull PersistentValuePropertyEntry<S, V> entry = new PersistentValuePropertyEntrySubclass<>(getSubject(), newTime, newValue);
                 SQL.insert(entry, getTable().getEntryConverter(), getSubject().getSite());
                 this.time = newTime;
                 this.value = newValue;

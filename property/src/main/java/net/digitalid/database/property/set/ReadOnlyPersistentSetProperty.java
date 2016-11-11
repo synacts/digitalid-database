@@ -25,7 +25,7 @@ import net.digitalid.database.property.Subject;
  */
 @ThreadSafe
 @ReadOnly(WritablePersistentSetProperty.class)
-public interface ReadOnlyPersistentSetProperty<S extends Subject, V, R extends ReadOnlySet<@Nonnull @Valid V>> extends ReadOnlySetProperty<V, R, DatabaseException, ReadOnlyPersistentSetProperty.Observer<S, V, R>, ReadOnlyPersistentSetProperty<S, V, R>>, PersistentProperty<S, SetPropertyEntry<S, V>, ReadOnlyPersistentSetProperty.Observer<S, V, R>> {
+public interface ReadOnlyPersistentSetProperty<S extends Subject, V, R extends ReadOnlySet<@Nonnull @Valid V>> extends ReadOnlySetProperty<V, R, DatabaseException, ReadOnlyPersistentSetProperty.Observer<S, V, R>, ReadOnlyPersistentSetProperty<S, V, R>>, PersistentProperty<S, PersistentSetPropertyEntry<S, V>, ReadOnlyPersistentSetProperty.Observer<S, V, R>> {
     
     /* -------------------------------------------------- Observer -------------------------------------------------- */
     
@@ -47,6 +47,6 @@ public interface ReadOnlyPersistentSetProperty<S extends Subject, V, R extends R
     
     @Pure
     @Override
-    public @Nonnull SetPropertyTable<S, V, ?> getTable();
+    public @Nonnull PersistentSetPropertyTable<S, V, ?> getTable();
     
 }

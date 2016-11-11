@@ -27,7 +27,7 @@ import net.digitalid.database.property.Subject;
  */
 @ThreadSafe
 @ReadOnly(WritablePersistentValueProperty.class)
-public interface ReadOnlyPersistentValueProperty<S extends Subject, V> extends ReadOnlyValueProperty<V, DatabaseException, ReadOnlyPersistentValueProperty.Observer<S, V>, ReadOnlyPersistentValueProperty<S, V>>, PersistentProperty<S, ValuePropertyEntry<S, V>, ReadOnlyPersistentValueProperty.Observer<S, V>> {
+public interface ReadOnlyPersistentValueProperty<S extends Subject, V> extends ReadOnlyValueProperty<V, DatabaseException, ReadOnlyPersistentValueProperty.Observer<S, V>, ReadOnlyPersistentValueProperty<S, V>>, PersistentProperty<S, PersistentValuePropertyEntry<S, V>, ReadOnlyPersistentValueProperty.Observer<S, V>> {
     
     /* -------------------------------------------------- Observer -------------------------------------------------- */
     
@@ -49,7 +49,7 @@ public interface ReadOnlyPersistentValueProperty<S extends Subject, V> extends R
     
     @Pure
     @Override
-    public @Nonnull ValuePropertyTable<S, V, ?> getTable();
+    public @Nonnull PersistentValuePropertyTable<S, V, ?> getTable();
     
     /* -------------------------------------------------- Time -------------------------------------------------- */
     

@@ -8,15 +8,15 @@ import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.interfaces.Site;
-import net.digitalid.database.property.value.ValuePropertyEntryConverter;
+import net.digitalid.database.property.value.PersistentValuePropertyEntryConverter;
 
 /**
- * This class converts the {@link PropertyEntry entries} of the {@link PropertyTable property table}.
+ * This class converts the {@link PersistentPropertyEntry entries} of the {@link PersistentPropertyTable property table}.
  * 
- * @see ValuePropertyEntryConverter
+ * @see PersistentValuePropertyEntryConverter
  */
 @Immutable
-public abstract class PropertyEntryConverter<S extends Subject, N extends PropertyEntry<S>> extends RootClass implements Converter<N, @Nonnull Site> {
+public abstract class PersistentPropertyEntryConverter<S extends Subject, N extends PersistentPropertyEntry<S>> extends RootClass implements Converter<N, @Nonnull Site> {
     
     /* -------------------------------------------------- Property Table -------------------------------------------------- */
     
@@ -24,6 +24,6 @@ public abstract class PropertyEntryConverter<S extends Subject, N extends Proper
      * Returns the property table to which this entry converter belongs.
      */
     @Pure
-    public abstract @Nonnull PropertyTable<S, N> getPropertyTable();
+    public abstract @Nonnull PersistentPropertyTable<S, N> getPropertyTable();
     
 }

@@ -12,23 +12,23 @@ import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
-import net.digitalid.database.property.PropertyTable;
+import net.digitalid.database.property.PersistentPropertyTable;
 import net.digitalid.database.property.Subject;
 
 /**
- * The set property table stores the {@link SetPropertyEntry set property entries}.
+ * The set property table stores the {@link PersistentSetPropertyEntry set property entries}.
  */
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class SetPropertyTable<S extends Subject, V, E> extends PropertyTable<S, SetPropertyEntry<S, V>> implements Valid.Value<V> {
+public abstract class PersistentSetPropertyTable<S extends Subject, V, E> extends PersistentPropertyTable<S, PersistentSetPropertyEntry<S, V>> implements Valid.Value<V> {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
     @Pure
     @Override
-    @Derive("SetPropertyEntryConverterBuilder.<S, V, E>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
-    public abstract @Nonnull SetPropertyEntryConverter<S, V, E> getEntryConverter();
+    @Derive("PersistentSetPropertyEntryConverterBuilder.<S, V, E>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
+    public abstract @Nonnull PersistentSetPropertyEntryConverter<S, V, E> getEntryConverter();
     
     /* -------------------------------------------------- Provided Object Extractor -------------------------------------------------- */
     

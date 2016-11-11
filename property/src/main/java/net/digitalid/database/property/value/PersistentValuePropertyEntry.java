@@ -6,20 +6,22 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collaboration.enumerations.Priority;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.auxiliary.Time;
-import net.digitalid.database.property.PropertyEntry;
+import net.digitalid.database.property.PersistentPropertyEntry;
 import net.digitalid.database.property.Subject;
 
 /**
  * This class models an entry in the {@link ValuePropertyTable value property table}.
  */
 @Immutable
+@GenerateBuilder
 @GenerateSubclass
-public abstract class ValuePropertyEntry<S extends Subject, V> extends PropertyEntry<S> {
+public abstract class PersistentValuePropertyEntry<S extends Subject, V> extends PersistentPropertyEntry<S> {
     
     /* -------------------------------------------------- Time -------------------------------------------------- */
     

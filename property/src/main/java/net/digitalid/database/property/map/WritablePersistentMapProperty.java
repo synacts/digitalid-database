@@ -89,7 +89,7 @@ public abstract class WritablePersistentMapProperty<S extends Subject, K, V, R e
         if (locking) { lock.lock(); }
         try {
             getMap().clear();
-            final @Nullable MapPropertyEntry<S, K, V> entry = SQL.select(getTable().getEntryConverter(), SQLBooleanAlias.with("key = 'TODO'"), getSubject().getSite(), getSubject().getSite());
+            final @Nullable PersistentMapPropertyEntry<S, K, V> entry = SQL.select(getTable().getEntryConverter(), SQLBooleanAlias.with("key = 'TODO'"), getSubject().getSite(), getSubject().getSite());
             if (entry != null) {
                 getMap().put(entry.getKey(), entry.getValue());
             }
@@ -130,7 +130,7 @@ public abstract class WritablePersistentMapProperty<S extends Subject, K, V, R e
             if (getMap().containsKey(key)) {
                 return false;
             } else {
-                final @Nonnull MapPropertyEntry<S, K, V> entry = new MapPropertyEntrySubclass<>(getSubject(), key, value);
+                final @Nonnull PersistentMapPropertyEntry<S, K, V> entry = new PersistentMapPropertyEntrySubclass<>(getSubject(), key, value);
                 SQL.insert(entry, getTable().getEntryConverter(), getSubject().getSite());
                 getMap().put(key, value);
                 notifyObservers(key, value, true);

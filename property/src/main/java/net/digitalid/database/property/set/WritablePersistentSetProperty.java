@@ -78,7 +78,7 @@ public abstract class WritablePersistentSetProperty<S extends Subject, V, R exte
         if (locking) { lock.lock(); }
         try {
             getSet().clear();
-            final @Nullable SetPropertyEntry<S, V> entry = SQL.select(getTable().getEntryConverter(), SQLBooleanAlias.with("key = 'TODO'"), getSubject().getSite(), getSubject().getSite());
+            final @Nullable PersistentSetPropertyEntry<S, V> entry = SQL.select(getTable().getEntryConverter(), SQLBooleanAlias.with("key = 'TODO'"), getSubject().getSite(), getSubject().getSite());
             if (entry != null) {
                 getSet().add(entry.getValue());
             }
@@ -111,7 +111,7 @@ public abstract class WritablePersistentSetProperty<S extends Subject, V, R exte
             if (getSet().contains(value)) {
                 return false;
             } else {
-                final @Nonnull SetPropertyEntry<S, V> entry = new SetPropertyEntrySubclass<>(getSubject(), value);
+                final @Nonnull PersistentSetPropertyEntry<S, V> entry = new PersistentSetPropertyEntrySubclass<>(getSubject(), value);
                 SQL.insert(entry, getTable().getEntryConverter(), getSubject().getSite());
                 getSet().add(value);
                 notifyObservers(value, true);
@@ -131,7 +131,7 @@ public abstract class WritablePersistentSetProperty<S extends Subject, V, R exte
         try {
             if (!loaded) { load(false); }
             if (getSet().contains(value)) {
-                final @Nonnull SetPropertyEntry<S, V> entry = new SetPropertyEntrySubclass<>(getSubject(), value);
+                final @Nonnull PersistentSetPropertyEntry<S, V> entry = new PersistentSetPropertyEntrySubclass<>(getSubject(), value);
                 SQL.insert(entry, getTable().getEntryConverter(), getSubject().getSite()); // TODO: SQL.delete()
                 getSet().remove(value);
                 notifyObservers(value, false);

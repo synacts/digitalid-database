@@ -13,23 +13,23 @@ import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
-import net.digitalid.database.property.PropertyTable;
+import net.digitalid.database.property.PersistentPropertyTable;
 import net.digitalid.database.property.Subject;
 
 /**
- * The map property table stores the {@link MapPropertyEntry map property entries}.
+ * The map property table stores the {@link PersistentMapPropertyEntry map property entries}.
  */
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class MapPropertyTable<S extends Subject, K, V, EK, EV> extends PropertyTable<S, MapPropertyEntry<S, K, V>> implements Valid.Key<K>, Valid.Value<V> {
+public abstract class PersistentMapPropertyTable<S extends Subject, K, V, EK, EV> extends PersistentPropertyTable<S, PersistentMapPropertyEntry<S, K, V>> implements Valid.Key<K>, Valid.Value<V> {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
     @Pure
     @Override
-    @Derive("MapPropertyEntryConverterBuilder.<S, K, V, EK, EV>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
-    public abstract @Nonnull MapPropertyEntryConverter<S, K, V, EK, EV> getEntryConverter();
+    @Derive("PersistentMapPropertyEntryConverterBuilder.<S, K, V, EK, EV>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
+    public abstract @Nonnull PersistentMapPropertyEntryConverter<S, K, V, EK, EV> getEntryConverter();
     
     /* -------------------------------------------------- Extractors -------------------------------------------------- */
     

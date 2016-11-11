@@ -57,7 +57,7 @@ abstract class ClassWithValueProperty extends RootClass implements Subject {
     
     /* -------------------------------------------------- Property -------------------------------------------------- */
     
-    protected static final @Nonnull ValuePropertyTable<ClassWithValueProperty, CustomString, Void> table = ValuePropertyTableBuilder.<ClassWithValueProperty, CustomString, Void>withName("name").withParentModule(MODULE).withValueConverter(CustomStringConverter.INSTANCE).withDefaultValue(CustomStringBuilder.withContent("default").build()).withValueValidator(value -> value != null).build();
+    protected static final @Nonnull PersistentValuePropertyTable<ClassWithValueProperty, CustomString, Void> table = PersistentValuePropertyTableBuilder.<ClassWithValueProperty, CustomString, Void>withName("name").withParentModule(MODULE).withValueConverter(CustomStringConverter.INSTANCE).withDefaultValue(CustomStringBuilder.withContent("default").build()).withValueValidator(value -> value != null).build();
     
     protected final @Nonnull WritablePersistentValueProperty<ClassWithValueProperty, @Nonnull CustomString> name = WritablePersistentValuePropertyBuilder.<ClassWithValueProperty, CustomString>withSubject(this).withTable(table).build();
     

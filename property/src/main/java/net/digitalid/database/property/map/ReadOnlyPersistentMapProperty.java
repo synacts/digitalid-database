@@ -29,7 +29,7 @@ import net.digitalid.database.property.Subject;
  */
 @ThreadSafe
 @ReadOnly(WritablePersistentMapProperty.class)
-public interface ReadOnlyPersistentMapProperty<S extends Subject, K, V, R extends ReadOnlyMap<@Nonnull @Valid("key") K, @Nonnull @Valid V>> extends ReadOnlyMapProperty<K, V, R, DatabaseException, ReadOnlyPersistentMapProperty.Observer<S, K, V, R>, ReadOnlyPersistentMapProperty<S, K, V, R>>, PersistentProperty<S, MapPropertyEntry<S, K, V>, ReadOnlyPersistentMapProperty.Observer<S, K, V, R>> {
+public interface ReadOnlyPersistentMapProperty<S extends Subject, K, V, R extends ReadOnlyMap<@Nonnull @Valid("key") K, @Nonnull @Valid V>> extends ReadOnlyMapProperty<K, V, R, DatabaseException, ReadOnlyPersistentMapProperty.Observer<S, K, V, R>, ReadOnlyPersistentMapProperty<S, K, V, R>>, PersistentProperty<S, PersistentMapPropertyEntry<S, K, V>, ReadOnlyPersistentMapProperty.Observer<S, K, V, R>> {
     
     /* -------------------------------------------------- Observer -------------------------------------------------- */
     
@@ -56,6 +56,6 @@ public interface ReadOnlyPersistentMapProperty<S extends Subject, K, V, R extend
     
     @Pure
     @Override
-    public @Nonnull MapPropertyTable<S, K, V, ?, ?> getTable();
+    public @Nonnull PersistentMapPropertyTable<S, K, V, ?, ?> getTable();
     
 }

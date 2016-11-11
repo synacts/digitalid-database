@@ -26,22 +26,22 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.constraints.PrimaryKey;
 import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.interfaces.Site;
-import net.digitalid.database.property.PropertyEntryConverter;
+import net.digitalid.database.property.PersistentPropertyEntryConverter;
 import net.digitalid.database.property.Subject;
 
 /**
- * This class converts the {@link MapPropertyEntry entries} of the {@link MapPropertyTable map property table}.
+ * This class converts the {@link PersistentMapPropertyEntry entries} of the {@link PersistentMapPropertyTable map property table}.
  */
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class MapPropertyEntryConverter<S extends Subject, K, V, EK, EV> extends PropertyEntryConverter<S, MapPropertyEntry<S, K, V>> {
+public abstract class PersistentMapPropertyEntryConverter<S extends Subject, K, V, EK, EV> extends PersistentPropertyEntryConverter<S, PersistentMapPropertyEntry<S, K, V>> {
     
     /* -------------------------------------------------- Property Table -------------------------------------------------- */
     
     @Pure
     @Override
-    public abstract @Nonnull MapPropertyTable<S, K, V, EK, EV> getPropertyTable();
+    public abstract @Nonnull PersistentMapPropertyTable<S, K, V, EK, EV> getPropertyTable();
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
@@ -60,7 +60,7 @@ public abstract class MapPropertyEntryConverter<S extends Subject, K, V, EK, EV>
     
     @Pure
     @Override
-    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified MapPropertyEntry<S, K, V> entry, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws X {
+    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified PersistentMapPropertyEntry<S, K, V> entry, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws X {
         int i = 1;
         i *= getPropertyTable().getParentModule().getSubjectConverter().convert(entry == null ? null : entry.getSubject(), valueCollector);
         i *= getPropertyTable().getKeyConverter().convert(entry == null ? null : entry.getKey(), valueCollector);
@@ -73,14 +73,14 @@ public abstract class MapPropertyEntryConverter<S extends Subject, K, V, EK, EV>
     @Pure
     @Override
     @Review(comment = "How would you handle the nullable recovered objects?", date = "2016-09-30", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.LOW)
-    public @Capturable <X extends ExternalException> @Nullable MapPropertyEntry<S, K, V> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, @Nonnull Site site) throws X {
+    public @Capturable <X extends ExternalException> @Nullable PersistentMapPropertyEntry<S, K, V> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, @Nonnull Site site) throws X {
         final @Nullable S subject = getPropertyTable().getParentModule().getSubjectConverter().recover(selectionResult, site);
         if (subject == null) { return null; }
         final @Nullable K key = getPropertyTable().getKeyConverter().recover(selectionResult, getPropertyTable().getProvidedObjectForKeyExtractor().evaluate(subject));
         if (key == null) { return null; }
         final @Nullable V value = getPropertyTable().getValueConverter().recover(selectionResult, getPropertyTable().getProvidedObjectForValueExtractor().evaluate(subject, key));
         if (value == null) { return null; }
-        return new MapPropertyEntrySubclass<>(subject, key, value);
+        return new PersistentMapPropertyEntrySubclass<>(subject, key, value);
     }
     
 }

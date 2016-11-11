@@ -8,15 +8,15 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.constraints.PrimaryKey;
 import net.digitalid.database.annotations.type.Embedded;
-import net.digitalid.database.property.value.ValuePropertyEntry;
+import net.digitalid.database.property.value.PersistentValuePropertyEntry;
 
 /**
  * This class models an entry in the {@link PropertyTable property table}.
  * 
- * @see ValuePropertyEntry
+ * @see PersistentValuePropertyEntry
  */
 @Immutable
-public abstract class PropertyEntry<S extends Subject> extends RootClass {
+public abstract class PersistentPropertyEntry<S extends Subject> extends RootClass {
     
     /* -------------------------------------------------- Subject -------------------------------------------------- */
     
