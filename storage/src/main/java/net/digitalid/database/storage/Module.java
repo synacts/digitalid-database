@@ -10,6 +10,7 @@ import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 /**
@@ -18,7 +19,7 @@ import net.digitalid.utility.validation.annotations.type.Mutable;
 @Mutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class Module extends Storage {
+public abstract class Module extends RootClass implements Storage {
     
     /* -------------------------------------------------- Substorages -------------------------------------------------- */
     

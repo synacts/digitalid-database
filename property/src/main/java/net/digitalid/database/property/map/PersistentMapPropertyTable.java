@@ -22,14 +22,14 @@ import net.digitalid.database.property.Subject;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class PersistentMapPropertyTable<S extends Subject, K, V, EK, EV> extends PersistentPropertyTable<S, PersistentMapPropertyEntry<S, K, V>> implements Valid.Key<K>, Valid.Value<V> {
+public interface PersistentMapPropertyTable<S extends Subject, K, V, EK, EV> extends PersistentPropertyTable<S, PersistentMapPropertyEntry<S, K, V>>, Valid.Key<K>, Valid.Value<V> {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
     @Pure
     @Override
     @Derive("PersistentMapPropertyEntryConverterBuilder.<S, K, V, EK, EV>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
-    public abstract @Nonnull PersistentMapPropertyEntryConverter<S, K, V, EK, EV> getEntryConverter();
+    public @Nonnull PersistentMapPropertyEntryConverter<S, K, V, EK, EV> getEntryConverter();
     
     /* -------------------------------------------------- Extractors -------------------------------------------------- */
     
@@ -38,14 +38,14 @@ public abstract class PersistentMapPropertyTable<S extends Subject, K, V, EK, EV
      */
     @Pure
     @Default("subject -> null")
-    public abstract @Nonnull UnaryFunction<@Nonnull S, EK> getProvidedObjectForKeyExtractor();
+    public @Nonnull UnaryFunction<@Nonnull S, EK> getProvidedObjectForKeyExtractor();
     
     /**
      * Returns the function that extracts the externally provided object for the value from the subject and the key.
      */
     @Pure
     @Default("(subject, key) -> null")
-    public abstract @Nonnull BinaryFunction<@Nonnull S, @Nonnull K, EV> getProvidedObjectForValueExtractor();
+    public @Nonnull BinaryFunction<@Nonnull S, @Nonnull K, EV> getProvidedObjectForValueExtractor();
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     
@@ -53,12 +53,12 @@ public abstract class PersistentMapPropertyTable<S extends Subject, K, V, EK, EV
      * Returns the converter to convert and recover the keys of the property.
      */
     @Pure
-    public abstract @Nonnull Converter<K, EK> getKeyConverter();
+    public @Nonnull Converter<K, EK> getKeyConverter();
     
     /**
      * Returns the converter to convert and recover the values of the property.
      */
     @Pure
-    public abstract @Nonnull Converter<V, EV> getValueConverter();
+    public @Nonnull Converter<V, EV> getValueConverter();
     
 }

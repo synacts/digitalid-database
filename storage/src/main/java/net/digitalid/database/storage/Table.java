@@ -9,12 +9,12 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 /**
- * This class models a database table that is described by the given converter.
+ * This type models a database table that is described by the given converter.
  */
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class Table<N, E> extends Storage {
+public interface Table<N, E> extends Storage {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
@@ -22,6 +22,6 @@ public abstract class Table<N, E> extends Storage {
      * Returns the converter that models the columns of this table and converts its entries.
      */
     @Pure
-    public abstract @Nonnull Converter<N, E> getEntryConverter();
+    public @Nonnull Converter<N, E> getEntryConverter();
     
 }

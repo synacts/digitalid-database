@@ -15,18 +15,18 @@ import net.digitalid.database.storage.Table;
  * @see PersistentValuePropertyTable
  */
 @Immutable
-public abstract class PersistentPropertyTable<S extends Subject, N extends PersistentPropertyEntry<S>> extends Table<N, Site> {
+public interface PersistentPropertyTable<S extends Subject, N extends PersistentPropertyEntry<S>> extends Table<N, Site> {
     
     /* -------------------------------------------------- Parent Module -------------------------------------------------- */
     
     @Pure
     @Override
-    public abstract @Nonnull SubjectModule<S> getParentModule();
+    public @Nonnull SubjectModule<S> getParentModule();
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
     @Pure
     @Override
-    public abstract @Nonnull PersistentPropertyEntryConverter<S, N> getEntryConverter();
+    public @Nonnull PersistentPropertyEntryConverter<S, N> getEntryConverter();
     
 }

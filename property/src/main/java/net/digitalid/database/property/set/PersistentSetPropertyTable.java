@@ -21,14 +21,14 @@ import net.digitalid.database.property.Subject;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class PersistentSetPropertyTable<S extends Subject, V, E> extends PersistentPropertyTable<S, PersistentSetPropertyEntry<S, V>> implements Valid.Value<V> {
+public interface PersistentSetPropertyTable<S extends Subject, V, E> extends PersistentPropertyTable<S, PersistentSetPropertyEntry<S, V>>, Valid.Value<V> {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
     @Pure
     @Override
     @Derive("PersistentSetPropertyEntryConverterBuilder.<S, V, E>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
-    public abstract @Nonnull PersistentSetPropertyEntryConverter<S, V, E> getEntryConverter();
+    public @Nonnull PersistentSetPropertyEntryConverter<S, V, E> getEntryConverter();
     
     /* -------------------------------------------------- Provided Object Extractor -------------------------------------------------- */
     
@@ -37,7 +37,7 @@ public abstract class PersistentSetPropertyTable<S extends Subject, V, E> extend
      */
     @Pure
     @Default("subject -> null")
-    public abstract @Nonnull UnaryFunction<@Nonnull S, E> getProvidedObjectExtractor();
+    public @Nonnull UnaryFunction<@Nonnull S, E> getProvidedObjectExtractor();
     
     /* -------------------------------------------------- Value Converter -------------------------------------------------- */
     
@@ -45,6 +45,6 @@ public abstract class PersistentSetPropertyTable<S extends Subject, V, E> extend
      * Returns the converter to convert and recover the values of the property.
      */
     @Pure
-    public abstract @Nonnull Converter<V, E> getValueConverter();
+    public @Nonnull Converter<V, E> getValueConverter();
     
 }

@@ -16,19 +16,19 @@ import net.digitalid.database.property.PersistentPropertyTable;
 import net.digitalid.database.property.Subject;
 
 /**
- * The value property table stores the {@link PersistentValuePropertyEntry value property entries}.
+ * The persistent value property table stores the {@link PersistentValuePropertyEntry value property entries}.
  */
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class PersistentValuePropertyTable<S extends Subject, V, E> extends PersistentPropertyTable<S, PersistentValuePropertyEntry<S, V>> implements Valid.Value<V> {
+public interface PersistentValuePropertyTable<S extends Subject, V, E> extends PersistentPropertyTable<S, PersistentValuePropertyEntry<S, V>>, Valid.Value<V> {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
     @Pure
     @Override
     @Derive("PersistentValuePropertyEntryConverterBuilder.<S, V, E>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
-    public abstract @Nonnull PersistentValuePropertyEntryConverter<S, V, E> getEntryConverter();
+    public @Nonnull PersistentValuePropertyEntryConverter<S, V, E> getEntryConverter();
     
     /* -------------------------------------------------- Provided Object Extractor -------------------------------------------------- */
     
@@ -37,7 +37,7 @@ public abstract class PersistentValuePropertyTable<S extends Subject, V, E> exte
      */
     @Pure
     @Default("subject -> null")
-    public abstract @Nonnull UnaryFunction<@Nonnull S, E> getProvidedObjectExtractor();
+    public @Nonnull UnaryFunction<@Nonnull S, E> getProvidedObjectExtractor();
     
     /* -------------------------------------------------- Value Converter -------------------------------------------------- */
     
@@ -45,7 +45,7 @@ public abstract class PersistentValuePropertyTable<S extends Subject, V, E> exte
      * Returns the converter to convert and recover the value of the property.
      */
     @Pure
-    public abstract @Nonnull Converter<V, E> getValueConverter();
+    public @Nonnull Converter<V, E> getValueConverter();
     
     /* -------------------------------------------------- Default Value -------------------------------------------------- */
     
@@ -53,6 +53,6 @@ public abstract class PersistentValuePropertyTable<S extends Subject, V, E> exte
      * Returns the default value of the property.
      */
     @Pure
-    public abstract @Valid V getDefaultValue();
+    public @Valid V getDefaultValue();
     
 }
