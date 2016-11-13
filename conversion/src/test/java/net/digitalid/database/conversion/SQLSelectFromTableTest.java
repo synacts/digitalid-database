@@ -37,7 +37,7 @@ public class SQLSelectFromTableTest extends SQLTestBase {
     private static TableImplementation simpleCollectionsTable;
     private static TableImplementation collectionsAndAdditionalFieldClassTable;
     
-    private static final Site site = new TestSite();
+    private static final Site site = TestSite.INSTANCE;
     
     @Impure
     @BeforeClass

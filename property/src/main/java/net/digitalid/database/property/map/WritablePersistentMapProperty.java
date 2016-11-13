@@ -75,7 +75,7 @@ public abstract class WritablePersistentMapProperty<S extends Subject, K, V, R e
     
     /* -------------------------------------------------- Loading -------------------------------------------------- */
     
-    private boolean loaded = false;
+    protected boolean loaded = false;
     
     /**
      * Loads the key-value pairs of this property from the database.

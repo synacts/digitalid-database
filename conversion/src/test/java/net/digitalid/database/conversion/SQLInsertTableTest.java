@@ -70,7 +70,7 @@ public class SQLInsertTableTest extends SQLTestBase {
     private static TableImplementation compositeCollectionTable;
     private static TableImplementation referencedCollectionFieldTable;
     
-    private static final Site site = new TestSite();
+    private static final Site site = TestSite.INSTANCE;
     
     @Impure
     @BeforeClass

@@ -33,7 +33,7 @@ import org.junit.Test;
  */
 public class SQLCreateTableTest extends SQLTestBase {
     
-    private static final @Nonnull Site site = new TestSite();
+    private static final @Nonnull Site site = TestSite.INSTANCE;
     
     @Impure
     @AfterClass

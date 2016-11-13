@@ -64,7 +64,7 @@ public abstract class WritablePersistentSetProperty<S extends Subject, V, R exte
     
     /* -------------------------------------------------- Loading -------------------------------------------------- */
     
-    private boolean loaded = false;
+    protected boolean loaded = false;
     
     /**
      * Loads the values of this property from the database.
