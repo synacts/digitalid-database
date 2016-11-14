@@ -33,7 +33,7 @@ public interface Site extends RootInterface {
      */
     @Pure
     public default boolean isHost() {
-        return true;
+        return false;
     }
     
     /**

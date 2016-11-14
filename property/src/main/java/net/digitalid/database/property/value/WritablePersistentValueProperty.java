@@ -5,6 +5,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
@@ -161,6 +162,16 @@ public abstract class WritablePersistentValueProperty<S extends Subject, V> exte
         } finally {
             lock.unlock();
         }
+    }
+    
+    /* -------------------------------------------------- Initialization -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    @CallSuper
+    protected void initialize() {
+        this.value = getTable().getDefaultValue();
+        super.initialize();
     }
     
 }

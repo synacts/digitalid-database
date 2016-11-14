@@ -9,5 +9,5 @@ import java.lang.annotation.Target;
  * @see Referenced
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, /* TODO: Probably remove the type use again once the annotation is used on the type declaration instead. */ ElementType.TYPE_USE})
 public @interface Embedded {}
