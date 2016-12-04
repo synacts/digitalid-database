@@ -105,7 +105,7 @@ public class SQLInsertTableTest extends SQLTestBase {
     @Before
     public void deleteTableContent() throws FailedNonCommittingOperationException, EntryNotFoundException {
         DatabaseInstance instance = Database.getInstance();
-        instance.execute("DELETE FROM " + site.getName() + "." + simpleBooleanTable.getName().toUpperCase());
+        instance.execute("DELETE FROM " + site.getSchemaName() + "." + simpleBooleanTable.getName().toUpperCase());
     }
     
     @Test

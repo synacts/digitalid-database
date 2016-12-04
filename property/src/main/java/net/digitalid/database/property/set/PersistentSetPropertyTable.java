@@ -13,7 +13,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.property.PersistentPropertyTable;
-import net.digitalid.database.property.Subject;
+import net.digitalid.database.interfaces.Subject;
 
 /**
  * The set property table stores the {@link PersistentSetPropertyEntry set property entries}.

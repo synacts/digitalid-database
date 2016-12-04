@@ -1,4 +1,4 @@
-package net.digitalid.database.property;
+package net.digitalid.database.interfaces;
 
 import javax.annotation.Nonnull;
 
@@ -8,11 +8,8 @@ import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.interfaces.Site;
-import net.digitalid.database.interfaces.SiteBuilder;
-
 /**
- * A subject belongs to a {@link Site site} and can have {@link PersistentProperty persistent properties}.
+ * A subject belongs to a {@link Site site} and can have persistent properties.
  */
 @Immutable
 public interface Subject extends RootInterface {
@@ -22,14 +19,14 @@ public interface Subject extends RootInterface {
     /**
      * Stores the default site for subjects.
      */
-    public static final @Nonnull Site DEFAULT_SITE = SiteBuilder.withName("default").build();
+    public static final @Nonnull Site DEFAULT_SITE = SiteBuilder.withSchemaName("default").build();
     
     /**
      * Returns the site of this subject.
      */
     @Pure
     @Provided
-    @Default("net.digitalid.database.property.Subject.DEFAULT_SITE")
+    @Default("net.digitalid.database.interfaces.Subject.DEFAULT_SITE")
     public @Nonnull Site getSite();
     
 }

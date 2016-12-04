@@ -7,7 +7,7 @@ import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.validation.annotations.type.ReadOnly;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
-import net.digitalid.database.property.Subject;
+import net.digitalid.database.interfaces.Subject;
 
 /**
  * This interface simplifies the declaration of {@link ReadOnlyPersistentSetProperty}.

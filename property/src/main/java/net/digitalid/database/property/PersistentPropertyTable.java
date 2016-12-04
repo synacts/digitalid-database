@@ -1,5 +1,7 @@
 package net.digitalid.database.property;
 
+import net.digitalid.database.interfaces.Subject;
+
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;

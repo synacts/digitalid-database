@@ -15,7 +15,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.PersistentProperty;
-import net.digitalid.database.property.Subject;
+import net.digitalid.database.interfaces.Subject;
 
 /**
  * This read-only property stores a set of values in the persistent database.

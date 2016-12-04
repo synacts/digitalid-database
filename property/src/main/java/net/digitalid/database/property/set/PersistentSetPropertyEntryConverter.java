@@ -27,7 +27,7 @@ import net.digitalid.database.annotations.constraints.PrimaryKey;
 import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.interfaces.Site;
 import net.digitalid.database.property.PersistentPropertyEntryConverter;
-import net.digitalid.database.property.Subject;
+import net.digitalid.database.interfaces.Subject;
 
 /**
  * This class converts the {@link PersistentSetPropertyEntry entries} of the {@link PersistentSetPropertyTable set property table}.

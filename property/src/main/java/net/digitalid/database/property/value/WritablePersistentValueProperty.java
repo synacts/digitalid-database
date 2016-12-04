@@ -30,7 +30,7 @@ import net.digitalid.database.auxiliary.TimeBuilder;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.dialect.ast.identifier.SQLBooleanAlias;
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.property.Subject;
+import net.digitalid.database.interfaces.Subject;
 
 /**
  * This writable property stores a value in the persistent database.

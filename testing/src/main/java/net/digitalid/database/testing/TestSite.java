@@ -18,14 +18,14 @@ public class TestSite implements Site {
     
     @Pure
     @Override
-    public @Nonnull @CodeIdentifier @MaxSize(63) String getName() {
+    public @Nonnull @CodeIdentifier @MaxSize(63) String getSchemaName() {
         return SCHEMA_NAME;
     }
     
     @Pure
     @Override
     public @Nonnull String toString() {
-        return getName();
+        return getSchemaName();
     }
     
 }

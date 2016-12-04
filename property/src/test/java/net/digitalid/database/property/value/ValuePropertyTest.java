@@ -14,7 +14,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.constraints.PrimaryKey;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.property.Subject;
+import net.digitalid.database.interfaces.Subject;
 import net.digitalid.database.property.SubjectModule;
 import net.digitalid.database.property.SubjectModuleBuilder;
 import net.digitalid.database.property.annotations.GeneratePersistentProperty;

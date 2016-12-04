@@ -70,7 +70,7 @@ public class SQLTestBase extends RootTest {
     @Impure
     public static void dropTable(@Nonnull String tableName, @Nonnull Site site) throws FailedNonCommittingOperationException {
         DatabaseInstance instance = Database.getInstance();
-        instance.execute("DROP TABLE " + site.getName() + "." + tableName.toLowerCase());
+        instance.execute("DROP TABLE " + site.getSchemaName() + "." + tableName.toLowerCase());
     }
     
     @Impure
@@ -83,7 +83,7 @@ public class SQLTestBase extends RootTest {
     @Impure
     public static void deleteFromTable(@Nonnull String tableName, @Nonnull Site site) throws FailedNonCommittingOperationException {
         DatabaseInstance instance = Database.getInstance();
-        instance.execute("DELETE FROM " + site.getName() + "." + tableName.toLowerCase());
+        instance.execute("DELETE FROM " + site.getSchemaName() + "." + tableName.toLowerCase());
     }
     
     @Impure
@@ -243,7 +243,7 @@ public class SQLTestBase extends RootTest {
     
     @Pure
     protected static void assertRowCount(@Nonnull TableImplementation table, @Nonnull Site site, long rowCount) throws FailedNonCommittingOperationException, EntryNotFoundException, FailedSQLValueRecoveryException {
-        assertRowCount(site.getName() + "." + table.getName(), rowCount);
+        assertRowCount(site.getSchemaName() + "." + table.getName(), rowCount);
     }
     
     @Pure
@@ -275,7 +275,7 @@ public class SQLTestBase extends RootTest {
     @Pure
     protected static void assertTableContains(@Nonnull TableImplementation table, @Nonnull Site site, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException, FailedSQLValueRecoveryException {
         final @Nonnull String tableName = table.getName();
-        assertTableContains(site.getName() + "." + tableName, expectedArray);
+        assertTableContains(site.getSchemaName() + "." + tableName, expectedArray);
     }
     
     // TODO: the following is still very ugly. Improve!

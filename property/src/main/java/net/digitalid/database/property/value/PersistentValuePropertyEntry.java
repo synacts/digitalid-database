@@ -13,7 +13,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.property.PersistentPropertyEntry;
-import net.digitalid.database.property.Subject;
+import net.digitalid.database.interfaces.Subject;
 
 /**
  * This class models an entry in the {@link ValuePropertyTable value property table}.

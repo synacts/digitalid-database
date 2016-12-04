@@ -51,7 +51,7 @@ public class SQLQualifiedTableName implements SQLNode<SQLQualifiedTableName> {
         
         @Override
         protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLQualifiedTableName node, @Nonnull Site site) throws InternalException {
-            final @Nonnull String qualifiedTableName = (site.getName().isEmpty() ? "" : site.getName() + ".") + node.tableName.length();
+            final @Nonnull String qualifiedTableName = (site.getSchemaName().isEmpty() ? "" : site.getSchemaName() + ".") + node.tableName.length();
             Require.that(qualifiedTableName.length() <= 63).orThrow("The qualified table name $ is bigger than allowed");
             
             return Quotes.inDouble(qualifiedTableName);

@@ -22,7 +22,7 @@ public class H2SQLTablenameTranscriber extends Transcriber<SQLQualifiedTableName
     @Pure
     @Override
     protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLQualifiedTableName node, @Nonnull Site site) throws InternalException {
-        return (site.getName().isEmpty() ? "" : site.getName() + ".") + node.tableName.toUpperCase();
+        return (site.getSchemaName().isEmpty() ? "" : site.getSchemaName() + ".") + node.tableName.toUpperCase();
     }
     
 }

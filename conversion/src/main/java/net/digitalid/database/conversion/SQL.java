@@ -9,7 +9,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.collections.map.FreezableHashMap;
 import net.digitalid.utility.collections.map.FreezableHashMapBuilder;
-import net.digitalid.utility.collections.set.FreezableHashSet;
+import net.digitalid.utility.collections.set.FreezableLinkedHashSetBuilder;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.conversion.converter.CustomField;
@@ -156,7 +156,7 @@ public final class SQL {
     public static <T, E> Set<T> export(@Nonnull Converter<T, E> converter, @Nonnull Site site, E externallyProvided) throws DatabaseException {
         final @Nonnull SQLSelectionResult selectionResult = getSelectionResult(converter, null, site);
         
-        Set<T> recoveredObjects = FreezableHashSet.withElements();
+        Set<T> recoveredObjects = FreezableLinkedHashSetBuilder.build();
         while (selectionResult.moveToNextRow()) {
             selectionResult.moveToFirstColumn();
             final @Nonnull T recoveredObject = converter.recover(selectionResult, externallyProvided);

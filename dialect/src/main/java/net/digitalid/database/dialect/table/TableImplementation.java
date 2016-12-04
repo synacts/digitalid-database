@@ -126,7 +126,7 @@ public class TableImplementation implements Table {
                 for (SQLColumnConstraint columnConstraint : columnDeclaration.columnConstraints) {
                     if (columnConstraint instanceof SQLForeignKeyConstraint) {
                         @Nonnull final CustomAnnotation references = ((SQLForeignKeyConstraint) columnConstraint).references;
-                        final @Nonnull String foreignTable = site.getName() + "." + references.get("foreignTable", String.class);
+                        final @Nonnull String foreignTable = site.getSchemaName() + "." + references.get("foreignTable", String.class);
                         for (Map.@Nonnull Entry<@Nonnull String, @Nonnull TableImplementation> preConstructedTableName : preConstructedTables.entrySet()) {
                             if (preConstructedTableName.getKey().equals(foreignTable)) {
                                 foreignKeys.put(SQLKey.with(type, columnDeclaration.columnName.getValue(), position), preConstructedTableName.getValue());
