@@ -16,7 +16,7 @@ import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLExpression;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 import net.digitalid.database.interfaces.SQLValueCollector;
-import net.digitalid.database.interfaces.Site;
+import net.digitalid.database.subject.Site;
 
 /**
  *

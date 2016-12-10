@@ -12,7 +12,7 @@ import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.enumerations.ForeignKeyAction;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 import net.digitalid.database.interfaces.SQLValueCollector;
-import net.digitalid.database.interfaces.Site;
+import net.digitalid.database.subject.Site;
 
 /**
  *

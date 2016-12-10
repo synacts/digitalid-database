@@ -18,7 +18,7 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.PersistentProperty;
-import net.digitalid.database.interfaces.Subject;
+import net.digitalid.database.subject.Subject;
 
 /**
  * This read-only property stores a value in the persistent database.

@@ -21,19 +21,17 @@ import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColu
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
 import net.digitalid.database.dialect.table.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
-import net.digitalid.database.interfaces.Site;
+import net.digitalid.database.subject.Site;
+import net.digitalid.database.subject.Subject;
 import net.digitalid.database.testing.SQLTestBase;
-import net.digitalid.database.testing.TestSite;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- */
 public class SQLCreateTableTest extends SQLTestBase {
     
-    private static final @Nonnull Site site = TestSite.INSTANCE;
+    private static final @Nonnull Site site = Subject.DEFAULT_SITE;
     
     @Impure
     @AfterClass
@@ -57,7 +55,7 @@ public class SQLCreateTableTest extends SQLTestBase {
         final @Nonnull TableImplementation table = SQL.create(EmptyClassConverter.INSTANCE, site);
         Assert.assertEquals(EmptyClassConverter.INSTANCE.getName(), table.getName());
         
-        assertTableExists(EmptyClassConverter.INSTANCE.getName(), site.toString());
+        assertTableExists(EmptyClassConverter.INSTANCE.getName(), site.getSchemaName());
     }
     
     @Test
@@ -65,10 +63,10 @@ public class SQLCreateTableTest extends SQLTestBase {
         TableImplementation table = SQL.create(SingleBooleanColumnTableConverter.INSTANCE, site);
         Assert.assertEquals(SingleBooleanColumnTableConverter.INSTANCE.getName(), table.getName());
 
-        assertTableExists(SingleBooleanColumnTableConverter.INSTANCE.getName(), site.toString());
+        assertTableExists(SingleBooleanColumnTableConverter.INSTANCE.getName(), site.getSchemaName());
         Map<String, String[]> expectedResult = new HashMap<>();
         expectedResult.put("value", new String[]{"boolean(1)" });
-        assertTableHasColumns(SingleBooleanColumnTableConverter.INSTANCE.getName(), site.toString(), expectedResult);
+        assertTableHasColumns(SingleBooleanColumnTableConverter.INSTANCE.getName(), site.getSchemaName(), expectedResult);
     }
     
     @Test
@@ -76,11 +74,11 @@ public class SQLCreateTableTest extends SQLTestBase {
         TableImplementation table = SQL.create(MultiBooleanColumnTableConverter.INSTANCE, site);
         Assert.assertEquals(MultiBooleanColumnTableConverter.INSTANCE.getName(), table.getName());
         
-        assertTableExists(MultiBooleanColumnTableConverter.INSTANCE.getName(), site.toString());
+        assertTableExists(MultiBooleanColumnTableConverter.INSTANCE.getName(), site.getSchemaName());
         Map<String, String[]> expectedResult = new HashMap<>();
         expectedResult.put("firstvalue", new String[] { "boolean(1)" });
         expectedResult.put("secondvalue", new String[] { "boolean(1)" });
-        assertTableHasColumns(MultiBooleanColumnTableConverter.INSTANCE.getName(), site.toString(), expectedResult);
+        assertTableHasColumns(MultiBooleanColumnTableConverter.INSTANCE.getName(), site.getSchemaName(), expectedResult);
     }
     
     @Test
@@ -88,10 +86,10 @@ public class SQLCreateTableTest extends SQLTestBase {
         TableImplementation table = SQL.create(BooleanColumnDefaultTrueTableConverter.INSTANCE, site);
         Assert.assertEquals(BooleanColumnDefaultTrueTableConverter.INSTANCE.getName(), table.getName());
         
-        assertTableExists(BooleanColumnDefaultTrueTableConverter.INSTANCE.getName(), site.toString());
+        assertTableExists(BooleanColumnDefaultTrueTableConverter.INSTANCE.getName(), site.getSchemaName());
         Map<String, String[]> expectedResult = new HashMap<>();
         expectedResult.put("value", new String[] { "boolean(1)", "NO", "", "TRUE" });
-        assertTableHasColumns(BooleanColumnDefaultTrueTableConverter.INSTANCE.getName(), site.toString(), expectedResult);
+        assertTableHasColumns(BooleanColumnDefaultTrueTableConverter.INSTANCE.getName(), site.getSchemaName(), expectedResult);
     }
     
     @Test
@@ -99,11 +97,11 @@ public class SQLCreateTableTest extends SQLTestBase {
         final @Nonnull TableImplementation table = SQL.create(ConstraintIntegerColumnTableConverter.INSTANCE, site);
         Assert.assertEquals(ConstraintIntegerColumnTableConverter.INSTANCE.getName(), table.getName());
         
-        assertTableExists(ConstraintIntegerColumnTableConverter.INSTANCE.getName(), site.toString());
+        assertTableExists(ConstraintIntegerColumnTableConverter.INSTANCE.getName(), site.getSchemaName());
         Map<String, String[]> expectedResult = new HashMap<>();
         // TODO: check if integer(10) is really expected.
         expectedResult.put("value", new String[] { "integer(10)", "NO", "", "NULL", "((VALUE % 7) = 0)" });
-        assertTableHasColumns(ConstraintIntegerColumnTableConverter.INSTANCE.getName(), site.toString(), expectedResult);
+        assertTableHasColumns(ConstraintIntegerColumnTableConverter.INSTANCE.getName(), site.getSchemaName(), expectedResult);
     }
     
     @Test
@@ -111,11 +109,11 @@ public class SQLCreateTableTest extends SQLTestBase {
         final @Nonnull TableImplementation table = SQL.create(SubClassConverter.INSTANCE, site);
         Assert.assertEquals(SubClassConverter.INSTANCE.getName(), table.getName());
         
-        assertTableExists(SubClassConverter.INSTANCE.getName(), site.toString());
+        assertTableExists(SubClassConverter.INSTANCE.getName(), site.getSchemaName());
         Map<String, String[]> expectedResult = new HashMap<>();
         expectedResult.put("flag", new String[] { "boolean(1)" });
         expectedResult.put("number", new String[] { "integer(10)" });
-        assertTableHasColumns(SubClassConverter.INSTANCE.getName(), site.toString(), expectedResult);
+        assertTableHasColumns(SubClassConverter.INSTANCE.getName(), site.getSchemaName(), expectedResult);
     }
     
     // TODO: fix
@@ -124,10 +122,10 @@ public class SQLCreateTableTest extends SQLTestBase {
 //        final @Nonnull Table table = SQL.create(PropertyTableConverter.INSTANCE, site);
 //        Assert.assertEquals(PropertyTableConverter.INSTANCE.getName(), table.getName(site));
 //        
-//        assertTableExists(PropertyTableConverter.INSTANCE.getName(), site.toString());
+//        assertTableExists(PropertyTableConverter.INSTANCE.getName(), site.getSchemaName());
 //        Map<String, String[]> expectedResult = new HashMap<>();
 //        expectedResult.put("myproperty", new String[] { "boolean(1)" });
-//        assertTableHasColumns(PropertyTableConverter.INSTANCE.getName(), site.toString(), expectedResult);
+//        assertTableHasColumns(PropertyTableConverter.INSTANCE.getName(), site.getSchemaName(), expectedResult);
 //    }
     
     @Test
@@ -135,11 +133,11 @@ public class SQLCreateTableTest extends SQLTestBase {
         final @Nonnull TableImplementation table = SQL.create(EmbeddedConvertiblesConverter.INSTANCE, site);
         Assert.assertEquals(EmbeddedConvertiblesConverter.INSTANCE.getName(), table.getName());
         
-        assertTableExists(EmbeddedConvertiblesConverter.INSTANCE.getName(), site.toString());
+        assertTableExists(EmbeddedConvertiblesConverter.INSTANCE.getName(), site.getSchemaName());
         Map<String, String[]> expectedResult = new HashMap<>();
         expectedResult.put("value1", new String[] { "integer(10)" });
         expectedResult.put("value2", new String[] { "integer(10)" });
-        assertTableHasColumns(EmbeddedConvertiblesConverter.INSTANCE.getName(), site.toString(), expectedResult);
+        assertTableHasColumns(EmbeddedConvertiblesConverter.INSTANCE.getName(), site.getSchemaName(), expectedResult);
     }
     
     @Test
@@ -149,17 +147,17 @@ public class SQLCreateTableTest extends SQLTestBase {
         
         final @Nonnull String referencedTableName = Entity.class.getField("referencedEntity").getAnnotation(ForeignKey.class).foreignTable();
         
-        assertTableExists(referencedTableName, site.toString());
+        assertTableExists(referencedTableName, site.getSchemaName());
         Map<String, String[]> expectedResult = new HashMap<>();
         expectedResult.put("id", new String[]{"integer(10)"});
         expectedResult.put("othervalue", new String[]{"integer(10)"});
-        assertTableHasColumns(referencedTableName, site.toString(), expectedResult);
+        assertTableHasColumns(referencedTableName, site.getSchemaName(), expectedResult);
 
         Map<String, String[]> expectedResult2 = new HashMap<>();
         expectedResult2.put("referencedentity", new String[]{"integer(10)"});
-        assertTableHasColumns(EntityConverter.INSTANCE.getName(), site.toString(), expectedResult2);
+        assertTableHasColumns(EntityConverter.INSTANCE.getName(), site.getSchemaName(), expectedResult2);
         
-        assertTableReferences(EntityConverter.INSTANCE.getName(), site.toString(), "referencedentity", "referenced_table_1", "id", UpdateAction.RESTRICT, DeleteAction.CASCADE);
+        assertTableReferences(EntityConverter.INSTANCE.getName(), site.getSchemaName(), "referencedentity", "referenced_table_1", "id", UpdateAction.RESTRICT, DeleteAction.CASCADE);
     }
     
     @Test
@@ -170,7 +168,7 @@ public class SQLCreateTableTest extends SQLTestBase {
         Map<String, String[]> expectedResult = new HashMap<>();
         expectedResult.put("listofintegers", new String[]{"integer(10)"});
         expectedResult.put("_listofintegers_index_0", new String[]{"integer(10)"});
-        assertTableHasColumns(SimpleCollectionsClassConverter.INSTANCE.getName(), site.toString(), expectedResult);
+        assertTableHasColumns(SimpleCollectionsClassConverter.INSTANCE.getName(), site.getSchemaName(), expectedResult);
     }
     
     @Test
@@ -181,16 +179,16 @@ public class SQLCreateTableTest extends SQLTestBase {
         {
             Map<String, String[]> expectedResult = new HashMap<>();
             expectedResult.put("additionalfield", new String[]{"integer(10)"});
-            assertTableHasColumns(ReferencedCollectionClassConverter.INSTANCE.getName(), site.toString(), expectedResult);
+            assertTableHasColumns(ReferencedCollectionClassConverter.INSTANCE.getName(), site.getSchemaName(), expectedResult);
         }
         {
-            assertTableExists(ReferencedCollectionClassConverter.INSTANCE.getName() + "_listofintegers", site.toString());
+            assertTableExists(ReferencedCollectionClassConverter.INSTANCE.getName() + "_listofintegers", site.getSchemaName());
     
             Map<String, String[]> expectedResult = new HashMap<>();
             expectedResult.put("additionalfield", new String[]{"integer(10)"});
             expectedResult.put("listofintegers", new String[]{"integer(10)"});
             expectedResult.put("_listofintegers_index_0", new String[]{"integer(10)"});
-            assertTableHasColumns(ReferencedCollectionClassConverter.INSTANCE.getName() + "_listofintegers", site.toString(), expectedResult);
+            assertTableHasColumns(ReferencedCollectionClassConverter.INSTANCE.getName() + "_listofintegers", site.getSchemaName(), expectedResult);
         }
     }
     

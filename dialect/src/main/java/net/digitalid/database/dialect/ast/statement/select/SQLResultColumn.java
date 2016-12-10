@@ -10,7 +10,7 @@ import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLNode;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
-import net.digitalid.database.interfaces.Site;
+import net.digitalid.database.subject.Site;
 
 /**
  * This SQL node represents a result column in a select statement.

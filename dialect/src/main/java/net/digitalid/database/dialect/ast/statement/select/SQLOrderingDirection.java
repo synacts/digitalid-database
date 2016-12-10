@@ -8,7 +8,7 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLNode;
 import net.digitalid.database.dialect.ast.Transcriber;
-import net.digitalid.database.interfaces.Site;
+import net.digitalid.database.subject.Site;
 
 /**
  * This node represents the ordering direction: ascending or descending.

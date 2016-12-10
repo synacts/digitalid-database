@@ -14,7 +14,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.property.PersistentPropertyTable;
-import net.digitalid.database.interfaces.Subject;
+import net.digitalid.database.subject.Subject;
 
 /**
  * The map property table stores the {@link PersistentMapPropertyEntry map property entries}.

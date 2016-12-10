@@ -38,9 +38,9 @@ import net.digitalid.database.exceptions.operation.FailedUpdateExecutionExceptio
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.interfaces.DatabaseInstance;
-import net.digitalid.database.interfaces.Site;
+import net.digitalid.database.subject.Site;
+import net.digitalid.database.subject.Subject;
 import net.digitalid.database.testing.SQLTestBase;
-import net.digitalid.database.testing.TestSite;
 
 import org.h2.jdbc.JdbcBatchUpdateException;
 import org.hamcrest.BaseMatcher;
@@ -52,9 +52,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-/**
- *
- */
 public class SQLInsertTableTest extends SQLTestBase {
     
     @Rule
@@ -70,7 +67,7 @@ public class SQLInsertTableTest extends SQLTestBase {
     private static TableImplementation compositeCollectionTable;
     private static TableImplementation referencedCollectionFieldTable;
     
-    private static final Site site = TestSite.INSTANCE;
+    private static final Site site = Subject.DEFAULT_SITE;
     
     @Impure
     @BeforeClass
@@ -249,8 +246,8 @@ public class SQLInsertTableTest extends SQLTestBase {
         );
         final @Nonnull String referencedColumnName = "additionalfield";
 
-        assertRowCount(TestSite.SCHEMA_NAME + "." + ReferencedCollectionClassConverter.INSTANCE.getName() + "_LISTOFINTEGERS", 5L);
-        assertTableContains(TestSite.SCHEMA_NAME + "." + ReferencedCollectionClassConverter.INSTANCE.getName() + "_LISTOFINTEGERS",
+        assertRowCount(Subject.DEFAULT_SITE.getSchemaName() + "." + ReferencedCollectionClassConverter.INSTANCE.getName() + "_LISTOFINTEGERS", 5L);
+        assertTableContains(Subject.DEFAULT_SITE.getSchemaName() + "." + ReferencedCollectionClassConverter.INSTANCE.getName() + "_LISTOFINTEGERS",
                 Expected.column("listofintegers").value("1").and(referencedColumnName).value("99"),
                 Expected.column("listofintegers").value("2").and(referencedColumnName).value("99"),
                 Expected.column("listofintegers").value("3").and(referencedColumnName).value("99"),

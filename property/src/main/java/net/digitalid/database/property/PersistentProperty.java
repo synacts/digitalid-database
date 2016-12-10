@@ -1,7 +1,5 @@
 package net.digitalid.database.property;
 
-import net.digitalid.database.interfaces.Subject;
-
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
@@ -13,6 +11,7 @@ import net.digitalid.utility.validation.annotations.type.Mutable;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.value.ReadOnlyPersistentValueProperty;
+import net.digitalid.database.subject.Subject;
 
 /**
  * A persistent property belongs to a {@link Subject subject} and stores its values in the database with the subject used as the key.

@@ -10,7 +10,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLBinaryOperator;
-import net.digitalid.database.interfaces.Site;
+import net.digitalid.database.subject.Site;
 
 /**
  * This class enumerates the supported comparison operators.

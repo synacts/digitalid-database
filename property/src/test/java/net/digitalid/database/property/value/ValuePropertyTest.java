@@ -14,9 +14,8 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.constraints.PrimaryKey;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.interfaces.Subject;
-import net.digitalid.database.property.annotations.GeneratePersistentProperty;
-import net.digitalid.database.property.annotations.GenerateSubjectModule;
+import net.digitalid.database.subject.Subject;
+import net.digitalid.database.subject.annotations.GeneratePersistentProperty;
 import net.digitalid.database.testing.SQLTestBase;
 
 import org.junit.BeforeClass;
@@ -38,9 +37,9 @@ abstract class ClassWithValueProperty extends RootClass implements Subject {
     
 //    protected static final @Nonnull SubjectModule<ClassWithValueProperty> MODULE = SubjectModuleBuilder.<ClassWithValueProperty>withName("ClassWithValueProperty").withSubjectConverter(ClassWithValuePropertyConverter.INSTANCE).build();
     
-    @Pure
-    @GenerateSubjectModule
-    protected void generateModule() {}
+//    @Pure
+//    @GenerateSubjectModule
+//    protected void generateModule() {}
     
     /* -------------------------------------------------- Property -------------------------------------------------- */
     

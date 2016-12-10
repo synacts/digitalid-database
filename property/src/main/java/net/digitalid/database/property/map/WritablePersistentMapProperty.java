@@ -35,7 +35,7 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.dialect.ast.identifier.SQLBooleanAlias;
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.interfaces.Subject;
+import net.digitalid.database.subject.Subject;
 
 /**
  * This writable property stores a map of key-value pairs in the persistent database.

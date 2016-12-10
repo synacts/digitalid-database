@@ -24,7 +24,8 @@ import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.interfaces.DatabaseInstance;
 import net.digitalid.database.interfaces.SQLSelectionResult;
-import net.digitalid.database.interfaces.Site;
+import net.digitalid.database.subject.Site;
+import net.digitalid.database.subject.Subject;
 import net.digitalid.database.testing.h2.H2Dialect;
 import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
 
@@ -58,7 +59,7 @@ public class SQLTestBase extends RootTest {
     public static void setUpSQL() throws Exception {
         if (!initialized) {
             SQLDialect.dialect.set(new H2Dialect());
-            Database.initialize(H2JDBCDatabaseInstance.get("jdbc:h2:" + (runInMemory ? "" : "tcp://localhost:9092/") + "mem:test;" + (runInMemory ? "" : "DB_CLOSE_DELAY=-1;") + "INIT=CREATE SCHEMA IF NOT EXISTS " + TestSite.SCHEMA_NAME + ";mode=MySQL;"));
+            Database.initialize(H2JDBCDatabaseInstance.get("jdbc:h2:" + (runInMemory ? "" : "tcp://localhost:9092/") + "mem:test;" + (runInMemory ? "" : "DB_CLOSE_DELAY=-1;") + "INIT=CREATE SCHEMA IF NOT EXISTS " + Subject.DEFAULT_SITE.getSchemaName() + ";mode=MySQL;"));
             server = Server.createTcpServer();
             initialized = true;
         }

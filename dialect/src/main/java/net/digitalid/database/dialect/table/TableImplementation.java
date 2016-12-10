@@ -24,8 +24,8 @@ import net.digitalid.database.dialect.ast.statement.table.create.SQLCreateTableS
 import net.digitalid.database.dialect.ast.statement.table.create.SQLForeignKeyConstraint;
 import net.digitalid.database.dialect.ast.statement.table.create.SQLPrimaryKeyConstraint;
 import net.digitalid.database.interfaces.SQLKey;
-import net.digitalid.database.interfaces.Site;
 import net.digitalid.database.interfaces.Table;
+import net.digitalid.database.subject.Site;
 
 /**
  * This class models a database table.

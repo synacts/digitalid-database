@@ -25,9 +25,9 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.constraints.PrimaryKey;
 import net.digitalid.database.annotations.type.Embedded;
-import net.digitalid.database.interfaces.Site;
 import net.digitalid.database.property.PersistentPropertyEntryConverter;
-import net.digitalid.database.interfaces.Subject;
+import net.digitalid.database.subject.Site;
+import net.digitalid.database.subject.Subject;
 
 /**
  * This class converts the {@link PersistentMapPropertyEntry entries} of the {@link PersistentMapPropertyTable map property table}.

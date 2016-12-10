@@ -13,7 +13,7 @@ import net.digitalid.database.dialect.ast.expression.SQLBinaryExpression;
 import net.digitalid.database.dialect.ast.utility.binary.SQLBinaryExpressionTranscriber;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 import net.digitalid.database.interfaces.SQLValueCollector;
-import net.digitalid.database.interfaces.Site;
+import net.digitalid.database.subject.Site;
 
 /**
  * This class implements a binary number expression.

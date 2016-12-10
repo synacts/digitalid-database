@@ -1,13 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
-    <groupId>net.digitalid.database</groupId>
-    <artifactId>database-dialect</artifactId>
-    <version>1.0.0</version>
-    <packaging>jar</packaging>
     
     <parent>
         <groupId>net.digitalid.database</groupId>
@@ -15,10 +7,17 @@
         <version>1.0.0</version>
     </parent>
     
+    <artifactId>database-dialect</artifactId>
+    
     <dependencies>
         <dependency>
             <groupId>net.digitalid.database</groupId>
             <artifactId>database-interfaces</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.digitalid.database</groupId>
+            <artifactId>database-subject</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

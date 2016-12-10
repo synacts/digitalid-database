@@ -1,4 +1,4 @@
-package net.digitalid.database.property.annotations;
+package net.digitalid.database.subject.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -20,8 +20,8 @@ import net.digitalid.utility.processor.generator.JavaFileGenerator;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
-import net.digitalid.database.property.SubjectModule;
-import net.digitalid.database.property.SubjectModuleBuilder;
+import net.digitalid.database.subject.SubjectModule;
+import net.digitalid.database.subject.SubjectModuleBuilder;
 
 /**
  * This method interceptor generates a subject module with the name of the surrounding class and its converter.
@@ -32,7 +32,7 @@ import net.digitalid.database.property.SubjectModuleBuilder;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Interceptor(GenerateSubjectModule.Interceptor.class)
-public @interface GenerateSubjectModule { // TODO: Move to the database interfaces so that the subject class can declare the method with this annotation?
+public @interface GenerateSubjectModule {
     
     /**
      * This class generates the interceptor for the surrounding annotation.

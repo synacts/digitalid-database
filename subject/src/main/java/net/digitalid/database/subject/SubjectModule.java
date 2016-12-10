@@ -1,4 +1,4 @@
-package net.digitalid.database.property;
+package net.digitalid.database.subject;
 
 import javax.annotation.Nonnull;
 
@@ -8,8 +8,6 @@ import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.interfaces.Site;
-import net.digitalid.database.interfaces.Subject;
 import net.digitalid.database.storage.Module;
 
 /**

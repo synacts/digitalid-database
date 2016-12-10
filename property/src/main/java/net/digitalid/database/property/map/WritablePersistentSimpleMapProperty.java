@@ -13,7 +13,7 @@ import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
-import net.digitalid.database.interfaces.Subject;
+import net.digitalid.database.subject.Subject;
 
 /**
  * This class simplifies the creation and declaration of {@link WritablePersistentMapProperty}.
