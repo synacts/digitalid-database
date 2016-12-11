@@ -6,7 +6,6 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.rootclass.RootInterface;
 import net.digitalid.utility.validation.annotations.generation.Default;
-import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.generation.Normalize;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
@@ -67,14 +66,18 @@ public interface Storage extends RootInterface {
      * Returns the full name of this storage with periods between the names of the parent modules from leaf to root.
      */
     @Pure
-    @Derive("getFullName(\".\", false)")
-    public @Nonnull String getFullNameWithPeriods();
+    // TODO: @Cached
+    public default @Nonnull String getFullNameWithPeriods() {
+        return getFullName(".", false);
+    }
     
     /**
      * Returns the full name of this storage with underlines between the names of the parent modules from root to leaf.
      */
     @Pure
-    @Derive("getFullName(\"_\", true)")
-    public @Nonnull @CodeIdentifier String getFullNameWithUnderlines();
+    // TODO: @Cached
+    public default @Nonnull @CodeIdentifier String getFullNameWithUnderlines() {
+        return getFullName("_", true);
+    }
     
 }

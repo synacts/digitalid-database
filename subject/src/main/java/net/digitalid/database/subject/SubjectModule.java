@@ -1,7 +1,5 @@
 package net.digitalid.database.subject;
 
-import net.digitalid.database.subject.site.Site;
-
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
@@ -13,6 +11,7 @@ import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.storage.Module;
+import net.digitalid.database.subject.site.Site;
 
 /**
  * A subject module contains the tables of all properties in the subject's class.
