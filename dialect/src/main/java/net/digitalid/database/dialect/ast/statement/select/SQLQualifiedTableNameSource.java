@@ -12,7 +12,7 @@ import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 import net.digitalid.database.interfaces.SQLValueCollector;
-import net.digitalid.database.subject.Site;
+import net.digitalid.database.subject.site.Site;
 
 /**
  * This SQL node represents a table source for the SQL select statement.

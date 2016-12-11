@@ -38,7 +38,7 @@ import net.digitalid.database.exceptions.operation.FailedUpdateExecutionExceptio
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.interfaces.DatabaseInstance;
-import net.digitalid.database.subject.Site;
+import net.digitalid.database.subject.site.Site;
 import net.digitalid.database.subject.Subject;
 import net.digitalid.database.testing.SQLTestBase;
 

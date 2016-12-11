@@ -9,7 +9,7 @@ import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.expression.SQLBinaryExpression;
 import net.digitalid.database.dialect.ast.expression.SQLBinaryOperator;
 import net.digitalid.database.dialect.ast.expression.SQLExpression;
-import net.digitalid.database.subject.Site;
+import net.digitalid.database.subject.site.Site;
 
 /**
  * Helper class to transcribe binary expressions.

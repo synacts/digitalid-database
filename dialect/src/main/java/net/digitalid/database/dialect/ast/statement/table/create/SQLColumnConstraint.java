@@ -20,7 +20,7 @@ import net.digitalid.database.annotations.constraints.Unique;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLParameterizableNode;
 import net.digitalid.database.dialect.ast.Transcriber;
-import net.digitalid.database.subject.Site;
+import net.digitalid.database.subject.site.Site;
 
 /**
  * This SQL node represents an SQL column constraint.

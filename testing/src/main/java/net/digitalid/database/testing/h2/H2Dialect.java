@@ -17,7 +17,7 @@ import net.digitalid.database.dialect.ast.identifier.SQLColumnName;
 import net.digitalid.database.dialect.ast.identifier.SQLIdentifier;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
-import net.digitalid.database.subject.Site;
+import net.digitalid.database.subject.site.Site;
 
 public class H2Dialect extends SQLDialect {
     

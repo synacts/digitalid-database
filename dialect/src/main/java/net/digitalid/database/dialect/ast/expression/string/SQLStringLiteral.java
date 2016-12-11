@@ -11,7 +11,7 @@ import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.dialect.ast.expression.SQLLiteral;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 import net.digitalid.database.interfaces.SQLValueCollector;
-import net.digitalid.database.subject.Site;
+import net.digitalid.database.subject.site.Site;
 
 /**
  * This class implements a string literal.

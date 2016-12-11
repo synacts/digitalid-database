@@ -11,7 +11,7 @@ import net.digitalid.utility.validation.annotations.size.MinSize;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.SQLNode;
 import net.digitalid.database.dialect.ast.Transcriber;
-import net.digitalid.database.subject.Site;
+import net.digitalid.database.subject.site.Site;
 
 /**
  * The SQL node that represents the qualified table name.

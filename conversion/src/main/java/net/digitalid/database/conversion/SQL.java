@@ -37,7 +37,7 @@ import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.interfaces.SQLSelectionResult;
 import net.digitalid.database.interfaces.SQLValueCollector;
 import net.digitalid.database.interfaces.Tables;
-import net.digitalid.database.subject.Site;
+import net.digitalid.database.subject.site.Site;
 
 /**
  * This class serves as an entry point for simple conversion of Java objects to SQL.

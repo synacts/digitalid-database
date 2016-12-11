@@ -19,7 +19,7 @@ import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanCol
 import net.digitalid.database.dialect.ast.identifier.SQLBooleanAlias;
 import net.digitalid.database.dialect.table.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
-import net.digitalid.database.subject.Site;
+import net.digitalid.database.subject.site.Site;
 import net.digitalid.database.subject.Subject;
 import net.digitalid.database.testing.SQLTestBase;
 

@@ -7,7 +7,7 @@ import net.digitalid.utility.exceptions.InternalException;
 
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.expression.SQLExpression;
-import net.digitalid.database.subject.Site;
+import net.digitalid.database.subject.site.Site;
 
 /**
  * This SQL node represents an SQL check constraint node.

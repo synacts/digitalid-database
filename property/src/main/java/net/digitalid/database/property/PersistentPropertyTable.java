@@ -7,7 +7,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.property.value.PersistentValuePropertyTable;
 import net.digitalid.database.storage.Table;
-import net.digitalid.database.subject.Site;
+import net.digitalid.database.subject.site.Site;
 import net.digitalid.database.subject.Subject;
 import net.digitalid.database.subject.SubjectModule;
 

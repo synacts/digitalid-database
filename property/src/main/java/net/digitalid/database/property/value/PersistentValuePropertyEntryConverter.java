@@ -28,7 +28,7 @@ import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeConverter;
 import net.digitalid.database.property.PersistentPropertyEntryConverter;
-import net.digitalid.database.subject.Site;
+import net.digitalid.database.subject.site.Site;
 import net.digitalid.database.subject.Subject;
 
 /**

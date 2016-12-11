@@ -13,7 +13,7 @@ import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.dialect.ast.Transcriber;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 import net.digitalid.database.interfaces.SQLValueCollector;
-import net.digitalid.database.subject.Site;
+import net.digitalid.database.subject.site.Site;
 
 /**
  * This SQL node represents a join clause of an SQL select statement.

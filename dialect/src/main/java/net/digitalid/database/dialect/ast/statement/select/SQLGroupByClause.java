@@ -17,7 +17,7 @@ import net.digitalid.database.dialect.ast.expression.bool.SQLBooleanExpression;
 import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 import net.digitalid.database.interfaces.SQLValueCollector;
-import net.digitalid.database.subject.Site;
+import net.digitalid.database.subject.site.Site;
 
 /**
  * This SQL node represents a GROUP BY clause for an SQL select statement.

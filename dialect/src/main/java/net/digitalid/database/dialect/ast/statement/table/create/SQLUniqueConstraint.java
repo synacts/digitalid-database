@@ -9,7 +9,7 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.database.dialect.ast.SQLDialect;
 import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
 import net.digitalid.database.interfaces.SQLValueCollector;
-import net.digitalid.database.subject.Site;
+import net.digitalid.database.subject.site.Site;
 
 /**
  * This SQL node represents a unique constraint on a column.
