@@ -7,8 +7,6 @@ import net.digitalid.utility.annotations.type.ThreadSafe;
 import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.property.set.ReadOnlySetProperty;
-import net.digitalid.utility.validation.annotations.type.Functional;
-import net.digitalid.utility.validation.annotations.type.Mutable;
 import net.digitalid.utility.validation.annotations.type.ReadOnly;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
@@ -20,33 +18,24 @@ import net.digitalid.database.subject.Subject;
 /**
  * This read-only property stores a set of values in the persistent database.
  * 
- * @see WritablePersistentSetProperty
+ * @see WritablePersistentSetPropertyImplementation
  * @see ReadOnlyPersistentSimpleSetProperty
  */
 @ThreadSafe
-@ReadOnly(WritablePersistentSetProperty.class)
-public interface ReadOnlyPersistentSetProperty<S extends Subject, V, R extends ReadOnlySet<@Nonnull @Valid V>> extends ReadOnlySetProperty<V, R, DatabaseException, ReadOnlyPersistentSetProperty.Observer<S, V, R>, ReadOnlyPersistentSetProperty<S, V, R>>, PersistentProperty<S, PersistentSetPropertyEntry<S, V>, ReadOnlyPersistentSetProperty.Observer<S, V, R>> {
-    
-    /* -------------------------------------------------- Observer -------------------------------------------------- */
-    
-    /**
-     * Objects that implement this interface can be used to {@link #register(net.digitalid.utility.property.Property.Observer) observe} {@link ReadOnlyPersistentSetProperty read-only persistent set properties}.
-     */
-    @Mutable
-    @Functional
-    public static interface Observer<S extends Subject, V, R extends ReadOnlySet<@Nonnull @Valid V>> extends ReadOnlySetProperty.Observer<V, R, DatabaseException, ReadOnlyPersistentSetProperty.Observer<S, V, R>, ReadOnlyPersistentSetProperty<S, V, R>> {}
+@ReadOnly(WritablePersistentSetPropertyImplementation.class)
+public interface ReadOnlyPersistentSetProperty<SUBJECT extends Subject<?>, VALUE, READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>> extends ReadOnlySetProperty<VALUE, READONLY_SET, DatabaseException, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>, ReadOnlyPersistentSetProperty<SUBJECT, VALUE, READONLY_SET>>, PersistentProperty<SUBJECT, PersistentSetPropertyEntry<SUBJECT, VALUE>, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>> {
     
     /* -------------------------------------------------- Getter -------------------------------------------------- */
     
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull @NonFrozen R get() throws DatabaseException;
+    public @Nonnull @NonFrozen READONLY_SET get() throws DatabaseException;
     
     /* -------------------------------------------------- Table -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull PersistentSetPropertyTable<S, V, ?> getTable();
+    public @Nonnull PersistentSetPropertyTable<?, SUBJECT, VALUE, ?> getTable();
     
 }

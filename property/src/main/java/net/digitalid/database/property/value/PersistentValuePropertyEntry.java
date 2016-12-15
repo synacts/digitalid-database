@@ -21,7 +21,7 @@ import net.digitalid.database.subject.Subject;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class PersistentValuePropertyEntry<S extends Subject, V> extends PersistentPropertyEntry<S> {
+public abstract class PersistentValuePropertyEntry<SUBJECT extends Subject<?>, VALUE> extends PersistentPropertyEntry<SUBJECT> {
     
     /* -------------------------------------------------- Time -------------------------------------------------- */
     
@@ -40,6 +40,6 @@ public abstract class PersistentValuePropertyEntry<S extends Subject, V> extends
     @Pure
     @Embedded
     @TODO(task = "The embedding is dependent on the actual type (and should cause a foreign key constraint if necessary). Please replace these field/method annotations with type annotations.", date = "2016-09-24", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.MIDDLE)
-    public abstract V getValue();
+    public abstract VALUE getValue();
     
 }

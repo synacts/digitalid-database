@@ -14,6 +14,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.property.PersistentPropertyTable;
 import net.digitalid.database.subject.Subject;
+import net.digitalid.database.subject.site.Site;
 
 /**
  * The set property table stores the {@link PersistentSetPropertyEntry set property entries}.
@@ -21,14 +22,14 @@ import net.digitalid.database.subject.Subject;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface PersistentSetPropertyTable<S extends Subject, V, E> extends PersistentPropertyTable<S, PersistentSetPropertyEntry<S, V>>, Valid.Value<V> {
+public interface PersistentSetPropertyTable<SITE extends Site<SITE>, SUBJECT extends Subject<SITE>, VALUE, PROVIDED_FOR_VALUE> extends PersistentPropertyTable<SITE, SUBJECT, PersistentSetPropertyEntry<SUBJECT, VALUE>>, Valid.Value<VALUE> {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
     @Pure
     @Override
-    @Derive("PersistentSetPropertyEntryConverterBuilder.<S, V, E>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
-    public @Nonnull PersistentSetPropertyEntryConverter<S, V, E> getEntryConverter();
+    @Derive("PersistentSetPropertyEntryConverterBuilder.<SITE, SUBJECT, VALUE, PROVIDED_FOR_VALUE>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
+    public @Nonnull PersistentSetPropertyEntryConverter<SITE, SUBJECT, VALUE, PROVIDED_FOR_VALUE> getEntryConverter();
     
     /* -------------------------------------------------- Provided Object Extractor -------------------------------------------------- */
     
@@ -37,7 +38,7 @@ public interface PersistentSetPropertyTable<S extends Subject, V, E> extends Per
      */
     @Pure
     @Default("subject -> null")
-    public @Nonnull UnaryFunction<@Nonnull S, E> getProvidedObjectExtractor();
+    public @Nonnull UnaryFunction<@Nonnull SUBJECT, PROVIDED_FOR_VALUE> getProvidedObjectExtractor();
     
     /* -------------------------------------------------- Value Converter -------------------------------------------------- */
     
@@ -45,6 +46,6 @@ public interface PersistentSetPropertyTable<S extends Subject, V, E> extends Per
      * Returns the converter to convert and recover the values of the property.
      */
     @Pure
-    public @Nonnull Converter<V, E> getValueConverter();
+    public @Nonnull Converter<VALUE, PROVIDED_FOR_VALUE> getValueConverter();
     
 }

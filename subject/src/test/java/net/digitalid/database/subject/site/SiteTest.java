@@ -2,6 +2,7 @@ package net.digitalid.database.subject.site;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.rootclass.RootClass;
@@ -13,7 +14,15 @@ import org.junit.Test;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-abstract class TestSite extends RootClass implements Site {}
+abstract class TestSite extends RootClass implements Site<TestSite> {
+    
+    @Pure
+    @Override
+    public final @Nonnull TestSite getSite() {
+        return this;
+    }
+    
+}
 
 public class SiteTest extends RootTest {
     

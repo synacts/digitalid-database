@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.type.ThreadSafe;
 import net.digitalid.utility.concurrency.exceptions.ReentranceException;
+import net.digitalid.utility.property.Observer;
 import net.digitalid.utility.property.Property;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
@@ -20,7 +21,7 @@ import net.digitalid.database.subject.Subject;
  */
 @Mutable
 @ThreadSafe
-public interface PersistentProperty<S extends Subject, N extends PersistentPropertyEntry<S>, O extends Property.Observer> extends Property<O> {
+public interface PersistentProperty<SUBJECT extends Subject<?>, ENTRY extends PersistentPropertyEntry<SUBJECT>, OBSERVER extends Observer> extends Property<OBSERVER> {
     
     /* -------------------------------------------------- Subject -------------------------------------------------- */
     
@@ -28,7 +29,7 @@ public interface PersistentProperty<S extends Subject, N extends PersistentPrope
      * Returns the subject to which this property belongs.
      */
     @Pure
-    public @Nonnull S getSubject();
+    public @Nonnull SUBJECT getSubject();
     
     /* -------------------------------------------------- Table -------------------------------------------------- */
     
@@ -36,7 +37,7 @@ public interface PersistentProperty<S extends Subject, N extends PersistentPrope
      * Returns the property table that contains the property name, subject module and entry converter.
      */
     @Pure
-    public @Nonnull PersistentPropertyTable<S, N> getTable();
+    public @Nonnull PersistentPropertyTable<?, SUBJECT, ENTRY> getTable();
     
     /* -------------------------------------------------- Reset -------------------------------------------------- */
     

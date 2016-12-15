@@ -13,7 +13,7 @@ import net.digitalid.database.subject.Subject;
  * This interface models a database unit.
  */
 @Immutable
-public interface Site extends Subject {
+public interface Site<SITE extends Site<SITE>> extends Subject<SITE> {
     
     /* -------------------------------------------------- Schema Name -------------------------------------------------- */
     
@@ -22,31 +22,5 @@ public interface Site extends Subject {
      */
     @Pure
     public abstract @Nonnull @CodeIdentifier @MaxSize(63) String getSchemaName();
-    
-    /* -------------------------------------------------- Queries -------------------------------------------------- */
-    
-    /**
-     * Returns whether this site is a host.
-     */
-    @Pure
-    public default boolean isHost() {
-        return false;
-    }
-    
-    /**
-     * Returns whether this site is a client.
-     */
-    @Pure
-    public default boolean isClient() {
-        return !isHost();
-    }
-    
-    /* -------------------------------------------------- Subject -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public default @Nonnull Site getSite() {
-        return this;
-    }
     
 }

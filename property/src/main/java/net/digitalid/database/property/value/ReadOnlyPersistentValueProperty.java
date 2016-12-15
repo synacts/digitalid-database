@@ -9,8 +9,6 @@ import net.digitalid.utility.annotations.type.ThreadSafe;
 import net.digitalid.utility.concurrency.exceptions.ReentranceException;
 import net.digitalid.utility.property.value.ReadOnlyValueProperty;
 import net.digitalid.utility.tuples.Pair;
-import net.digitalid.utility.validation.annotations.type.Functional;
-import net.digitalid.utility.validation.annotations.type.Mutable;
 import net.digitalid.utility.validation.annotations.type.ReadOnly;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
@@ -23,33 +21,24 @@ import net.digitalid.database.subject.Subject;
 /**
  * This read-only property stores a value in the persistent database.
  * 
- * @see WritablePersistentValueProperty
+ * @see WritablePersistentValuePropertyImplementation
  */
 @ThreadSafe
-@ReadOnly(WritablePersistentValueProperty.class)
-public interface ReadOnlyPersistentValueProperty<S extends Subject, V> extends ReadOnlyValueProperty<V, DatabaseException, ReadOnlyPersistentValueProperty.Observer<S, V>, ReadOnlyPersistentValueProperty<S, V>>, PersistentProperty<S, PersistentValuePropertyEntry<S, V>, ReadOnlyPersistentValueProperty.Observer<S, V>> {
-    
-    /* -------------------------------------------------- Observer -------------------------------------------------- */
-    
-    /**
-     * Objects that implement this interface can be used to {@link #register(net.digitalid.utility.property.Property.Observer) observe} {@link ReadOnlyPersistentValueProperty read-only persistent value properties}.
-     */
-    @Mutable
-    @Functional
-    public static interface Observer<S extends Subject, V> extends ReadOnlyValueProperty.Observer<V, DatabaseException, ReadOnlyPersistentValueProperty.Observer<S, V>, ReadOnlyPersistentValueProperty<S, V>> {}
+@ReadOnly(WritablePersistentValuePropertyImplementation.class)
+public interface ReadOnlyPersistentValueProperty<SUBJECT extends Subject<?>, VALUE> extends ReadOnlyValueProperty<VALUE, DatabaseException, PersistentValueObserver<SUBJECT, VALUE>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE>>, PersistentProperty<SUBJECT, PersistentValuePropertyEntry<SUBJECT, VALUE>, PersistentValueObserver<SUBJECT, VALUE>> {
     
     /* -------------------------------------------------- Getter -------------------------------------------------- */
     
     @Pure
     @Override
     @NonCommitting
-    public @NonCapturable @Valid V get() throws DatabaseException;
+    public @NonCapturable @Valid VALUE get() throws DatabaseException;
     
     /* -------------------------------------------------- Table -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull PersistentValuePropertyTable<S, V, ?> getTable();
+    public @Nonnull PersistentValuePropertyTable<?, SUBJECT, VALUE, ?> getTable();
     
     /* -------------------------------------------------- Time -------------------------------------------------- */
     
@@ -71,6 +60,6 @@ public interface ReadOnlyPersistentValueProperty<S extends Subject, V> extends R
      */
     @Pure
     @NonCommitting
-    public @Nonnull Pair<@Valid V, @Nullable Time> getValueWithTimeOfLastModification() throws DatabaseException, ReentranceException;
+    public @Nonnull Pair<@Valid VALUE, @Nullable Time> getValueWithTimeOfLastModification() throws DatabaseException, ReentranceException;
     
 }

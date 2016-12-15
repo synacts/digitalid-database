@@ -17,7 +17,7 @@ import net.digitalid.database.subject.Subject;
  * @see PersistentValuePropertyEntry
  */
 @Immutable
-public abstract class PersistentPropertyEntry<S extends Subject> extends RootClass {
+public abstract class PersistentPropertyEntry<SUBJECT extends Subject<?>> extends RootClass {
     
     /* -------------------------------------------------- Subject -------------------------------------------------- */
     
@@ -27,6 +27,6 @@ public abstract class PersistentPropertyEntry<S extends Subject> extends RootCla
     @Pure
     @Embedded
     @PrimaryKey
-    public abstract @Nonnull S getSubject();
+    public abstract @Nonnull SUBJECT getSubject();
     
 }

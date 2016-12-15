@@ -11,8 +11,6 @@ import net.digitalid.utility.annotations.type.ThreadSafe;
 import net.digitalid.utility.collections.map.ReadOnlyMap;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.property.map.ReadOnlyMapProperty;
-import net.digitalid.utility.validation.annotations.type.Functional;
-import net.digitalid.utility.validation.annotations.type.Mutable;
 import net.digitalid.utility.validation.annotations.type.ReadOnly;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
@@ -24,38 +22,29 @@ import net.digitalid.database.subject.Subject;
 /**
  * This read-only property stores a map of key-value pairs in the persistent database.
  * 
- * @see WritablePersistentMapProperty
+ * @see WritablePersistentMapPropertyImplementation
  * @see ReadOnlyPersistentSimpleMapProperty
  */
 @ThreadSafe
-@ReadOnly(WritablePersistentMapProperty.class)
-public interface ReadOnlyPersistentMapProperty<S extends Subject, K, V, R extends ReadOnlyMap<@Nonnull @Valid("key") K, @Nonnull @Valid V>> extends ReadOnlyMapProperty<K, V, R, DatabaseException, ReadOnlyPersistentMapProperty.Observer<S, K, V, R>, ReadOnlyPersistentMapProperty<S, K, V, R>>, PersistentProperty<S, PersistentMapPropertyEntry<S, K, V>, ReadOnlyPersistentMapProperty.Observer<S, K, V, R>> {
-    
-    /* -------------------------------------------------- Observer -------------------------------------------------- */
-    
-    /**
-     * Objects that implement this interface can be used to {@link #register(net.digitalid.utility.property.Property.Observer) observe} {@link ReadOnlyPersistentMapProperty read-only persistent map properties}.
-     */
-    @Mutable
-    @Functional
-    public static interface Observer<S extends Subject, K, V, R extends ReadOnlyMap<@Nonnull @Valid("key") K, @Nonnull @Valid V>> extends ReadOnlyMapProperty.Observer<K, V, R, DatabaseException, ReadOnlyPersistentMapProperty.Observer<S, K, V, R>, ReadOnlyPersistentMapProperty<S, K, V, R>> {}
+@ReadOnly(WritablePersistentMapPropertyImplementation.class)
+public interface ReadOnlyPersistentMapProperty<SUBJECT extends Subject<?>, KEY, VALUE, READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>> extends ReadOnlyMapProperty<KEY, VALUE, READONLY_MAP, DatabaseException, PersistentMapObserver<SUBJECT, KEY, VALUE, READONLY_MAP>, ReadOnlyPersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP>>, PersistentProperty<SUBJECT, PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>, PersistentMapObserver<SUBJECT, KEY, VALUE, READONLY_MAP>> {
     
     /* -------------------------------------------------- Getters -------------------------------------------------- */
     
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull @NonFrozen R get() throws DatabaseException;
+    public @Nonnull @NonFrozen READONLY_MAP get() throws DatabaseException;
     
     @Pure
     @Override
     @NonCommitting
-    public @NonCapturable @Nullable @Valid V get(@NonCaptured @Unmodified @Nonnull @Valid("key") K key) throws DatabaseException;
+    public @NonCapturable @Nullable @Valid VALUE get(@NonCaptured @Unmodified @Nonnull @Valid("key") KEY key) throws DatabaseException;
     
     /* -------------------------------------------------- Table -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull PersistentMapPropertyTable<S, K, V, ?, ?> getTable();
+    public @Nonnull PersistentMapPropertyTable<?, SUBJECT, KEY, VALUE, ?, ?> getTable();
     
 }

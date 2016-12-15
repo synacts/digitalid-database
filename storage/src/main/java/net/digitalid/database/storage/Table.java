@@ -14,7 +14,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface Table<N, E> extends Storage {
+public interface Table<ENTRY, PROVIDED> extends Storage {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
@@ -22,6 +22,6 @@ public interface Table<N, E> extends Storage {
      * Returns the converter that models the columns of this table and converts its entries.
      */
     @Pure
-    public @Nonnull Converter<N, E> getEntryConverter();
+    public @Nonnull Converter<ENTRY, PROVIDED> getEntryConverter();
     
 }

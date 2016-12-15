@@ -8,6 +8,8 @@ import java.lang.annotation.Target;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeMirror;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.circumfixes.Brackets;
@@ -57,7 +59,9 @@ public @interface GenerateSubjectModule {
             } else {
                 subjectConverter = typeInformation.getSimpleNameOfGeneratedConverter() + ".INSTANCE";
             }
-            javaFileGenerator.addField("static final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(SubjectModule.class) + Brackets.inPointy(javaFileGenerator.importIfPossible(typeInformation.getType())) + " MODULE = " + javaFileGenerator.importIfPossible(SubjectModuleBuilder.class) + ".withSubjectConverter" + Brackets.inRound(subjectConverter) + ".build()");
+            
+            final @Nonnull TypeMirror siteType = ((DeclaredType) method.getReturnType()).getTypeArguments().get(0);
+            javaFileGenerator.addField("static final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(SubjectModule.class) + Brackets.inPointy(javaFileGenerator.importIfPossible(siteType) + ", " + javaFileGenerator.importIfPossible(typeInformation.getType())) + " MODULE = " + javaFileGenerator.importIfPossible(SubjectModuleBuilder.class) + ".withSubjectConverter" + Brackets.inRound(subjectConverter) + ".build()");
         }
         
         @Pure

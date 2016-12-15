@@ -12,8 +12,8 @@ import net.digitalid.database.subject.Subject;
 /**
  * This interface simplifies the declaration of {@link ReadOnlyPersistentMapProperty}.
  * 
- * @see WritablePersistentSimpleMapProperty
+ * @see WritablePersistentSimpleMapPropertyImplementation
  */
 @ThreadSafe
-@ReadOnly(WritablePersistentSimpleMapProperty.class)
-public interface ReadOnlyPersistentSimpleMapProperty<S extends Subject, K, V> extends ReadOnlyPersistentMapProperty<S, K, V, ReadOnlyMap<@Nonnull @Valid("key") K, @Nonnull @Valid V>> {}
+@ReadOnly(WritablePersistentSimpleMapPropertyImplementation.class)
+public interface ReadOnlyPersistentSimpleMapProperty<SUBJECT extends Subject<?>, KEY, VALUE> extends ReadOnlyPersistentMapProperty<SUBJECT, KEY, VALUE, ReadOnlyMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>> {}

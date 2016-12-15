@@ -14,6 +14,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.property.PersistentPropertyTable;
 import net.digitalid.database.subject.Subject;
+import net.digitalid.database.subject.site.Site;
 
 /**
  * The persistent value property table stores the {@link PersistentValuePropertyEntry value property entries}.
@@ -21,14 +22,14 @@ import net.digitalid.database.subject.Subject;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface PersistentValuePropertyTable<S extends Subject, V, E> extends PersistentPropertyTable<S, PersistentValuePropertyEntry<S, V>>, Valid.Value<V> {
+public interface PersistentValuePropertyTable<SITE extends Site<SITE>, SUBJECT extends Subject<SITE>, VALUE, PROVIDED_FOR_VALUE> extends PersistentPropertyTable<SITE, SUBJECT, PersistentValuePropertyEntry<SUBJECT, VALUE>>, Valid.Value<VALUE> {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
     @Pure
     @Override
-    @Derive("PersistentValuePropertyEntryConverterBuilder.<S, V, E>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
-    public @Nonnull PersistentValuePropertyEntryConverter<S, V, E> getEntryConverter();
+    @Derive("PersistentValuePropertyEntryConverterBuilder.<SITE, SUBJECT, VALUE, PROVIDED_FOR_VALUE>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
+    public @Nonnull PersistentValuePropertyEntryConverter<SITE, SUBJECT, VALUE, PROVIDED_FOR_VALUE> getEntryConverter();
     
     /* -------------------------------------------------- Provided Object Extractor -------------------------------------------------- */
     
@@ -37,7 +38,7 @@ public interface PersistentValuePropertyTable<S extends Subject, V, E> extends P
      */
     @Pure
     @Default("subject -> null")
-    public @Nonnull UnaryFunction<@Nonnull S, E> getProvidedObjectExtractor();
+    public @Nonnull UnaryFunction<@Nonnull SUBJECT, PROVIDED_FOR_VALUE> getProvidedObjectExtractor();
     
     /* -------------------------------------------------- Value Converter -------------------------------------------------- */
     
@@ -45,7 +46,7 @@ public interface PersistentValuePropertyTable<S extends Subject, V, E> extends P
      * Returns the converter to convert and recover the value of the property.
      */
     @Pure
-    public @Nonnull Converter<V, E> getValueConverter();
+    public @Nonnull Converter<VALUE, PROVIDED_FOR_VALUE> getValueConverter();
     
     /* -------------------------------------------------- Default Value -------------------------------------------------- */
     
@@ -53,6 +54,6 @@ public interface PersistentValuePropertyTable<S extends Subject, V, E> extends P
      * Returns the default value of the property.
      */
     @Pure
-    public @Valid V getDefaultValue();
+    public @Valid VALUE getDefaultValue();
     
 }

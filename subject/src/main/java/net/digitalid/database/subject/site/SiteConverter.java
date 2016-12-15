@@ -27,7 +27,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class SiteConverter<SITE extends Site> implements Converter<SITE, Site> {
+public abstract class SiteConverter<SITE extends Site<SITE>> implements Converter<SITE, SITE> {
     
     /**
      * Returns the class object of the site that is converted.
@@ -57,9 +57,8 @@ public abstract class SiteConverter<SITE extends Site> implements Converter<SITE
     
     @Pure
     @Override
-    public @Capturable <X extends ExternalException> @Nullable SITE recover(@NonCaptured @Modified @Nonnull SelectionResult<X> selectionResult, Site site) throws X {
-        if (getSiteClass().isInstance(site)) { return getSiteClass().cast(site); }
-        else { return null; }
+    public @Capturable <X extends ExternalException> @Nullable SITE recover(@NonCaptured @Modified @Nonnull SelectionResult<X> selectionResult, @Nonnull SITE site) throws X {
+        return site;
     }
     
 }

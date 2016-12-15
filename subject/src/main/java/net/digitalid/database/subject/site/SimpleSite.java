@@ -17,15 +17,30 @@ import net.digitalid.database.subject.SubjectModuleBuilder;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class SimpleSite extends RootClass implements Site {
+public abstract class SimpleSite extends RootClass implements Site<SimpleSite> {
     
-    /* -------------------------------------------------- Module -------------------------------------------------- */
+    /* -------------------------------------------------- Instance -------------------------------------------------- */
     
-    static final @Nonnull SubjectModule<SimpleSite> MODULE = SubjectModuleBuilder.withSubjectConverter(SiteConverterBuilder.withSiteClass(SimpleSite.class).build()).build();
+    /**
+     * Stores a default instance of a simple site.
+     */
+    public static final @Nonnull SimpleSite INSTANCE = SimpleSiteBuilder.withSchemaName("default").build();
+    
+    /* -------------------------------------------------- Subject -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull SubjectModule<?> module() {
+    public final @Nonnull SimpleSite getSite() {
+        return this;
+    }
+    
+    /* -------------------------------------------------- Module -------------------------------------------------- */
+    
+    static final @Nonnull SubjectModule<SimpleSite, ?> MODULE = SubjectModuleBuilder.withSubjectConverter(SiteConverterBuilder.withSiteClass(SimpleSite.class).build()).build();
+    
+    @Pure
+    @Override
+    public @Nonnull SubjectModule<SimpleSite, ?> module() {
         return MODULE;
     }
     

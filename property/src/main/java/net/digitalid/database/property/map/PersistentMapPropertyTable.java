@@ -15,6 +15,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.property.PersistentPropertyTable;
 import net.digitalid.database.subject.Subject;
+import net.digitalid.database.subject.site.Site;
 
 /**
  * The map property table stores the {@link PersistentMapPropertyEntry map property entries}.
@@ -22,14 +23,14 @@ import net.digitalid.database.subject.Subject;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface PersistentMapPropertyTable<S extends Subject, K, V, EK, EV> extends PersistentPropertyTable<S, PersistentMapPropertyEntry<S, K, V>>, Valid.Key<K>, Valid.Value<V> {
+public interface PersistentMapPropertyTable<SITE extends Site<SITE>, SUBJECT extends Subject<SITE>, KEY, VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> extends PersistentPropertyTable<SITE, SUBJECT, PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>>, Valid.Key<KEY>, Valid.Value<VALUE> {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
     @Pure
     @Override
-    @Derive("PersistentMapPropertyEntryConverterBuilder.<S, K, V, EK, EV>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
-    public @Nonnull PersistentMapPropertyEntryConverter<S, K, V, EK, EV> getEntryConverter();
+    @Derive("PersistentMapPropertyEntryConverterBuilder.<SITE, SUBJECT, KEY, VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
+    public @Nonnull PersistentMapPropertyEntryConverter<SITE, SUBJECT, KEY, VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> getEntryConverter();
     
     /* -------------------------------------------------- Extractors -------------------------------------------------- */
     
@@ -38,14 +39,14 @@ public interface PersistentMapPropertyTable<S extends Subject, K, V, EK, EV> ext
      */
     @Pure
     @Default("subject -> null")
-    public @Nonnull UnaryFunction<@Nonnull S, EK> getProvidedObjectForKeyExtractor();
+    public @Nonnull UnaryFunction<@Nonnull SUBJECT, PROVIDED_FOR_KEY> getProvidedObjectForKeyExtractor();
     
     /**
      * Returns the function that extracts the externally provided object for the value from the subject and the key.
      */
     @Pure
     @Default("(subject, key) -> null")
-    public @Nonnull BinaryFunction<@Nonnull S, @Nonnull K, EV> getProvidedObjectForValueExtractor();
+    public @Nonnull BinaryFunction<@Nonnull SUBJECT, @Nonnull KEY, PROVIDED_FOR_VALUE> getProvidedObjectForValueExtractor();
     
     /* -------------------------------------------------- Converters -------------------------------------------------- */
     
@@ -53,12 +54,12 @@ public interface PersistentMapPropertyTable<S extends Subject, K, V, EK, EV> ext
      * Returns the converter to convert and recover the keys of the property.
      */
     @Pure
-    public @Nonnull Converter<K, EK> getKeyConverter();
+    public @Nonnull Converter<KEY, PROVIDED_FOR_KEY> getKeyConverter();
     
     /**
      * Returns the converter to convert and recover the values of the property.
      */
     @Pure
-    public @Nonnull Converter<V, EV> getValueConverter();
+    public @Nonnull Converter<VALUE, PROVIDED_FOR_VALUE> getValueConverter();
     
 }

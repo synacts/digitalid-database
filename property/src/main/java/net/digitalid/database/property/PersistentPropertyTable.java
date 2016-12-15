@@ -7,9 +7,9 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.property.value.PersistentValuePropertyTable;
 import net.digitalid.database.storage.Table;
-import net.digitalid.database.subject.site.Site;
 import net.digitalid.database.subject.Subject;
 import net.digitalid.database.subject.SubjectModule;
+import net.digitalid.database.subject.site.Site;
 
 /**
  * A property table belongs to a {@link SubjectModule subject module} and stores the {@link PersistentPropertyEntry property entries}.
@@ -17,18 +17,18 @@ import net.digitalid.database.subject.SubjectModule;
  * @see PersistentValuePropertyTable
  */
 @Immutable
-public interface PersistentPropertyTable<S extends Subject, N extends PersistentPropertyEntry<S>> extends Table<N, Site> {
+public interface PersistentPropertyTable<SITE extends Site<SITE>, SUBJECT extends Subject<SITE>, ENTRY extends PersistentPropertyEntry<SUBJECT>> extends Table<ENTRY, @Nonnull SITE> {
     
     /* -------------------------------------------------- Parent Module -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull SubjectModule<S> getParentModule();
+    public @Nonnull SubjectModule<SITE, SUBJECT> getParentModule();
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull PersistentPropertyEntryConverter<S, N> getEntryConverter();
+    public @Nonnull PersistentPropertyEntryConverter<SITE, SUBJECT, ENTRY> getEntryConverter();
     
 }

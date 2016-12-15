@@ -38,8 +38,7 @@ import net.digitalid.database.exceptions.operation.FailedUpdateExecutionExceptio
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.interfaces.DatabaseInstance;
-import net.digitalid.database.subject.site.Site;
-import net.digitalid.database.subject.Subject;
+import net.digitalid.database.subject.site.SimpleSite;
 import net.digitalid.database.testing.SQLTestBase;
 
 import org.h2.jdbc.JdbcBatchUpdateException;
@@ -67,7 +66,7 @@ public class SQLInsertTableTest extends SQLTestBase {
     private static TableImplementation compositeCollectionTable;
     private static TableImplementation referencedCollectionFieldTable;
     
-    private static final Site site = Subject.DEFAULT_SITE;
+    private static final @Nonnull SimpleSite site = SimpleSite.INSTANCE;
     
     @Impure
     @BeforeClass
@@ -246,8 +245,8 @@ public class SQLInsertTableTest extends SQLTestBase {
         );
         final @Nonnull String referencedColumnName = "additionalfield";
 
-        assertRowCount(Subject.DEFAULT_SITE.getSchemaName() + "." + ReferencedCollectionClassConverter.INSTANCE.getName() + "_LISTOFINTEGERS", 5L);
-        assertTableContains(Subject.DEFAULT_SITE.getSchemaName() + "." + ReferencedCollectionClassConverter.INSTANCE.getName() + "_LISTOFINTEGERS",
+        assertRowCount(SimpleSite.INSTANCE.getSchemaName() + "." + ReferencedCollectionClassConverter.INSTANCE.getName() + "_LISTOFINTEGERS", 5L);
+        assertTableContains(SimpleSite.INSTANCE.getSchemaName() + "." + ReferencedCollectionClassConverter.INSTANCE.getName() + "_LISTOFINTEGERS",
                 Expected.column("listofintegers").value("1").and(referencedColumnName).value("99"),
                 Expected.column("listofintegers").value("2").and(referencedColumnName).value("99"),
                 Expected.column("listofintegers").value("3").and(referencedColumnName).value("99"),

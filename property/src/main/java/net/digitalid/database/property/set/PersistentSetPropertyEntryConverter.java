@@ -26,8 +26,8 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.constraints.PrimaryKey;
 import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.property.PersistentPropertyEntryConverter;
-import net.digitalid.database.subject.site.Site;
 import net.digitalid.database.subject.Subject;
+import net.digitalid.database.subject.site.Site;
 
 /**
  * This class converts the {@link PersistentSetPropertyEntry entries} of the {@link PersistentSetPropertyTable set property table}.
@@ -35,13 +35,13 @@ import net.digitalid.database.subject.Subject;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class PersistentSetPropertyEntryConverter<S extends Subject, V, E> extends PersistentPropertyEntryConverter<S, PersistentSetPropertyEntry<S, V>> {
+public abstract class PersistentSetPropertyEntryConverter<SITE extends Site<SITE>, SUBJECT extends Subject<SITE>, VALUE, PROVIDED_FOR_VALUE> extends PersistentPropertyEntryConverter<SITE, SUBJECT, PersistentSetPropertyEntry<SUBJECT, VALUE>> {
     
     /* -------------------------------------------------- Property Table -------------------------------------------------- */
     
     @Pure
     @Override
-    public abstract @Nonnull PersistentSetPropertyTable<S, V, E> getPropertyTable();
+    public abstract @Nonnull PersistentSetPropertyTable<SITE, SUBJECT, VALUE, PROVIDED_FOR_VALUE> getPropertyTable();
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     
@@ -59,7 +59,7 @@ public abstract class PersistentSetPropertyEntryConverter<S extends Subject, V, 
     
     @Pure
     @Override
-    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified PersistentSetPropertyEntry<S, V> entry, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws X {
+    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified PersistentSetPropertyEntry<SUBJECT, VALUE> entry, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws X {
         int i = 1;
         i *= getPropertyTable().getParentModule().getSubjectConverter().convert(entry == null ? null : entry.getSubject(), valueCollector);
         i *= getPropertyTable().getValueConverter().convert(entry == null ? null : entry.getValue(), valueCollector);
@@ -71,10 +71,10 @@ public abstract class PersistentSetPropertyEntryConverter<S extends Subject, V, 
     @Pure
     @Override
     @Review(comment = "How would you handle the nullable recovered objects?", date = "2016-09-30", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.LOW)
-    public @Capturable <X extends ExternalException> @Nullable PersistentSetPropertyEntry<S, V> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, @Nonnull Site site) throws X {
-        final @Nullable S subject = getPropertyTable().getParentModule().getSubjectConverter().recover(selectionResult, site);
+    public @Capturable <X extends ExternalException> @Nullable PersistentSetPropertyEntry<SUBJECT, VALUE> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, @Nonnull SITE site) throws X {
+        final @Nullable SUBJECT subject = getPropertyTable().getParentModule().getSubjectConverter().recover(selectionResult, site);
         if (subject != null) {
-            final @Nullable V value = getPropertyTable().getValueConverter().recover(selectionResult, getPropertyTable().getProvidedObjectExtractor().evaluate(subject));
+            final @Nullable VALUE value = getPropertyTable().getValueConverter().recover(selectionResult, getPropertyTable().getProvidedObjectExtractor().evaluate(subject));
             return value != null ? new PersistentSetPropertyEntrySubclass<>(subject, value) : null;
         } else {
             return null;

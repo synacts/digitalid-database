@@ -4,12 +4,11 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.converter.Converter;
-import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.property.value.PersistentValuePropertyEntryConverter;
-import net.digitalid.database.subject.site.Site;
 import net.digitalid.database.subject.Subject;
+import net.digitalid.database.subject.site.Site;
 
 /**
  * This class converts the {@link PersistentPropertyEntry entries} of the {@link PersistentPropertyTable property table}.
@@ -17,7 +16,7 @@ import net.digitalid.database.subject.Subject;
  * @see PersistentValuePropertyEntryConverter
  */
 @Immutable
-public abstract class PersistentPropertyEntryConverter<S extends Subject, N extends PersistentPropertyEntry<S>> extends RootClass implements Converter<N, @Nonnull Site> {
+public abstract class PersistentPropertyEntryConverter<SITE extends Site<SITE>, SUBJECT extends Subject<SITE>, ENTRY extends PersistentPropertyEntry<SUBJECT>> implements Converter<ENTRY, @Nonnull SITE> {
     
     /* -------------------------------------------------- Property Table -------------------------------------------------- */
     
@@ -25,6 +24,6 @@ public abstract class PersistentPropertyEntryConverter<S extends Subject, N exte
      * Returns the property table to which this entry converter belongs.
      */
     @Pure
-    public abstract @Nonnull PersistentPropertyTable<S, N> getPropertyTable();
+    public abstract @Nonnull PersistentPropertyTable<SITE, SUBJECT, ENTRY> getPropertyTable();
     
 }

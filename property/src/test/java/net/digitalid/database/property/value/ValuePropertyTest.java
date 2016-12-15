@@ -16,6 +16,7 @@ import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.subject.Subject;
 import net.digitalid.database.subject.annotations.GeneratePersistentProperty;
+import net.digitalid.database.subject.site.SimpleSite;
 import net.digitalid.database.testing.SQLTestBase;
 
 import org.junit.BeforeClass;
@@ -25,27 +26,13 @@ import org.junit.Test;
 @GenerateBuilder
 @GenerateSubclass
 @GenerateConverter
-abstract class ClassWithValueProperty extends RootClass implements Subject {
+abstract class ClassWithValueProperty extends RootClass implements Subject<SimpleSite> {
     
     /* -------------------------------------------------- Key -------------------------------------------------- */
     
     @Pure
     @PrimaryKey
     public abstract long getKey();
-    
-    /* -------------------------------------------------- Module -------------------------------------------------- */
-    
-//    protected static final @Nonnull SubjectModule<ClassWithValueProperty> MODULE = SubjectModuleBuilder.<ClassWithValueProperty>withName("ClassWithValueProperty").withSubjectConverter(ClassWithValuePropertyConverter.INSTANCE).build();
-    
-//    @Pure
-//    @GenerateSubjectModule
-//    protected void generateModule() {}
-    
-    /* -------------------------------------------------- Property -------------------------------------------------- */
-    
-//    protected static final @Nonnull PersistentValuePropertyTable<ClassWithValueProperty, String, Void> table = PersistentValuePropertyTableBuilder.<ClassWithValueProperty, String, Void>withName("name").withParentModule(ClassWithValuePropertySubclass.MODULE).withValueConverter(StringConverter.INSTANCE).withDefaultValue("default").withValueValidator(value -> value != null).build();
-    
-//    protected final @Nonnull WritablePersistentValueProperty<ClassWithValueProperty, @Nonnull String> name = WritablePersistentValuePropertyBuilder.<ClassWithValueProperty, String>withSubject(this).withTable(table).build();
     
     @Pure
     @Default("\"default\"")
@@ -61,13 +48,13 @@ public class ValuePropertyTest extends SQLTestBase {
     @Impure
     @BeforeClass
     public static void createTables() throws Exception {
-        System.out.println(ClassWithValuePropertySubclass.NAME.getEntryConverter().getName());
-        SQL.create(ClassWithValuePropertySubclass.NAME.getEntryConverter(), Subject.DEFAULT_SITE);
+        System.out.println(ClassWithValuePropertySubclass.NAME_TABLE.getEntryConverter().getName());
+        SQL.create(ClassWithValuePropertySubclass.NAME_TABLE.getEntryConverter(), SimpleSite.INSTANCE);
     }
     
     @Test
     public void testProperty() throws DatabaseException {
-        final @Nonnull ClassWithValueProperty object = ClassWithValuePropertyBuilder.withKey(123).build();
+        final @Nonnull ClassWithValueProperty object = ClassWithValuePropertyBuilder.withSite(SimpleSite.INSTANCE).withKey(123).build();
         object.name().set("test");
         object.name().reset();
         assertEquals("test", object.name().get());

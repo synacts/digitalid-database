@@ -19,8 +19,7 @@ import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanCol
 import net.digitalid.database.dialect.ast.identifier.SQLBooleanAlias;
 import net.digitalid.database.dialect.table.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
-import net.digitalid.database.subject.site.Site;
-import net.digitalid.database.subject.Subject;
+import net.digitalid.database.subject.site.SimpleSite;
 import net.digitalid.database.testing.SQLTestBase;
 
 import org.junit.AfterClass;
@@ -34,7 +33,7 @@ public class SQLSelectFromTableTest extends SQLTestBase {
     private static TableImplementation simpleCollectionsTable;
     private static TableImplementation collectionsAndAdditionalFieldClassTable;
     
-    private static final Site site = Subject.DEFAULT_SITE;
+    private static final @Nonnull SimpleSite site = SimpleSite.INSTANCE;
     
     @Impure
     @BeforeClass
