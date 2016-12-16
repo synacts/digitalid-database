@@ -13,7 +13,7 @@ import net.digitalid.database.subject.Subject;
  * This interface models a database unit.
  */
 @Immutable
-public interface Site<SITE extends Site<SITE>> extends Subject<SITE> {
+public interface Site<SITE extends Site<?>> extends Subject<SITE> {
     
     /* -------------------------------------------------- Schema Name -------------------------------------------------- */
     

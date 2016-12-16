@@ -16,7 +16,7 @@ import net.digitalid.database.subject.site.Site;
  * @see PersistentValuePropertyEntryConverter
  */
 @Immutable
-public abstract class PersistentPropertyEntryConverter<SITE extends Site<SITE>, SUBJECT extends Subject<SITE>, ENTRY extends PersistentPropertyEntry<SUBJECT>> implements Converter<ENTRY, @Nonnull SITE> {
+public abstract class PersistentPropertyEntryConverter<SITE extends Site<?>, SUBJECT extends Subject<SITE>, ENTRY extends PersistentPropertyEntry<SUBJECT>> implements Converter<ENTRY, @Nonnull SITE> {
     
     /* -------------------------------------------------- Property Table -------------------------------------------------- */
     

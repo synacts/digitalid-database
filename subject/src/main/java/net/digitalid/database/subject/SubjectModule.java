@@ -19,7 +19,7 @@ import net.digitalid.database.subject.site.Site;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class SubjectModule<SITE extends Site<SITE>, SUBJECT extends Subject<SITE>> extends Module {
+public abstract class SubjectModule<SITE extends Site<?>, SUBJECT extends Subject<SITE>> extends Module {
     
     /* -------------------------------------------------- Subject Converter -------------------------------------------------- */
     

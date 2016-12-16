@@ -37,7 +37,7 @@ import net.digitalid.database.subject.site.Site;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class PersistentValuePropertyEntryConverter<SITE extends Site<SITE>, SUBJECT extends Subject<SITE>, VALUE, PROVIDED_FOR_VALUE> extends PersistentPropertyEntryConverter<SITE, SUBJECT, PersistentValuePropertyEntry<SUBJECT, VALUE>> {
+public abstract class PersistentValuePropertyEntryConverter<SITE extends Site<?>, SUBJECT extends Subject<SITE>, VALUE, PROVIDED_FOR_VALUE> extends PersistentPropertyEntryConverter<SITE, SUBJECT, PersistentValuePropertyEntry<SUBJECT, VALUE>> {
     
     /* -------------------------------------------------- Property Table -------------------------------------------------- */
     

@@ -16,7 +16,7 @@ import net.digitalid.database.subject.site.Site;
  * A subject belongs to a {@link Site site} and can have persistent properties.
  */
 @Immutable
-public interface Subject<SITE extends Site<SITE>> extends RootInterface {
+public interface Subject<SITE extends Site<?>> extends RootInterface {
     
     /* -------------------------------------------------- Site -------------------------------------------------- */
     

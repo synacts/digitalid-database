@@ -35,7 +35,7 @@ import net.digitalid.database.subject.site.Site;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class PersistentMapPropertyEntryConverter<SITE extends Site<SITE>, SUBJECT extends Subject<SITE>, KEY, VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> extends PersistentPropertyEntryConverter<SITE, SUBJECT, PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>> {
+public abstract class PersistentMapPropertyEntryConverter<SITE extends Site<?>, SUBJECT extends Subject<SITE>, KEY, VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> extends PersistentPropertyEntryConverter<SITE, SUBJECT, PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>> {
     
     /* -------------------------------------------------- Property Table -------------------------------------------------- */
     

@@ -23,7 +23,7 @@ import net.digitalid.database.subject.site.Site;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface PersistentMapPropertyTable<SITE extends Site<SITE>, SUBJECT extends Subject<SITE>, KEY, VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> extends PersistentPropertyTable<SITE, SUBJECT, PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>>, Valid.Key<KEY>, Valid.Value<VALUE> {
+public interface PersistentMapPropertyTable<SITE extends Site<?>, SUBJECT extends Subject<SITE>, KEY, VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> extends PersistentPropertyTable<SITE, SUBJECT, PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>>, Valid.Key<KEY>, Valid.Value<VALUE> {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     

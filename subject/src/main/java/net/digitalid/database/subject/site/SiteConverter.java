@@ -27,7 +27,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class SiteConverter<SITE extends Site<SITE>> implements Converter<SITE, SITE> {
+public abstract class SiteConverter<SITE extends Site<?>> implements Converter<SITE, SITE> {
     
     /**
      * Returns the class object of the site that is converted.

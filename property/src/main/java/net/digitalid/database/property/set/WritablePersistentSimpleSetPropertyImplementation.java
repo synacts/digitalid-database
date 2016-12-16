@@ -21,7 +21,7 @@ import net.digitalid.database.subject.site.Site;
 @ThreadSafe
 @GenerateBuilder
 @GenerateSubclass
-public abstract class WritablePersistentSimpleSetPropertyImplementation<SITE extends Site<SITE>, SUBJECT extends Subject<SITE>, VALUE> extends WritablePersistentSetPropertyImplementation<SITE, SUBJECT, VALUE, ReadOnlySet<@Nonnull @Valid VALUE>, FreezableSet<@Nonnull @Valid VALUE>> implements WritablePersistentSimpleSetProperty<SUBJECT, VALUE> {
+public abstract class WritablePersistentSimpleSetPropertyImplementation<SITE extends Site<?>, SUBJECT extends Subject<SITE>, VALUE> extends WritablePersistentSetPropertyImplementation<SITE, SUBJECT, VALUE, ReadOnlySet<@Nonnull @Valid VALUE>, FreezableSet<@Nonnull @Valid VALUE>> implements WritablePersistentSimpleSetProperty<SUBJECT, VALUE> {
     
     @Pure
     @Override

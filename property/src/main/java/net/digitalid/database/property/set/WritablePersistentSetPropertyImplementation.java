@@ -40,7 +40,7 @@ import net.digitalid.database.subject.site.Site;
 @ThreadSafe
 @GenerateBuilder
 @GenerateSubclass
-public abstract class WritablePersistentSetPropertyImplementation<SITE extends Site<SITE>, SUBJECT extends Subject<SITE>, VALUE, READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>, FREEZABLE_SET extends FreezableSet<@Nonnull @Valid VALUE>> extends WritableSetPropertyImplementation<VALUE, READONLY_SET, DatabaseException, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>, ReadOnlyPersistentSetProperty<SUBJECT, VALUE, READONLY_SET>> implements WritablePersistentSetProperty<SUBJECT, VALUE, READONLY_SET, FREEZABLE_SET> {
+public abstract class WritablePersistentSetPropertyImplementation<SITE extends Site<?>, SUBJECT extends Subject<SITE>, VALUE, READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>, FREEZABLE_SET extends FreezableSet<@Nonnull @Valid VALUE>> extends WritableSetPropertyImplementation<VALUE, READONLY_SET, DatabaseException, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>, ReadOnlyPersistentSetProperty<SUBJECT, VALUE, READONLY_SET>> implements WritablePersistentSetProperty<SUBJECT, VALUE, READONLY_SET, FREEZABLE_SET> {
     
     /* -------------------------------------------------- Validator -------------------------------------------------- */
     

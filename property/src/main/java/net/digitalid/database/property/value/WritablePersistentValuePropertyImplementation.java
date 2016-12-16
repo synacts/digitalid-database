@@ -38,7 +38,7 @@ import net.digitalid.database.subject.site.Site;
 @ThreadSafe
 @GenerateBuilder
 @GenerateSubclass
-public abstract class WritablePersistentValuePropertyImplementation<SITE extends Site<SITE>, SUBJECT extends Subject<SITE>, VALUE> extends WritableValuePropertyImplementation<VALUE, DatabaseException, PersistentValueObserver<SUBJECT, VALUE>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE>> implements WritablePersistentValueProperty<SUBJECT, VALUE> {
+public abstract class WritablePersistentValuePropertyImplementation<SITE extends Site<?>, SUBJECT extends Subject<SITE>, VALUE> extends WritableValuePropertyImplementation<VALUE, DatabaseException, PersistentValueObserver<SUBJECT, VALUE>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE>> implements WritablePersistentValueProperty<SUBJECT, VALUE> {
     
     /* -------------------------------------------------- Validator -------------------------------------------------- */
     

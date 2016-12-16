@@ -17,7 +17,7 @@ import net.digitalid.database.subject.site.Site;
  * @see PersistentValuePropertyTable
  */
 @Immutable
-public interface PersistentPropertyTable<SITE extends Site<SITE>, SUBJECT extends Subject<SITE>, ENTRY extends PersistentPropertyEntry<SUBJECT>> extends Table<ENTRY, @Nonnull SITE> {
+public interface PersistentPropertyTable<SITE extends Site<?>, SUBJECT extends Subject<SITE>, ENTRY extends PersistentPropertyEntry<SUBJECT>> extends Table<ENTRY, @Nonnull SITE> {
     
     /* -------------------------------------------------- Parent Module -------------------------------------------------- */
     
