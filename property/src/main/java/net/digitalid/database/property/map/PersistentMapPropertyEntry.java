@@ -14,7 +14,7 @@ import net.digitalid.database.property.PersistentPropertyEntry;
 import net.digitalid.database.subject.Subject;
 
 /**
- * This class models an entry in the {@link MapPropertyTable map property table}.
+ * This class models an entry in the {@link PersistentMapPropertyTable persistent map property table}.
  */
 @Immutable
 @GenerateBuilder

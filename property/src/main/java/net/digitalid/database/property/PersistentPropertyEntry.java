@@ -12,7 +12,7 @@ import net.digitalid.database.property.value.PersistentValuePropertyEntry;
 import net.digitalid.database.subject.Subject;
 
 /**
- * This class models an entry in the {@link PropertyTable property table}.
+ * This class models an entry in the {@link PersistentPropertyTable persistent property table}.
  * 
  * @see PersistentValuePropertyEntry
  */

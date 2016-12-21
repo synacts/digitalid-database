@@ -13,7 +13,6 @@ import net.digitalid.database.exceptions.DatabaseException;
  * This exception indicates a failed database operation.
  * 
  * @see FailedCommitException
- * @see FailedClosingException
  * @see FailedNonCommittingOperationException
  */
 @Immutable

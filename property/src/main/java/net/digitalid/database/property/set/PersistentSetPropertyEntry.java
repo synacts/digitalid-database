@@ -14,7 +14,7 @@ import net.digitalid.database.property.PersistentPropertyEntry;
 import net.digitalid.database.subject.Subject;
 
 /**
- * This class models an entry in the {@link SetPropertyTable set property table}.
+ * This class models an entry in the {@link PersistentSetPropertyTable persistent set property table}.
  */
 @Immutable
 @GenerateBuilder

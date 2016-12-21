@@ -11,10 +11,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
  * 
  * @see FailedConnectionException
  * @see FailedKeyGenerationException
- * @see FailedPreparedStatementCreationException
  * @see FailedQueryExecutionException
- * @see FailedSavepointCreationException
- * @see FailedSavepointRollbackException
  * @see FailedStatementCreationException
  * @see FailedUpdateExecutionException
  * @see FailedSQLValueRecoveryException

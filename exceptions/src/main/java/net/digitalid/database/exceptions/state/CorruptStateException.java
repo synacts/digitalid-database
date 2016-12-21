@@ -7,13 +7,13 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.state.row.WrongRowCountException;
+import net.digitalid.database.exceptions.state.value.CorruptValueException;
 
 /**
  * This exception indicates a corrupt database state.
  * 
  * @see CorruptValueException
  * @see WrongRowCountException
- * @see MaskingCorruptStateException
  */
 @Immutable
 public abstract class CorruptStateException extends DatabaseException {
