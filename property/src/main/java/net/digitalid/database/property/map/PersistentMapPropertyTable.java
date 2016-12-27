@@ -29,7 +29,7 @@ public interface PersistentMapPropertyTable<SITE extends Site<?>, SUBJECT extend
     
     @Pure
     @Override
-    @Derive("PersistentMapPropertyEntryConverterBuilder.<SITE, SUBJECT, KEY, VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE>withName(getFullNameWithUnderlines()).withPropertyTable(this).build()")
+    @Derive("PersistentMapPropertyEntryConverterBuilder.<SITE, SUBJECT, KEY, VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE>withType(PersistentMapPropertyEntry.class).withTypeName(getFullNameWithUnderlines()).withTypePackage(\"net.digitalid.database.property.map\").withPropertyTable(this).build()")
     public @Nonnull PersistentMapPropertyEntryConverter<SITE, SUBJECT, KEY, VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> getEntryConverter();
     
     /* -------------------------------------------------- Extractors -------------------------------------------------- */

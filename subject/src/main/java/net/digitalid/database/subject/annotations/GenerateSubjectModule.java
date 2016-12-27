@@ -55,7 +55,7 @@ public @interface GenerateSubjectModule {
         public void generateFieldsRequiredByMethod(@Nonnull JavaFileGenerator javaFileGenerator, @Nonnull MethodInformation method, @Nonnull TypeInformation typeInformation) {
             final @Nonnull String subjectConverter;
             if (ProcessingUtility.isRawSubtype(typeInformation.getType(), Site.class)) {
-                subjectConverter = javaFileGenerator.importIfPossible(SiteConverterBuilder.class) + ".withSiteClass" + Brackets.inRound(typeInformation.getName() + ".class") + ".build()";
+                subjectConverter = javaFileGenerator.importIfPossible(SiteConverterBuilder.class) + ".withType" + Brackets.inRound(typeInformation.getName() + ".class") + ".build()";
             } else {
                 subjectConverter = typeInformation.getSimpleNameOfGeneratedConverter() + ".INSTANCE";
             }

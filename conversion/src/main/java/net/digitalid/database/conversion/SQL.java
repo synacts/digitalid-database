@@ -13,6 +13,7 @@ import net.digitalid.utility.collections.set.FreezableLinkedHashSetBuilder;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.conversion.converter.CustomField;
+import net.digitalid.utility.conversion.converter.Representation;
 import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.exceptions.UnexpectedFailureException;
 import net.digitalid.utility.logging.Log;
@@ -34,7 +35,7 @@ import net.digitalid.database.dialect.ast.statement.table.create.SQLCreateTableS
 import net.digitalid.database.dialect.table.TableImplementation;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
-import net.digitalid.database.interfaces.SQLSelectionResult;
+import net.digitalid.database.interfaces.SQLDecoder;
 import net.digitalid.database.interfaces.SQLValueCollector;
 import net.digitalid.database.interfaces.Tables;
 import net.digitalid.database.subject.site.Site;
@@ -58,9 +59,9 @@ public final class SQL {
     @Pure
     @Committing
     public static @Nonnull TableImplementation create(@Nonnull Converter<?, ?> converter, @Nonnull Site<?> site) throws InternalException, DatabaseException {
-        final @Nonnull String tableName = converter.getName();
+        final @Nonnull String tableName = converter.getTypeName();
         final @Nonnull SQLCreateTableColumnDeclarations columnDeclarations = SQLCreateTableColumnDeclarations.get(tableName);
-        for (@Nonnull CustomField field : converter.getFields()) {
+        for (@Nonnull CustomField field : converter.getFields(Representation.INTERNAL)) {
             columnDeclarations.setField(field);
         }
         
@@ -99,11 +100,11 @@ public final class SQL {
     public static <T> void insert(@Nullable T object, @Nonnull Converter<T, ?> converter, @Nonnull Site<?> site) throws DatabaseException {
         final @Nonnull SQLOrderedStatements<@Nonnull SQLInsertStatement, @Nonnull SQLInsertIntoTableColumnDeclarations> orderedInsertStatements = SQLOrderedStatementCache.INSTANCE.getOrderedInsertStatements(converter);
         
-        final @Nonnull SQLValueCollector valueCollector = Database.getInstance().getValueCollector(orderedInsertStatements.getStatementsOrderedByExecution().map(insertStatement -> 
+        final @Nonnull SQLValueCollector encoder = Database.getInstance().getValueCollector(orderedInsertStatements.getStatementsOrderedByExecution().map(insertStatement -> 
                 insertStatement.toPreparedStatement(SQLDialect.getDialect(), site)
                ), orderedInsertStatements.getOrderByColumn(), orderedInsertStatements.getColumnCountForGroup());
-        converter.convert(object, valueCollector);
-        Database.getInstance().execute(valueCollector);
+        converter.convert(object, encoder);
+        Database.getInstance().execute(encoder);
         Database.getInstance().commit();
     }
     
@@ -111,7 +112,7 @@ public final class SQL {
     
     @Pure
     @NonCommitting
-    private static <T> @Nonnull SQLSelectionResult getSelectionResult(@Nonnull Converter<T, ?> converter, @Nullable SQLBooleanExpression whereClauseExpression, @Nonnull Site<?> site) throws DatabaseException {
+    private static <T> @Nonnull SQLDecoder getSelectionResult(@Nonnull Converter<T, ?> converter, @Nullable SQLBooleanExpression whereClauseExpression, @Nonnull Site<?> site) throws DatabaseException {
         final @Nonnull SQLOrderedStatements<@Nonnull SQLSelectStatement, @Nonnull SQLSelectFromTableColumnDeclarations> orderedSelectStatements = SQLOrderedStatementCache.INSTANCE.getOrderedSelectStatements(converter);
         final @Nonnull @NonEmpty ReadOnlyList<@Nonnull SQLSelectStatement> statementsOrderedByExecution = orderedSelectStatements.getStatementsOrderedByExecution();
         final @Nonnull SQLSelectStatement selectStatement = statementsOrderedByExecution.getFirst();
@@ -127,8 +128,8 @@ public final class SQL {
     
         final @Nonnull String selectIntoTableStatementString = selectStatement.toPreparedStatement(SQLDialect.getDialect(), site);
         Log.debugging(selectIntoTableStatementString);
-        final @Nonnull SQLSelectionResult selectionResult = Database.getInstance().executeSelect(selectIntoTableStatementString);
-        return selectionResult;
+        final @Nonnull SQLDecoder decoder = Database.getInstance().executeSelect(selectIntoTableStatementString);
+        return decoder;
     }
     
     /**
@@ -137,13 +138,13 @@ public final class SQL {
     @Pure
     @NonCommitting
     public static <T, E> @Nullable T select(@Nonnull Converter<T, E> converter, @Nullable SQLBooleanExpression whereClauseExpression, @Nonnull Site<?> site, E externallyProvided) throws DatabaseException {
-        final @Nonnull SQLSelectionResult selectionResult = getSelectionResult(converter, whereClauseExpression, site);
+        final @Nonnull SQLDecoder decoder = getSelectionResult(converter, whereClauseExpression, site);
         
-        if (!selectionResult.moveToNextRow()) {
+        if (!decoder.moveToNextRow()) {
             return null;
         }
-        final @Nullable T recoveredObject = converter.recover(selectionResult, externallyProvided);
-        Require.that(!selectionResult.moveToNextRow()).orThrow("Not all of the rows have been processed.");
+        final @Nullable T recoveredObject = converter.recover(decoder, externallyProvided);
+        Require.that(!decoder.moveToNextRow()).orThrow("Not all of the rows have been processed.");
         
         return recoveredObject;
     }
@@ -154,12 +155,12 @@ public final class SQL {
     @Pure
     @NonCommitting
     public static <T, E> Set<T> export(@Nonnull Converter<T, E> converter, @Nonnull Site<?> site, E externallyProvided) throws DatabaseException {
-        final @Nonnull SQLSelectionResult selectionResult = getSelectionResult(converter, null, site);
+        final @Nonnull SQLDecoder decoder = getSelectionResult(converter, null, site);
         
         Set<T> recoveredObjects = FreezableLinkedHashSetBuilder.build();
-        while (selectionResult.moveToNextRow()) {
-            selectionResult.moveToFirstColumn();
-            final @Nonnull T recoveredObject = converter.recover(selectionResult, externallyProvided);
+        while (decoder.moveToNextRow()) {
+            decoder.moveToFirstColumn();
+            final @Nonnull T recoveredObject = converter.recover(decoder, externallyProvided);
             recoveredObjects.add(recoveredObject);
         }
         

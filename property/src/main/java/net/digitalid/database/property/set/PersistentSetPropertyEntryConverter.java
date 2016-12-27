@@ -14,8 +14,9 @@ import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collaboration.enumerations.Priority;
 import net.digitalid.utility.conversion.converter.CustomAnnotation;
 import net.digitalid.utility.conversion.converter.CustomField;
-import net.digitalid.utility.conversion.converter.SelectionResult;
-import net.digitalid.utility.conversion.converter.ValueCollector;
+import net.digitalid.utility.conversion.converter.Decoder;
+import net.digitalid.utility.conversion.converter.Encoder;
+import net.digitalid.utility.conversion.converter.Representation;
 import net.digitalid.utility.conversion.converter.types.CustomType;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -48,9 +49,9 @@ public abstract class PersistentSetPropertyEntryConverter<SITE extends Site<?>, 
     @Pure
     @Override
     @TODO(task = "Support @Cached on methods without parameters.", date = "2016-09-24", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.LOW)
-    public @Nonnull ImmutableList<@Nonnull CustomField> getFields() {
+    public @Nonnull ImmutableList<@Nonnull CustomField> getFields(@Nonnull Representation representation) {
         return ImmutableList.withElements(
-                CustomField.with(CustomType.TUPLE.of(getPropertyTable().getParentModule().getSubjectConverter()), getPropertyTable().getParentModule().getSubjectConverter().getName(), ImmutableList.withElements(CustomAnnotation.with(PrimaryKey.class), CustomAnnotation.with(Nonnull.class), CustomAnnotation.with(Embedded.class))),
+                CustomField.with(CustomType.TUPLE.of(getPropertyTable().getParentModule().getSubjectConverter()), getPropertyTable().getParentModule().getSubjectConverter().getTypeName(), ImmutableList.withElements(CustomAnnotation.with(PrimaryKey.class), CustomAnnotation.with(Nonnull.class), CustomAnnotation.with(Embedded.class))),
                 CustomField.with(CustomType.TUPLE.of(getPropertyTable().getValueConverter()), "value", ImmutableList.withElements(CustomAnnotation.with(PrimaryKey.class), CustomAnnotation.with(Nonnull.class), CustomAnnotation.with(Embedded.class)/* TODO: Pass them? Probably pass the whole custom field instead. */))
         );
     }
@@ -59,10 +60,10 @@ public abstract class PersistentSetPropertyEntryConverter<SITE extends Site<?>, 
     
     @Pure
     @Override
-    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified PersistentSetPropertyEntry<SUBJECT, VALUE> entry, @Nonnull @NonCaptured @Modified ValueCollector<X> valueCollector) throws X {
+    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified PersistentSetPropertyEntry<SUBJECT, VALUE> entry, @Nonnull @NonCaptured @Modified Encoder<X> encoder) throws X {
         int i = 1;
-        i *= getPropertyTable().getParentModule().getSubjectConverter().convert(entry == null ? null : entry.getSubject(), valueCollector);
-        i *= getPropertyTable().getValueConverter().convert(entry == null ? null : entry.getValue(), valueCollector);
+        i *= getPropertyTable().getParentModule().getSubjectConverter().convert(entry == null ? null : entry.getSubject(), encoder);
+        i *= getPropertyTable().getValueConverter().convert(entry == null ? null : entry.getValue(), encoder);
         return i;
     }
     
@@ -71,10 +72,10 @@ public abstract class PersistentSetPropertyEntryConverter<SITE extends Site<?>, 
     @Pure
     @Override
     @Review(comment = "How would you handle the nullable recovered objects?", date = "2016-09-30", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.LOW)
-    public @Capturable <X extends ExternalException> @Nullable PersistentSetPropertyEntry<SUBJECT, VALUE> recover(@Nonnull @NonCaptured @Modified SelectionResult<X> selectionResult, @Nonnull SITE site) throws X {
-        final @Nullable SUBJECT subject = getPropertyTable().getParentModule().getSubjectConverter().recover(selectionResult, site);
+    public @Capturable <X extends ExternalException> @Nullable PersistentSetPropertyEntry<SUBJECT, VALUE> recover(@Nonnull @NonCaptured @Modified Decoder<X> decoder, @Nonnull SITE site) throws X {
+        final @Nullable SUBJECT subject = getPropertyTable().getParentModule().getSubjectConverter().recover(decoder, site);
         if (subject != null) {
-            final @Nullable VALUE value = getPropertyTable().getValueConverter().recover(selectionResult, getPropertyTable().getProvidedObjectExtractor().evaluate(subject));
+            final @Nullable VALUE value = getPropertyTable().getValueConverter().recover(decoder, getPropertyTable().getProvidedObjectExtractor().evaluate(subject));
             return value != null ? new PersistentSetPropertyEntrySubclass<>(subject, value) : null;
         } else {
             return null;

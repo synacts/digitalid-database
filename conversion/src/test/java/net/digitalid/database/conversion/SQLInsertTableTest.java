@@ -93,7 +93,7 @@ public class SQLInsertTableTest extends SQLTestBase {
         dropTable(SimpleCollectionsClassConverter.INSTANCE, site);
         dropTable(CollectionAndAdditionalFieldClassConverter.INSTANCE, site);
         dropTable(CompositeCollectionsClassConverter.INSTANCE, site);
-        dropTable(ReferencedCollectionClassConverter.INSTANCE.getName() + "_listofintegers", site);
+        dropTable(ReferencedCollectionClassConverter.INSTANCE.getTypeName() + "_listofintegers", site);
         dropTable(ReferencedCollectionClassConverter.INSTANCE, site);
     }
     
@@ -245,8 +245,8 @@ public class SQLInsertTableTest extends SQLTestBase {
         );
         final @Nonnull String referencedColumnName = "additionalfield";
 
-        assertRowCount(SimpleSite.INSTANCE.getSchemaName() + "." + ReferencedCollectionClassConverter.INSTANCE.getName() + "_LISTOFINTEGERS", 5L);
-        assertTableContains(SimpleSite.INSTANCE.getSchemaName() + "." + ReferencedCollectionClassConverter.INSTANCE.getName() + "_LISTOFINTEGERS",
+        assertRowCount(SimpleSite.INSTANCE.getSchemaName() + "." + ReferencedCollectionClassConverter.INSTANCE.getTypeName() + "_LISTOFINTEGERS", 5L);
+        assertTableContains(SimpleSite.INSTANCE.getSchemaName() + "." + ReferencedCollectionClassConverter.INSTANCE.getTypeName() + "_LISTOFINTEGERS",
                 Expected.column("listofintegers").value("1").and(referencedColumnName).value("99"),
                 Expected.column("listofintegers").value("2").and(referencedColumnName).value("99"),
                 Expected.column("listofintegers").value("3").and(referencedColumnName).value("99"),

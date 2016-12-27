@@ -3,7 +3,7 @@ package net.digitalid.database.interfaces;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.conversion.converter.SelectionResult;
+import net.digitalid.utility.conversion.converter.Decoder;
 
 import net.digitalid.database.exceptions.operation.FailedResourceClosingException;
 import net.digitalid.database.exceptions.operation.FailedSQLValueRecoveryException;
@@ -13,7 +13,7 @@ import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
  * This interface allows to get the values of an SQL result.
  * Advancing the column index is left to the implementation.
  */
-public interface SQLSelectionResult extends AutoCloseable, SelectionResult<FailedSQLValueRecoveryException> {
+public interface SQLDecoder extends AutoCloseable, Decoder<FailedSQLValueRecoveryException> {
     
     /* -------------------------------------------------- Iteration -------------------------------------------------- */
     

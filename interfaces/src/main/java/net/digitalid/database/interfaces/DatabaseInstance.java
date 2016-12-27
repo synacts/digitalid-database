@@ -53,16 +53,16 @@ public interface DatabaseInstance extends AutoCloseable {
     public abstract void execute(@Nonnull String sqlStatement) throws InternalException, FailedNonCommittingOperationException;
     
     @Impure
-    public abstract void execute(@Nonnull SQLValueCollector valueCollector) throws InternalException, FailedNonCommittingOperationException;
+    public abstract void execute(@Nonnull SQLValueCollector encoder) throws InternalException, FailedNonCommittingOperationException;
     
     @Impure
     public abstract @Nonnull SQLValueCollector getValueCollector(@Nonnull FiniteIterable<@Nonnull String> preparedStatements, @Nonnull FreezableArrayList<@Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Integer, @Nonnull Integer>>> orderOfExecution, ReadOnlyList<@Nonnull Integer> columnCountForGroup) throws FailedNonCommittingOperationException;
     
     @Impure
-    public @Nonnull SQLSelectionResult executeSelect(@Nonnull String selectStatement) throws FailedNonCommittingOperationException, InternalException;
+    public @Nonnull SQLDecoder executeSelect(@Nonnull String selectStatement) throws FailedNonCommittingOperationException, InternalException;
     
     @Impure
-    public @Nonnull SQLSelectionResult executeSelect(@Nonnull SQLValueCollector valueCollector) throws FailedNonCommittingOperationException, InternalException;
+    public @Nonnull SQLDecoder executeSelect(@Nonnull SQLValueCollector encoder) throws FailedNonCommittingOperationException, InternalException;
     
 //    /**
 //     * Executes the given create table statement at the given site.

@@ -6,7 +6,7 @@ import java.math.BigInteger;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
-import net.digitalid.utility.conversion.converter.ValueCollector;
+import net.digitalid.utility.conversion.converter.Encoder;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;
 
@@ -17,7 +17,7 @@ import net.digitalid.database.exceptions.operation.FailedSQLValueConversionExcep
  * This interface allows to set the values of an SQL statement.
  * Advancing the parameter index is left to the implementation.
  */
-public interface SQLValueCollector extends AutoCloseable, ValueCollector<FailedSQLValueConversionException> {
+public interface SQLValueCollector extends AutoCloseable, Encoder<FailedSQLValueConversionException> {
     
     /* -------------------------------------------------- Setters -------------------------------------------------- */
     

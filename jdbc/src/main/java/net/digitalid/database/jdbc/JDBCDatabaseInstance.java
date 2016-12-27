@@ -30,7 +30,7 @@ import net.digitalid.database.exceptions.operation.FailedQueryExecutionException
 import net.digitalid.database.exceptions.operation.FailedStatementCreationException;
 import net.digitalid.database.exceptions.operation.FailedUpdateExecutionException;
 import net.digitalid.database.interfaces.DatabaseInstance;
-import net.digitalid.database.interfaces.SQLSelectionResult;
+import net.digitalid.database.interfaces.SQLDecoder;
 
 /**
  * This classes uses the JDBC connection to execute the statements.
@@ -251,10 +251,10 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
     }
     
     @Impure
-    protected int executeUpdate(@Nonnull JDBCValueCollector valueCollector) throws FailedNonCommittingOperationException, InternalException {
+    protected int executeUpdate(@Nonnull JDBCEncoder encoder) throws FailedNonCommittingOperationException, InternalException {
         try {
             int result = 0;
-            for (@Nonnull PreparedStatement preparedStatement : valueCollector.getPreparedStatements()) {
+            for (@Nonnull PreparedStatement preparedStatement : encoder.getPreparedStatements()) {
                 result += preparedStatement.executeUpdate();
             }
             return result;
@@ -264,10 +264,10 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
     }
     
     @Impure
-    protected int executeBatch(@Nonnull JDBCValueCollector valueCollector) throws FailedNonCommittingOperationException, InternalException {
+    protected int executeBatch(@Nonnull JDBCEncoder encoder) throws FailedNonCommittingOperationException, InternalException {
         try {
             int result = 0;
-            for (@Nonnull PreparedStatement preparedStatement : valueCollector.getPreparedStatements()) {
+            for (@Nonnull PreparedStatement preparedStatement : encoder.getPreparedStatements()) {
                 int[] updatedRows = preparedStatement.executeBatch();
                 for (int updatedRowCount : updatedRows) {
                     result += updatedRowCount;
@@ -311,22 +311,22 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
     
     @Impure
     @Override
-    public @Nonnull SQLSelectionResult executeSelect(@Nonnull String selectStatement) throws FailedNonCommittingOperationException, InternalException {
+    public @Nonnull SQLDecoder executeSelect(@Nonnull String selectStatement) throws FailedNonCommittingOperationException, InternalException {
         try {
             final @Nonnull ResultSet resultSet = getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(selectStatement);
-            return JDBCSelectionResult.get(resultSet);
+            return JDBCDecoder.get(resultSet);
         } catch (@Nonnull SQLException exception) {
             throw FailedQueryExecutionException.get(exception);
         }
     }
      
     @Impure
-    public @Nonnull SQLSelectionResult executeSelect(@Nonnull JDBCValueCollector valueCollector) throws FailedNonCommittingOperationException, InternalException {
+    public @Nonnull SQLDecoder executeSelect(@Nonnull JDBCEncoder encoder) throws FailedNonCommittingOperationException, InternalException {
         // TODO: Implement wrapper around ResultSet such that multiple result-sets can be retrieved. Alternatively, make sure that only one prepared statement exists.
         try {
-            final @Nonnull PreparedStatement preparedStatement = valueCollector.getPreparedStatements().getFirst();
+            final @Nonnull PreparedStatement preparedStatement = encoder.getPreparedStatements().getFirst();
             final @Nonnull ResultSet resultSet = preparedStatement.executeQuery();
-            return JDBCSelectionResult.get(resultSet);
+            return JDBCDecoder.get(resultSet);
         } catch (@Nonnull SQLException exception) {
             throw FailedQueryExecutionException.get(exception);
         }

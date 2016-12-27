@@ -36,7 +36,7 @@ public abstract class SimpleSite extends RootClass implements Site<SimpleSite> {
     
     /* -------------------------------------------------- Module -------------------------------------------------- */
     
-    static final @Nonnull SubjectModule<SimpleSite, ?> MODULE = SubjectModuleBuilder.withSubjectConverter(SiteConverterBuilder.withSiteClass(SimpleSite.class).build()).build();
+    static final @Nonnull SubjectModule<SimpleSite, ?> MODULE = SubjectModuleBuilder.withSubjectConverter(SiteConverterBuilder.withType(SimpleSite.class).build()).build();
     
     @Pure
     @Override

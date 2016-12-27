@@ -34,7 +34,7 @@ public abstract class SubjectModule<SITE extends Site<?>, SUBJECT extends Subjec
     @Pure
     @Override
     public @Nonnull @CodeIdentifier @MaxSize(63) String getName() {
-        return getSubjectConverter().getName();
+        return getSubjectConverter().getTypeName();
     }
     
 }

@@ -18,6 +18,7 @@ import javax.crypto.Cipher;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.FreezableArrayList;
+import net.digitalid.utility.conversion.converter.Representation;
 import net.digitalid.utility.functional.failable.FailableProducer;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;
@@ -27,24 +28,19 @@ import net.digitalid.database.exceptions.operation.FailedSQLValueRecoveryExcepti
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
 import net.digitalid.database.exceptions.state.value.CorruptNullValueException;
 import net.digitalid.database.exceptions.state.value.CorruptParameterValueException;
-import net.digitalid.database.interfaces.SQLSelectionResult;
+import net.digitalid.database.interfaces.SQLDecoder;
 
 /**
  * This classes uses the JDBC result set to retrieve the values.
  */
-public class JDBCSelectionResult implements SQLSelectionResult {
+public class JDBCDecoder implements SQLDecoder {
     
     /* -------------------------------------------------- Result Set -------------------------------------------------- */
     
-    /**
-     * Stores the result set used to retrieve the values.
-     */
     private final @Nonnull ResultSet resultSet;
     
     /**
      * Returns the result set used to retrieve the values.
-     * 
-     * @return the result set used to retrieve the values.
      */
     @Pure
     public @Nonnull ResultSet getResultSet() {
@@ -58,33 +54,32 @@ public class JDBCSelectionResult implements SQLSelectionResult {
      * 
      * @param resultSet the result set used to retrieve the values.
      */
-    protected JDBCSelectionResult(@Nonnull ResultSet resultSet) {
+    protected JDBCDecoder(@Nonnull ResultSet resultSet) {
         this.resultSet = resultSet;
     }
     
     /**
      * Returns a new selection result with the given result set.
-     * 
-     * @param resultSet the result set used to retrieve the values.
-     * 
-     * @return a new selection result with the given result set.
      */
     @Pure
-    public static @Nonnull JDBCSelectionResult get(@Nonnull ResultSet resultSet) {
-        return new JDBCSelectionResult(resultSet);
+    public static @Nonnull JDBCDecoder get(@Nonnull ResultSet resultSet) {
+        return new JDBCDecoder(resultSet);
+    }
+    
+    /* -------------------------------------------------- Representation -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull Representation getRepresentation() {
+        return Representation.INTERNAL;
     }
     
     /* -------------------------------------------------- Parameter Index -------------------------------------------------- */
     
-    /**
-     * Stores the index of the next column to get.
-     */
     private int columnIndex = 1;
     
     /**
      * Returns the index of the next column to get.
-     * 
-     * @return the index of the next column to get.
      */
     @Pure
     @Override

@@ -18,6 +18,7 @@ import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.conversion.converter.CustomAnnotation;
 import net.digitalid.utility.conversion.converter.CustomField;
 import net.digitalid.utility.conversion.converter.Declaration;
+import net.digitalid.utility.conversion.converter.Representation;
 import net.digitalid.utility.conversion.converter.types.CustomType;
 import net.digitalid.utility.exceptions.UnexpectedFailureException;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
@@ -218,7 +219,7 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
     
     @Impure
     void declareColumns(Converter<?, ?> converter) {
-        final @Nonnull ImmutableList<@Nonnull CustomField> fields = converter.getFields();
+        final @Nonnull ImmutableList<@Nonnull CustomField> fields = converter.getFields(Representation.INTERNAL);
         for (@Nonnull CustomField field : fields) {
             setField(field);
         }

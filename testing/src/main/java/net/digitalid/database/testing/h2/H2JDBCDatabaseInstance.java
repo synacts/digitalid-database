@@ -14,10 +14,10 @@ import net.digitalid.utility.tuples.Pair;
 
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.operation.FailedOperationException;
-import net.digitalid.database.interfaces.SQLSelectionResult;
+import net.digitalid.database.interfaces.SQLDecoder;
 import net.digitalid.database.interfaces.SQLValueCollector;
 import net.digitalid.database.jdbc.JDBCDatabaseInstance;
-import net.digitalid.database.jdbc.JDBCValueCollector;
+import net.digitalid.database.jdbc.JDBCEncoder;
 
 import org.h2.Driver;
 
@@ -73,19 +73,19 @@ public class H2JDBCDatabaseInstance extends JDBCDatabaseInstance {
     
     @Impure
     @Override
-    public void execute(@Nonnull SQLValueCollector valueCollector) throws InternalException, FailedNonCommittingOperationException {
-        executeBatch((JDBCValueCollector) valueCollector);
+    public void execute(@Nonnull SQLValueCollector encoder) throws InternalException, FailedNonCommittingOperationException {
+        executeBatch((JDBCEncoder) encoder);
     }
     
     @Pure
     @Override
     public @Nonnull SQLValueCollector getValueCollector(@Nonnull FiniteIterable<@Nonnull String> preparedStatements, @Nonnull FreezableArrayList<@Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Integer, @Nonnull Integer>>> orderOfExecution, ReadOnlyList<@Nonnull Integer> columnCountForGroup) throws FailedNonCommittingOperationException {
-        return JDBCValueCollector.get(preparedStatements.map(preparedStatement -> prepare(preparedStatement, false)), orderOfExecution, columnCountForGroup);
+        return JDBCEncoder.get(preparedStatements.map(preparedStatement -> prepare(preparedStatement, false)), orderOfExecution, columnCountForGroup);
     }
     
     @Impure
     @Override
-    public SQLSelectionResult executeSelect(@Nonnull SQLValueCollector valueCollector) throws InternalException, FailedNonCommittingOperationException {
-        return executeSelect((JDBCValueCollector) valueCollector);
+    public SQLDecoder executeSelect(@Nonnull SQLValueCollector encoder) throws InternalException, FailedNonCommittingOperationException {
+        return executeSelect((JDBCEncoder) encoder);
     }
 }

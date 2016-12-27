@@ -10,15 +10,18 @@ import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.conversion.converter.Converter;
 import net.digitalid.utility.conversion.converter.CustomField;
-import net.digitalid.utility.conversion.converter.SelectionResult;
-import net.digitalid.utility.conversion.converter.ValueCollector;
+import net.digitalid.utility.conversion.converter.Decoder;
+import net.digitalid.utility.conversion.converter.Encoder;
+import net.digitalid.utility.conversion.converter.Representation;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
+import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 /**
@@ -29,35 +32,35 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 @GenerateSubclass
 public abstract class SiteConverter<SITE extends Site<?>> implements Converter<SITE, SITE> {
     
-    /**
-     * Returns the class object of the site that is converted.
-     */
     @Pure
-    public abstract @Nonnull Class<SITE> getSiteClass();
+    @Override
+    public @Nonnull @CodeIdentifier @MaxSize(63) String getTypeName() {
+        return getType().getSimpleName();
+    }
     
     @Pure
     @Override
-    public @Nonnull @CodeIdentifier @MaxSize(63) String getName() {
-        return getSiteClass().getSimpleName();
+    public @Nonnull @DomainName String getTypePackage() {
+        return Strings.substringUntilLast(getType().getCanonicalName(), '.');
     }
     
     private static final @Nonnull ImmutableList<@Nonnull CustomField> FIELDS = ImmutableList.withElements();
     
     @Pure
     @Override
-    public @Nonnull ImmutableList<@Nonnull CustomField> getFields() {
+    public @Nonnull ImmutableList<@Nonnull CustomField> getFields(@Nonnull Representation representation) {
         return FIELDS;
     }
     
     @Pure
     @Override
-    public <X extends ExternalException> int convert(@NonCaptured @Unmodified @Nullable SITE site, @NonCaptured @Modified @Nonnull ValueCollector<X> valueCollector) throws X {
+    public <X extends ExternalException> int convert(@NonCaptured @Unmodified @Nullable SITE site, @NonCaptured @Modified @Nonnull Encoder<X> encoder) throws X {
         return 1;
     }
     
     @Pure
     @Override
-    public @Capturable <X extends ExternalException> @Nullable SITE recover(@NonCaptured @Modified @Nonnull SelectionResult<X> selectionResult, @Nonnull SITE site) throws X {
+    public @Capturable <X extends ExternalException> @Nullable SITE recover(@NonCaptured @Modified @Nonnull Decoder<X> decoder, @Nonnull SITE site) throws X {
         return site;
     }
     

@@ -23,7 +23,8 @@ import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.conversion.converter.ValueCollectorImplementation;
+import net.digitalid.utility.conversion.converter.EncoderImplementation;
+import net.digitalid.utility.conversion.converter.Representation;
 import net.digitalid.utility.conversion.converter.types.CustomType;
 import net.digitalid.utility.functional.failable.FailableConsumer;
 import net.digitalid.utility.functional.failable.FailableUnaryFunction;
@@ -44,17 +45,21 @@ import net.digitalid.database.jdbc.preparedstatement.SQLStatementProcessingImple
 /**
  * This classes uses the JDBC prepared statement to collect the values.
  */
-public class JDBCValueCollector extends ValueCollectorImplementation<FailedSQLValueConversionException> implements SQLValueCollector {
+public class JDBCEncoder extends EncoderImplementation<FailedSQLValueConversionException> implements SQLValueCollector {
+    
+    /* -------------------------------------------------- Execution Data -------------------------------------------------- */
     
     /**
      * The execution data object that is used to store the data that will be put into the prepared statement when the collection is ready.
      */
     private final @Nonnull ExecutionData<@Nonnull PreparedStatement> executionData;
     
+    /* -------------------------------------------------- Constructors -------------------------------------------------- */
+    
     /**
      * Creates a new value collector with the given prepared statement.
      */
-    private JDBCValueCollector(@Nonnull FiniteIterable<PreparedStatement> preparedStatements, @Nonnull FreezableArrayList<@Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Integer, @Nonnull Integer>>> orderOfExecution, @Nonnull ReadOnlyList<@Nonnull Integer> columnCountForGroup) {
+    private JDBCEncoder(@Nonnull FiniteIterable<PreparedStatement> preparedStatements, @Nonnull FreezableArrayList<@Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Integer, @Nonnull Integer>>> orderOfExecution, @Nonnull ReadOnlyList<@Nonnull Integer> columnCountForGroup) {
         final @Nonnull FreezableArrayList<@Nonnull SQLStatementProcessingImplementation> rowsForStatementImplementations = FreezableArrayList.withElementsOf(preparedStatements.map(SQLStatementProcessingImplementation::with));
         this.executionData = ExecutionData.with(rowsForStatementImplementations, orderOfExecution, FreezableLinkedList.withElementsOf(columnCountForGroup));
     }
@@ -63,8 +68,16 @@ public class JDBCValueCollector extends ValueCollectorImplementation<FailedSQLVa
      * Returns a new value collector with the given prepared statement.
      */
     @Pure
-    public static @Nonnull JDBCValueCollector get(@Nonnull FiniteIterable<PreparedStatement> preparedStatements, @Nonnull FreezableArrayList<@Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Integer, @Nonnull Integer>>> orderOfExecution, @Nonnull ReadOnlyList<@Nonnull Integer> columnCountForGroup) {
-        return new JDBCValueCollector(preparedStatements, orderOfExecution, columnCountForGroup);
+    public static @Nonnull JDBCEncoder get(@Nonnull FiniteIterable<PreparedStatement> preparedStatements, @Nonnull FreezableArrayList<@Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Integer, @Nonnull Integer>>> orderOfExecution, @Nonnull ReadOnlyList<@Nonnull Integer> columnCountForGroup) {
+        return new JDBCEncoder(preparedStatements, orderOfExecution, columnCountForGroup);
+    }
+    
+    /* -------------------------------------------------- Representation -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull Representation getRepresentation() {
+        return Representation.INTERNAL;
     }
     
     /* -------------------------------------------------- Setters -------------------------------------------------- */
