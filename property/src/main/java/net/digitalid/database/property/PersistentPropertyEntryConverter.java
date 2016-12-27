@@ -4,6 +4,8 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.converter.Converter;
+import net.digitalid.utility.validation.annotations.size.MaxSize;
+import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.property.value.PersistentValuePropertyEntryConverter;
@@ -25,5 +27,13 @@ public abstract class PersistentPropertyEntryConverter<SITE extends Site<?>, SUB
      */
     @Pure
     public abstract @Nonnull PersistentPropertyTable<SITE, SUBJECT, ENTRY> getPropertyTable();
+    
+    /* -------------------------------------------------- Name -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull @CodeIdentifier @MaxSize(63) String getTypeName() {
+        return getPropertyTable().getFullNameWithUnderlines();
+    }
     
 }

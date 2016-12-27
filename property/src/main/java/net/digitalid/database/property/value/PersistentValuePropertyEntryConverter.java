@@ -22,6 +22,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.constraints.PrimaryKey;
@@ -45,6 +46,22 @@ public abstract class PersistentValuePropertyEntryConverter<SITE extends Site<?>
     @Pure
     @Override
     public abstract @Nonnull PersistentValuePropertyTable<SITE, SUBJECT, VALUE, PROVIDED_FOR_VALUE> getPropertyTable();
+    
+    /* -------------------------------------------------- Type -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull Class<? super PersistentValuePropertyEntry<SUBJECT, VALUE>> getType() {
+        return PersistentValuePropertyEntry.class;
+    }
+    
+    /* -------------------------------------------------- Package -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull @DomainName String getTypePackage() {
+        return "net.digitalid.database.property.value";
+    }
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */
     

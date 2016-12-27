@@ -28,7 +28,7 @@ public interface PersistentSetPropertyTable<SITE extends Site<?>, SUBJECT extend
     
     @Pure
     @Override
-    @Derive("PersistentSetPropertyEntryConverterBuilder.<SITE, SUBJECT, VALUE, PROVIDED_FOR_VALUE>withType(PersistentSetPropertyEntry.class).withTypeName(getFullNameWithUnderlines()).withTypePackage(\"net.digitalid.database.property.set\").withPropertyTable(this).build()")
+    @Derive("PersistentSetPropertyEntryConverterBuilder.withPropertyTable(this).build()")
     public @Nonnull PersistentSetPropertyEntryConverter<SITE, SUBJECT, VALUE, PROVIDED_FOR_VALUE> getEntryConverter();
     
     /* -------------------------------------------------- Provided Object Extractor -------------------------------------------------- */
