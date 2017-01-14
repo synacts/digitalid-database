@@ -3,7 +3,7 @@ package net.digitalid.database.interfaces;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.conversion.converter.types.CustomType;
+import net.digitalid.utility.conversion.model.CustomType;
 
 /**
  *

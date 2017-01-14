@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.collections.list.FreezableArrayList;
-import net.digitalid.utility.logging.exceptions.ExternalException;
+import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
 import net.digitalid.database.conversion.testenvironment.iterable.CollectionAndAdditionalFieldClass;
@@ -16,7 +16,7 @@ import net.digitalid.database.conversion.testenvironment.iterable.SimpleCollecti
 import net.digitalid.database.conversion.testenvironment.iterable.SimpleCollectionsClassConverter;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTable;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
-import net.digitalid.database.dialect.ast.identifier.SQLBooleanAlias;
+import net.digitalid.database.dialect.identifier.SQLBooleanAlias;
 import net.digitalid.database.dialect.table.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.subject.site.SimpleSite;

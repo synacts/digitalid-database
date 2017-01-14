@@ -7,21 +7,21 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.conversion.converter.CustomAnnotation;
-import net.digitalid.utility.conversion.converter.CustomField;
-import net.digitalid.utility.conversion.converter.types.CustomType;
+import net.digitalid.utility.conversion.model.CustomAnnotation;
+import net.digitalid.utility.conversion.model.CustomField;
+import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
 
-import net.digitalid.database.dialect.ast.identifier.SQLColumnName;
-import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
-import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnConstraint;
-import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDeclaration;
-import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDefinition;
-import net.digitalid.database.dialect.ast.statement.table.create.SQLCreateTableStatement;
-import net.digitalid.database.dialect.ast.statement.table.create.SQLTypeNode;
+import net.digitalid.database.dialect.identifier.SQLColumnName;
+import net.digitalid.database.dialect.identifier.SQLQualifiedTableName;
+import net.digitalid.database.dialect.statement.table.create.SQLColumnConstraint;
+import net.digitalid.database.dialect.statement.table.create.SQLColumnDeclaration;
+import net.digitalid.database.dialect.statement.table.create.SQLColumnDefinition;
+import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatement;
+import net.digitalid.database.dialect.statement.table.create.SQLTypeNode;
 import net.digitalid.database.enumerations.SQLType;
 
 /**

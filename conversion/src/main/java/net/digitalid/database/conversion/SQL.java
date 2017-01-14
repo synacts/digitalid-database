@@ -11,11 +11,11 @@ import net.digitalid.utility.collections.map.FreezableHashMap;
 import net.digitalid.utility.collections.map.FreezableHashMapBuilder;
 import net.digitalid.utility.collections.set.FreezableLinkedHashSetBuilder;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.conversion.converter.Converter;
-import net.digitalid.utility.conversion.converter.CustomField;
-import net.digitalid.utility.conversion.converter.Representation;
+import net.digitalid.utility.conversion.interfaces.Converter;
+import net.digitalid.utility.conversion.model.CustomField;
+import net.digitalid.utility.conversion.enumerations.Representation;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.exceptions.UnexpectedFailureException;
+import net.digitalid.utility.exceptions.UncheckedException;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Stateless;
@@ -26,17 +26,17 @@ import net.digitalid.database.conversion.columndeclarations.SQLCreateTableColumn
 import net.digitalid.database.conversion.columndeclarations.SQLInsertIntoTableColumnDeclarations;
 import net.digitalid.database.conversion.columndeclarations.SQLOrderedStatements;
 import net.digitalid.database.conversion.columndeclarations.SQLSelectFromTableColumnDeclarations;
-import net.digitalid.database.dialect.ast.SQLDialect;
-import net.digitalid.database.dialect.ast.expression.bool.SQLBooleanExpression;
-import net.digitalid.database.dialect.ast.statement.insert.SQLInsertStatement;
-import net.digitalid.database.dialect.ast.statement.select.SQLSelectStatement;
-import net.digitalid.database.dialect.ast.statement.select.SQLWhereClause;
-import net.digitalid.database.dialect.ast.statement.table.create.SQLCreateTableStatement;
+import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
+import net.digitalid.database.dialect.statement.insert.SQLInsertStatement;
+import net.digitalid.database.dialect.statement.select.SQLSelectStatement;
+import net.digitalid.database.dialect.statement.select.SQLWhereClause;
+import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatement;
 import net.digitalid.database.dialect.table.TableImplementation;
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.interfaces.DatabaseUtility;
 import net.digitalid.database.interfaces.SQLDecoder;
-import net.digitalid.database.interfaces.SQLValueCollector;
+import net.digitalid.database.interfaces.SQLEncoder;
 import net.digitalid.database.interfaces.Tables;
 import net.digitalid.database.subject.site.Site;
 
@@ -80,13 +80,13 @@ public final class SQL {
             }
             Tables.add(table);
             Log.debugging(createTableStatementString);
-            Database.getInstance().execute(createTableStatementString);
+            DatabaseUtility.getInstance().execute(createTableStatementString);
         }
         if (mainTable == null) {
-            Database.rollback();
-            throw UnexpectedFailureException.with("The conversion failed due to a failure in the ordering of tables.");
+            DatabaseUtility.rollback();
+            throw UncheckedException.with("The conversion failed due to a failure in the ordering of tables.");
         }
-        Database.commit();
+        DatabaseUtility.commit();
         return mainTable;
     }
     
@@ -100,12 +100,12 @@ public final class SQL {
     public static <T> void insert(@Nullable T object, @Nonnull Converter<T, ?> converter, @Nonnull Site<?> site) throws DatabaseException {
         final @Nonnull SQLOrderedStatements<@Nonnull SQLInsertStatement, @Nonnull SQLInsertIntoTableColumnDeclarations> orderedInsertStatements = SQLOrderedStatementCache.INSTANCE.getOrderedInsertStatements(converter);
         
-        final @Nonnull SQLValueCollector encoder = Database.getInstance().getValueCollector(orderedInsertStatements.getStatementsOrderedByExecution().map(insertStatement -> 
+        final @Nonnull SQLEncoder encoder = DatabaseUtility.getInstance().getValueCollector(orderedInsertStatements.getStatementsOrderedByExecution().map(insertStatement -> 
                 insertStatement.toPreparedStatement(SQLDialect.getDialect(), site)
                ), orderedInsertStatements.getOrderByColumn(), orderedInsertStatements.getColumnCountForGroup());
         converter.convert(object, encoder);
-        Database.getInstance().execute(encoder);
-        Database.getInstance().commit();
+        DatabaseUtility.getInstance().execute(encoder);
+        DatabaseUtility.getInstance().commit();
     }
     
     /* -------------------------------------------------- Select -------------------------------------------------- */
@@ -128,7 +128,7 @@ public final class SQL {
     
         final @Nonnull String selectIntoTableStatementString = selectStatement.toPreparedStatement(SQLDialect.getDialect(), site);
         Log.debugging(selectIntoTableStatementString);
-        final @Nonnull SQLDecoder decoder = Database.getInstance().executeSelect(selectIntoTableStatementString);
+        final @Nonnull SQLDecoder decoder = DatabaseUtility.getInstance().executeSelect(selectIntoTableStatementString);
         return decoder;
     }
     

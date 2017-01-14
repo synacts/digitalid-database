@@ -28,7 +28,7 @@ import net.digitalid.database.core.interfaces.jdbc.JDBCDatabaseInstance;
 import net.digitalid.database.exceptions.operation.FailedClosingException;
 import net.digitalid.database.exceptions.operation.FailedOperationException;
 import net.digitalid.database.exceptions.operation.FailedUpdateExecutionException;
-import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.interfaces.DatabaseUtility;
 
 /**
  * This class configures a PostgreSQL database.
@@ -214,7 +214,7 @@ public final class PostgresDatabaseInstance extends JDBCDatabaseInstance {
         } catch (@Nonnull SQLException exception) {
             throw FailedUpdateExecutionException.get(exception);
         }
-        Database.commit();
+        DatabaseUtility.commit();
     }
     
     /* -------------------------------------------------- Syntax -------------------------------------------------- */

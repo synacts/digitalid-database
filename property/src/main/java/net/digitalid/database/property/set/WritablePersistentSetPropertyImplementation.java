@@ -27,7 +27,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
-import net.digitalid.database.dialect.ast.identifier.SQLBooleanAlias;
+import net.digitalid.database.dialect.identifier.SQLBooleanAlias;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.subject.Subject;
 import net.digitalid.database.subject.site.Site;

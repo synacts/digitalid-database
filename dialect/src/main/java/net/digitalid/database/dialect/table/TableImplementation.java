@@ -10,19 +10,19 @@ import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.collections.map.FreezableHashMap;
 import net.digitalid.utility.collections.map.FreezableHashMapBuilder;
 import net.digitalid.utility.collections.map.ReadOnlyMap;
-import net.digitalid.utility.conversion.converter.CustomAnnotation;
-import net.digitalid.utility.conversion.converter.types.CustomType;
+import net.digitalid.utility.conversion.model.CustomAnnotation;
+import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.freezable.annotations.Frozen;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
-import net.digitalid.database.dialect.ast.statement.insert.SQLValues;
-import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnConstraint;
-import net.digitalid.database.dialect.ast.statement.table.create.SQLColumnDeclaration;
-import net.digitalid.database.dialect.ast.statement.table.create.SQLCreateTableStatement;
-import net.digitalid.database.dialect.ast.statement.table.create.SQLForeignKeyConstraint;
-import net.digitalid.database.dialect.ast.statement.table.create.SQLPrimaryKeyConstraint;
+import net.digitalid.database.dialect.identifier.table.SQLQualifiedTable;
+import net.digitalid.database.dialect.statement.insert.SQLValues;
+import net.digitalid.database.dialect.statement.table.create.SQLColumnConstraint;
+import net.digitalid.database.dialect.statement.table.create.SQLColumnDeclaration;
+import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatement;
+import net.digitalid.database.dialect.statement.table.create.SQLForeignKeyConstraint;
+import net.digitalid.database.dialect.statement.table.create.SQLPrimaryKeyConstraint;
 import net.digitalid.database.interfaces.SQLKey;
 import net.digitalid.database.interfaces.Table;
 import net.digitalid.database.subject.site.Site;
@@ -38,7 +38,7 @@ public class TableImplementation implements Table {
     /**
      * Stores the name of this table.
      */
-    private final @Nonnull SQLQualifiedTableName name;
+    private final @Nonnull SQLQualifiedTable name;
     
     /* -------------------------------------------------- Primary Keys -------------------------------------------------- */
     
@@ -78,7 +78,7 @@ public class TableImplementation implements Table {
     /**
      * Creates a new table with the given name and declaration.
      */
-    protected TableImplementation(@Nonnull SQLQualifiedTableName name, @Nonnull ReadOnlyList<SQLKey> primaryKeys, @Nonnull ReadOnlyMap<@Nonnull SQLKey, @Nonnull TableImplementation> foreignKeys, @Nonnull ReadOnlyMap<@Nonnull  String, @Nonnull Integer> typesForColumns, @Nonnull ReadOnlyMap<@Nonnull String, @Nonnull Integer> numberOfColumnsForField) {
+    protected TableImplementation(@Nonnull SQLQualifiedTable name, @Nonnull ReadOnlyList<SQLKey> primaryKeys, @Nonnull ReadOnlyMap<@Nonnull SQLKey, @Nonnull TableImplementation> foreignKeys, @Nonnull ReadOnlyMap<@Nonnull  String, @Nonnull Integer> typesForColumns, @Nonnull ReadOnlyMap<@Nonnull String, @Nonnull Integer> numberOfColumnsForField) {
         this.name = name;
         this.primaryKeys = primaryKeys;
         this.foreignKeys = foreignKeys;
@@ -147,7 +147,7 @@ public class TableImplementation implements Table {
      */
     @Pure
     public static @Nonnull TableImplementation get(@Nonnull SQLCreateTableStatement createTableStatement, @Nonnull ReadOnlyMap<@Nonnull String, @Nonnull TableImplementation> preConstructedTables, @Nonnull ReadOnlyMap<@Nonnull String, @Nonnull Integer> numberOfColumnsForField, @Nonnull Site site) {
-        final @Nonnull SQLQualifiedTableName name = createTableStatement.qualifiedTableName;
+        final @Nonnull SQLQualifiedTable name = createTableStatement.qualifiedTableName;
         final @Nonnull ReadOnlyList<@Nonnull SQLKey> primaryKeys = initializePrimaryKeys(createTableStatement);
         final @Nonnull ReadOnlyMap<@Nonnull SQLKey, @Nonnull TableImplementation> foreignKeys = initializeForeignKeys(createTableStatement, preConstructedTables, site);
         @Nonnull ReadOnlyMap<@Nonnull  String, @Nonnull Integer> typesForColumns = initializeTypesForColumns(createTableStatement);

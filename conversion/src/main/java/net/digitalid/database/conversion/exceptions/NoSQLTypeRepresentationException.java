@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.conversion.converter.Converter;
+import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.exceptions.InternalException;
 
 /**

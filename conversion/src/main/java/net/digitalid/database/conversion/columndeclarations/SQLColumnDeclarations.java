@@ -14,13 +14,13 @@ import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.map.FreezableHashMap;
 import net.digitalid.utility.collections.map.FreezableHashMapBuilder;
 import net.digitalid.utility.collections.map.ReadOnlyMap;
-import net.digitalid.utility.conversion.converter.Converter;
-import net.digitalid.utility.conversion.converter.CustomAnnotation;
-import net.digitalid.utility.conversion.converter.CustomField;
-import net.digitalid.utility.conversion.converter.Declaration;
-import net.digitalid.utility.conversion.converter.Representation;
-import net.digitalid.utility.conversion.converter.types.CustomType;
-import net.digitalid.utility.exceptions.UnexpectedFailureException;
+import net.digitalid.utility.conversion.interfaces.Converter;
+import net.digitalid.utility.conversion.model.CustomAnnotation;
+import net.digitalid.utility.conversion.model.CustomField;
+import net.digitalid.utility.conversion.model.Declaration;
+import net.digitalid.utility.conversion.enumerations.Representation;
+import net.digitalid.utility.conversion.model.CustomType;
+import net.digitalid.utility.exceptions.UncheckedException;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.immutable.ImmutableMap;
@@ -31,7 +31,7 @@ import net.digitalid.database.annotations.constraints.ForeignKey;
 import net.digitalid.database.annotations.constraints.PrimaryKey;
 import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.conversion.exceptions.ConformityViolationException;
-import net.digitalid.database.dialect.ast.statement.table.create.SQLTypeNode;
+import net.digitalid.database.dialect.statement.table.create.SQLTypeNode;
 import net.digitalid.database.enumerations.SQLType;
 
 /**
@@ -193,7 +193,7 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
                 return columnOfReferencedTable.get1();
             }
         }
-        throw UnexpectedFailureException.with("Could not find column name in referenced table with the name " + Quotes.inSingle(columnName));
+        throw UncheckedException.with("Could not find column name in referenced table with the name " + Quotes.inSingle(columnName));
     }
     
     /**

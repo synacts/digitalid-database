@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.exceptions.UnexpectedFailureException;
+import net.digitalid.utility.exceptions.UncheckedException;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
@@ -29,14 +29,14 @@ import net.digitalid.database.exceptions.operation.FailedOperationException;
 import net.digitalid.database.exceptions.operation.FailedQueryExecutionException;
 import net.digitalid.database.exceptions.operation.FailedStatementCreationException;
 import net.digitalid.database.exceptions.operation.FailedUpdateExecutionException;
-import net.digitalid.database.interfaces.DatabaseInstance;
+import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.interfaces.SQLDecoder;
 
 /**
  * This classes uses the JDBC connection to execute the statements.
  */
 @Mutable
-public abstract class JDBCDatabaseInstance implements DatabaseInstance {
+public abstract class JDBCDatabaseInstance implements Database {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -279,7 +279,7 @@ public abstract class JDBCDatabaseInstance implements DatabaseInstance {
             throw FailedUpdateExecutionException.get(exception);
         } catch (FailedCommitException exception) {
             // TODO: exception
-            throw UnexpectedFailureException.with(exception);
+            throw UncheckedException.with(exception);
         }
     }
     

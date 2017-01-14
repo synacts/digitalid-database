@@ -23,9 +23,8 @@ import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.list.ReadOnlyList;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.conversion.converter.EncoderImplementation;
-import net.digitalid.utility.conversion.converter.Representation;
-import net.digitalid.utility.conversion.converter.types.CustomType;
+import net.digitalid.utility.conversion.enumerations.Representation;
+import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.functional.failable.FailableConsumer;
 import net.digitalid.utility.functional.failable.FailableUnaryFunction;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
@@ -34,18 +33,16 @@ import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;
 
 import net.digitalid.database.enumerations.SQLType;
-import net.digitalid.database.exceptions.operation.FailedResourceClosingException;
-import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
-import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.interfaces.DatabaseUtility;
 import net.digitalid.database.interfaces.ExecutionData;
-import net.digitalid.database.interfaces.SQLValueCollector;
+import net.digitalid.database.interfaces.SQLEncoder;
 import net.digitalid.database.interfaces.processing.ParameterFunctionData;
 import net.digitalid.database.jdbc.preparedstatement.SQLStatementProcessingImplementation;
 
 /**
  * This classes uses the JDBC prepared statement to collect the values.
  */
-public class JDBCEncoder extends EncoderImplementation<FailedSQLValueConversionException> implements SQLValueCollector {
+public class JDBCEncoder implements SQLEncoder {
     
     /* -------------------------------------------------- Execution Data -------------------------------------------------- */
     
@@ -95,7 +92,7 @@ public class JDBCEncoder extends EncoderImplementation<FailedSQLValueConversionE
     
     @Impure
     @Override
-    public @Nonnull Integer setEmpty() throws FailedSQLValueConversionException {
+    public @Nonnull Integer encodeEmpty() throws FailedSQLValueConversionException {
         executionData.setColumnData(setBooleanInPreparedStatementFunction, true);
         return 1;
     }
@@ -330,7 +327,7 @@ public class JDBCEncoder extends EncoderImplementation<FailedSQLValueConversionE
     @Impure
     @Override
     public @Nonnull Integer setBinaryStream(@Nonnull InputStream stream, int length) throws FailedSQLValueConversionException {
-        Require.that(Database.getInstance().supportsBinaryStreams()).orThrow("The database supports binary streams.");
+        Require.that(DatabaseUtility.getInstance().supportsBinaryStreams()).orThrow("The database supports binary streams.");
     
         executionData.setColumnData(setBinaryStreamInPreparedStatementFunction, stream);
         return 1;

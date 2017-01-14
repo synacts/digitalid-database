@@ -20,9 +20,6 @@
         <module>enumerations</module>
         <module>annotations</module>
         <module>exceptions</module>
-        <module>interfaces</module>
-        <module>jdbc</module>
-<!--        <module>android</module>-->
         <module>storage</module>
         <module>subject</module>
         <module>dialect</module>
@@ -30,6 +27,9 @@
 <!--        <module>sqlite</module>-->
 <!--        <module>postgres</module>-->
         <module>testing</module>
+        <module>interfaces</module>
+        <module>jdbc</module>
+<!--        <module>android</module>-->
         <module>conversion</module>
         <module>auxiliary</module>
         <module>property</module>

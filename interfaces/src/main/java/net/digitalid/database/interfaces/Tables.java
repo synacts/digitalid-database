@@ -8,7 +8,6 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.map.FreezableHashMap;
 import net.digitalid.utility.collections.map.FreezableHashMapBuilder;
 
-
 /**
  *
  */

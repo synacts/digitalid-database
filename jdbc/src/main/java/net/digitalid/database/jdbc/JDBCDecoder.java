@@ -18,7 +18,7 @@ import javax.crypto.Cipher;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.FreezableArrayList;
-import net.digitalid.utility.conversion.converter.Representation;
+import net.digitalid.utility.conversion.enumerations.Representation;
 import net.digitalid.utility.functional.failable.FailableProducer;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;

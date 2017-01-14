@@ -15,7 +15,7 @@ import net.digitalid.utility.tuples.Pair;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.operation.FailedOperationException;
 import net.digitalid.database.interfaces.SQLDecoder;
-import net.digitalid.database.interfaces.SQLValueCollector;
+import net.digitalid.database.interfaces.SQLEncoder;
 import net.digitalid.database.jdbc.JDBCDatabaseInstance;
 import net.digitalid.database.jdbc.JDBCEncoder;
 
@@ -73,19 +73,19 @@ public class H2JDBCDatabaseInstance extends JDBCDatabaseInstance {
     
     @Impure
     @Override
-    public void execute(@Nonnull SQLValueCollector encoder) throws InternalException, FailedNonCommittingOperationException {
+    public void execute(@Nonnull SQLEncoder encoder) throws InternalException, FailedNonCommittingOperationException {
         executeBatch((JDBCEncoder) encoder);
     }
     
     @Pure
     @Override
-    public @Nonnull SQLValueCollector getValueCollector(@Nonnull FiniteIterable<@Nonnull String> preparedStatements, @Nonnull FreezableArrayList<@Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Integer, @Nonnull Integer>>> orderOfExecution, ReadOnlyList<@Nonnull Integer> columnCountForGroup) throws FailedNonCommittingOperationException {
+    public @Nonnull SQLEncoder getValueCollector(@Nonnull FiniteIterable<@Nonnull String> preparedStatements, @Nonnull FreezableArrayList<@Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Integer, @Nonnull Integer>>> orderOfExecution, ReadOnlyList<@Nonnull Integer> columnCountForGroup) throws FailedNonCommittingOperationException {
         return JDBCEncoder.get(preparedStatements.map(preparedStatement -> prepare(preparedStatement, false)), orderOfExecution, columnCountForGroup);
     }
     
     @Impure
     @Override
-    public SQLDecoder executeSelect(@Nonnull SQLValueCollector encoder) throws InternalException, FailedNonCommittingOperationException {
+    public SQLDecoder executeSelect(@Nonnull SQLEncoder encoder) throws InternalException, FailedNonCommittingOperationException {
         return executeSelect((JDBCEncoder) encoder);
     }
 }

@@ -8,15 +8,15 @@ import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.annotations.parameter.Unmodified;
-import net.digitalid.utility.conversion.converter.Converter;
-import net.digitalid.utility.conversion.converter.CustomField;
-import net.digitalid.utility.conversion.converter.Decoder;
-import net.digitalid.utility.conversion.converter.Encoder;
-import net.digitalid.utility.conversion.converter.Representation;
+import net.digitalid.utility.conversion.enumerations.Representation;
+import net.digitalid.utility.conversion.exceptions.ConnectionException;
+import net.digitalid.utility.conversion.interfaces.Converter;
+import net.digitalid.utility.conversion.interfaces.Decoder;
+import net.digitalid.utility.conversion.interfaces.Encoder;
+import net.digitalid.utility.conversion.model.CustomField;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
-import net.digitalid.utility.logging.exceptions.ExternalException;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
@@ -54,13 +54,13 @@ public abstract class SiteConverter<SITE extends Site<?>> implements Converter<S
     
     @Pure
     @Override
-    public <X extends ExternalException> int convert(@NonCaptured @Unmodified @Nullable SITE site, @NonCaptured @Modified @Nonnull Encoder<X> encoder) throws X {
+    public <X extends ConnectionException> int convert(@NonCaptured @Unmodified @Nullable SITE site, @NonCaptured @Modified @Nonnull Encoder<X> encoder) throws X {
         return 1;
     }
     
     @Pure
     @Override
-    public @Capturable <X extends ExternalException> @Nullable SITE recover(@NonCaptured @Modified @Nonnull Decoder<X> decoder, @Nonnull SITE site) throws X {
+    public @Capturable <X extends ConnectionException> @Nullable SITE recover(@NonCaptured @Modified @Nonnull Decoder<X> decoder, @Nonnull SITE site) throws X {
         return site;
     }
     

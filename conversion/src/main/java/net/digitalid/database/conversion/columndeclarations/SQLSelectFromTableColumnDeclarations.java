@@ -5,20 +5,20 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.list.FreezableArrayList;
-import net.digitalid.utility.conversion.converter.CustomAnnotation;
-import net.digitalid.utility.conversion.converter.CustomField;
+import net.digitalid.utility.conversion.model.CustomAnnotation;
+import net.digitalid.utility.conversion.model.CustomField;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
 
-import net.digitalid.database.dialect.ast.identifier.SQLQualifiedColumnName;
-import net.digitalid.database.dialect.ast.identifier.SQLQualifiedTableName;
-import net.digitalid.database.dialect.ast.statement.select.SQLQualifiedTableNameSource;
-import net.digitalid.database.dialect.ast.statement.select.SQLResultColumn;
-import net.digitalid.database.dialect.ast.statement.select.SQLSelectStatement;
-import net.digitalid.database.dialect.ast.statement.select.SQLSource;
-import net.digitalid.database.dialect.ast.statement.select.SQLWhereClause;
-import net.digitalid.database.dialect.ast.statement.table.create.SQLTypeNode;
+import net.digitalid.database.dialect.identifier.SQLQualifiedColumnName;
+import net.digitalid.database.dialect.identifier.SQLQualifiedTableName;
+import net.digitalid.database.dialect.statement.select.SQLQualifiedTableNameSource;
+import net.digitalid.database.dialect.statement.select.SQLResultColumn;
+import net.digitalid.database.dialect.statement.select.SQLSelectStatement;
+import net.digitalid.database.dialect.statement.select.SQLSource;
+import net.digitalid.database.dialect.statement.select.SQLWhereClause;
+import net.digitalid.database.dialect.statement.table.create.SQLTypeNode;
 
 /**
  * Implements column declarations for the retrieval of SQL data. The column declaration is the {@link SQLQualifiedColumnName SQL qualified column name} type.

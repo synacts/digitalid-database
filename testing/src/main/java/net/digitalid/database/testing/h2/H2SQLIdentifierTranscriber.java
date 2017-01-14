@@ -5,9 +5,9 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.exceptions.InternalException;
 
-import net.digitalid.database.dialect.ast.SQLDialect;
-import net.digitalid.database.dialect.ast.Transcriber;
-import net.digitalid.database.dialect.ast.identifier.SQLIdentifier;
+import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.Transcriber;
+import net.digitalid.database.dialect.identifier.SQLIdentifier;
 import net.digitalid.database.subject.site.Site;
 
 /**

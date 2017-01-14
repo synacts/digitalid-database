@@ -1,110 +1,31 @@
 package net.digitalid.database.interfaces;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.annotations.ownership.NonCapturable;
-import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.logging.Log;
-import net.digitalid.utility.validation.annotations.type.Stateless;
+import net.digitalid.utility.collections.list.FreezableArrayList;
+import net.digitalid.utility.collections.list.ReadOnlyList;
+import net.digitalid.utility.functional.iterables.FiniteIterable;
+import net.digitalid.utility.tuples.Pair;
+import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.Committing;
-import net.digitalid.database.exceptions.operation.FailedCommitException;
+import net.digitalid.database.exceptions.DatabaseException;
 
 /**
- * This class provides connections to the database.
+ * This interface allows to execute SQL statements.
  */
-@Stateless
-public final class Database {
+@Mutable
+public interface Database<CREATE_TABLE_ENCODER extends SQLEncoder> extends AutoCloseable {
     
-    /* -------------------------------------------------- Instance -------------------------------------------------- */
-    
-    /**
-     * Stores the database instance.
-     */
-    private static @Nullable DatabaseInstance instance;
+    /* -------------------------------------------------- Binary Stream -------------------------------------------------- */
     
     /**
-     * Returns the database instance.
-     * <p>
-     * <em>Important:</em> Do not store
-     * the instance permanently because
-     * it may change during testing!
-     * 
-     * @return the database instance.
+     * Returns whether binary streams are supported by this database instance.
      */
     @Pure
-    @SuppressWarnings("null")
-    public static @NonCapturable @Nonnull DatabaseInstance getInstance() {
-        Require.that(instance != null).orThrow("The database is initialized.");
-        
-        return instance;
-    }
-    
-    /* -------------------------------------------------- Single-Access -------------------------------------------------- */
-    
-    /**
-     * Stores whether the database is set up for single-access.
-     * In case of single-access, only one process accesses the
-     * database, which allows to keep the objects in memory up
-     * to date with no need to reload them all the time.
-     * (Clients on hosts are run in multi-access mode.)
-     */
-    private static boolean singleAccess;
-    
-    /**
-     * Returns whether the database is set up for single-access.
-     */
-    @Pure
-    public static boolean isSingleAccess() {
-        return singleAccess;
-    }
-    
-    /**
-     * Returns whether the database is set up for multi-access.
-     */
-    @Pure
-    public static boolean isMultiAccess() {
-        return !singleAccess;
-    }
-    
-    /* -------------------------------------------------- Initialization -------------------------------------------------- */
-    
-    /**
-     * Initializes the database with the given instance and dialect.
-     * 
-     * @param instance the instance with which the database is configured.
-     * @param singleAccess whether the database is accessed by a single process.
-     */
-    @Impure
-    public static void initialize(@Nonnull DatabaseInstance instance, boolean singleAccess) {
-        Database.instance = instance;
-        Database.singleAccess = singleAccess;
-        
-        Log.information("The database has been initialized for " + (singleAccess ? "single" : "multi") + "-access.");
-    }
-    
-    /**
-     * Initializes the database with the given instance and dialect.
-     * 
-     * @param instance the instance with which the database is configured.
-     */
-    @Impure
-    public static void initialize(@Nonnull DatabaseInstance instance) {
-        initialize(instance, true);
-    }
-    
-    /**
-     * Returns whether the database has been initialized.
-     * 
-     * @return whether the database has been initialized.
-     */
-    @Pure
-    public static boolean isInitialized() {
-        return instance != null;
-    }
+    public boolean supportsBinaryStreams();
     
     /* -------------------------------------------------- Transactions -------------------------------------------------- */
     
@@ -114,9 +35,7 @@ public final class Database {
      */
     @Impure
     @Committing
-    public static void commit() throws FailedCommitException {
-        getInstance().commit();
-    }
+    public void commit() throws DatabaseException;
     
     /**
      * Rolls back all changes of the current thread since the last commit or rollback.
@@ -124,8 +43,95 @@ public final class Database {
      */
     @Impure
     @Committing
-    public static void rollback() {
-        getInstance().rollback();
-    }
+    public void rollback();
+    
+    /* -------------------------------------------------- Executions -------------------------------------------------- */
+    
+    @Impure
+    public abstract void execute(@Nonnull String sqlStatement) throws DatabaseException;
+    
+    @Impure
+    public abstract void execute(@Nonnull SQLEncoder encoder) throws DatabaseException;
+    
+    @Impure
+    public abstract @Nonnull SQLEncoder getEncoder(@Nonnull FiniteIterable<@Nonnull String> preparedStatements, @Nonnull FreezableArrayList<@Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Integer, @Nonnull Integer>>> orderOfExecution, ReadOnlyList<@Nonnull Integer> columnCountForGroup) throws DatabaseException;
+    
+    @Impure
+    public @Nonnull SQLDecoder executeSelect(@Nonnull String selectStatement) throws DatabaseException;
+    
+    @Impure
+    public @Nonnull SQLDecoder executeSelect(@Nonnull SQLEncoder encoder) throws DatabaseException;
+    
+    /* -------------------------------------------------- Create Table -------------------------------------------------- */
+    
+    @Impure
+    public abstract @Nonnull CREATE_TABLE_ENCODER getEncoder(@Nonnull SQLCreateTableStatement createTableStatement, @Nonnull Site<?> site) throws DatabaseException;
+    
+    /**
+     * Executes the given create table statement at the given site.
+     * 
+     * @param site the site at which the statement is to be executed.
+     * @param createTableStatement the create table statement to execute.
+     */
+    public void createTable(@Nonnull CREATE_TABLE_ENCODER encoder) throws DatabaseException;
+    
+    /* -------------------------------------------------- Drop Table -------------------------------------------------- */
+    
+    /**
+     * Executes the given drop table statement at the given site.
+     * 
+     * @param site the site at which the statement is to be executed.
+     * @param dropTableStatement the drop table statement to execute.
+     */
+    public void execute(@Nonnull Site site, @Nonnull SQLDropTableStatement dropTableStatement) throws FailedNonCommittingOperationException, InternalException;
+    
+    /**
+     * Executes the given insert statement at the given site.
+     * 
+     * @param site the site at which the statement is executed.
+     * @param insertStatement the insert statement to execute.
+     */
+    public void execute(@Nonnull Site site, @Nonnull SQLInsertStatement insertStatement) throws FailedNonCommittingOperationException, InternalException;
+    
+    /**
+     * Executes the given update statement at the given site.
+     * 
+     * @param site the site at which the statement is executed.
+     * @param updateStatement the update statement to execute.
+     * 
+     * @return the number of rows updated by the given statement.
+     */
+    public int execute(@Nonnull Site site, @Nonnull SQLUpdateStatement updateStatement) throws FailedNonCommittingOperationException, InternalException;
+    
+    /**
+     * Executes the given delete statement at the given site.
+     * 
+     * @param site the site at which the statement is executed.
+     * @param deleteStatement the delete statement to execute.
+     * 
+     * @return the number of rows deleted by the given statement.
+     */
+    public int execute(@Nonnull Site site, @Nonnull SQLDeleteStatement deleteStatement) throws FailedNonCommittingOperationException, InternalException;
+    
+    /**
+     * Executes the given select statement at the given site.
+     * 
+     * @param site the site at which the statement is executed.
+     * @param selectStatement the select statement to execute.
+     * 
+     * @return the rows that were selected by the given statement.
+     */
+    public @Nonnull SelectionResult execute(@Nonnull Site site, @Nonnull SQLSelectStatement selectStatement) throws FailedNonCommittingOperationException, InternalException;
+    
+    // TODO: probably remove this.
+    /**
+     * Executes the given insert statement at the given site.
+     * 
+     * @param insertStatement the insert statement to execute.
+     * 
+     * @return the key that was generated by the given statement.
+     */
+    @Impure
+    public long executeAndReturnGeneratedKey(@Nonnull String insertStatement) throws DatabaseException;
     
 }

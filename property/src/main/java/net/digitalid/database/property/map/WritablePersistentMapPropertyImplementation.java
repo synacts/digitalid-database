@@ -21,7 +21,7 @@ import net.digitalid.utility.collections.map.FreezableMap;
 import net.digitalid.utility.collections.map.ReadOnlyMap;
 import net.digitalid.utility.concurrency.exceptions.ReentranceException;
 import net.digitalid.utility.contracts.Validate;
-import net.digitalid.utility.exceptions.UnexpectedValueException;
+import net.digitalid.utility.exceptions.CaseException;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.functional.interfaces.Predicate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
@@ -32,7 +32,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
-import net.digitalid.database.dialect.ast.identifier.SQLBooleanAlias;
+import net.digitalid.database.dialect.identifier.SQLBooleanAlias;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.subject.Subject;
 import net.digitalid.database.subject.site.Site;
@@ -150,7 +150,7 @@ public abstract class WritablePersistentMapPropertyImplementation<SITE extends S
                 // TODO (of course without SQL injection!): SQL.delete(getTable().getEntryConverter(), SQLBooleanAlias.with("key = " + key), getSubject().getSite());
                 final @Nullable VALUE value = getMap().remove(key);
                 if (value != null) { notifyObservers(key, value, false); }
-                else { throw UnexpectedValueException.with("value", value); }
+                else { throw CaseException.with("value", value); }
                 return value;
             } else {
                 return null;

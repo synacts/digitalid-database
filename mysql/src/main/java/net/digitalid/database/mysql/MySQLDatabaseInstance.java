@@ -26,7 +26,7 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.core.interfaces.jdbc.JDBCDatabaseInstance;
 import net.digitalid.database.exceptions.operation.FailedOperationException;
 import net.digitalid.database.exceptions.operation.FailedUpdateExecutionException;
-import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.interfaces.DatabaseUtility;
 
 /**
  * This class configures a MySQL database.
@@ -203,12 +203,12 @@ public final class MySQLDatabaseInstance extends JDBCDatabaseInstance {
     @Override
     @Committing
     public void dropDatabase() throws FailedOperationException {
-        try (@Nonnull Statement statement = Database.createStatement()) {
+        try (@Nonnull Statement statement = DatabaseUtility.createStatement()) {
             statement.executeUpdate("DROP DATABASE IF EXISTS " + database);
         } catch (@Nonnull SQLException exception) {
             throw FailedUpdateExecutionException.get(exception);
         }
-        Database.commit();
+        DatabaseUtility.commit();
     }
     
     /* -------------------------------------------------- Syntax -------------------------------------------------- */

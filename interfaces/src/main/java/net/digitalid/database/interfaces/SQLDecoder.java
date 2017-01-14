@@ -3,17 +3,18 @@ package net.digitalid.database.interfaces;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.conversion.converter.Decoder;
+import net.digitalid.utility.conversion.interfaces.Decoder;
+import net.digitalid.utility.validation.annotations.type.Mutable;
 
-import net.digitalid.database.exceptions.operation.FailedResourceClosingException;
-import net.digitalid.database.exceptions.operation.FailedSQLValueRecoveryException;
-import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
+import net.digitalid.database.exceptions.DatabaseException;
 
 /**
- * This interface allows to get the values of an SQL result.
- * Advancing the column index is left to the implementation.
+ * An SQL decoder decodes values from an SQL result set.
+ * 
+ * @see SQLEncoder
  */
-public interface SQLDecoder extends AutoCloseable, Decoder<FailedSQLValueRecoveryException> {
+@Mutable
+public interface SQLDecoder extends AutoCloseable, Decoder<DatabaseException> {
     
     /* -------------------------------------------------- Iteration -------------------------------------------------- */
     
@@ -23,7 +24,7 @@ public interface SQLDecoder extends AutoCloseable, Decoder<FailedSQLValueRecover
      * @return whether there was another row to which the cursor could be moved.
      */
     @Impure
-    public boolean moveToNextRow() throws FailedSQLValueRecoveryException;
+    public boolean moveToNextRow() throws DatabaseException;
     
     /**
      * Moves the cursor to the first row of the selection result.
@@ -31,7 +32,7 @@ public interface SQLDecoder extends AutoCloseable, Decoder<FailedSQLValueRecover
      * @throws EntryNotFoundException if the selection results contains no rows.
      */
     @Impure
-    public void moveToFirstRow() throws FailedSQLValueRecoveryException;
+    public void moveToFirstRow() throws DatabaseException;
     
     /**
      * Returns the current position of the cursor in the columns.
@@ -56,12 +57,12 @@ public interface SQLDecoder extends AutoCloseable, Decoder<FailedSQLValueRecover
      * Returns whether the last returned column was null.
      */
     @Pure
-    public boolean wasNull() throws FailedSQLValueRecoveryException;
+    public boolean wasNull() throws DatabaseException;
     
     /* -------------------------------------------------- Closing -------------------------------------------------- */
     
     @Impure
     @Override
-    public void close() throws FailedResourceClosingException;
+    public void close() throws DatabaseException;
     
 }

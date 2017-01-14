@@ -24,7 +24,7 @@ import net.digitalid.database.core.interfaces.jdbc.JDBCDatabaseInstance;
 import net.digitalid.database.exceptions.operation.FailedConnectionException;
 import net.digitalid.database.exceptions.operation.FailedKeyGenerationException;
 import net.digitalid.database.exceptions.operation.FailedUpdateExecutionException;
-import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.interfaces.DatabaseUtility;
 
 /**
  * This class configures a SQLite database.
@@ -82,9 +82,9 @@ public final class SQLiteDatabaseInstance extends JDBCDatabaseInstance {
         
         this.name = name;
         if (reset) {
-            Database.lock();
+            DatabaseUtility.lock();
             dropDatabase();
-            Database.unlock();
+            DatabaseUtility.unlock();
         }
         
         // TODO: The following code has to be called by the client (if at all):
@@ -171,7 +171,7 @@ public final class SQLiteDatabaseInstance extends JDBCDatabaseInstance {
     @Locked
     @Override
     public void dropDatabase() {
-        Require.that(Database.isLocked()).orThrow("The database is locked.");
+        Require.that(DatabaseUtility.isLocked()).orThrow("The database is locked.");
         
         new File(Directory.getDataDirectory().getPath() + File.separator + name + ".db").delete();
         new File(Directory.getDataDirectory().getPath() + File.separator + name + ".db-journal").delete();

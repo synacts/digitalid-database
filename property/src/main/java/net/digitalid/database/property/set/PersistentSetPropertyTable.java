@@ -3,7 +3,7 @@ package net.digitalid.database.property.set;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.conversion.converter.Converter;
+import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.functional.interfaces.UnaryFunction;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;

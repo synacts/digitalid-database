@@ -5,12 +5,16 @@ import java.sql.Types;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.circumfixes.Quotes;
-import net.digitalid.utility.conversion.converter.types.CustomType;
+import net.digitalid.utility.conversion.model.CustomType;
+import net.digitalid.utility.exceptions.CaseException;
+import net.digitalid.utility.exceptions.CaseExceptionBuilder;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
 /**
- *
+ * This class enumerates the various types that are supported.
  */
+@Immutable
+@Deprecated // TODO: Do we really want to replicate the type enumeration? A custom type can also be mapped with a map to the corresponding JDBC code.
 public enum SQLType {
     
     /* -------------------------------------------------- Constants -------------------------------------------------- */
@@ -112,9 +116,7 @@ public enum SQLType {
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
-     * Creates a new SQL type with the given code.
-     * 
-     * @param code the JDBC code of this SQL type.
+     * Creates a new SQL type with the given JDBC code and custom type.
      */
     private SQLType(int code, @Nonnull CustomType customType) {
         this.code = code;
@@ -122,31 +124,29 @@ public enum SQLType {
     }
     
     /**
-     * Returns an SQL type for a given Digital ID custom type, or throws an exception
-     * if the type cannot be mapped.
+     * Returns an SQL type for a given Digital ID custom type or throws a {@link CaseException} if the type cannot be mapped.
      */
+    @Pure
     public static @Nonnull SQLType of(@Nonnull CustomType type) {
         for (@Nonnull SQLType sqlType : values()) {
             if (sqlType.customType == type) {
                 return sqlType;
             }
         }
-        // TODO: Replace the thrown exception with an internal exception like UnexpectedValueException and use the $-symbol notation.
-        throw new UnsupportedOperationException("SQL type can only be a primitive type, but Digital ID custom type was " + Quotes.inSingle(type));
+        throw CaseExceptionBuilder.withVariable("type").withValue(type).build();
     }
     
     /**
-     * Returns an SQL type for a given Digital ID custom type, or throws an exception
-     * if the type cannot be mapped.
+     * Returns an SQL type for a given Digital ID custom type, or throws a {@link CaseException} if the type cannot be mapped.
      */
+    @Pure
     public static @Nonnull SQLType of(int code) {
         for (@Nonnull SQLType sqlType : values()) {
             if (sqlType.code == code) {
                 return sqlType;
             }
         }
-        // TODO: Replace the thrown exception with an internal exception like UnexpectedValueException and use the $-symbol notation.
-        throw new UnsupportedOperationException("SQL type does not support the type code " + Quotes.inSingle(code));
+        throw CaseExceptionBuilder.withVariable("code").withValue(code).build();
     }
     
 }
