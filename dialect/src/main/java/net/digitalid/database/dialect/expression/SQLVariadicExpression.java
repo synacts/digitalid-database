@@ -6,7 +6,6 @@ import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
-import net.digitalid.utility.functional.iterators.ReadOnlyIterator;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -49,11 +48,7 @@ public interface SQLVariadicExpression<@Unspecifiable OPERATOR extends SQLVariad
     public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         dialect.unparse(getOperator(), site, string);
         string.append("(");
-        final @Nonnull ReadOnlyIterator<EXPRESSION> iterator = getExpressions().iterator();
-        while (iterator.hasNext()) {
-            dialect.unparse(iterator.next(), site, string);
-            if (iterator.hasNext()) { string.append(", "); }
-        }
+        dialect.unparse(getExpressions(), site, string);
         string.append(")");
     }
     

@@ -11,8 +11,6 @@ import net.digitalid.utility.validation.annotations.elements.NonNullableElements
 import net.digitalid.utility.validation.annotations.size.MinSize;
 
 import net.digitalid.database.dialect.SQLDialect;
-import net.digitalid.database.dialect.Transcriber;
-import net.digitalid.database.dialect.statement.insert.SQLValuesOrStatement;
 import net.digitalid.database.subject.site.Site;
 
 /**

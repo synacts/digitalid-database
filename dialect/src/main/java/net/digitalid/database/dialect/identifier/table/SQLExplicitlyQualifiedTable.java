@@ -1,7 +1,6 @@
-package net.digitalid.database.dialect.statement.delete;
+package net.digitalid.database.dialect.identifier.table;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
@@ -12,38 +11,33 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
-import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
-import net.digitalid.database.dialect.statement.SQLStatement;
+import net.digitalid.database.dialect.identifier.schema.SQLSchemaName;
 import net.digitalid.database.subject.site.Site;
 
 /**
- * An SQL delete statement.
+ * An SQL explicitly qualified table.
  */
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface SQLDeleteStatement extends SQLStatement {
+public interface SQLExplicitlyQualifiedTable extends SQLQualifiedTable {
     
-    /* -------------------------------------------------- Where Clause -------------------------------------------------- */
+    /* -------------------------------------------------- Schema -------------------------------------------------- */
     
     /**
-     * Returns the optional where clause of this delete statement.
+     * Returns the schema of this qualified table.
      */
     @Pure
-    public @Nullable SQLBooleanExpression getWhereClause();
+    public @Nonnull SQLSchemaName getSchema();
     
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     
     @Pure
     @Override
     public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
-        string.append("DELETE FROM ");
+        dialect.unparse(getSchema(), site, string);
+        string.append(".");
         dialect.unparse(getTable(), site, string);
-        final @Nullable SQLBooleanExpression whereClause = getWhereClause();
-        if (whereClause != null) {
-            string.append(" WHERE ");
-            dialect.unparse(whereClause, site, string);
-        }
     }
     
 }

@@ -1,5 +1,7 @@
 package net.digitalid.database.dialect;
 
+import java.util.Iterator;
+
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
@@ -35,6 +37,18 @@ public abstract class SQLDialect {
     @Pure
     public void unparse(@Nonnull SQLNode node, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         node.unparse(this, site, string);
+    }
+    
+    /**
+     * Appends the given nodes separated by commas as SQL in this dialect at the given site to the given string.
+     */
+    @Pure
+    public void unparse(@Nonnull Iterable<? extends SQLNode> nodes, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        final @Nonnull Iterator<? extends SQLNode> iterator = nodes.iterator();
+        while (iterator.hasNext()) {
+            unparse(iterator.next(), site, string);
+            if (iterator.hasNext()) { string.append(", "); }
+        }
     }
     
     /* -------------------------------------------------- Utility -------------------------------------------------- */

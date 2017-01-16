@@ -3,92 +3,54 @@ package net.digitalid.database.dialect.statement.insert;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.circumfixes.Brackets;
-import net.digitalid.utility.collections.list.ReadOnlyList;
-import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.freezable.annotations.Frozen;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
+import net.digitalid.utility.annotations.parameter.Modified;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
-import net.digitalid.database.dialect.SQLNode;
-import net.digitalid.database.dialect.Transcriber;
-import net.digitalid.database.dialect.identifier.SQLColumnName;
-import net.digitalid.database.dialect.identifier.table.SQLQualifiedTable;
+import net.digitalid.database.dialect.identifier.column.SQLColumnName;
+import net.digitalid.database.dialect.statement.SQLStatement;
 import net.digitalid.database.subject.site.Site;
 
 /**
- * An AST node holding information about nodes relevant to the SQL insert statement, such as
- * the table name and the column names, which should eventually be inserted.
+ * An SQL insert statement.
  */
-// TODO: re-integrate the SQLValues node, e.g. by adding a Subclass SQLPreparedInsertStatement that does not have SQLValues.
-public class SQLInsertStatement implements SQLNode<SQLInsertStatement> {
+@Immutable
+@GenerateBuilder
+@GenerateSubclass
+public interface SQLInsertStatement extends SQLStatement {
     
-    /* -------------------------------------------------- Table name -------------------------------------------------- */
-    
-    /**
-     * The qualified table name.
-     */
-    public final @Nonnull SQLQualifiedTable qualifiedTableName;
-    
-    /* -------------------------------------------------- Column Names -------------------------------------------------- */
+    /* -------------------------------------------------- Columns -------------------------------------------------- */
     
     /**
-     * A list of column names.
-     */
-    private final @Nonnull ImmutableList<@Nonnull SQLColumnName<?>> columnNames;
-    
-    /* -------------------------------------------------- Constructor -------------------------------------------------- */
-    
-    /**
-     * Creates a new SQL insert statement node.
-     */
-    private SQLInsertStatement(@Nonnull SQLQualifiedTable qualifiedTableName, @Nonnull @Frozen ReadOnlyList<@Nonnull SQLColumnName<?>> columnNames) {
-        this.qualifiedTableName = qualifiedTableName;
-        this.columnNames = ImmutableList.withElementsOf(columnNames);
-    }
-    
-    /**
-     * Returns an SQL insert statement node.
+     * Returns the columns into which the given values are inserted.
      */
     @Pure
-    public static @Nonnull SQLInsertStatement get(@Nonnull SQLQualifiedTable qualifiedTableName, @Nonnull @NonNullableElements @Frozen ReadOnlyList<SQLColumnName<?>> columnNames) {
-        return new SQLInsertStatement(qualifiedTableName, columnNames);
-    }
+    public @Nonnull ImmutableList<@Nonnull SQLColumnName> getColumns();
+    
+    /* -------------------------------------------------- Values -------------------------------------------------- */
     
     /**
-     * The transcriber that stores a string representation of this SQL node in the string builder.
+     * Returns the values which are inserted into the given columns.
      */
-    private static final @Nonnull Transcriber<SQLInsertStatement> transcriber = new Transcriber<SQLInsertStatement>() {
-        
-        @Override
-        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLInsertStatement node, @Nonnull Site site) throws InternalException {
-            final @Nonnull StringBuilder string = new StringBuilder();
-            string.append("INSERT INTO ");
-            string.append(dialect.transcribe(site, node.qualifiedTableName));
-            string.append(" ");
-            string.append(node.columnNames.map((columnName) -> dialect.transcribe(site, columnName)).join(Brackets.ROUND));
-            string.append(" VALUES ");
-            string.append(node.columnNames.map((columnName) -> '?').join(Brackets.ROUND));
-            return string.toString();
-        }
-        
-    };
+    @Pure
+    public @Nonnull SQLValues getValues();
+    
+    /* -------------------------------------------------- Unparse -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull Transcriber<SQLInsertStatement> getTranscriber() {
-        return transcriber;
-    }
-    
-    /* -------------------------------------------------- to SQL -------------------------------------------------- */
-    
-    /**
-     * Returns a string representation of the prepared statement.
-     */
-    @Pure
-    public String toPreparedStatement(@Nonnull SQLDialect dialect, @Nonnull Site site) throws InternalException {
-        return dialect.transcribe(site, this);
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        string.append("INSERT INTO ");
+        dialect.unparse(getTable(), site, string);
+        string.append(" (");
+        dialect.unparse(getColumns(), site, string);
+        string.append(") ");
+        dialect.unparse(getValues(), site, string);
     }
     
 }

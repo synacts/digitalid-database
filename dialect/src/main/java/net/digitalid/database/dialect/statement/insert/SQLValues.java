@@ -1,99 +1,15 @@
 package net.digitalid.database.dialect.statement.insert;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.utility.annotations.method.Impure;
-import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.annotations.ownership.NonCaptured;
-import net.digitalid.utility.circumfixes.Brackets;
-import net.digitalid.utility.collections.list.FreezableArrayList;
-import net.digitalid.utility.exceptions.InternalException;
-
-import net.digitalid.database.dialect.SQLDialect;
-import net.digitalid.database.dialect.SQLParameterizableNode;
-import net.digitalid.database.dialect.Transcriber;
-import net.digitalid.database.dialect.expression.SQLExpression;
-import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
-import net.digitalid.database.interfaces.SQLEncoder;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.dialect.SQLNode;
+import net.digitalid.database.dialect.statement.select.SQLSelectStatement;
 
 /**
- *
+ * SQL values.
+ * 
+ * @see SQLRows
+ * @see SQLSelectStatement
  */
-public class SQLValues implements SQLParameterizableNode<SQLValues>, SQLValuesOrStatement<SQLValues> {
-   
-    public final @Nonnull FreezableArrayList<@Nonnull SQLExpression<?>> values;
-    
-    private SQLValues() {
-        this.values = FreezableArrayList.withNoElements();
-    }
-    
-    private SQLValues(@Nonnull FreezableArrayList<@Nonnull SQLExpression<?>> values) {
-        this.values = values;
-    }
-    
-    private SQLValues(@Nonnull SQLValues sqlValues) {
-        this(sqlValues.values.clone());
-    }
-    
-    @Pure
-    public static @Nonnull SQLValues get() {
-        return new SQLValues();
-    }
-    
-    @Pure
-    public static @Nonnull SQLValues get(@Nonnull FreezableArrayList<SQLExpression<?>> values) {
-        return new SQLValues(values);
-    }
-    
-    @Pure
-    public static SQLValues clone(SQLValues c) {
-        return new SQLValues(c);
-    }
-    
-    @Pure
-    @Override
-    public void storeValues(@NonCaptured @Nonnull SQLEncoder collector) throws FailedSQLValueConversionException {
-        for (@Nullable SQLExpression sqlExpression : values) {
-            // in the simplest case, the sqlExpression is a literal.
-            sqlExpression.storeValues(collector);
-        }
-    }
-    
-    @Impure
-    public void prependValue(@Nullable SQLExpression value) {
-        values.add(0, value);
-    }
-    
-    @Impure
-    public void addValue(@Nullable SQLExpression value) {
-        values.add(value);
-    }
-    
-    /* -------------------------------------------------- SQL Node -------------------------------------------------- */
-    
-    /**
-     * The transcriber that stores a string representation of this SQL node in the string builder.
-     */
-    private static final @Nonnull Transcriber<SQLValues> transcriber = new Transcriber<SQLValues>() {
-        
-        @Override
-        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLValues node, @Nonnull Site site)  throws InternalException {
-            final @Nonnull StringBuilder string = new StringBuilder();
-            if (node.values.size() > 0) {
-                string.append("VALUES ");
-                string.append(node.values.map(value -> dialect.transcribe(site, value)).join(Brackets.ROUND, ", "));
-            }
-            return string.toString();
-        }
-        
-    };
- 
-    @Pure
-    @Override
-    public @Nonnull Transcriber<SQLValues> getTranscriber() {
-        return transcriber;
-    }
-    
-}
+@Immutable
+public interface SQLValues extends SQLNode {}

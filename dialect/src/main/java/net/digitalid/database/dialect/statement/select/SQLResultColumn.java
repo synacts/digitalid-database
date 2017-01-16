@@ -4,73 +4,54 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
+import net.digitalid.utility.annotations.parameter.Modified;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.SQLNode;
-import net.digitalid.database.dialect.Transcriber;
-import net.digitalid.database.dialect.identifier.SQLQualifiedColumn;
+import net.digitalid.database.dialect.expression.SQLExpression;
+import net.digitalid.database.dialect.identifier.column.SQLColumnAlias;
 import net.digitalid.database.subject.site.Site;
 
 /**
  * This SQL node represents a result column in a select statement.
  */
-public class SQLResultColumn implements SQLNode<SQLResultColumn> {
+@Immutable
+@GenerateBuilder
+@GenerateSubclass
+public interface SQLResultColumn extends SQLNode {
     
-    /* -------------------------------------------------- Final Fields -------------------------------------------------- */
+    /* -------------------------------------------------- Expression -------------------------------------------------- */
     
     /**
      * The qualified column name.
      */
-    public final @Nonnull SQLQualifiedColumn qualifiedColumnName;
+    @Pure
+    public @Nonnull SQLExpression getExpression();
+    
+    /* -------------------------------------------------- Alias -------------------------------------------------- */
     
     /**
      * The alias of the qualified column name.
      */
-    public final @Nullable String alias;
-    
-    /* -------------------------------------------------- Constructor -------------------------------------------------- */
-    
-    /**
-     * Constructs a new result column node with a given qualified column name and an optional alias.
-     */
-    private SQLResultColumn(@Nonnull SQLQualifiedColumn qualifiedColumnName, @Nullable String alias) {
-        this.qualifiedColumnName = qualifiedColumnName;
-        this.alias = alias;
-    }
-    
-    /**
-     * Returns a result column node with a given qualified column name and an optional alias.
-     */
     @Pure
-    public static @Nonnull SQLResultColumn get(@Nonnull SQLQualifiedColumn qualifiedColumnName, @Nullable String alias) {
-        return new SQLResultColumn(qualifiedColumnName, alias);
-    }
+    public @Nullable SQLColumnAlias getAlias();
     
-    /* -------------------------------------------------- Transcriber -------------------------------------------------- */
-    
-    /**
-     * The transcriber that stores a string representation of this SQL node in the string builder.
-     */
-    private static final @Nonnull Transcriber<SQLResultColumn> transcriber = new Transcriber<SQLResultColumn>() {
-    
-        @Override
-        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLResultColumn node, @Nonnull Site site)  throws InternalException {
-            final @Nonnull StringBuilder string = new StringBuilder();
-            string.append(dialect.transcribe(site, node.qualifiedColumnName));
-            if (node.alias != null) {
-                string.append(" AS ");
-                string.append(node.alias);
-            }
-            return string.toString();
-        }
-        
-    };
+    /* -------------------------------------------------- Unparse -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull Transcriber<SQLResultColumn> getTranscriber() {
-        return transcriber;
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        dialect.unparse(getExpression(), site, string);
+        final @Nullable SQLColumnAlias alias = getAlias();
+        if (alias != null) {
+            string.append(" AS ");
+            dialect.unparse(getAlias(), site, string);
+        }
     }
     
 }

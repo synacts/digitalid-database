@@ -12,6 +12,9 @@ import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.expression.SQLExpression;
 import net.digitalid.database.dialect.expression.SQLOperator;
 import net.digitalid.database.dialect.identifier.SQLIdentifier;
+import net.digitalid.database.dialect.statement.SQLStatement;
+import net.digitalid.database.dialect.statement.insert.SQLExpressions;
+import net.digitalid.database.dialect.statement.insert.SQLValues;
 import net.digitalid.database.subject.site.Site;
 
 /**
@@ -21,6 +24,9 @@ import net.digitalid.database.subject.site.Site;
  * @see SQLOperator
  * @see SQLIdentifier
  * @see SQLTable
+ * @see SQLStatement
+ * @see SQLExpressions
+ * @see SQLValues
  */
 @Immutable
 public interface SQLNode extends RootInterface {

@@ -35,7 +35,7 @@ public interface SQLName extends SQLIdentifier {
     public default @Nonnull SQLName prefixedWith(@Nonnull SQLPrefix prefix) {
         Require.that(prefix.getString().length() + getString().length() <= 62).orThrow("The added lengths of the prefix $ and this name $ may be at most 62.", prefix.getString(), getString());
         
-        return SQLNameBuilder.withString(prefix.getString() + "_" + this.getString());
+        return SQLNameBuilder.withString(prefix.getString() + "_" + this.getString()).build();
     }
     
 }
