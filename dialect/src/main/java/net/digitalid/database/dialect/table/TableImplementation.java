@@ -18,11 +18,11 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.dialect.identifier.table.SQLQualifiedTable;
 import net.digitalid.database.dialect.statement.insert.SQLValues;
-import net.digitalid.database.dialect.statement.table.create.SQLColumnConstraint;
+import net.digitalid.database.dialect.statement.table.create.constraints.SQLColumnConstraint;
 import net.digitalid.database.dialect.statement.table.create.SQLColumnDeclaration;
 import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatement;
-import net.digitalid.database.dialect.statement.table.create.SQLForeignKeyConstraint;
-import net.digitalid.database.dialect.statement.table.create.SQLPrimaryKeyConstraint;
+import net.digitalid.database.dialect.statement.table.create.constraints.SQLForeignKeyConstraint;
+import net.digitalid.database.dialect.statement.table.create.constraints.SQLPrimaryKeyConstraint;
 import net.digitalid.database.interfaces.SQLKey;
 import net.digitalid.database.interfaces.Table;
 import net.digitalid.database.subject.site.Site;

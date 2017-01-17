@@ -1,13 +1,6 @@
 package net.digitalid.database.dialect;
 
-import net.digitalid.database.interfaces.DatabaseUtility;
-
 /**
- * Unit testing of the class {@link DatabaseUtility}.
- * 
- * @see MySQLTest
- * @see PostgreSQLTest
- * @see SQLiteTest
  * TODO: Remove this class
  */
 public class DatabaseTest {

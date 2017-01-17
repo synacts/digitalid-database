@@ -17,7 +17,7 @@ import net.digitalid.utility.validation.annotations.math.NonNegative;
 
 import net.digitalid.database.dialect.identifier.SQLColumnName;
 import net.digitalid.database.dialect.identifier.SQLQualifiedTableName;
-import net.digitalid.database.dialect.statement.table.create.SQLColumnConstraint;
+import net.digitalid.database.dialect.statement.table.create.constraints.SQLColumnConstraint;
 import net.digitalid.database.dialect.statement.table.create.SQLColumnDeclaration;
 import net.digitalid.database.dialect.statement.table.create.SQLColumnDefinition;
 import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatement;

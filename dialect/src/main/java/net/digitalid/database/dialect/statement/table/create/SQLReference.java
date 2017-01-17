@@ -1,119 +1,87 @@
 package net.digitalid.database.dialect.statement.table.create;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
+import net.digitalid.utility.annotations.parameter.Modified;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.dialect.table.TableImplementation;
+import net.digitalid.database.annotations.sql.SQLFraction;
+import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.SQLNode;
+import net.digitalid.database.dialect.identifier.column.SQLColumnName;
+import net.digitalid.database.dialect.identifier.table.SQLQualifiedTable;
+import net.digitalid.database.subject.site.Site;
 
 /**
- * This class models single-column foreign key references.
+ * This type models a foreign key reference.
  */
 @Immutable
-public class SQLReference {
+@GenerateBuilder
+@GenerateSubclass
+public interface SQLReference extends SQLNode {
     
     /* -------------------------------------------------- Table -------------------------------------------------- */
     
     /**
-     * Stores the database table whose column is referenced.
-     */
-    private final @Nonnull TableImplementation table;
-    
-    /**
-     * Returns the database table whose column is referenced.
-     * 
-     * @return the database table whose column is referenced.
+     * Returns the table whose columns are referenced.
      */
     @Pure
-    public final @Nonnull TableImplementation getTable() {
-        return table;
-    }
+    public @Nonnull SQLQualifiedTable getTable();
     
-    /* -------------------------------------------------- Column -------------------------------------------------- */
+    /* -------------------------------------------------- Columns -------------------------------------------------- */
     
-//    /**
-//     * Stores the referenced column within the specified table.
-//     */
-//    private final @Nonnull ColumnDeclaration column;
-//    
-//    /**
-//     * Returns the referenced column within the specified table.
-//     * 
-//     * @return the referenced column within the specified table.
-//     */
-//    @Pure
-//    public final @Nonnull ColumnDeclaration getColumn() {
-//        return column;
-//    }
-//    
+    /**
+     * Returns the referenced columns within the given table.
+     */
+    @Pure
+    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<SQLColumnName> getColumns();
+    
     /* -------------------------------------------------- Delete Option -------------------------------------------------- */
     
     /**
-     * Stores the referential action triggered on deletion.
-     */
-    private final @Nonnull SQLReferenceOption deleteOption;
-    
-    /**
      * Returns the referential action triggered on deletion.
-     * 
-     * @return the referential action triggered on deletion.
      */
     @Pure
-    public final @Nonnull SQLReferenceOption getDeleteOption() {
-        return deleteOption;
-    }
+    public @Nullable SQLReferenceOption getDeleteOption();
     
     /* -------------------------------------------------- Update Option -------------------------------------------------- */
     
     /**
-     * Stores the referential action triggered on update.
-     */
-    private final @Nonnull SQLReferenceOption updateOption;
-    
-    /**
      * Returns the referential action triggered on update.
-     * 
-     * @return the referential action triggered on update.
      */
     @Pure
-    public final @Nonnull SQLReferenceOption getUpdateOption() {
-        return updateOption;
+    public @Nullable SQLReferenceOption getUpdateOption();
+    
+    /* -------------------------------------------------- Unparse -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        string.append(" REFERENCES ");
+        dialect.unparse(getTable(), site, string);
+        string.append(" (");
+        dialect.unparse(getColumns(), site, string);
+        string.append(")");
+        
+        final @Nullable SQLReferenceOption deleteOption = getDeleteOption();
+        if (deleteOption != null) {
+            string.append(" ON DELETE ");
+            dialect.unparse(deleteOption, site, string);
+        }
+        
+        final @Nullable SQLReferenceOption updateOption = getUpdateOption();
+        if (updateOption != null) {
+            string.append(" ON UPDATE ");
+            dialect.unparse(updateOption, site, string);
+        }
     }
-    
-    /* -------------------------------------------------- Constructor -------------------------------------------------- */
-    
-    /**
-     * Creates a new column reference with the given parameters.
-     * 
-     * @param table the database table whose column is referenced.
-     * @param deleteOption the referential action triggered on deletion.
-     * @param updateOption the referential action triggered on update.
-     */
-//    protected SQLReference(@Nonnull Table table, @Nonnull ColumnDeclaration column, @Nonnull SQLReferenceOption deleteOption, @Nonnull SQLReferenceOption updateOption) {
-    protected SQLReference(@Nonnull TableImplementation table, @Nonnull SQLReferenceOption deleteOption, @Nonnull SQLReferenceOption updateOption) {
-        this.table = table;
-        this.deleteOption = deleteOption;
-        this.updateOption = updateOption;
-    }
-    
-    /* -------------------------------------------------- Retrieval -------------------------------------------------- */
-    
-    /**
-     * Returns the reference to the table of the given site after creating it first.
-     * 
-     * @param site the site at which the foreign key constraint is declared and used.
-     * 
-     * @return the reference to the table of the given site after creating it first.
-     * 
-     * @ensure return.startsWith("REFERENCES") : "The returned string is a reference.";
-     */
-    // TODO: replace with transcribe.
-//    @Locked
-//    @NonCommitting
-//    public @Nonnull String get(@Nonnull Site site) throws FailedOperationException {
-//        table.create(site);
-//        return "REFERENCES " + table.getName(site) + " (entity, " + getColumn().getName() + ") ON DELETE " + getDeleteOption() + " ON UPDATE " + getUpdateOption();
-//    }
     
 }

@@ -1,9 +1,7 @@
 package net.digitalid.database.dialect;
 
-import net.digitalid.database.interfaces.DatabaseUtility;
-
 /**
- * Unit testing of the {@link DatabaseUtility} with the MySQLConfiguration.
+ * Unit testing of the database with the MySQLConfiguration.
  */
 public final class MySQLTest extends DatabaseTest {
     

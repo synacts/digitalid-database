@@ -1,80 +1,63 @@
 package net.digitalid.database.dialect.statement.table.create;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.circumfixes.Brackets;
-import net.digitalid.utility.collections.list.ReadOnlyList;
-import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
+import net.digitalid.utility.annotations.parameter.Modified;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.size.NonEmpty;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
-import net.digitalid.database.dialect.SQLNode;
-import net.digitalid.database.dialect.Transcriber;
-import net.digitalid.database.dialect.identifier.table.SQLQualifiedTable;
+import net.digitalid.database.dialect.statement.SQLTableStatement;
+import net.digitalid.database.dialect.statement.table.create.constraints.SQLTableConstraint;
 import net.digitalid.database.subject.site.Site;
 
 /**
- * An AST node holding information about nodes relevant to the SQL create table statement, such as
- * the table name and the column declarations.
+ * An SQL create table statement.
  */
-public class SQLCreateTableStatement implements SQLNode<SQLCreateTableStatement> {
+@Immutable
+@GenerateBuilder
+@GenerateSubclass
+public interface SQLCreateTableStatement extends SQLTableStatement {
     
-    /* -------------------------------------------------- Final Fields -------------------------------------------------- */
-    
-    /**
-     * The qualified table name.
-     */
-    public final @Nonnull SQLQualifiedTable qualifiedTableName;
+    /* -------------------------------------------------- Column Declarations -------------------------------------------------- */
     
     /**
-     * The column declarations.
-     */
-    public final @Nonnull ImmutableList<@Nonnull SQLColumnDeclaration> columnDeclarations;
-    
-    /* -------------------------------------------------- Constructor -------------------------------------------------- */
-    
-    /**
-     * Creates a new create table statement node with the given qualified table name and the column declarations.
-     */
-    private SQLCreateTableStatement(@Nonnull SQLQualifiedTable qualifiedTableName, @Nonnull ReadOnlyList<@Nonnull SQLColumnDeclaration> columnDeclarations) {
-        this.qualifiedTableName = qualifiedTableName;
-        this.columnDeclarations = ImmutableList.withElementsOf(columnDeclarations);
-    }
-    
-    /**
-     * Returns a create table statement node with the given qualified table name and the column declarations.
+     * Returns the column declarations.
      */
     @Pure
-    public static @Nonnull SQLCreateTableStatement with(@Nonnull SQLQualifiedTable qualifiedTableName, @Nonnull ReadOnlyList<@Nonnull SQLColumnDeclaration> columnDeclarations) {
-        return new SQLCreateTableStatement(qualifiedTableName, columnDeclarations);
-    }
+    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<SQLColumnDeclaration> getColumnDeclarations();
     
-    /* -------------------------------------------------- SQLNode -------------------------------------------------- */
+    /* -------------------------------------------------- Table Constraints -------------------------------------------------- */
     
     /**
-     * The transcriber that returns a string representation of this SQL node.
+     * Returns the optional table constraints.
      */
-    private static final @Nonnull Transcriber<SQLCreateTableStatement> transcriber = new Transcriber<SQLCreateTableStatement>() {
-        
-        @Override
-        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLCreateTableStatement node, @Nonnull Site site) throws InternalException {
-            StringBuilder string = new StringBuilder();
-            string.append("CREATE TABLE ");
-            string.append(dialect.transcribe(site, node.qualifiedTableName));
-            string.append(" ");
-            if (node.columnDeclarations.size() > 0) {
-                string.append(node.columnDeclarations.map(column -> dialect.transcribe(site, column)).join(Brackets.ROUND));
-            }
-            return string.toString();
-        }
-        
-    };
+    @Pure
+    public @Nullable @NonNullableElements @NonEmpty ImmutableList<SQLTableConstraint> getTableConstraints();
+    
+    /* -------------------------------------------------- Unparse -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull Transcriber<SQLCreateTableStatement> getTranscriber() {
-        return transcriber;
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        string.append("CREATE TABLE IF NOT EXISTS ");
+        dialect.unparse(getTable(), site, string);
+        string.append("(");
+        dialect.unparse(getColumnDeclarations(), site, string);
+        final @Nullable @NonNullableElements @NonEmpty ImmutableList<SQLTableConstraint> tableConstraints = getTableConstraints();
+        if (tableConstraints != null) {
+            string.append(", ");
+            dialect.unparse(tableConstraints, site, string);
+        }
+        string.append(")");
     }
     
 }

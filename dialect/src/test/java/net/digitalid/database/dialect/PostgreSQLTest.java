@@ -1,9 +1,7 @@
 package net.digitalid.database.dialect;
 
-import net.digitalid.database.interfaces.DatabaseUtility;
-
 /**
- * Unit testing of the {@link DatabaseUtility} with the PostgreSQLConfiguration.
+ * Unit testing of the database with the PostgreSQLConfiguration.
  */
 public final class PostgreSQLTest extends DatabaseTest {
     
