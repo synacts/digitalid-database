@@ -1,4 +1,4 @@
-package net.digitalid.database.dialect.statement.insert;
+package net.digitalid.database.dialect.statement.select;
 
 import javax.annotation.Nonnull;
 
@@ -8,49 +8,39 @@ import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.identifier.column.SQLColumnName;
-import net.digitalid.database.dialect.statement.SQLTableStatement;
 import net.digitalid.database.subject.site.Site;
 
 /**
- * An SQL insert statement.
+ * A join constraint using the given columns.
  */
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface SQLInsertStatement extends SQLTableStatement {
+public interface SQLUsingJoinConstraint extends SQLJoinConstraint {
     
     /* -------------------------------------------------- Columns -------------------------------------------------- */
     
     /**
-     * Returns the columns into which the given values are inserted.
+     * Returns the columns of this join constraint.
      */
     @Pure
-    public @Nonnull ImmutableList<@Nonnull SQLColumnName> getColumns();
-    
-    /* -------------------------------------------------- Values -------------------------------------------------- */
-    
-    /**
-     * Returns the values which are inserted into the given columns.
-     */
-    @Pure
-    public @Nonnull SQLValues getValues();
+    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<SQLColumnName> getColumns();
     
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     
     @Pure
     @Override
     public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
-        string.append("INSERT INTO ");
-        dialect.unparse(getTable(), site, string);
-        string.append(" (");
+        string.append(" USING (");
         dialect.unparse(getColumns(), site, string);
-        string.append(") ");
-        dialect.unparse(getValues(), site, string);
+        string.append(")");
     }
     
 }

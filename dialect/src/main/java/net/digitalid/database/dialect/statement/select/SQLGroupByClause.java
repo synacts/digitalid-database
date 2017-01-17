@@ -5,90 +5,55 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
-import net.digitalid.utility.collections.list.ReadOnlyList;
-import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.annotations.parameter.Modified;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
-import net.digitalid.utility.validation.annotations.size.MinSize;
+import net.digitalid.utility.validation.annotations.size.NonEmpty;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
+import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
-import net.digitalid.database.dialect.SQLParameterizableNode;
-import net.digitalid.database.dialect.Transcriber;
+import net.digitalid.database.dialect.SQLNode;
 import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
-import net.digitalid.database.dialect.identifier.SQLQualifiedColumn;
-import net.digitalid.database.exceptions.operation.FailedSQLValueConversionException;
-import net.digitalid.database.interfaces.SQLEncoder;
+import net.digitalid.database.dialect.identifier.column.SQLColumn;
 import net.digitalid.database.subject.site.Site;
 
 /**
  * This SQL node represents a GROUP BY clause for an SQL select statement.
  */
-public class SQLGroupByClause implements SQLParameterizableNode<SQLGroupByClause> {
+@Immutable
+@GenerateBuilder
+@GenerateSubclass
+public interface SQLGroupByClause extends SQLNode {
     
-    /* -------------------------------------------------- Final Fields -------------------------------------------------- */
-    
-    /**
-     * The list of qualifiedColumnNames used in the group clause.
-     */
-    public final @Nonnull @MinSize(1) @NonNullableElements ReadOnlyList<SQLQualifiedColumn> qualifiedColumnNames;
+    /* -------------------------------------------------- Columns -------------------------------------------------- */
     
     /**
-     * The HAVING boolean expression.
-     */
-    public final @Nullable SQLBooleanExpression havingExpression;
-    
-    /* -------------------------------------------------- Constructor -------------------------------------------------- */
-    
-    /**
-     * Constructs a group-by clause node.
-     */
-    private SQLGroupByClause(@Nonnull @MinSize(1) @NonNullableElements ReadOnlyList<SQLQualifiedColumn> qualifiedColumnNames, @Nullable SQLBooleanExpression havingExpression) {
-        this.qualifiedColumnNames = qualifiedColumnNames;
-        this.havingExpression = havingExpression;
-    }
-    
-    /**
-     * Returns a group-by clause node.
+     * Returns the columns used in the group-by clause.
      */
     @Pure
-    public static @Nonnull SQLGroupByClause get(@Nonnull @MinSize(1) @NonNullableElements ReadOnlyList<SQLQualifiedColumn> qualifiedColumnNames, @Nullable SQLBooleanExpression havingExpression) {
-        return new SQLGroupByClause(qualifiedColumnNames, havingExpression);
-    }
+    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<SQLColumn> getColumns();
     
-    /* -------------------------------------------------- SQL Parameterized Node -------------------------------------------------- */
+    /**
+     * Returns the expression used in the having clause.
+     */
+    @Pure
+    public @Nullable SQLBooleanExpression getExpression();
+    
+    /* -------------------------------------------------- Unparse -------------------------------------------------- */
     
     @Pure
-    @Override 
-    public void storeValues(@NonCaptured @Nonnull SQLEncoder collector) throws FailedSQLValueConversionException {
-        if (havingExpression != null) {
-            havingExpression.storeValues(collector);
+    @Override
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        string.append(" GROUP BY ");
+        dialect.unparse(getColumns(), site, string);
+        final @Nullable SQLBooleanExpression expression = getExpression();
+        if (expression != null) {
+            string.append(" HAVING ");
+            dialect.unparse(expression, site, string);
         }
-    }
-    
-    /* -------------------------------------------------- Transcriber -------------------------------------------------- */
-    
-    /**
-     * The transcriber that stores a string representation of this SQL node in the string builder.
-     */
-    private static final @Nonnull Transcriber<SQLGroupByClause> transcriber = new Transcriber<SQLGroupByClause>() {
-    
-        @Override
-        protected String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLGroupByClause node, @Nonnull Site site)  throws InternalException {
-            final @Nonnull StringBuilder string = new StringBuilder();
-            string.append(" GROUP BY ");
-            string.append(node.qualifiedColumnNames.map(columnName -> dialect.transcribe(site, columnName)).join());
-            if (node.havingExpression != null) {
-                string.append(" HAVING ");
-                dialect.transcribe(site, node.havingExpression);
-            }
-            return string.toString();
-        }
-    
-    };
-    
-    @Pure
-    @Override 
-    public @Nonnull Transcriber<SQLGroupByClause> getTranscriber() {
-        return transcriber;
     }
     
 }

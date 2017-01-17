@@ -11,7 +11,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
-import net.digitalid.database.dialect.statement.SQLStatement;
+import net.digitalid.database.dialect.statement.SQLTableStatement;
 import net.digitalid.database.subject.site.Site;
 
 /**
@@ -20,7 +20,7 @@ import net.digitalid.database.subject.site.Site;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface SQLDropTableStatement extends SQLStatement {
+public interface SQLDropTableStatement extends SQLTableStatement {
     
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     

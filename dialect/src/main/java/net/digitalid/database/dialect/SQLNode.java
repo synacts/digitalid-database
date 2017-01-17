@@ -27,6 +27,7 @@ import net.digitalid.database.subject.site.Site;
  * @see SQLStatement
  * @see SQLExpressions
  * @see SQLValues
+ * @see SQLResultColumnOrAllColumns
  */
 @Immutable
 public interface SQLNode extends RootInterface {

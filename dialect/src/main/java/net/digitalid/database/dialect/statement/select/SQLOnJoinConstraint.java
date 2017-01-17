@@ -1,7 +1,6 @@
 package net.digitalid.database.dialect.statement.select;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
@@ -12,45 +11,32 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
-import net.digitalid.database.dialect.expression.SQLExpression;
-import net.digitalid.database.dialect.identifier.column.SQLColumnAlias;
+import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
 import net.digitalid.database.subject.site.Site;
 
 /**
- * This SQL node represents a result column in a select statement.
+ * A join constraint based on the given expression.
  */
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface SQLResultColumn extends SQLResultColumnOrAllColumns {
+public interface SQLOnJoinConstraint extends SQLJoinConstraint {
     
     /* -------------------------------------------------- Expression -------------------------------------------------- */
     
     /**
-     * The qualified column name.
+     * Returns the expression of this join constraint.
      */
     @Pure
-    public @Nonnull SQLExpression getExpression();
-    
-    /* -------------------------------------------------- Alias -------------------------------------------------- */
-    
-    /**
-     * The alias of the qualified column name.
-     */
-    @Pure
-    public @Nullable SQLColumnAlias getAlias();
+    public @Nonnull SQLBooleanExpression getExpression();
     
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     
     @Pure
     @Override
     public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        string.append(" ON ");
         dialect.unparse(getExpression(), site, string);
-        final @Nullable SQLColumnAlias alias = getAlias();
-        if (alias != null) {
-            string.append(" AS ");
-            dialect.unparse(alias, site, string);
-        }
     }
     
 }

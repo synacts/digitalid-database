@@ -34,7 +34,7 @@ public interface SQLBinaryExpression<@Unspecifiable OPERATOR extends SQLBinaryOp
     /* -------------------------------------------------- Left Expression -------------------------------------------------- */
     
     /**
-     * Returns the left child expression of this binary expression.
+     * Returns the left child of this binary expression.
      */
     @Pure
     public @Nonnull EXPRESSION getLeftExpression();
@@ -42,7 +42,7 @@ public interface SQLBinaryExpression<@Unspecifiable OPERATOR extends SQLBinaryOp
     /* -------------------------------------------------- Right Expression -------------------------------------------------- */
     
     /**
-     * Returns the right child expression of this binary expression.
+     * Returns the right child of this binary expression.
      */
     @Pure
     public @Nonnull EXPRESSION getRightExpression();

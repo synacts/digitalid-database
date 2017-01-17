@@ -8,29 +8,39 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.dialect.expression.SQLUnaryOperator;
 
 /**
- * This class enumerates the supported unary number operators.
+ * This class enumerates the supported aggregate operators.
  * 
- * @see SQLUnaryNumberExpression
+ * @see SQLAggregateNumberExpression
  */
 @Immutable
-public enum SQLUnaryNumberOperator implements SQLUnaryOperator {
+public enum SQLAggregateOperator implements SQLUnaryOperator {
     
     /* -------------------------------------------------- Constants -------------------------------------------------- */
     
     /**
-     * This operator returns the rounded value.
+     * This operator returns the average value of all non-null values in the column.
      */
-    ROUND("ROUND"),
+    AVG("AVG"),
     
     /**
-     * This operator returns the negative value.
+     * This operator returns the number of non-null values in the column.
      */
-    NEGATIVE("-"),
+    COUNT("COUNT"),
     
     /**
-     * This operator returns the absolute value.
+     * This operator returns the maximum value in the column.
      */
-    ABSOLUTE("ABS");
+    MAX("MAX"),
+    
+    /**
+     * This operator returns the minimum value in the column.
+     */
+    MIN("MIN"),
+    
+    /**
+     * This operator returns the sum of all values in the column.
+     */
+    SUM("SUM");
     
     /* -------------------------------------------------- Symbol -------------------------------------------------- */
     
@@ -44,7 +54,7 @@ public enum SQLUnaryNumberOperator implements SQLUnaryOperator {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
-    private SQLUnaryNumberOperator(@Nonnull String symbol) {
+    private SQLAggregateOperator(@Nonnull String symbol) {
         this.symbol = symbol;
     }
     

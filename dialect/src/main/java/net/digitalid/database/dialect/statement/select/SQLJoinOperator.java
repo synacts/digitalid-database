@@ -3,47 +3,41 @@ package net.digitalid.database.dialect.statement.select;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.dialect.SQLDialect;
-import net.digitalid.database.dialect.SQLNode;
-import net.digitalid.database.dialect.Transcriber;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.dialect.expression.SQLBinaryOperator;
 
 /**
- * The SQL node represents a join operator.
+ * This class enumerates the supported join operators.
  */
-public enum SQLJoinOperator implements SQLNode<SQLJoinOperator> {
+@Immutable
+public enum SQLJoinOperator implements SQLBinaryOperator {
     
-    /* -------------------------------------------------- Join Operator Choices -------------------------------------------------- */
+    /* -------------------------------------------------- Constants -------------------------------------------------- */
     
-    LEFT,
-    LEFT_OUTER,
-    INNER,
-    CROSS,
-    NATURAL_LEFT,
-    NATURAL_LEFT_OUTER,
-    NATURAL_INNER,
-    NATURAL_CROSS;
+    LEFT("LEFT"),
+    LEFT_OUTER("LEFT OUTER"),
+    INNER("INNER"),
+    CROSS("CROSS"),
+    NATURAL_LEFT("NATURAL LEFT"),
+    NATURAL_LEFT_OUTER("NATURAL LEFT OUTER"),
+    NATURAL_INNER("NATURAL INNER"),
+    NATURAL_CROSS("NATURAL CROSS");
     
-    /* -------------------------------------------------- Transcriber -------------------------------------------------- */
+    /* -------------------------------------------------- Symbol -------------------------------------------------- */
     
-    /**
-     * The transcriber that stores a string representation of this SQL node in the string builder.
-     */
-    private static final @Nonnull Transcriber<SQLJoinOperator> transcriber = new Transcriber<SQLJoinOperator>() {
-        
-        @Override
-        protected @Nonnull String transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLJoinOperator node, @Nonnull Site site)  throws InternalException {
-            return node.name().replaceAll("_", " ");
-        }
-        
-    };
- 
+    private final @Nonnull String symbol;
+    
     @Pure
-    @Override 
-    public @Nonnull Transcriber<SQLJoinOperator> getTranscriber() {
-        return transcriber;
+    @Override
+    public @Nonnull String getSymbol() {
+        return symbol;
+    }
+    
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
+    
+    private SQLJoinOperator(@Nonnull String symbol) {
+        this.symbol = symbol;
     }
     
 }

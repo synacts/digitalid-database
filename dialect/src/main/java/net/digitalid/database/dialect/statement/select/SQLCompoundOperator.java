@@ -5,13 +5,13 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.dialect.expression.SQLOperator;
+import net.digitalid.database.dialect.expression.SQLBinaryOperator;
 
 /**
  * This SQL node represents an SQL compound operator used in an SQL select statement.
  */
 @Immutable
-public enum SQLCompoundOperator implements SQLOperator {
+public enum SQLCompoundOperator implements SQLBinaryOperator {
     
     /**
      * Combines the results of two select statements.
