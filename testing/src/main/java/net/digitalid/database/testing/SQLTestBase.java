@@ -17,7 +17,7 @@ import net.digitalid.utility.testing.RootTest;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
 import net.digitalid.database.dialect.SQLDialect;
-import net.digitalid.database.dialect.table.TableImplementation;
+import net.digitalid.database.interfaces.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.operation.FailedSQLValueRecoveryException;
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;

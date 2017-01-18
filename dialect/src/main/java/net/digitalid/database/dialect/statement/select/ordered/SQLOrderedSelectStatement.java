@@ -41,7 +41,7 @@ public interface SQLOrderedSelectStatement extends SQLSelectStatement {
      * Returns the optional orders of this ordered select statement.
      */
     @Pure
-    public @Nullable @NonNullableElements @NonEmpty ImmutableList<SQLOrderingTerm> getOrders();
+    public @Nullable @NonNullableElements @NonEmpty ImmutableList<? extends SQLOrderingTerm> getOrders();
     
     /* -------------------------------------------------- Limit -------------------------------------------------- */
     
@@ -65,7 +65,7 @@ public interface SQLOrderedSelectStatement extends SQLSelectStatement {
     @Override
     public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         dialect.unparse(getSelectStatement(), site, string);
-        final @Nullable @NonNullableElements @NonEmpty ImmutableList<SQLOrderingTerm> orders = getOrders();
+        final @Nullable @NonNullableElements @NonEmpty ImmutableList<? extends SQLOrderingTerm> orders = getOrders();
         if (orders != null) {
             string.append(" ORDER BY ");
             dialect.unparse(orders, site, string);

@@ -30,7 +30,7 @@ public interface SQLRows extends SQLValues {
      * Returns the rows whose evaluations are to be inserted.
      */
     @Pure
-    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<SQLExpressions> getRows();
+    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<? extends SQLExpressions> getRows();
     
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     

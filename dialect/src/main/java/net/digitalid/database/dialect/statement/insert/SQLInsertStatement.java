@@ -33,7 +33,7 @@ public interface SQLInsertStatement extends SQLTableStatement {
      * Returns the columns into which the given values are inserted.
      */
     @Pure
-    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<SQLColumnName> getColumns();
+    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<? extends SQLColumnName> getColumns();
     
     /* -------------------------------------------------- Values -------------------------------------------------- */
     

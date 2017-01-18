@@ -32,7 +32,7 @@ import net.digitalid.database.dialect.statement.insert.SQLInsertStatement;
 import net.digitalid.database.dialect.statement.select.SQLSelectStatement;
 import net.digitalid.database.dialect.statement.select.SQLWhereClause;
 import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatement;
-import net.digitalid.database.dialect.table.TableImplementation;
+import net.digitalid.database.interfaces.TableImplementation;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.DatabaseUtility;
 import net.digitalid.database.interfaces.SQLDecoder;

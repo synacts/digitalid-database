@@ -17,7 +17,7 @@ import net.digitalid.database.conversion.testenvironment.iterable.SimpleCollecti
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTable;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
 import net.digitalid.database.dialect.identifier.SQLBooleanAlias;
-import net.digitalid.database.dialect.table.TableImplementation;
+import net.digitalid.database.interfaces.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.subject.site.SimpleSite;
 import net.digitalid.database.testing.SQLTestBase;

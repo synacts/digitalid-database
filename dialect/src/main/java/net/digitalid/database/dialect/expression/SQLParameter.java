@@ -22,12 +22,27 @@ import net.digitalid.database.subject.site.Site;
 @GenerateSubclass
 public interface SQLParameter extends SQLBooleanExpression, SQLNumberExpression, SQLStringExpression {
     
-    /* -------------------------------------------------- Instance -------------------------------------------------- */
+    /* -------------------------------------------------- Instances -------------------------------------------------- */
     
     /**
      * Stores an instance of the surrounding class.
      */
     public static final @Nonnull SQLParameter INSTANCE = new SQLParameterSubclass();
+    
+    /**
+     * Stores an instance of the surrounding class as a boolean expression.
+     */
+    public static final @Nonnull SQLBooleanExpression BOOLEAN = INSTANCE;
+    
+    /**
+     * Stores an instance of the surrounding class as a number expression.
+     */
+    public static final @Nonnull SQLNumberExpression NUMBER = INSTANCE;
+    
+    /**
+     * Stores an instance of the surrounding class as a string expression.
+     */
+    public static final @Nonnull SQLStringExpression STRING = INSTANCE;
     
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     

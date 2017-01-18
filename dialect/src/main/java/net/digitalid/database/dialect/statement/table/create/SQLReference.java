@@ -42,7 +42,7 @@ public interface SQLReference extends SQLNode {
      * Returns the referenced columns within the given table.
      */
     @Pure
-    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<SQLColumnName> getColumns();
+    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<? extends SQLColumnName> getColumns();
     
     /* -------------------------------------------------- Delete Option -------------------------------------------------- */
     

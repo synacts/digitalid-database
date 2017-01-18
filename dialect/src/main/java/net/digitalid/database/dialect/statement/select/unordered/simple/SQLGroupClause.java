@@ -21,12 +21,12 @@ import net.digitalid.database.dialect.identifier.column.SQLColumn;
 import net.digitalid.database.subject.site.Site;
 
 /**
- * This SQL node represents a GROUP BY clause for an SQL select statement.
+ * This SQL node represents a group clause for an SQL select statement.
  */
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface SQLGroupByClause extends SQLNode {
+public interface SQLGroupClause extends SQLNode {
     
     /* -------------------------------------------------- Columns -------------------------------------------------- */
     
@@ -34,7 +34,7 @@ public interface SQLGroupByClause extends SQLNode {
      * Returns the columns used in the group-by clause.
      */
     @Pure
-    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<SQLColumn> getColumns();
+    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<? extends SQLColumn> getColumns();
     
     /**
      * Returns the expression used in the having clause.

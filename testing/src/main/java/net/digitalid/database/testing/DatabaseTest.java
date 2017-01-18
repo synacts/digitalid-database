@@ -1,4 +1,4 @@
-package net.digitalid.database.dialect;
+package net.digitalid.database.testing;
 
 /**
  * TODO: Remove this class

@@ -32,7 +32,7 @@ public interface SQLExpressions extends SQLNode {
      * Returns the expressions whose evaluations are to be inserted.
      */
     @Pure
-    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<SQLExpression> getExpressions();
+    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<? extends SQLExpression> getExpressions();
     
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     

@@ -19,7 +19,7 @@ import net.digitalid.database.conversion.testenvironment.referenced.Entity;
 import net.digitalid.database.conversion.testenvironment.referenced.EntityConverter;
 import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColumnTableConverter;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
-import net.digitalid.database.dialect.table.TableImplementation;
+import net.digitalid.database.interfaces.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.subject.site.SimpleSite;
 import net.digitalid.database.testing.SQLTestBase;

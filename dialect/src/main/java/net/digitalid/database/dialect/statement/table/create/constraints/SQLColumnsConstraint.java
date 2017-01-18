@@ -23,6 +23,6 @@ public interface SQLColumnsConstraint extends SQLTableConstraint {
     /* -------------------------------------------------- Columns -------------------------------------------------- */
     
     @Pure
-    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<SQLColumnName> getColumns();
+    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<? extends SQLColumnName> getColumns();
     
 }

@@ -36,7 +36,7 @@ public interface SQLSimpleSelectStatement extends SQLUnorderedSelectStatement {
      * Returns whether the selected rows should be distinct.
      */
     @Pure
-    @Default("true")
+    @Default("false")
     public boolean isDistinct();
     
     /* -------------------------------------------------- Columns -------------------------------------------------- */
@@ -45,7 +45,7 @@ public interface SQLSimpleSelectStatement extends SQLUnorderedSelectStatement {
      * Returns the result columns, which are queried.
      */
     @Pure
-    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<SQLResultColumnOrAllColumns> getColumns();
+    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<? extends SQLResultColumnOrAllColumns> getColumns();
     
     /* -------------------------------------------------- Sources -------------------------------------------------- */
     
@@ -53,7 +53,7 @@ public interface SQLSimpleSelectStatement extends SQLUnorderedSelectStatement {
      * Returns the sources from which the columns are retrieved.
      */
     @Pure
-    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<SQLSource<?>> getSources();
+    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<? extends SQLSource<?>> getSources();
     
     /* -------------------------------------------------- Where Clause -------------------------------------------------- */
     
@@ -69,7 +69,7 @@ public interface SQLSimpleSelectStatement extends SQLUnorderedSelectStatement {
      * Returns an optional group clause.
      */
     @Pure
-    public @Nullable SQLGroupByClause getGroupClause();
+    public @Nullable SQLGroupClause getGroupClause();
     
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     
@@ -88,7 +88,7 @@ public interface SQLSimpleSelectStatement extends SQLUnorderedSelectStatement {
             dialect.unparse(whereClause, site, string);
         }
         
-        final @Nullable SQLGroupByClause groupClause = getGroupClause();
+        final @Nullable SQLGroupClause groupClause = getGroupClause();
         if (groupClause != null) { dialect.unparse(groupClause, site, string); }
     }
     

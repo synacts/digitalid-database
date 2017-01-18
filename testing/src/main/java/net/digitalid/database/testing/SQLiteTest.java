@@ -1,4 +1,4 @@
-package net.digitalid.database.dialect;
+package net.digitalid.database.testing;
 
 /**
  * Unit testing of the database with the SQLiteConfiguration.

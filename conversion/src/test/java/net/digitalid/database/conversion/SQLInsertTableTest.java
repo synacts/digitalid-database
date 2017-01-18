@@ -32,7 +32,7 @@ import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColu
 import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColumnTableConverter;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTable;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
-import net.digitalid.database.dialect.table.TableImplementation;
+import net.digitalid.database.interfaces.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
 import net.digitalid.database.exceptions.operation.FailedUpdateExecutionException;
 import net.digitalid.database.exceptions.state.row.EntryNotFoundException;

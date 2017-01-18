@@ -31,7 +31,7 @@ public interface SQLUsingJoinConstraint extends SQLJoinConstraint {
      * Returns the columns of this join constraint.
      */
     @Pure
-    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<SQLColumnName> getColumns();
+    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<? extends SQLColumnName> getColumns();
     
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     

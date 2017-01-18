@@ -33,7 +33,7 @@ public interface SQLUpdateStatement extends SQLTableStatement {
      * Returns the assignments of this update statement.
      */
     @Pure
-    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<SQLAssignment> getAssignments();
+    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<? extends SQLAssignment> getAssignments();
     
     /* -------------------------------------------------- Where Clause -------------------------------------------------- */
     

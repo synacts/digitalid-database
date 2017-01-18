@@ -33,7 +33,7 @@ public interface SQLCreateTableStatement extends SQLTableStatement {
      * Returns the column declarations.
      */
     @Pure
-    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<SQLColumnDeclaration> getColumnDeclarations();
+    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<? extends SQLColumnDeclaration> getColumnDeclarations();
     
     /* -------------------------------------------------- Table Constraints -------------------------------------------------- */
     
@@ -41,7 +41,7 @@ public interface SQLCreateTableStatement extends SQLTableStatement {
      * Returns the optional table constraints.
      */
     @Pure
-    public @Nullable @NonNullableElements @NonEmpty ImmutableList<SQLTableConstraint> getTableConstraints();
+    public @Nullable @NonNullableElements @NonEmpty ImmutableList<? extends SQLTableConstraint> getTableConstraints();
     
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     
@@ -52,7 +52,7 @@ public interface SQLCreateTableStatement extends SQLTableStatement {
         dialect.unparse(getTable(), site, string);
         string.append("(");
         dialect.unparse(getColumnDeclarations(), site, string);
-        final @Nullable @NonNullableElements @NonEmpty ImmutableList<SQLTableConstraint> tableConstraints = getTableConstraints();
+        final @Nullable @NonNullableElements @NonEmpty ImmutableList<? extends SQLTableConstraint> tableConstraints = getTableConstraints();
         if (tableConstraints != null) {
             string.append(", ");
             dialect.unparse(tableConstraints, site, string);

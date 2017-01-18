@@ -39,7 +39,7 @@ public interface SQLVariadicExpression<@Unspecifiable OPERATOR extends SQLVariad
      * Returns the child expressions of this variadic expression.
      */
     @Pure
-    public @Nonnull @NonNullableElements ImmutableList<EXPRESSION> getExpressions();
+    public @Nonnull @NonNullableElements ImmutableList<? extends EXPRESSION> getExpressions();
     
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     
