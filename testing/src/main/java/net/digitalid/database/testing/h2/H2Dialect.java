@@ -3,44 +3,41 @@ package net.digitalid.database.testing.h2;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collections.map.FreezableHashMap;
-import net.digitalid.utility.collections.map.FreezableHashMapBuilder;
-import net.digitalid.utility.exceptions.InternalException;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.annotations.ownership.NonCaptured;
+import net.digitalid.utility.annotations.parameter.Modified;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.initialization.annotations.Initialize;
+import net.digitalid.utility.validation.annotations.type.Stateless;
 
+import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.SQLNode;
-import net.digitalid.database.dialect.Transcriber;
-import net.digitalid.database.dialect.expression.number.SQLNumberReference;
-import net.digitalid.database.dialect.identifier.SQLAlias;
-import net.digitalid.database.dialect.identifier.SQLBooleanAlias;
-import net.digitalid.database.dialect.identifier.SQLColumnName;
 import net.digitalid.database.dialect.identifier.SQLIdentifier;
-import net.digitalid.database.dialect.identifier.SQLQualifiedColumn;
-import net.digitalid.database.dialect.identifier.table.SQLQualifiedTable;
 import net.digitalid.database.subject.site.Site;
 
+@Stateless
 public class H2Dialect extends SQLDialect {
     
-    private final @Nonnull FreezableHashMap<@Nonnull Class<?>, @Nonnull Transcriber<?>> transcribers = FreezableHashMapBuilder.build();
-    
-    public H2Dialect() {
-        transcribers.put(SQLIdentifier.class, new H2SQLIdentifierTranscriber<>(SQLIdentifier.class));
-        transcribers.put(SQLQualifiedColumn.class, new H2SQLIdentifierTranscriber<>(SQLQualifiedColumn.class));
-        transcribers.put(SQLColumnName.class, new H2SQLIdentifierTranscriber<>(SQLColumnName.class));
-        transcribers.put(SQLAlias.class, new H2SQLIdentifierTranscriber<>(SQLAlias.class));
-        transcribers.put(SQLBooleanAlias.class, new H2SQLIdentifierTranscriber<>(SQLBooleanAlias.class));
-        transcribers.put(SQLNumberReference.class, new H2SQLIdentifierTranscriber<>(SQLNumberReference.class));
-    
-        transcribers.put(SQLQualifiedTable.class, new H2SQLTablenameTranscriber());
+    /**
+     * Initializes the dialect.
+     */
+    @PureWithSideEffects
+    @Initialize(target = SQLDialect.class)
+    public static void initializeDialect() {
+        SQLDialect.instance.set(new H2Dialect());
     }
     
     @Pure
     @Override
-    public @Nonnull String transcribe(@Nonnull Site site, @Nonnull SQLNode<?> node) throws InternalException {
-        if (transcribers.containsKey(node.getClass())) {
-            return transcribers.get(node.getClass()).transcribeNode(this, node, site);
+    @TODO(task = "Steffi thinks that identifiers have to be in upper case. According to http://www.h2database.com/html/grammar.html#quoted_name, however, the default unparsing seems fine.", date = "2017-01-18", author = Author.KASPAR_ETTER)
+    public void unparse(@Nonnull SQLNode node, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        if (node instanceof SQLIdentifier) {
+            final @Nonnull SQLIdentifier identifier = (SQLIdentifier) node;
+            string.append(identifier.getString().toUpperCase());
         } else {
-            return super.transcribe(site, node);
+            super.unparse(node, site, string);
         }
     }
     

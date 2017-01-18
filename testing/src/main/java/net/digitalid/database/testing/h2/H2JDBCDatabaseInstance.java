@@ -12,8 +12,6 @@ import net.digitalid.utility.exceptions.InternalException;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.tuples.Pair;
 
-import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
-import net.digitalid.database.exceptions.operation.FailedOperationException;
 import net.digitalid.database.interfaces.SQLDecoder;
 import net.digitalid.database.interfaces.SQLEncoder;
 import net.digitalid.database.jdbc.JDBCDatabaseInstance;

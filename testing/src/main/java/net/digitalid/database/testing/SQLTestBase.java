@@ -12,21 +12,17 @@ import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collections.set.FreezableHashSetBuilder;
 import net.digitalid.utility.conversion.interfaces.Converter;
-import net.digitalid.utility.exceptions.CaseException;
+import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.testing.RootTest;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
-import net.digitalid.database.dialect.SQLDialect;
-import net.digitalid.database.interfaces.TableImplementation;
-import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
-import net.digitalid.database.exceptions.operation.FailedSQLValueRecoveryException;
-import net.digitalid.database.exceptions.state.row.EntryNotFoundException;
-import net.digitalid.database.interfaces.DatabaseUtility;
+import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.interfaces.DatabaseUtility;
 import net.digitalid.database.interfaces.SQLDecoder;
+import net.digitalid.database.interfaces.TableImplementation;
 import net.digitalid.database.subject.site.SimpleSite;
 import net.digitalid.database.subject.site.Site;
-import net.digitalid.database.testing.h2.H2Dialect;
 import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
 
 import org.h2.tools.Server;
@@ -58,7 +54,6 @@ public class SQLTestBase extends RootTest {
     @BeforeClass
     public static void setUpSQL() throws Exception {
         if (!initialized) {
-            SQLDialect.dialect.set(new H2Dialect());
             DatabaseUtility.initialize(H2JDBCDatabaseInstance.get("jdbc:h2:" + (runInMemory ? "" : "tcp://localhost:9092/") + "mem:test;" + (runInMemory ? "" : "DB_CLOSE_DELAY=-1;") + "INIT=CREATE SCHEMA IF NOT EXISTS " + SimpleSite.INSTANCE.getSchemaName() + ";mode=MySQL;"));
             server = Server.createTcpServer();
             initialized = true;
@@ -69,26 +64,26 @@ public class SQLTestBase extends RootTest {
     /* -------------------------------------------------- Drop Table -------------------------------------------------- */
     
     @Impure
-    public static void dropTable(@Nonnull String tableName, @Nonnull Site site) throws FailedNonCommittingOperationException {
+    public static void dropTable(@Nonnull String tableName, @Nonnull Site site) throws DatabaseException {
         Database instance = DatabaseUtility.getInstance();
         instance.execute("DROP TABLE " + site.getSchemaName() + "." + tableName.toLowerCase());
     }
     
     @Impure
-    public static void dropTable(@Nonnull Converter<?, ?> converter, @Nonnull Site site) throws FailedNonCommittingOperationException {
+    public static void dropTable(@Nonnull Converter<?, ?> converter, @Nonnull Site site) throws DatabaseException {
         dropTable(converter.getTypeName(), site);
     }
     
     /* -------------------------------------------------- Delete -------------------------------------------------- */
     
     @Impure
-    public static void deleteFromTable(@Nonnull String tableName, @Nonnull Site site) throws FailedNonCommittingOperationException {
+    public static void deleteFromTable(@Nonnull String tableName, @Nonnull Site site) throws DatabaseException {
         Database instance = DatabaseUtility.getInstance();
         instance.execute("DELETE FROM " + site.getSchemaName() + "." + tableName.toLowerCase());
     }
     
     @Impure
-    public static void deleteFromTable(@Nonnull Converter<?, ?> converter, @Nonnull Site site) throws FailedNonCommittingOperationException {
+    public static void deleteFromTable(@Nonnull Converter<?, ?> converter, @Nonnull Site site) throws DatabaseException {
         deleteFromTable(converter.getTypeName(), site);
     }
     
@@ -110,16 +105,16 @@ public class SQLTestBase extends RootTest {
         instance.execute("CREATE TABLE IF NOT EXISTS blubb");
         SQLDecoder tableExistsQuery = instance.executeSelect("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'BLUBB'");
         tableExistsQuery.moveToFirstRow();
-        Assert.assertSame(1, tableExistsQuery.getInteger32());
+        Assert.assertSame(1, tableExistsQuery.decodeInteger32());
     }
     
     @Pure
-    protected void assertTableExists(@Nonnull String tableName, @Nonnull String schema) throws EntryNotFoundException, FailedNonCommittingOperationException, FailedSQLValueRecoveryException {
+    protected void assertTableExists(@Nonnull String tableName, @Nonnull String schema) throws EntryNotFoundException, DatabaseException, FailedSQLValueRecoveryException {
         final @Nonnull String query = "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = '" + tableName.toLowerCase() + "' and table_schema = '" + schema.toLowerCase() + "'";
         Database instance = DatabaseUtility.getInstance();
         SQLDecoder tableExistsQuery = instance.executeSelect(query);
         tableExistsQuery.moveToFirstRow();
-        Assert.assertSame("Table does not exist (" + query + ")", 1, tableExistsQuery.getInteger32());
+        Assert.assertSame("Table does not exist (" + query + ")", 1, tableExistsQuery.decodeInteger32());
     }
     
     protected enum UpdateAction {
@@ -139,7 +134,7 @@ public class SQLTestBase extends RootTest {
                     return action;
                 }
             }
-            throw CaseException.with("UpdateAction", i);
+            throw CaseExceptionBuilder.withVariable("UpdateAction").withValue(i).build();
         }
     }
     
@@ -160,12 +155,12 @@ public class SQLTestBase extends RootTest {
                     return action;
                 }
             }
-            throw CaseException.with("DeleteAction", i);
+            throw CaseExceptionBuilder.withVariable("DeleteAction").withValue(i).build();
         }
     }
     
     @Pure
-    protected void assertTableReferences(@Nonnull String tableName, @Nonnull String schema, @Nonnull String column, @Nonnull String referencedTable, @Nonnull String referencedColumn, @Nonnull UpdateAction updateAction, @Nonnull DeleteAction deleteAction) throws FailedNonCommittingOperationException, EntryNotFoundException, FailedSQLValueRecoveryException {
+    protected void assertTableReferences(@Nonnull String tableName, @Nonnull String schema, @Nonnull String column, @Nonnull String referencedTable, @Nonnull String referencedColumn, @Nonnull UpdateAction updateAction, @Nonnull DeleteAction deleteAction) throws DatabaseException, EntryNotFoundException, FailedSQLValueRecoveryException {
         final @Nonnull String query = "SELECT PKTABLE_NAME, PKCOLUMN_NAME, FKCOLUMN_NAME, UPDATE_RULE, DELETE_RULE FROM INFORMATION_SCHEMA.CROSS_REFERENCES WHERE FKTABLE_SCHEMA = '" + schema.toUpperCase() + "' AND FKTABLE_NAME = '" + tableName.toUpperCase() + "'";
         final @Nonnull Database instance = DatabaseUtility.getInstance();
         final @Nonnull SQLDecoder tableReferencesResult = instance.executeSelect(query);
@@ -174,8 +169,8 @@ public class SQLTestBase extends RootTest {
         final @Nullable String pkTableName = tableReferencesResult.getString();
         final @Nullable String pkColumnName = tableReferencesResult.getString();
         final @Nullable String fkColumnName = tableReferencesResult.getString();
-        final int updateRule = tableReferencesResult.getInteger32();
-        final int deleteRule = tableReferencesResult.getInteger32();
+        final int updateRule = tableReferencesResult.decodeInteger32();
+        final int deleteRule = tableReferencesResult.decodeInteger32();
     
         Assert.assertEquals("Expected reference definition on column '" + column + "', but got '" + fkColumnName + "'", column, fkColumnName);
         Assert.assertEquals("Expected referenced table '" + referencedTable + "', but got '" + pkTableName + "'", referencedTable, pkTableName);
@@ -234,7 +229,7 @@ public class SQLTestBase extends RootTest {
     }
     
     @Pure
-    protected static void assertRowCount(@Nonnull String tableName, long rowCount) throws FailedNonCommittingOperationException, EntryNotFoundException, FailedSQLValueRecoveryException {
+    protected static void assertRowCount(@Nonnull String tableName, long rowCount) throws DatabaseException, EntryNotFoundException, FailedSQLValueRecoveryException {
         final @Nonnull String rowCountQuery = "SELECT COUNT(*) AS count FROM " + tableName.toLowerCase();
         final @Nonnull Database instance = DatabaseUtility.getInstance();
         final @Nonnull SQLDecoder rowCountResult = instance.executeSelect(rowCountQuery);
@@ -243,12 +238,12 @@ public class SQLTestBase extends RootTest {
     }
     
     @Pure
-    protected static void assertRowCount(@Nonnull TableImplementation table, @Nonnull Site site, long rowCount) throws FailedNonCommittingOperationException, EntryNotFoundException, FailedSQLValueRecoveryException {
+    protected static void assertRowCount(@Nonnull TableImplementation table, @Nonnull Site site, long rowCount) throws DatabaseException, EntryNotFoundException, FailedSQLValueRecoveryException {
         assertRowCount(site.getSchemaName() + "." + table.getName(), rowCount);
     }
     
     @Pure
-    protected static void assertTableContains(@Nonnull String tableName, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException, FailedSQLValueRecoveryException {
+    protected static void assertTableContains(@Nonnull String tableName, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, DatabaseException, FailedSQLValueRecoveryException {
         final @Nonnull Database instance = DatabaseUtility.getInstance();
         for (@Nonnull Expected expected : expectedArray) {
             @Nonnull String rowCountQuery = "SELECT COUNT(*) AS count FROM " + tableName.toLowerCase() ;
@@ -274,7 +269,7 @@ public class SQLTestBase extends RootTest {
     }
     
     @Pure
-    protected static void assertTableContains(@Nonnull TableImplementation table, @Nonnull Site site, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, FailedNonCommittingOperationException, FailedSQLValueRecoveryException {
+    protected static void assertTableContains(@Nonnull TableImplementation table, @Nonnull Site site, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, DatabaseException, FailedSQLValueRecoveryException {
         final @Nonnull String tableName = table.getName();
         assertTableContains(site.getSchemaName() + "." + tableName, expectedArray);
     }
