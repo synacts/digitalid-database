@@ -5,7 +5,6 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
-import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -17,9 +16,15 @@ import net.digitalid.database.subject.site.Site;
  * An SQL expression that counts the number of rows.
  */
 @Immutable
-@GenerateBuilder
 @GenerateSubclass
 public interface SQLRowCountNumberExpression extends SQLNumberExpression {
+    
+    /* -------------------------------------------------- Instance -------------------------------------------------- */
+    
+    /**
+     * Stores an instance of the surrounding class.
+     */
+    public static final @Nonnull SQLRowCountNumberExpression INSTANCE = new SQLRowCountNumberExpressionSubclass();
     
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     

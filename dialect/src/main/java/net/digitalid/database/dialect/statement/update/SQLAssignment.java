@@ -1,7 +1,6 @@
-package net.digitalid.database.dialect.expression.bool;
+package net.digitalid.database.dialect.statement.update;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
@@ -12,31 +11,43 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
-import net.digitalid.database.dialect.expression.SQLLiteral;
+import net.digitalid.database.dialect.SQLNode;
+import net.digitalid.database.dialect.expression.SQLExpression;
+import net.digitalid.database.dialect.identifier.column.SQLColumnName;
 import net.digitalid.database.subject.site.Site;
 
 /**
- * A boolean literal.
+ * This type models an assignment in an update statement.
  */
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface SQLBooleanLiteral extends SQLBooleanExpression, SQLLiteral {
+public interface SQLAssignment extends SQLNode {
     
-    /* -------------------------------------------------- Value -------------------------------------------------- */
+    /* -------------------------------------------------- Column -------------------------------------------------- */
     
     /**
-     * Returns the value of this boolean literal.
+     * Returns the column to which the given expression is assigned.
      */
     @Pure
-    public @Nullable Boolean getValue();
+    public @Nonnull SQLColumnName getColumn();
+    
+    /* -------------------------------------------------- Expression -------------------------------------------------- */
+    
+    /**
+     * Returns the expression that is assigned to the given column.
+     */
+    @Pure
+    public @Nonnull SQLExpression getExpression();
     
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     
     @Pure
     @Override
     public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
-        string.append(String.valueOf(getValue()).toUpperCase());
+        dialect.unparse(getColumn(), site, string);
+        string.append(" = ");
+        dialect.unparse(getExpression(), site, string);
     }
     
 }

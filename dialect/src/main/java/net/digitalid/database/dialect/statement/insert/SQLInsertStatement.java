@@ -5,11 +5,12 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.generation.Default;
+import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.sql.SQLFraction;
@@ -24,7 +25,6 @@ import net.digitalid.database.subject.site.Site;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-@TODO(task = "Support 'insert or replace'.", date = "2017-01-17", author = Author.KASPAR_ETTER)
 public interface SQLInsertStatement extends SQLTableStatement {
     
     /* -------------------------------------------------- Columns -------------------------------------------------- */
@@ -33,7 +33,7 @@ public interface SQLInsertStatement extends SQLTableStatement {
      * Returns the columns into which the given values are inserted.
      */
     @Pure
-    public @Nonnull ImmutableList<@Nonnull SQLColumnName> getColumns();
+    public @Nonnull @NonNullableElements @NonEmpty ImmutableList<SQLColumnName> getColumns();
     
     /* -------------------------------------------------- Values -------------------------------------------------- */
     
@@ -43,12 +43,23 @@ public interface SQLInsertStatement extends SQLTableStatement {
     @Pure
     public @Nonnull SQLValues getValues();
     
+    /* -------------------------------------------------- Replace -------------------------------------------------- */
+    
+    /**
+     * Returns whether an entry with the same primary key shall be replaced with the given values.
+     */
+    @Pure
+    @Default("false")
+    public boolean isReplacing();
+    
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     
     @Pure
     @Override
     public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
-        string.append("INSERT INTO ");
+        string.append("INSERT");
+        if (isReplacing()) { string.append(" OR REPLACE"); }
+        string.append(" INTO ");
         dialect.unparse(getTable(), site, string);
         string.append(" (");
         dialect.unparse(getColumns(), site, string);

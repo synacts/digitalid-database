@@ -81,11 +81,13 @@ public interface SQLSimpleSelectStatement extends SQLUnorderedSelectStatement {
         dialect.unparse(getColumns(), site, string);
         string.append(" FROM ");
         dialect.unparse(getSources(), site, string);
+        
         final @Nullable SQLBooleanExpression whereClause = getWhereClause();
         if (whereClause != null) {
             string.append(" WHERE ");
             dialect.unparse(whereClause, site, string);
         }
+        
         final @Nullable SQLGroupByClause groupClause = getGroupClause();
         if (groupClause != null) { dialect.unparse(groupClause, site, string); }
     }

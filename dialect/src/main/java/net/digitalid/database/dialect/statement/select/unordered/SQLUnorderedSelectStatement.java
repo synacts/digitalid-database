@@ -6,7 +6,9 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.dialect.statement.select.SQLSelectStatement;
+import net.digitalid.database.dialect.statement.select.unordered.compound.SQLCompoundOperator;
 import net.digitalid.database.dialect.statement.select.unordered.compound.SQLCompoundSelectStatement;
+import net.digitalid.database.dialect.statement.select.unordered.compound.SQLCompoundSelectStatementBuilder;
 
 /**
  * An SQL select statement without an order or limit clause.
@@ -24,7 +26,7 @@ public interface SQLUnorderedSelectStatement extends SQLSelectStatement {
      */
     @Pure
     public default @Nonnull SQLCompoundSelectStatement union(@Nonnull SQLUnorderedSelectStatement selectStatement) {
-        return todo;
+        return SQLCompoundSelectStatementBuilder.withOperator(SQLCompoundOperator.UNION).withLeftExpression(this).withRightExpression(selectStatement).build();
     }
     
     /**
@@ -32,7 +34,7 @@ public interface SQLUnorderedSelectStatement extends SQLSelectStatement {
      */
     @Pure
     public default @Nonnull SQLCompoundSelectStatement intersect(@Nonnull SQLUnorderedSelectStatement selectStatement) {
-        return todo;
+        return SQLCompoundSelectStatementBuilder.withOperator(SQLCompoundOperator.INTERSECT).withLeftExpression(this).withRightExpression(selectStatement).build();
     }
     
     /**
@@ -40,7 +42,7 @@ public interface SQLUnorderedSelectStatement extends SQLSelectStatement {
      */
     @Pure
     public default @Nonnull SQLCompoundSelectStatement except(@Nonnull SQLUnorderedSelectStatement selectStatement) {
-        return todo;
+        return SQLCompoundSelectStatementBuilder.withOperator(SQLCompoundOperator.EXCEPT).withLeftExpression(this).withRightExpression(selectStatement).build();
     }
     
 }

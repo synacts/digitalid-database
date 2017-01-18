@@ -38,7 +38,7 @@ public interface SQLBooleanExpression extends SQLExpression {
      */
     @Pure
     public default @Nonnull SQLUnaryBooleanExpression negated() {
-        return SQLUnaryBooleanExpression.get(SQLUnaryBooleanOperator.NOT, this);
+        return SQLUnaryBooleanExpressionBuilder.withOperator(SQLUnaryBooleanOperator.NOT).withExpression(this).build();
     }
     
     /* -------------------------------------------------- Binary Operations -------------------------------------------------- */
@@ -48,7 +48,7 @@ public interface SQLBooleanExpression extends SQLExpression {
      */
     @Pure
     public default @Nonnull SQLBinaryBooleanExpression and(@Nonnull SQLBooleanExpression expression) {
-        return SQLBinaryBooleanExpression.get(SQLBinaryBooleanOperator.AND, this, expression);
+        return SQLBinaryBooleanExpressionBuilder.withOperator(SQLBinaryBooleanOperator.AND).withLeftExpression(this).withRightExpression(expression).build();
     }
     
     /**
@@ -56,7 +56,7 @@ public interface SQLBooleanExpression extends SQLExpression {
      */
     @Pure
     public default @Nonnull SQLBinaryBooleanExpression or(@Nonnull SQLBooleanExpression expression) {
-        return SQLBinaryBooleanExpression.get(SQLBinaryBooleanOperator.OR, this, expression);
+        return SQLBinaryBooleanExpressionBuilder.withOperator(SQLBinaryBooleanOperator.OR).withLeftExpression(this).withRightExpression(expression).build();
     }
     
     /**
@@ -64,7 +64,7 @@ public interface SQLBooleanExpression extends SQLExpression {
      */
     @Pure
     public default @Nonnull SQLBinaryBooleanExpression xor(@Nonnull SQLBooleanExpression expression) {
-        return SQLBinaryBooleanExpression.get(SQLBinaryBooleanOperator.XOR, this, expression);
+        return SQLBinaryBooleanExpressionBuilder.withOperator(SQLBinaryBooleanOperator.XOR).withLeftExpression(this).withRightExpression(expression).build();
     }
     
     /**
@@ -72,7 +72,7 @@ public interface SQLBooleanExpression extends SQLExpression {
      */
     @Pure
     public default @Nonnull SQLBinaryBooleanExpression equal(@Nonnull SQLBooleanExpression expression) {
-        return SQLBinaryBooleanExpression.get(SQLBinaryBooleanOperator.EQUAL, this, expression);
+        return SQLBinaryBooleanExpressionBuilder.withOperator(SQLBinaryBooleanOperator.EQUAL).withLeftExpression(this).withRightExpression(expression).build();
     }
     
     /**
@@ -80,7 +80,7 @@ public interface SQLBooleanExpression extends SQLExpression {
      */
     @Pure
     public default @Nonnull SQLBinaryBooleanExpression unequal(@Nonnull SQLBooleanExpression expression) {
-        return SQLBinaryBooleanExpression.get(SQLBinaryBooleanOperator.UNEQUAL, this, expression);
+        return SQLBinaryBooleanExpressionBuilder.withOperator(SQLBinaryBooleanOperator.UNEQUAL).withLeftExpression(this).withRightExpression(expression).build();
     }
     
 }

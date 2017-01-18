@@ -28,6 +28,7 @@ public interface SQLNumberLiteral extends SQLNumberExpression, SQLLiteral {
     /**
      * Returns the value of this number literal.
      */
+    @Pure
     public @Nullable Long getValue();
     
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
