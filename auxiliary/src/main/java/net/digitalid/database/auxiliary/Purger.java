@@ -1,4 +1,4 @@
-package net.digitalid.database.interfaces.table.purger;
+package net.digitalid.database.auxiliary;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -8,13 +8,16 @@ import java.util.concurrent.ConcurrentMap;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 /**
  * Description.
  */
 @Stateless
-public final class Purger {
+@TODO(task = "Redo the whole class if it is still useful.", date = "2017-01-18", author = Author.KASPAR_ETTER)
+public abstract class Purger {
     
     /* -------------------------------------------------- Purging -------------------------------------------------- */
     

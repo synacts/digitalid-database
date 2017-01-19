@@ -11,13 +11,24 @@ import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.database.dialect.statement.delete.SQLDeleteStatement;
+import net.digitalid.database.dialect.statement.insert.SQLInsertStatement;
+import net.digitalid.database.dialect.statement.select.SQLSelectStatement;
+import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatement;
+import net.digitalid.database.dialect.statement.table.drop.SQLDropTableStatement;
+import net.digitalid.database.dialect.statement.update.SQLUpdateStatement;
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.subject.site.Site;
 
 /**
  * This interface allows to execute SQL statements.
  */
 @Mutable
-public interface Database<CREATE_TABLE_ENCODER extends SQLEncoder> extends AutoCloseable {
+public interface Database extends AutoCloseable {
+    
+    /* -------------------------------------------------- Instance -------------------------------------------------- */
+    
+    // TODO: Use our configuration class here to store an instance of this interface.
     
     /* -------------------------------------------------- Binary Stream -------------------------------------------------- */
     
@@ -64,16 +75,13 @@ public interface Database<CREATE_TABLE_ENCODER extends SQLEncoder> extends AutoC
     
     /* -------------------------------------------------- Create Table -------------------------------------------------- */
     
-    @Impure
-    public abstract @Nonnull CREATE_TABLE_ENCODER getEncoder(@Nonnull SQLCreateTableStatement createTableStatement, @Nonnull Site<?> site) throws DatabaseException;
+    // TODO: Maybe pass an SQLSchemaName instead of a site object already here.
+    // TODO: Create an SQLDefinitionStatementEncoder interface that has a 'void execute()' method.
+    // TODO: Create an SQLManipulationStatementEncoder interface that has a 'int execute()' method.
+    // TODO: Create an SQLSelectStatementEncoder interface that has a '@Nonnull SQLDecoder execute()' method.
     
-    /**
-     * Executes the given create table statement at the given site.
-     * 
-     * @param site the site at which the statement is to be executed.
-     * @param createTableStatement the create table statement to execute.
-     */
-    public void createTable(@Nonnull CREATE_TABLE_ENCODER encoder) throws DatabaseException;
+    @Impure
+    public abstract @Nonnull SQLDefinitionStatementEncoder getEncoder(@Nonnull SQLCreateTableStatement createTableStatement, @Nonnull Site<?> site) throws DatabaseException;
     
     /* -------------------------------------------------- Drop Table -------------------------------------------------- */
     
@@ -121,7 +129,7 @@ public interface Database<CREATE_TABLE_ENCODER extends SQLEncoder> extends AutoC
      * 
      * @return the rows that were selected by the given statement.
      */
-    public @Nonnull SelectionResult execute(@Nonnull Site site, @Nonnull SQLSelectStatement selectStatement) throws FailedNonCommittingOperationException, InternalException;
+    public @Nonnull SQLDecoder execute(@Nonnull Site site, @Nonnull SQLSelectStatement selectStatement) throws FailedNonCommittingOperationException, InternalException;
     
     // TODO: probably remove this.
     /**
