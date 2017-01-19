@@ -15,7 +15,20 @@
     <name>Digital ID Database</name>
     <description>This project provides the classes that interact with the database.</description>
     <url>https://code.digitalid.net/digitalid/database</url>
-    
+
+    <repositories>
+        <repository>
+            <id>digitalid-releases</id>
+            <name>Digital ID Releases</name>
+            <url>https://repo.digitalid.net/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>digitalid-snapshots</id>
+            <name>Digital ID Snapshots</name>
+            <url>https://repo.digitalid.net/content/repositories/snapshots/</url>
+        </repository>
+    </repositories>
+   
     <modules>
         <module>enumerations</module>
         <module>annotations</module>
