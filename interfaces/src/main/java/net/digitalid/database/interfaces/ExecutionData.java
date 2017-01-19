@@ -176,7 +176,7 @@ public class ExecutionData<P> {
     /* -------------------------------------------------- Column Meta Data -------------------------------------------------- */
     
     /**
-     * Set column data through a given consumer, which eventually sets the value into the prepared statement. If the row index was specified previously, only the indexed row is set. Otherwise, all rows are set with the given funtion.
+     * Set column data through a given consumer, which eventually sets the value into the prepared statement. If the row index was specified previously, only the indexed row is set. Otherwise, all rows are set with the given function.
      */
     @Impure
     public <T> @Nonnull FreezableArrayList<SQLStatementProcessing<P>> setColumnData(@Nonnull FailableConsumer<@Nonnull ParameterFunctionData<P, T>, SQLException> function, @Nonnull T value) {
