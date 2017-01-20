@@ -1,4 +1,4 @@
-package net.digitalid.database.interfaces;
+package net.digitalid.database.interfaces.encoder;
 
 import javax.annotation.Nonnull;
 
@@ -7,6 +7,7 @@ import net.digitalid.utility.conversion.interfaces.Encoder;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.interfaces.SQLDecoder;
 
 /**
  * An SQL encoder encodes values to an SQL statement.

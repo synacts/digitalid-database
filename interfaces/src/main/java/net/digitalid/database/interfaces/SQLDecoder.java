@@ -7,6 +7,7 @@ import net.digitalid.utility.conversion.interfaces.Decoder;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.interfaces.encoder.SQLEncoder;
 
 /**
  * An SQL decoder decodes values from an SQL result set.
@@ -29,7 +30,6 @@ public interface SQLDecoder extends AutoCloseable, Decoder<DatabaseException> {
     /**
      * Moves the cursor to the first row of the selection result.
      * 
-     * @throws EntryNotFoundException if the selection results contains no rows.
      */
     @Impure
     public void moveToFirstRow() throws DatabaseException;
@@ -38,6 +38,7 @@ public interface SQLDecoder extends AutoCloseable, Decoder<DatabaseException> {
      * Returns the current position of the cursor in the columns.
      */
     @Pure
+    @Deprecated
     public int getColumnIndex();
     
     /**
@@ -46,9 +47,11 @@ public interface SQLDecoder extends AutoCloseable, Decoder<DatabaseException> {
      * @param columnIndex the column to which the cursor should be moved.
      */
     @Impure
+    @Deprecated
     public void moveToColumn(int columnIndex);
     
     @Impure
+    @Deprecated
     public void moveToFirstColumn();
     
     /* -------------------------------------------------- Null -------------------------------------------------- */

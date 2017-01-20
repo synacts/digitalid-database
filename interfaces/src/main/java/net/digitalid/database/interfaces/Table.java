@@ -9,6 +9,7 @@ import net.digitalid.utility.collections.map.ReadOnlyMap;
 /**
  *
  */
+@Deprecated
 public interface Table {
     
     @Pure

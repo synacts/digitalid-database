@@ -8,6 +8,7 @@ import net.digitalid.utility.conversion.model.CustomType;
 /**
  *
  */
+@Deprecated
 public class SQLKey {
     
     /* -------------------------------------------------- Type -------------------------------------------------- */

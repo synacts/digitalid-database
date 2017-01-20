@@ -6,7 +6,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Properties;
 
 import javax.annotation.Nonnull;
@@ -14,23 +13,28 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.exceptions.InternalException;
-import net.digitalid.utility.exceptions.UncheckedException;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
-import net.digitalid.database.exceptions.operation.FailedCommitException;
-import net.digitalid.database.exceptions.operation.FailedConnectionException;
-import net.digitalid.database.exceptions.operation.FailedKeyGenerationException;
-import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
-import net.digitalid.database.exceptions.operation.FailedOperationException;
-import net.digitalid.database.exceptions.operation.FailedQueryExecutionException;
-import net.digitalid.database.exceptions.operation.FailedStatementCreationException;
-import net.digitalid.database.exceptions.operation.FailedUpdateExecutionException;
+import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.statement.SQLTableStatement;
+import net.digitalid.database.dialect.statement.delete.SQLDeleteStatement;
+import net.digitalid.database.dialect.statement.insert.SQLInsertStatement;
+import net.digitalid.database.dialect.statement.select.SQLSelectStatement;
+import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatement;
+import net.digitalid.database.dialect.statement.table.drop.SQLDropTableStatement;
+import net.digitalid.database.dialect.statement.update.SQLUpdateStatement;
+import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
 import net.digitalid.database.interfaces.Database;
-import net.digitalid.database.interfaces.SQLDecoder;
+import net.digitalid.database.interfaces.encoder.SQLDataManipulationLanguageEncoder;
+import net.digitalid.database.interfaces.encoder.SQLQueryEncoder;
+import net.digitalid.database.jdbc.encoder.JDBCDataManipulationLanguageEncoder;
+import net.digitalid.database.jdbc.encoder.JDBCDataManipulationLanguageEncoderBuilder;
+import net.digitalid.database.subject.site.Site;
 
 /**
  * This classes uses the JDBC connection to execute the statements.
@@ -57,6 +61,7 @@ public abstract class JDBCDatabaseInstance implements Database {
     
     /* -------------------------------------------------- Database -------------------------------------------------- */
     
+    // TODO: we need to figure out how we can initialize it
     /**
      * Returns the URL of this database instance.
      * 
@@ -64,7 +69,7 @@ public abstract class JDBCDatabaseInstance implements Database {
      */
     @Pure
     protected abstract @Nonnull String getURL();
-    
+
     /**
      * Returns the properties of this instance.
      * <p>
@@ -73,14 +78,17 @@ public abstract class JDBCDatabaseInstance implements Database {
      * @return the properties of this instance.
      */
     @Pure
+    // TODO: what properties are those?
     protected abstract @Nonnull Properties getProperties();
-    
-    /**
-     * Drops this database instance.
-     */
-    @Impure
-    @Committing
-    public abstract void dropDatabase() throws FailedOperationException;
+//    
+//    /**
+//     * Drops this database instance.
+//     */
+//    @Impure
+//    @Committing
+//    public void dropDatabase() throws DatabaseException {
+//        
+//    }
     
     /* -------------------------------------------------- Connection -------------------------------------------------- */
     
@@ -94,14 +102,14 @@ public abstract class JDBCDatabaseInstance implements Database {
      */
     @Impure
     @NonCommitting
-    private void setConnection() throws FailedConnectionException {
+    private void setConnection() throws DatabaseException {
         try {
             final @Nonnull Connection connection = DriverManager.getConnection(getURL(), getProperties());
             connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             connection.setAutoCommit(false);
             this.connection.set(connection);
         } catch (@Nonnull SQLException exception) {
-            throw FailedConnectionException.get(exception);
+            throw DatabaseExceptionBuilder.withCause(exception).build();
         }
     }
     
@@ -110,7 +118,7 @@ public abstract class JDBCDatabaseInstance implements Database {
      */
     @Impure
     @NonCommitting
-    private void checkConnection() throws FailedConnectionException {
+    private void checkConnection() throws DatabaseException {
         final @Nullable Connection connection = this.connection.get();
         if (connection == null) {
             setConnection();
@@ -122,7 +130,7 @@ public abstract class JDBCDatabaseInstance implements Database {
                     setConnection();
                 }
             } catch (@Nonnull SQLException exception) {
-                throw FailedConnectionException.get(exception);
+                throw DatabaseExceptionBuilder.withCause(exception).build();
             }
         }
     }
@@ -137,7 +145,7 @@ public abstract class JDBCDatabaseInstance implements Database {
      */
     @Impure
     @NonCommitting
-    protected final @Nonnull Connection getConnection() throws FailedConnectionException {
+    protected final @Nonnull Connection getConnection() throws DatabaseException {
         if (!transaction.get()) { begin(); }
         return connection.get();
     }
@@ -156,7 +164,7 @@ public abstract class JDBCDatabaseInstance implements Database {
      */
     @Impure
     @NonCommitting
-    protected void begin() throws FailedConnectionException {
+    protected void begin() throws DatabaseException {
         checkConnection();
         transaction.set(Boolean.TRUE);
     }
@@ -164,14 +172,12 @@ public abstract class JDBCDatabaseInstance implements Database {
     @Impure
     @Override
     @Committing
-    public void commit() throws FailedCommitException {
+    public void commit() throws DatabaseException {
         try {
             getConnection().commit();
             transaction.set(Boolean.FALSE);
-        } catch (@Nonnull FailedConnectionException exception) {
-            throw FailedCommitException.get(new SQLException("This should never happen because the connection is checked when the transaction is started.", exception));
-        } catch (@Nonnull SQLException exception) {
-            throw FailedCommitException.get(exception);
+        } catch (SQLException e) {
+            throw DatabaseExceptionBuilder.withCause(e).build();
         }
     }
     
@@ -182,7 +188,7 @@ public abstract class JDBCDatabaseInstance implements Database {
         try {
             getConnection().rollback();
             transaction.set(Boolean.FALSE);
-        } catch (@Nonnull FailedConnectionException | SQLException exception) {
+        } catch (SQLException | DatabaseException exception) {
             Log.error("Could not roll back the transaction.", exception);
         }
     }
@@ -193,160 +199,90 @@ public abstract class JDBCDatabaseInstance implements Database {
      * Prepares the given statement at the given site.
      * 
      * @param statement the statement which is to be prepared.
-     * @param generatesKeys whether the statement generates keys.
-     *                      TODO: instead of allowing to set generatesKeys here, we need to adjust the insert statements where generated keys are expected to query with statement.getGeneratedKeys().
      * 
      * @return the prepared statement that is ready for execution.
      */
     @Pure
-    protected @Nonnull PreparedStatement prepare(@Nonnull String statement, boolean generatesKeys) throws FailedNonCommittingOperationException, InternalException {
+    protected @Nonnull PreparedStatement prepare(@Nonnull String statement) throws DatabaseException {
         try {
             final @Nonnull PreparedStatement preparedStatement = getConnection().prepareStatement(statement, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             return preparedStatement;
         } catch (@Nonnull SQLException exception) {
-            throw FailedStatementCreationException.get(exception);
+            throw DatabaseExceptionBuilder.withCause(exception).build();
         }
-    }
-    
-    // TODO: move transcription to database conversion.
-    /**
-     * Prepares the given statement at the given site.
-     * 
-     * @param site the site at which the statement is prepared.
-     * @param statement the statement which is to be prepared.
-     * @param generatesKeys whether the statement generates keys.
-     * 
-     * @return the prepared statement that is ready for execution.
-     */
-/*    protected @Nonnull PreparedStatement prepare(@Nonnull Site site, @Nonnull SQLNode statement, boolean generatesKeys) throws FailedNonCommittingOperationException, InternalException {
-        final @Nonnull StringBuilder string = new StringBuilder();
-        statement.transcribe(Database.getDialect(), site, string);
-        try {
-            final @Nonnull PreparedStatement preparedStatement = getConnection().prepareStatement(string.toString(), generatesKeys ? Statement.RETURN_GENERATED_KEYS : Statement.NO_GENERATED_KEYS);
-            if (statement instanceof SQLParameterizableNode) {
-                final @Nonnull ValueCollector collector = JDBCValueCollector.get(preparedStatement);
-                ((SQLParameterizableNode) statement).storeValues(collector);
-            }
-            return preparedStatement;
-        } catch (@Nonnull SQLException exception) {
-            throw FailedStatementCreationException.get(exception);
-        }
-    }*/
-    
-    /**
-     * Executes the given statement at the given site.
-     * 
-     * @param statement the statement which is to be executed.
-     * 
-     * @return the number of rows affected by the given statement.
-     */
-    @Impure
-    protected int executeUpdate(@Nonnull String statement) throws FailedNonCommittingOperationException, InternalException {
-        try {
-            return getConnection().createStatement().executeUpdate(statement);
-            //prepare(statement, false, tables).executeUpdate();
-        } catch (@Nonnull SQLException exception) {
-            throw FailedUpdateExecutionException.get(exception);
-        }
-    }
-    
-    @Impure
-    protected int executeUpdate(@Nonnull JDBCEncoder encoder) throws FailedNonCommittingOperationException, InternalException {
-        try {
-            int result = 0;
-            for (@Nonnull PreparedStatement preparedStatement : encoder.getPreparedStatements()) {
-                result += preparedStatement.executeUpdate();
-            }
-            return result;
-        } catch (@Nonnull SQLException exception) {
-            throw FailedUpdateExecutionException.get(exception);
-        }
-    }
-    
-    @Impure
-    protected int executeBatch(@Nonnull JDBCEncoder encoder) throws FailedNonCommittingOperationException, InternalException {
-        try {
-            int result = 0;
-            for (@Nonnull PreparedStatement preparedStatement : encoder.getPreparedStatements()) {
-                int[] updatedRows = preparedStatement.executeBatch();
-                for (int updatedRowCount : updatedRows) {
-                    result += updatedRowCount;
-                }
-                commit();
-            }
-            return result;
-        } catch (@Nonnull SQLException exception) {
-            throw FailedUpdateExecutionException.get(exception);
-        } catch (FailedCommitException exception) {
-            // TODO: exception
-            throw UncheckedException.with(exception);
-        }
-    }
-    
-    // TODO: Move to conversion package.
-/*    @Override
-    public void execute(@Nonnull Site site, @Nonnull SQLCreateTableStatement createTableStatement) throws FailedNonCommittingOperationException, InternalException {
-        executeUpdate(site, createTableStatement);
     }
     
     @Override
-    public void execute(@Nonnull Site site, @Nonnull SQLDropTableStatement dropTableStatement) throws FailedNonCommittingOperationException, InternalException {
-        executeUpdate(site, dropTableStatement);
+    @PureWithSideEffects
+    public void close() throws Exception {
+        getConnection().close();
     }
     
-    @Override
-    public void execute(@Nonnull Site site, @Nonnull SQLInsertStatement insertStatement) throws FailedNonCommittingOperationException, InternalException {
-        executeUpdate(site, insertStatement);
-    }
+    /* -------------------------------------------------- Execution -------------------------------------------------- */
     
-    @Override
-    public int execute(@Nonnull Site site, @Nonnull SQLUpdateStatement updateStatement) throws FailedNonCommittingOperationException, InternalException {
-        return executeUpdate(site, updateStatement);
-    }
-    
-    @Override
-    public int execute(@Nonnull Site site, @Nonnull SQLDeleteStatement deleteStatement) throws FailedNonCommittingOperationException, InternalException {
-        return executeUpdate(site, deleteStatement);
-    }*/
-    
-    @Impure
-    @Override
-    public @Nonnull SQLDecoder executeSelect(@Nonnull String selectStatement) throws FailedNonCommittingOperationException, InternalException {
+    @PureWithSideEffects
+    private void executeStatement(@Nonnull Site<?> site, @Nonnull SQLTableStatement tableStatement) throws DatabaseException {
+        final @Nonnull StringBuilder sqlStringBuilder = new StringBuilder();
+        tableStatement.unparse(SQLDialect.instance.get(), site, sqlStringBuilder);
         try {
-            final @Nonnull ResultSet resultSet = getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).executeQuery(selectStatement);
-            return JDBCDecoder.get(resultSet);
-        } catch (@Nonnull SQLException exception) {
-            throw FailedQueryExecutionException.get(exception);
-        }
-    }
-     
-    @Impure
-    public @Nonnull SQLDecoder executeSelect(@Nonnull JDBCEncoder encoder) throws FailedNonCommittingOperationException, InternalException {
-        // TODO: Implement wrapper around ResultSet such that multiple result-sets can be retrieved. Alternatively, make sure that only one prepared statement exists.
-        try {
-            final @Nonnull PreparedStatement preparedStatement = encoder.getPreparedStatements().getFirst();
-            final @Nonnull ResultSet resultSet = preparedStatement.executeQuery();
-            return JDBCDecoder.get(resultSet);
-        } catch (@Nonnull SQLException exception) {
-            throw FailedQueryExecutionException.get(exception);
+            // TODO: do we really need to set the result set type and result set concurrency?
+            getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).execute(sqlStringBuilder.toString());
+        } catch (SQLException exception) {
+            throw DatabaseExceptionBuilder.withCause(exception).build();
         }
     }
     
-    @Impure
     @Override
-    public long executeAndReturnGeneratedKey(@Nonnull String insertStatement) throws FailedNonCommittingOperationException, InternalException {
-        try {
-            final @Nonnull Statement statement = getConnection().createStatement();
-            statement.executeUpdate(insertStatement);
-            try (@Nonnull ResultSet resultSet = statement.getGeneratedKeys()) {
-                if (resultSet.next()) { return resultSet.getLong(1); }
-                else { throw new SQLException("The prepared statement did not generate a key."); }
-            } catch (@Nonnull SQLException exception) {
-                throw FailedKeyGenerationException.get(exception);
-            }
-        } catch (@Nonnull SQLException exception) {
-            throw FailedUpdateExecutionException.get(exception);
-        }
+    @PureWithSideEffects
+    public void execute(@Nonnull Site<?> site, @Nonnull SQLTableStatement tableStatement) throws DatabaseException {
+        executeStatement(site, tableStatement);
+    }
+    
+    @Override
+    @PureWithSideEffects
+    public void execute(@Nonnull Site<?> site, @Nonnull SQLCreateTableStatement createTableStatement) throws DatabaseException {
+        executeStatement(site, createTableStatement);
+    }
+    
+    @Override
+    @PureWithSideEffects
+    public void execute(@Nonnull Site site, @Nonnull SQLDropTableStatement dropTableStatement) throws DatabaseException {
+        executeStatement(site, dropTableStatement);
+    }
+    
+    /* -------------------------------------------------- Encoder -------------------------------------------------- */
+    
+    @PureWithSideEffects
+    private @Nonnull SQLDataManipulationLanguageEncoder getEncoderForStatement(@Nonnull Site<?> site, @Nonnull SQLTableStatement tableStatement) throws DatabaseException {
+        final @Nonnull StringBuilder sqlStringBuilder = new StringBuilder();
+        tableStatement.unparse(SQLDialect.instance.get(), site, sqlStringBuilder);
+        return JDBCDataManipulationLanguageEncoderBuilder.withPreparedStatement(prepare(sqlStringBuilder.toString())).build();
+    }
+    
+    @Override
+    @PureWithSideEffects
+    public @Nonnull SQLDataManipulationLanguageEncoder getEncoder(@Nonnull Site site, @Nonnull SQLInsertStatement insertStatement) throws DatabaseException {
+        return getEncoderForStatement(site, insertStatement);
+    }
+    
+    @Override
+    @PureWithSideEffects
+    public @Nonnull SQLDataManipulationLanguageEncoder getEncoder(@Nonnull Site site, @Nonnull SQLUpdateStatement updateStatement) throws DatabaseException {
+        return getEncoderForStatement(site, updateStatement);
+    }
+    
+    @Override
+    @PureWithSideEffects
+    public @Nonnull SQLDataManipulationLanguageEncoder getEncoder(@Nonnull Site site, @Nonnull SQLDeleteStatement deleteStatement) throws DatabaseException {
+        return getEncoderForStatement(site, deleteStatement);
+    }
+    
+    @Override
+    @PureWithSideEffects
+    public @Nonnull SQLQueryEncoder getEncoder(@Nonnull Site site, @Nonnull SQLSelectStatement selectStatement) throws DatabaseException {
+        final @Nonnull StringBuilder sqlStringBuilder = new StringBuilder();
+        selectStatement.unparse(SQLDialect.instance.get(), site, sqlStringBuilder);
+//        return JDBCQueryEncoderBuilder.withPreparedStatement(prepare(sqlStringBuilder.toString())).build();
     }
     
 }

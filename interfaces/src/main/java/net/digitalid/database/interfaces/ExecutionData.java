@@ -26,6 +26,7 @@ import net.digitalid.database.interfaces.processing.SQLStatementProcessing;
  * 
  * @param <P> the type of the prepared statement for driver-independent queries and updates.
  */
+@Deprecated
 public class ExecutionData<P> {
     
     /* -------------------------------------------------- Prepared Statement Entry Queue -------------------------------------------------- */

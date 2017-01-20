@@ -13,9 +13,9 @@ import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.tuples.Pair;
 
 import net.digitalid.database.interfaces.SQLDecoder;
-import net.digitalid.database.interfaces.SQLEncoder;
+import net.digitalid.database.interfaces.encoder.SQLEncoder;
 import net.digitalid.database.jdbc.JDBCDatabaseInstance;
-import net.digitalid.database.jdbc.JDBCEncoder;
+import net.digitalid.database.jdbc.encoder.JDBCEncoder;
 
 import org.h2.Driver;
 

@@ -36,7 +36,7 @@ import net.digitalid.database.interfaces.TableImplementation;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.DatabaseUtility;
 import net.digitalid.database.interfaces.SQLDecoder;
-import net.digitalid.database.interfaces.SQLEncoder;
+import net.digitalid.database.interfaces.encoder.SQLEncoder;
 import net.digitalid.database.interfaces.Tables;
 import net.digitalid.database.subject.site.Site;
 

@@ -11,6 +11,7 @@ import net.digitalid.utility.collections.map.FreezableHashMapBuilder;
 /**
  *
  */
+@Deprecated
 public class Tables {
     
     private final static @Nonnull FreezableHashMap<@Nonnull String, @Nonnull Table> tables = FreezableHashMapBuilder.build();

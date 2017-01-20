@@ -15,6 +15,7 @@ import net.digitalid.database.interfaces.processing.SQLStatementProcessing;
 /**
  * The data structure that points to a certain column of an SQL statement.
  */
+@Deprecated
 class SQLStatementEntry<P> {
     
     /**
