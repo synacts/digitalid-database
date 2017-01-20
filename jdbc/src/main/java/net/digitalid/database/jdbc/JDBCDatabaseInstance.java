@@ -283,6 +283,7 @@ public abstract class JDBCDatabaseInstance implements Database {
         final @Nonnull StringBuilder sqlStringBuilder = new StringBuilder();
         selectStatement.unparse(SQLDialect.instance.get(), site, sqlStringBuilder);
 //        return JDBCQueryEncoderBuilder.withPreparedStatement(prepare(sqlStringBuilder.toString())).build();
+        return null;
     }
     
 }

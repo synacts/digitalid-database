@@ -1,5 +1,7 @@
 package net.digitalid.database.interfaces.encoder;
 
+import javax.annotation.Nonnull;
+
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 
 import net.digitalid.database.exceptions.DatabaseException;
@@ -21,6 +23,6 @@ public interface SQLQueryEncoder extends SQLEncoder {
      * Executes the SELECT statement.
      */
     @PureWithSideEffects
-    public SQLDecoder execute() throws DatabaseException;
+    public @Nonnull SQLDecoder execute() throws DatabaseException;
     
 }

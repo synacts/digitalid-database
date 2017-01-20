@@ -25,6 +25,7 @@ import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 /**
+ * TODO: if we change the hierarchy of site such that it does not extend from Subject, we won't need the converter here.
  * This class converts a specific {@link Site site} so that the site itself is {@link Provided provided}.
  */
 @Immutable
@@ -54,8 +55,7 @@ public abstract class SiteConverter<SITE extends Site<?>> implements Converter<S
     
     @Pure
     @Override
-    public <X extends ConnectionException> int convert(@NonCaptured @Unmodified @Nullable SITE site, @NonCaptured @Modified @Nonnull Encoder<X> encoder) throws X {
-        return 1;
+    public <X extends ConnectionException> void convert(@NonCaptured @Unmodified @Nullable SITE site, @NonCaptured @Modified @Nonnull Encoder<X> encoder) throws X {
     }
     
     @Pure
