@@ -16,7 +16,7 @@ import net.digitalid.database.exceptions.DatabaseException;
  * 
  * @see SQLQueryEncoder
  */
-public interface SQLDataManipulationLanguageEncoder extends SQLEncoder {
+public interface SQLDataManipulationLanguageEncoder {
     
     /**
      * Executes the data manipulation language (DML) statement of the type:

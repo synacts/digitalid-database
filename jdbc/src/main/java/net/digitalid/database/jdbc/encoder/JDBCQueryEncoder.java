@@ -16,11 +16,11 @@ import net.digitalid.database.interfaces.SQLDecoder;
 import net.digitalid.database.interfaces.encoder.SQLQueryEncoder;
 
 /**
- *
+ * The JDBC query encoder collects values for the prepared and executes it.
  */
 @GenerateBuilder
 @GenerateSubclass
-public class JDBCQueryEncoder extends JDBCEncoder implements SQLQueryEncoder {
+public class JDBCQueryEncoder extends JDBCEncoderSubclass implements SQLQueryEncoder {
     
     protected JDBCQueryEncoder(@Nonnull PreparedStatement preparedStatement) {
         super(preparedStatement);

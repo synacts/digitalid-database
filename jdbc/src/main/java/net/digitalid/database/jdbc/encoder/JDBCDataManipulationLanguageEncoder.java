@@ -18,7 +18,7 @@ import net.digitalid.database.interfaces.encoder.SQLDataManipulationLanguageEnco
  */
 @GenerateBuilder
 @GenerateSubclass
-public class JDBCDataManipulationLanguageEncoder extends JDBCEncoder implements SQLDataManipulationLanguageEncoder {
+public class JDBCDataManipulationLanguageEncoder extends JDBCEncoderSubclass implements SQLDataManipulationLanguageEncoder {
     
     protected JDBCDataManipulationLanguageEncoder(@Nonnull PreparedStatement preparedStatement) {
         super(preparedStatement);

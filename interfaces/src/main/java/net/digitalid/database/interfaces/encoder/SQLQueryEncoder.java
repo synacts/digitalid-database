@@ -17,7 +17,7 @@ import net.digitalid.database.interfaces.SQLDecoder;
  * 
  * @see SQLDataManipulationLanguageEncoder
  */
-public interface SQLQueryEncoder extends SQLEncoder {
+public interface SQLQueryEncoder {
     
     /**
      * Executes the SELECT statement.
