@@ -11,7 +11,6 @@ import javax.crypto.Cipher;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.collaboration.annotations.TODO;
@@ -80,7 +79,7 @@ public abstract class SQLEncoder implements AutoCloseable, Encoder<DatabaseExcep
     /**
      * Stores the mapping from custom types to SQL types.
      */
-    public static @Nonnull ImmutableMap<@Nonnull CustomType, @Nonnull Integer> typeMapping = ImmutableMap
+    private static @Nonnull ImmutableMap<@Nonnull CustomType, @Nonnull Integer> TYPES = ImmutableMap
             .with(CustomType.BOOLEAN, Types.BOOLEAN)
             .with(CustomType.INTEGER08, Types.TINYINT)
             .with(CustomType.INTEGER16, Types.SMALLINT)
@@ -102,7 +101,7 @@ public abstract class SQLEncoder implements AutoCloseable, Encoder<DatabaseExcep
      */
     @Pure
     public static int getSQLType(@Nonnull CustomType customType) {
-        final @Nullable Integer result = typeMapping.get(customType);
+        final @Nullable Integer result = TYPES.get(customType);
         if (result == null) { throw CaseExceptionBuilder.withVariable("customType").withValue(customType).build(); }
         else { return result; }
     }
@@ -117,15 +116,15 @@ public abstract class SQLEncoder implements AutoCloseable, Encoder<DatabaseExcep
     
     /* -------------------------------------------------- Object -------------------------------------------------- */
     
+    @Impure
     @Override
-    @PureWithSideEffects
     public <TYPE> void encodeObject(@Nonnull Converter<TYPE, ?> converter, @Nonnull @NonCaptured @Unmodified TYPE object) throws DatabaseException {
         Require.that(object != null).orThrow("The given object, that should be encoded, may not be null.");
         converter.convert(object, this);
     }
     
+    @Impure
     @Override
-    @PureWithSideEffects
     public <TYPE> void encodeNullableObject(@Nonnull Converter<TYPE, ?> converter, @Nullable @NonCaptured @Unmodified TYPE object) throws DatabaseException {
         if (object == null) {
             final @Nonnull ImmutableList<@Nonnull CustomField> fields = converter.getFields(Representation.INTERNAL);
@@ -134,7 +133,7 @@ public abstract class SQLEncoder implements AutoCloseable, Encoder<DatabaseExcep
                     encodeNullableObject(((CustomType.CustomConverterType) field.getCustomType()).getConverter(), null);
                 } else {
                     if (!field.getCustomType().isCompositeType()) {
-                        encodeNull(typeMapping.get(field.getCustomType()));
+                        encodeNull(TYPES.get(field.getCustomType()));
                     }
                 }
             }
@@ -145,100 +144,100 @@ public abstract class SQLEncoder implements AutoCloseable, Encoder<DatabaseExcep
     
     /* -------------------------------------------------- Iterables -------------------------------------------------- */
     
+    @Impure
     @Override
-    @PureWithSideEffects
     public <TYPE> void encodeOrderedIterable(@Nonnull Converter<TYPE, ?> converter, @Nonnull FiniteIterable<@Nonnull TYPE> iterable) throws DatabaseException {
         throw new UnsupportedOperationException("The SQL Encoder cannot encode ordered iterables.");
     }
     
+    @Impure
     @Override
-    @PureWithSideEffects
     public <TYPE> void encodeOrderedIterableWithNullableElements(@Nonnull Converter<TYPE, ?> converter, @Nonnull FiniteIterable<@Nullable TYPE> iterable) throws DatabaseException {
         throw new UnsupportedOperationException("The SQL Encoder cannot encode ordered iterables.");
     }
     
+    @Impure
     @Override
-    @PureWithSideEffects
     public <TYPE> void encodeUnorderedIterable(@Nonnull Converter<TYPE, ?> converter, @Nonnull FiniteIterable<@Nonnull TYPE> iterable) throws DatabaseException {
         throw new UnsupportedOperationException("The SQL Encoder cannot encode unordered iterables.");
     }
     
+    @Impure
     @Override
-    @PureWithSideEffects
     public <TYPE> void encodeUnorderedIterableWithNullableElements(@Nonnull Converter<TYPE, ?> converter, @Nonnull FiniteIterable<@Nullable TYPE> iterable) throws DatabaseException {
         throw new UnsupportedOperationException("The SQL Encoder cannot encode unordered iterables.");
     }
     
     /* -------------------------------------------------- Maps -------------------------------------------------- */
     
+    @Impure
     @Override
-    @PureWithSideEffects
     public <KEY, VALUE> void encodeMap(@Nonnull Converter<KEY, ?> keyConverter, @Nonnull Converter<VALUE, ?> valueConverter, @Nonnull Map<@Nonnull KEY, @Nonnull VALUE> map) throws DatabaseException {
         throw new UnsupportedOperationException("The SQL Encoder cannot encode maps.");
     }
     
+    @Impure
     @Override
-    @PureWithSideEffects
     public <KEY, VALUE> void encodeMapWithNullableValues(@Nonnull Converter<KEY, ?> keyConverter, @Nonnull Converter<VALUE, ?> valueConverter, @Nonnull Map<@Nullable KEY, @Nullable VALUE> map) throws DatabaseException {
         throw new UnsupportedOperationException("The SQL Encoder cannot encode maps.");
     }
     
     /* -------------------------------------------------- Hashing -------------------------------------------------- */
     
+    @Pure
     @Override
-    @PureWithSideEffects
     public boolean isHashing() {
         return false;
     }
     
+    @Impure
     @Override
-    @PureWithSideEffects
     public void startHashing(@Nonnull MessageDigest digest) {
         throw new UnsupportedOperationException("The SQL Encoder cannot handle hashes.");
     }
     
+    @Impure
     @Override
-    @PureWithSideEffects
     public @Nonnull byte[] stopHashing() {
         throw new UnsupportedOperationException("The SQL Encoder cannot handle hashes.");
     }
     
     /* -------------------------------------------------- Compression -------------------------------------------------- */
     
+    @Pure
     @Override
-    @PureWithSideEffects
     public boolean isCompressing() {
         return false;
     }
     
+    @Impure
     @Override
-    @PureWithSideEffects
     public void startCompressing(@Nonnull Deflater deflater) {
         throw new UnsupportedOperationException("The SQL Encoder cannot handle compression.");
     }
     
+    @Impure
     @Override
-    @PureWithSideEffects
     public void stopCompressing() throws DatabaseException {
         throw new UnsupportedOperationException("The SQL Encoder cannot handle compression.");
     }
     
     /* -------------------------------------------------- Encryption -------------------------------------------------- */
     
+    @Pure
     @Override
-    @PureWithSideEffects
     public boolean isEncrypting() {
         return false;
     }
     
+    @Impure
     @Override
-    @PureWithSideEffects
     public void startEncrypting(@Nonnull Cipher cipher) {
         throw new UnsupportedOperationException("The SQL Encoder cannot handle encryption.");
     }
     
+    @Impure
     @Override
-    @PureWithSideEffects
     public void stopEncrypting() throws DatabaseException {
         throw new UnsupportedOperationException("The SQL Encoder cannot handle encryption.");
     }
