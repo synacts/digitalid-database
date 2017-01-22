@@ -14,7 +14,7 @@ import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.expression.number.SQLVariadicNumberExpression;
 import net.digitalid.database.dialect.expression.string.SQLVariadicStringExpression;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * All variadic expressions implement this interface.
@@ -45,10 +45,10 @@ public interface SQLVariadicExpression<@Unspecifiable OPERATOR extends SQLVariad
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
-        dialect.unparse(getOperator(), site, string);
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        dialect.unparse(getOperator(), unit, string);
         string.append("(");
-        dialect.unparse(getExpressions(), site, string);
+        dialect.unparse(getExpressions(), unit, string);
         string.append(")");
     }
     

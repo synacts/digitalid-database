@@ -15,7 +15,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.identifier.column.SQLColumnName;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * A join constraint using the given columns.
@@ -37,9 +37,9 @@ public interface SQLUsingJoinConstraint extends SQLJoinConstraint {
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         string.append(" USING (");
-        dialect.unparse(getColumns(), site, string);
+        dialect.unparse(getColumns(), unit, string);
         string.append(")");
     }
     

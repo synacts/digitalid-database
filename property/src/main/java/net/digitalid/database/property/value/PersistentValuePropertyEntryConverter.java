@@ -31,7 +31,7 @@ import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeConverter;
 import net.digitalid.database.property.PersistentPropertyEntryConverter;
 import net.digitalid.database.subject.Subject;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * This class converts the {@link PersistentValuePropertyEntry entries} of the {@link PersistentValuePropertyTable value property table}.
@@ -39,7 +39,7 @@ import net.digitalid.database.subject.site.Site;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class PersistentValuePropertyEntryConverter<SITE extends Site<?>, SUBJECT extends Subject<SITE>, VALUE, PROVIDED_FOR_VALUE> extends PersistentPropertyEntryConverter<SITE, SUBJECT, PersistentValuePropertyEntry<SUBJECT, VALUE>> {
+public abstract class PersistentValuePropertyEntryConverter<SITE extends Unit<?>, SUBJECT extends Subject<SITE>, VALUE, PROVIDED_FOR_VALUE> extends PersistentPropertyEntryConverter<SITE, SUBJECT, PersistentValuePropertyEntry<SUBJECT, VALUE>> {
     
     /* -------------------------------------------------- Property Table -------------------------------------------------- */
     

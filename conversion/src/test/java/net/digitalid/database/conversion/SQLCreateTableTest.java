@@ -21,7 +21,7 @@ import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColu
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
 import net.digitalid.database.interfaces.TableImplementation;
 import net.digitalid.database.exceptions.operation.FailedNonCommittingOperationException;
-import net.digitalid.database.subject.site.SimpleSite;
+import net.digitalid.database.unit.DefaultUnit;
 import net.digitalid.database.testing.SQLTestBase;
 
 import org.junit.AfterClass;
@@ -30,7 +30,7 @@ import org.junit.Test;
 
 public class SQLCreateTableTest extends SQLTestBase {
     
-    private static final @Nonnull SimpleSite site = SimpleSite.INSTANCE;
+    private static final @Nonnull DefaultUnit site = Unit.DEFAULT;
     
     @Impure
     @AfterClass

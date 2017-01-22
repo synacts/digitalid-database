@@ -12,7 +12,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.statement.SQLTableStatement;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * An SQL drop table statement.
@@ -26,9 +26,9 @@ public interface SQLDropTableStatement extends SQLTableStatement {
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         string.append("DROP TABLE IF EXISTS ");
-        dialect.unparse(getTable(), site, string);
+        dialect.unparse(getTable(), unit, string);
     }
     
 }

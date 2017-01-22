@@ -17,7 +17,7 @@ import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.statement.SQLTableStatement;
 import net.digitalid.database.dialect.statement.table.create.constraints.SQLTableConstraint;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * An SQL create table statement.
@@ -47,15 +47,15 @@ public interface SQLCreateTableStatement extends SQLTableStatement {
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         string.append("CREATE TABLE IF NOT EXISTS ");
-        dialect.unparse(getTable(), site, string);
+        dialect.unparse(getTable(), unit, string);
         string.append("(");
-        dialect.unparse(getColumnDeclarations(), site, string);
+        dialect.unparse(getColumnDeclarations(), unit, string);
         final @Nullable @NonNullableElements @NonEmpty ImmutableList<? extends SQLTableConstraint> tableConstraints = getTableConstraints();
         if (tableConstraints != null) {
             string.append(", ");
-            dialect.unparse(tableConstraints, site, string);
+            dialect.unparse(tableConstraints, unit, string);
         }
         string.append(")");
     }

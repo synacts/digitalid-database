@@ -12,7 +12,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.expression.SQLExpression;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * An SQL expression that checks whether an expression is in a given range.
@@ -53,13 +53,13 @@ public interface SQLExpressionInRangeBooleanExpression<EXPRESSION extends SQLExp
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         string.append("(");
-        dialect.unparse(getExpression(), site, string);
+        dialect.unparse(getExpression(), unit, string);
         string.append(") BETWEEN (");
-        dialect.unparse(getStartValue(), site, string);
+        dialect.unparse(getStartValue(), unit, string);
         string.append(") AND (");
-        dialect.unparse(getStopValue(), site, string);
+        dialect.unparse(getStopValue(), unit, string);
         string.append(")");
     }
     

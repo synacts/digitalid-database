@@ -10,7 +10,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.property.value.PersistentValuePropertyEntryConverter;
 import net.digitalid.database.subject.Subject;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * This class converts the {@link PersistentPropertyEntry entries} of the {@link PersistentPropertyTable property table}.
@@ -18,7 +18,7 @@ import net.digitalid.database.subject.site.Site;
  * @see PersistentValuePropertyEntryConverter
  */
 @Immutable
-public abstract class PersistentPropertyEntryConverter<SITE extends Site<?>, SUBJECT extends Subject<SITE>, ENTRY extends PersistentPropertyEntry<SUBJECT>> implements Converter<ENTRY, @Nonnull SITE> {
+public abstract class PersistentPropertyEntryConverter<SITE extends Unit<?>, SUBJECT extends Subject<SITE>, ENTRY extends PersistentPropertyEntry<SUBJECT>> implements Converter<ENTRY, @Nonnull SITE> {
     
     /* -------------------------------------------------- Property Table -------------------------------------------------- */
     

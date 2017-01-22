@@ -11,14 +11,14 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
-import net.digitalid.database.interfaces.encoder.SQLDataManipulationLanguageEncoder;
+import net.digitalid.database.interfaces.encoder.SQLActionEncoder;
 
 /**
  *
  */
 @GenerateBuilder
 @GenerateSubclass
-public class JDBCDataManipulationLanguageEncoder extends JDBCEncoderSubclass implements SQLDataManipulationLanguageEncoder {
+public class JDBCDataManipulationLanguageEncoder extends JDBCEncoderSubclass implements SQLActionEncoder {
     
     protected JDBCDataManipulationLanguageEncoder(@Nonnull PreparedStatement preparedStatement) {
         super(preparedStatement);

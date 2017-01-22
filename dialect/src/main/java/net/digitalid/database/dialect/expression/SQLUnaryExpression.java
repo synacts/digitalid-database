@@ -12,7 +12,7 @@ import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.expression.bool.SQLUnaryBooleanExpression;
 import net.digitalid.database.dialect.expression.number.SQLUnaryNumberExpression;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * All unary SQL expressions implement this interface.
@@ -43,10 +43,10 @@ public interface SQLUnaryExpression<@Unspecifiable OPERATOR extends SQLUnaryOper
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
-        dialect.unparse(getOperator(), site, string);
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        dialect.unparse(getOperator(), unit, string);
         string.append("(");
-        dialect.unparse(getExpression(), site, string);
+        dialect.unparse(getExpression(), unit, string);
         string.append(")");
     }
     

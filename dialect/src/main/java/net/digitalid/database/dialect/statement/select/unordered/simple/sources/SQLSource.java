@@ -12,7 +12,7 @@ import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.SQLNode;
 import net.digitalid.database.dialect.identifier.table.SQLTableAlias;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * The source of an SQL select statement.
@@ -44,14 +44,14 @@ public interface SQLSource<SOURCE extends SQLNode> extends SQLNode {
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         string.append("(");
-        dialect.unparse(getSource(), site, string);
+        dialect.unparse(getSource(), unit, string);
         string.append(")");
         final @Nullable SQLTableAlias alias = getAlias();
         if (alias != null) {
             string.append(" AS ");
-            dialect.unparse(alias, site, string);
+            dialect.unparse(alias, unit, string);
         }
     }
     

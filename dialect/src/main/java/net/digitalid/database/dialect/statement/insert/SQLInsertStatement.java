@@ -17,7 +17,7 @@ import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.identifier.column.SQLColumnName;
 import net.digitalid.database.dialect.statement.SQLTableStatement;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * An SQL insert statement.
@@ -56,15 +56,15 @@ public interface SQLInsertStatement extends SQLTableStatement {
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         string.append("INSERT");
         if (isReplacing()) { string.append(" OR REPLACE"); }
         string.append(" INTO ");
-        dialect.unparse(getTable(), site, string);
+        dialect.unparse(getTable(), unit, string);
         string.append(" (");
-        dialect.unparse(getColumns(), site, string);
+        dialect.unparse(getColumns(), unit, string);
         string.append(") ");
-        dialect.unparse(getValues(), site, string);
+        dialect.unparse(getValues(), unit, string);
     }
     
 }

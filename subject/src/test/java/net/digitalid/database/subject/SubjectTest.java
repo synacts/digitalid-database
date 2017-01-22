@@ -9,7 +9,7 @@ import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.testing.RootTest;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.subject.site.SimpleSite;
+import net.digitalid.database.unit.Unit;
 
 import org.junit.Test;
 
@@ -17,13 +17,13 @@ import org.junit.Test;
 @GenerateBuilder
 @GenerateSubclass
 @GenerateConverter
-abstract class TestSubject extends RootClass implements Subject<SimpleSite> {}
+abstract class TestSubject extends RootClass implements Subject<Unit> {}
 
 public class SubjectTest extends RootTest {
     
     @Test
     public void testGeneratedModule() {
-        final @Nonnull TestSubject subject = TestSubjectBuilder.withSite(SimpleSite.INSTANCE).build();
+        final @Nonnull TestSubject subject = TestSubjectBuilder.build();
         assertEquals("TestSubject", subject.module().getName());
     }
     

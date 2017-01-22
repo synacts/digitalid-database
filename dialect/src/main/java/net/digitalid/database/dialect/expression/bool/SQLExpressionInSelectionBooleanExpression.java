@@ -13,7 +13,7 @@ import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.expression.SQLExpression;
 import net.digitalid.database.dialect.statement.select.SQLSelectStatement;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * An SQL expression that checks whether a value is in a given selection.
@@ -43,11 +43,11 @@ public interface SQLExpressionInSelectionBooleanExpression extends SQLBooleanExp
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         string.append("(");
-        dialect.unparse(getExpression(), site, string);
+        dialect.unparse(getExpression(), unit, string);
         string.append(") IN (");
-        dialect.unparse(getSelection(), site, string);
+        dialect.unparse(getSelection(), unit, string);
         string.append(")");
     }
     

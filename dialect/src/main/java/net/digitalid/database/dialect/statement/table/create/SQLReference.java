@@ -18,7 +18,7 @@ import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.SQLNode;
 import net.digitalid.database.dialect.identifier.column.SQLColumnName;
 import net.digitalid.database.dialect.identifier.table.SQLQualifiedTable;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * This type models a foreign key reference.
@@ -64,23 +64,23 @@ public interface SQLReference extends SQLNode {
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         string.append(" REFERENCES ");
-        dialect.unparse(getTable(), site, string);
+        dialect.unparse(getTable(), unit, string);
         string.append(" (");
-        dialect.unparse(getColumns(), site, string);
+        dialect.unparse(getColumns(), unit, string);
         string.append(")");
         
         final @Nullable SQLReferenceOption deleteOption = getDeleteOption();
         if (deleteOption != null) {
             string.append(" ON DELETE ");
-            dialect.unparse(deleteOption, site, string);
+            dialect.unparse(deleteOption, unit, string);
         }
         
         final @Nullable SQLReferenceOption updateOption = getUpdateOption();
         if (updateOption != null) {
             string.append(" ON UPDATE ");
-            dialect.unparse(updateOption, site, string);
+            dialect.unparse(updateOption, unit, string);
         }
     }
     

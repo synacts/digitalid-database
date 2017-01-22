@@ -9,7 +9,7 @@ import net.digitalid.database.property.value.PersistentValuePropertyTable;
 import net.digitalid.database.storage.Table;
 import net.digitalid.database.subject.Subject;
 import net.digitalid.database.subject.SubjectModule;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * A property table belongs to a {@link SubjectModule subject module} and stores the {@link PersistentPropertyEntry property entries}.
@@ -17,7 +17,7 @@ import net.digitalid.database.subject.site.Site;
  * @see PersistentValuePropertyTable
  */
 @Immutable
-public interface PersistentPropertyTable<SITE extends Site<?>, SUBJECT extends Subject<SITE>, ENTRY extends PersistentPropertyEntry<SUBJECT>> extends Table<ENTRY, @Nonnull SITE> {
+public interface PersistentPropertyTable<SITE extends Unit<?>, SUBJECT extends Subject<SITE>, ENTRY extends PersistentPropertyEntry<SUBJECT>> extends Table<ENTRY, @Nonnull SITE> {
     
     /* -------------------------------------------------- Parent Module -------------------------------------------------- */
     

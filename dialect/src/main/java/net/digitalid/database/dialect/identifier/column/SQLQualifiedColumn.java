@@ -12,7 +12,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.identifier.table.SQLTable;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * An SQL qualified column.
@@ -42,10 +42,10 @@ public interface SQLQualifiedColumn extends SQLColumn {
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
-        dialect.unparse(getTable(), site, string);
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        dialect.unparse(getTable(), unit, string);
         string.append(".");
-        dialect.unparse(getColumn(), site, string);
+        dialect.unparse(getColumn(), unit, string);
     }
     
 }

@@ -13,7 +13,7 @@ import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
 import net.digitalid.database.dialect.expression.number.SQLNumberExpression;
 import net.digitalid.database.dialect.expression.string.SQLStringExpression;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * An SQL parameter unparses to a question mark.
@@ -48,7 +48,7 @@ public interface SQLParameter extends SQLBooleanExpression, SQLNumberExpression,
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         string.append("?");
     }
     

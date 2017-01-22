@@ -13,7 +13,7 @@ import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.subject.Subject;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * This class implements the {@link WritablePersistentSimpleMapProperty}.
@@ -21,7 +21,7 @@ import net.digitalid.database.subject.site.Site;
 @ThreadSafe
 @GenerateBuilder
 @GenerateSubclass
-public abstract class WritablePersistentSimpleMapPropertyImplementation<SITE extends Site<?>, SUBJECT extends Subject<SITE>, KEY, VALUE> extends WritablePersistentMapPropertyImplementation<SITE, SUBJECT, KEY, VALUE, ReadOnlyMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>, FreezableMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>> implements WritablePersistentSimpleMapProperty<SUBJECT, KEY, VALUE> {
+public abstract class WritablePersistentSimpleMapPropertyImplementation<SITE extends Unit<?>, SUBJECT extends Subject<SITE>, KEY, VALUE> extends WritablePersistentMapPropertyImplementation<SITE, SUBJECT, KEY, VALUE, ReadOnlyMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>, FreezableMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>> implements WritablePersistentSimpleMapProperty<SUBJECT, KEY, VALUE> {
     
     @Pure
     @Override

@@ -2,6 +2,7 @@ package net.digitalid.database.subject;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
@@ -11,7 +12,7 @@ import net.digitalid.utility.validation.annotations.string.CodeIdentifier;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.storage.Module;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * A subject module contains the tables of all properties in the subject's class.
@@ -19,7 +20,7 @@ import net.digitalid.database.subject.site.Site;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class SubjectModule<SITE extends Site<?>, SUBJECT extends Subject<SITE>> extends Module {
+public abstract class SubjectModule<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>> extends Module {
     
     /* -------------------------------------------------- Subject Converter -------------------------------------------------- */
     
@@ -27,7 +28,7 @@ public abstract class SubjectModule<SITE extends Site<?>, SUBJECT extends Subjec
      * Returns the converter used to convert and recover the subject.
      */
     @Pure
-    public abstract @Nonnull Converter<SUBJECT, @Nonnull SITE> getSubjectConverter();
+    public abstract @Nonnull Converter<SUBJECT, @Nonnull UNIT> getSubjectConverter();
     
     /* -------------------------------------------------- Name -------------------------------------------------- */
     

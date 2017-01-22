@@ -1,11 +1,12 @@
 package net.digitalid.database.interfaces.encoder;
 
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.exceptions.DatabaseException;
 
 /**
- * The SQL data manipulation language (DML) encoder helps to prepare statements that are considered
+ * The SQL action encoder helps to prepare statements that are considered
  * to manipulate the data set of the SQL database. It can handle the following statements:
  * - INSERT
  * - UPDATE
@@ -16,7 +17,8 @@ import net.digitalid.database.exceptions.DatabaseException;
  * 
  * @see SQLQueryEncoder
  */
-public interface SQLDataManipulationLanguageEncoder {
+@Mutable
+public abstract class SQLActionEncoder extends SQLEncoder {
     
     /**
      * Executes the data manipulation language (DML) statement of the type:
@@ -25,6 +27,6 @@ public interface SQLDataManipulationLanguageEncoder {
      * - DELETE
      */
     @PureWithSideEffects
-    public void execute() throws DatabaseException;
+    public abstract void execute() throws DatabaseException;
     
 }

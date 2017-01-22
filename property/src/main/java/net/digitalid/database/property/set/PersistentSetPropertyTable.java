@@ -14,7 +14,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.property.PersistentPropertyTable;
 import net.digitalid.database.subject.Subject;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * The set property table stores the {@link PersistentSetPropertyEntry set property entries}.
@@ -22,7 +22,7 @@ import net.digitalid.database.subject.site.Site;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface PersistentSetPropertyTable<SITE extends Site<?>, SUBJECT extends Subject<SITE>, VALUE, PROVIDED_FOR_VALUE> extends PersistentPropertyTable<SITE, SUBJECT, PersistentSetPropertyEntry<SUBJECT, VALUE>>, Valid.Value<VALUE> {
+public interface PersistentSetPropertyTable<SITE extends Unit<?>, SUBJECT extends Subject<SITE>, VALUE, PROVIDED_FOR_VALUE> extends PersistentPropertyTable<SITE, SUBJECT, PersistentSetPropertyEntry<SUBJECT, VALUE>>, Valid.Value<VALUE> {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     

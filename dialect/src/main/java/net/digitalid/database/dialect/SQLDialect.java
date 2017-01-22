@@ -12,7 +12,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.annotations.sql.SQLFraction;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * A dialect implements a particular version of the structured query language (SQL).
@@ -31,22 +31,22 @@ public abstract class SQLDialect {
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     
     /**
-     * Appends the given node as SQL in this dialect at the given site to the given string.
+     * Appends the given node as SQL in this dialect at the given unit to the given string.
      * Override this method in specific dialects to avoid the default implementation of certain nodes with instance checks.
      */
     @Pure
-    public void unparse(@Nonnull SQLNode node, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
-        node.unparse(this, site, string);
+    public void unparse(@Nonnull SQLNode node, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        node.unparse(this, unit, string);
     }
     
     /**
-     * Appends the given nodes separated by commas as SQL in this dialect at the given site to the given string.
+     * Appends the given nodes separated by commas as SQL in this dialect at the given unit to the given string.
      */
     @Pure
-    public void unparse(@Nonnull Iterable<? extends SQLNode> nodes, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+    public void unparse(@Nonnull Iterable<? extends SQLNode> nodes, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         final @Nonnull Iterator<? extends SQLNode> iterator = nodes.iterator();
         while (iterator.hasNext()) {
-            unparse(iterator.next(), site, string);
+            unparse(iterator.next(), unit, string);
             if (iterator.hasNext()) { string.append(", "); }
         }
     }
@@ -54,12 +54,12 @@ public abstract class SQLDialect {
     /* -------------------------------------------------- Utility -------------------------------------------------- */
     
     /**
-     * Returns the given node as SQL in this dialect at the given site.
+     * Returns the given node as SQL in this dialect at the given unit.
      */
     @Pure
-    public static @Nonnull @SQLFraction String unparse(@Nonnull SQLNode node, @Nonnull Site<?> site) {
+    public static @Nonnull @SQLFraction String unparse(@Nonnull SQLNode node, @Nonnull Unit unit) {
         final @Nonnull StringBuilder result = new StringBuilder();
-        instance.get().unparse(node, site, result);
+        instance.get().unparse(node, unit, result);
         return result.toString();
     }
     

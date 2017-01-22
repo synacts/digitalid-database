@@ -18,7 +18,7 @@ import net.digitalid.database.dialect.SQLNode;
 import net.digitalid.database.dialect.expression.SQLExpression;
 import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
 import net.digitalid.database.dialect.identifier.column.SQLColumnName;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * This SQL node represents a column declaration.
@@ -108,10 +108,10 @@ public interface SQLColumnDeclaration extends SQLNode {
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
-        dialect.unparse(getName(), site, string);
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        dialect.unparse(getName(), unit, string);
         string.append(" ");
-        dialect.unparse(getType(), site, string);
+        dialect.unparse(getType(), unit, string);
         
         if (isNotNull()) { string.append(" NOT NULL"); }
         if (isPrimaryKey()) { string.append(" PRIMARY KEY"); }
@@ -121,19 +121,19 @@ public interface SQLColumnDeclaration extends SQLNode {
         final @Nullable SQLBooleanExpression check = getCheck();
         if (check != null) {
             string.append(" CHECK (");
-            dialect.unparse(check, site, string);
+            dialect.unparse(check, unit, string);
             string.append(")");
         }
         
         final @Nullable SQLExpression defaultValue = getDefaultValue();
         if (defaultValue != null) {
             string.append(" DEFAULT (");
-            dialect.unparse(defaultValue, site, string);
+            dialect.unparse(defaultValue, unit, string);
             string.append(")");
         }
         
         final @Nullable SQLReference reference = getReference();
-        if (reference != null) { dialect.unparse(reference, site, string); }
+        if (reference != null) { dialect.unparse(reference, unit, string); }
     }
     
     /* -------------------------------------------------- Utility -------------------------------------------------- */

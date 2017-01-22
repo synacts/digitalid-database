@@ -29,7 +29,7 @@ import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.dialect.identifier.SQLBooleanAlias;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.subject.Subject;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * This class implements the {@link WritablePersistentValueProperty}.
@@ -37,7 +37,7 @@ import net.digitalid.database.subject.site.Site;
 @ThreadSafe
 @GenerateBuilder
 @GenerateSubclass
-public abstract class WritablePersistentValuePropertyImplementation<SITE extends Site<?>, SUBJECT extends Subject<SITE>, VALUE> extends WritableValuePropertyImplementation<VALUE, DatabaseException, PersistentValueObserver<SUBJECT, VALUE>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE>> implements WritablePersistentValueProperty<SUBJECT, VALUE> {
+public abstract class WritablePersistentValuePropertyImplementation<SITE extends Unit<?>, SUBJECT extends Subject<SITE>, VALUE> extends WritableValuePropertyImplementation<VALUE, DatabaseException, PersistentValueObserver<SUBJECT, VALUE>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE>> implements WritablePersistentValueProperty<SUBJECT, VALUE> {
     
     /* -------------------------------------------------- Validator -------------------------------------------------- */
     

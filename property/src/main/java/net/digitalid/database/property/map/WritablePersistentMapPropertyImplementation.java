@@ -35,7 +35,7 @@ import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.dialect.identifier.SQLBooleanAlias;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.subject.Subject;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * This class implements the {@link WritablePersistentMapProperty}.
@@ -43,7 +43,7 @@ import net.digitalid.database.subject.site.Site;
 @ThreadSafe
 @GenerateBuilder
 @GenerateSubclass
-public abstract class WritablePersistentMapPropertyImplementation<SITE extends Site<?>, SUBJECT extends Subject<SITE>, KEY, VALUE, READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>, FREEZABLE_MAP extends FreezableMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>> extends WritableMapPropertyImplementation<KEY, VALUE, READONLY_MAP, DatabaseException, PersistentMapObserver<SUBJECT, KEY, VALUE, READONLY_MAP>, ReadOnlyPersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP>> implements WritablePersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP, FREEZABLE_MAP> {
+public abstract class WritablePersistentMapPropertyImplementation<SITE extends Unit<?>, SUBJECT extends Subject<SITE>, KEY, VALUE, READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>, FREEZABLE_MAP extends FreezableMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>> extends WritableMapPropertyImplementation<KEY, VALUE, READONLY_MAP, DatabaseException, PersistentMapObserver<SUBJECT, KEY, VALUE, READONLY_MAP>, ReadOnlyPersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP>> implements WritablePersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP, FREEZABLE_MAP> {
     
     /* -------------------------------------------------- Validators -------------------------------------------------- */
     

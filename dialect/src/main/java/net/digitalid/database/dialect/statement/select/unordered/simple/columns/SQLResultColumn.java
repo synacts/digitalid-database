@@ -14,7 +14,7 @@ import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.expression.SQLExpression;
 import net.digitalid.database.dialect.identifier.column.SQLColumnAlias;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * This SQL node represents a result column in a select statement.
@@ -44,12 +44,12 @@ public interface SQLResultColumn extends SQLResultColumnOrAllColumns {
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
-        dialect.unparse(getExpression(), site, string);
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        dialect.unparse(getExpression(), unit, string);
         final @Nullable SQLColumnAlias alias = getAlias();
         if (alias != null) {
             string.append(" AS ");
-            dialect.unparse(alias, site, string);
+            dialect.unparse(alias, unit, string);
         }
     }
     

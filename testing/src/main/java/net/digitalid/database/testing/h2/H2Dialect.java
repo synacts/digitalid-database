@@ -15,7 +15,7 @@ import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.SQLNode;
 import net.digitalid.database.dialect.identifier.SQLIdentifier;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 @Stateless
 public class H2Dialect extends SQLDialect {
@@ -32,7 +32,7 @@ public class H2Dialect extends SQLDialect {
     @Pure
     @Override
     @TODO(task = "Steffi thinks that identifiers have to be in upper case. According to http://www.h2database.com/html/grammar.html#quoted_name, however, the default unparsing seems fine.", date = "2017-01-18", author = Author.KASPAR_ETTER)
-    public void unparse(@Nonnull SQLNode node, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+    public void unparse(@Nonnull SQLNode node, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         if (node instanceof SQLIdentifier) {
             final @Nonnull SQLIdentifier identifier = (SQLIdentifier) node;
             string.append(identifier.getString().toUpperCase());

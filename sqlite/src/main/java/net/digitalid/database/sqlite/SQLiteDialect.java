@@ -12,7 +12,7 @@ import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.SQLNode;
 import net.digitalid.database.dialect.Transcriber;
 import net.digitalid.database.dialect.expression.bool.SQLBooleanLiteral;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  *
@@ -29,14 +29,14 @@ public class SQLiteDialect extends SQLDialect {
         register(new Transcriber<SQLBooleanLiteral>(SQLBooleanLiteral.class) {
 
             @Override
-            protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBooleanLiteral node, @Nonnull Site site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
+            protected void transcribe(@Nonnull SQLDialect dialect, @Nonnull SQLBooleanLiteral node, @Nonnull Unit site, @Nonnull @NonCapturable StringBuilder string, boolean parameterizable) throws InternalException {
                 string.append(node.getValue() ? "1" : "0");
             }
         });
     }
     
     @Override
-    public void transcribe(@Nonnull Site site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLNode<?> node, boolean parameterizable) throws InternalException {
+    public void transcribe(@Nonnull Unit site, @NonCapturable @Nonnull StringBuilder string, @Nonnull SQLNode<?> node, boolean parameterizable) throws InternalException {
         if (dialectSpecificTranscribers.containsKey(node.getClass())) {
             dialectSpecificTranscribers.get(node.getClass()).transcribeNode(this, node, site, string);
         } else {

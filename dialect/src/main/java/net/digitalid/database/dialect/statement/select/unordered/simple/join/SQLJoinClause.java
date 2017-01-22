@@ -15,7 +15,7 @@ import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.SQLNode;
 import net.digitalid.database.dialect.statement.select.unordered.simple.join.constraints.SQLJoinConstraint;
 import net.digitalid.database.dialect.statement.select.unordered.simple.sources.SQLSource;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * This SQL node represents a join clause of an SQL select statement.
@@ -61,14 +61,14 @@ public interface SQLJoinClause extends SQLNode {
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
-        dialect.unparse(getLeftSource(), site, string);
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        dialect.unparse(getLeftSource(), unit, string);
         string.append(" ");
-        dialect.unparse(getOperator(), site, string);
+        dialect.unparse(getOperator(), unit, string);
         string.append(" ");
-        dialect.unparse(getRightSource(), site, string);
+        dialect.unparse(getRightSource(), unit, string);
         final @Nullable SQLJoinConstraint constraint = getConstraint();
-        if (constraint != null) { dialect.unparse(constraint, site, string); }
+        if (constraint != null) { dialect.unparse(constraint, unit, string); }
     }
     
 }

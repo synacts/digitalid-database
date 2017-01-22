@@ -12,7 +12,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * A check constraint in a create table statement.
@@ -34,10 +34,10 @@ public interface SQLCheckConstraint extends SQLTableConstraint {
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
-        SQLTableConstraint.super.unparse(dialect, site, string);
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        SQLTableConstraint.super.unparse(dialect, unit, string);
         string.append(" CHECK (");
-        dialect.unparse(getExpression(), site, string);
+        dialect.unparse(getExpression(), unit, string);
         string.append(")");
     }
     

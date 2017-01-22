@@ -21,8 +21,8 @@ import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.interfaces.DatabaseUtility;
 import net.digitalid.database.interfaces.SQLDecoder;
 import net.digitalid.database.interfaces.TableImplementation;
-import net.digitalid.database.subject.site.SimpleSite;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.DefaultUnit;
+import net.digitalid.database.unit.Unit;
 import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
 
 import org.h2.tools.Server;
@@ -54,7 +54,7 @@ public class SQLTestBase extends RootTest {
     @BeforeClass
     public static void setUpSQL() throws Exception {
         if (!initialized) {
-            DatabaseUtility.initialize(H2JDBCDatabaseInstance.get("jdbc:h2:" + (runInMemory ? "" : "tcp://localhost:9092/") + "mem:test;" + (runInMemory ? "" : "DB_CLOSE_DELAY=-1;") + "INIT=CREATE SCHEMA IF NOT EXISTS " + SimpleSite.INSTANCE.getSchemaName() + ";mode=MySQL;"));
+            DatabaseUtility.initialize(H2JDBCDatabaseInstance.get("jdbc:h2:" + (runInMemory ? "" : "tcp://localhost:9092/") + "mem:test;" + (runInMemory ? "" : "DB_CLOSE_DELAY=-1;") + "INIT=CREATE SCHEMA IF NOT EXISTS " + Unit.DEFAULT.getSchemaName() + ";mode=MySQL;"));
             server = Server.createTcpServer();
             initialized = true;
         }
@@ -64,26 +64,26 @@ public class SQLTestBase extends RootTest {
     /* -------------------------------------------------- Drop Table -------------------------------------------------- */
     
     @Impure
-    public static void dropTable(@Nonnull String tableName, @Nonnull Site site) throws DatabaseException {
+    public static void dropTable(@Nonnull String tableName, @Nonnull Unit site) throws DatabaseException {
         Database instance = DatabaseUtility.getInstance();
-        instance.execute("DROP TABLE " + site.getSchemaName() + "." + tableName.toLowerCase());
+        instance.execute("DROP TABLE " + site.getName() + "." + tableName.toLowerCase());
     }
     
     @Impure
-    public static void dropTable(@Nonnull Converter<?, ?> converter, @Nonnull Site site) throws DatabaseException {
+    public static void dropTable(@Nonnull Converter<?, ?> converter, @Nonnull Unit site) throws DatabaseException {
         dropTable(converter.getTypeName(), site);
     }
     
     /* -------------------------------------------------- Delete -------------------------------------------------- */
     
     @Impure
-    public static void deleteFromTable(@Nonnull String tableName, @Nonnull Site site) throws DatabaseException {
+    public static void deleteFromTable(@Nonnull String tableName, @Nonnull Unit site) throws DatabaseException {
         Database instance = DatabaseUtility.getInstance();
-        instance.execute("DELETE FROM " + site.getSchemaName() + "." + tableName.toLowerCase());
+        instance.execute("DELETE FROM " + site.getName() + "." + tableName.toLowerCase());
     }
     
     @Impure
-    public static void deleteFromTable(@Nonnull Converter<?, ?> converter, @Nonnull Site site) throws DatabaseException {
+    public static void deleteFromTable(@Nonnull Converter<?, ?> converter, @Nonnull Unit site) throws DatabaseException {
         deleteFromTable(converter.getTypeName(), site);
     }
     
@@ -238,8 +238,8 @@ public class SQLTestBase extends RootTest {
     }
     
     @Pure
-    protected static void assertRowCount(@Nonnull TableImplementation table, @Nonnull Site site, long rowCount) throws DatabaseException, EntryNotFoundException, FailedSQLValueRecoveryException {
-        assertRowCount(site.getSchemaName() + "." + table.getName(), rowCount);
+    protected static void assertRowCount(@Nonnull TableImplementation table, @Nonnull Unit site, long rowCount) throws DatabaseException, EntryNotFoundException, FailedSQLValueRecoveryException {
+        assertRowCount(site.getName() + "." + table.getName(), rowCount);
     }
     
     @Pure
@@ -269,9 +269,9 @@ public class SQLTestBase extends RootTest {
     }
     
     @Pure
-    protected static void assertTableContains(@Nonnull TableImplementation table, @Nonnull Site site, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, DatabaseException, FailedSQLValueRecoveryException {
+    protected static void assertTableContains(@Nonnull TableImplementation table, @Nonnull Unit site, @Nonnull @NonNullableElements Expected... expectedArray) throws EntryNotFoundException, DatabaseException, FailedSQLValueRecoveryException {
         final @Nonnull String tableName = table.getName();
-        assertTableContains(site.getSchemaName() + "." + tableName, expectedArray);
+        assertTableContains(site.getName() + "." + tableName, expectedArray);
     }
     
     // TODO: the following is still very ugly. Improve!

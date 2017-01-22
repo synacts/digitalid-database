@@ -12,7 +12,7 @@ import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.SQLNode;
 import net.digitalid.database.dialect.identifier.constraint.SQLConstraintName;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * A constraint in the SQL create table statement.
@@ -35,11 +35,11 @@ public interface SQLTableConstraint extends SQLNode {
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         final @Nullable SQLConstraintName name = getName();
         if (name != null) {
             string.append("CONSTRAINT ");
-            dialect.unparse(name, site, string);
+            dialect.unparse(name, unit, string);
         }
     }
     

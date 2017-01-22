@@ -30,7 +30,7 @@ import net.digitalid.database.dialect.statement.update.SQLUpdateStatement;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
 import net.digitalid.database.interfaces.Database;
-import net.digitalid.database.interfaces.encoder.SQLDataManipulationLanguageEncoder;
+import net.digitalid.database.interfaces.encoder.SQLActionEncoder;
 import net.digitalid.database.interfaces.encoder.SQLQueryEncoder;
 import net.digitalid.database.jdbc.encoder.JDBCDataManipulationLanguageEncoderBuilder;
 import net.digitalid.database.subject.site.Site;
@@ -252,7 +252,7 @@ public abstract class JDBCDatabaseInstance implements Database {
     /* -------------------------------------------------- Encoder -------------------------------------------------- */
     
     @PureWithSideEffects
-    private @Nonnull SQLDataManipulationLanguageEncoder getEncoderForStatement(@Nonnull Site<?> site, @Nonnull SQLTableStatement tableStatement) throws DatabaseException {
+    private @Nonnull SQLActionEncoder getEncoderForStatement(@Nonnull Site<?> site, @Nonnull SQLTableStatement tableStatement) throws DatabaseException {
         final @Nonnull StringBuilder sqlStringBuilder = new StringBuilder();
         tableStatement.unparse(SQLDialect.instance.get(), site, sqlStringBuilder);
         return JDBCDataManipulationLanguageEncoderBuilder.withPreparedStatement(prepare(sqlStringBuilder.toString())).build();
@@ -260,19 +260,19 @@ public abstract class JDBCDatabaseInstance implements Database {
     
     @Override
     @PureWithSideEffects
-    public @Nonnull SQLDataManipulationLanguageEncoder getEncoder(@Nonnull Site site, @Nonnull SQLInsertStatement insertStatement) throws DatabaseException {
+    public @Nonnull SQLActionEncoder getEncoder(@Nonnull Site site, @Nonnull SQLInsertStatement insertStatement) throws DatabaseException {
         return getEncoderForStatement(site, insertStatement);
     }
     
     @Override
     @PureWithSideEffects
-    public @Nonnull SQLDataManipulationLanguageEncoder getEncoder(@Nonnull Site site, @Nonnull SQLUpdateStatement updateStatement) throws DatabaseException {
+    public @Nonnull SQLActionEncoder getEncoder(@Nonnull Site site, @Nonnull SQLUpdateStatement updateStatement) throws DatabaseException {
         return getEncoderForStatement(site, updateStatement);
     }
     
     @Override
     @PureWithSideEffects
-    public @Nonnull SQLDataManipulationLanguageEncoder getEncoder(@Nonnull Site site, @Nonnull SQLDeleteStatement deleteStatement) throws DatabaseException {
+    public @Nonnull SQLActionEncoder getEncoder(@Nonnull Site site, @Nonnull SQLDeleteStatement deleteStatement) throws DatabaseException {
         return getEncoderForStatement(site, deleteStatement);
     }
     

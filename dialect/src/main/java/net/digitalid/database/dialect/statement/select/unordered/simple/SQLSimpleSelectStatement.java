@@ -20,7 +20,7 @@ import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
 import net.digitalid.database.dialect.statement.select.unordered.SQLUnorderedSelectStatement;
 import net.digitalid.database.dialect.statement.select.unordered.simple.columns.SQLResultColumnOrAllColumns;
 import net.digitalid.database.dialect.statement.select.unordered.simple.sources.SQLSource;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * A simple select statement without an order or limit clause.
@@ -75,21 +75,21 @@ public interface SQLSimpleSelectStatement extends SQLUnorderedSelectStatement {
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         string.append("SELECT ");
         if (isDistinct()) { string.append("DISTINCT "); }
-        dialect.unparse(getColumns(), site, string);
+        dialect.unparse(getColumns(), unit, string);
         string.append(" FROM ");
-        dialect.unparse(getSources(), site, string);
+        dialect.unparse(getSources(), unit, string);
         
         final @Nullable SQLBooleanExpression whereClause = getWhereClause();
         if (whereClause != null) {
             string.append(" WHERE ");
-            dialect.unparse(whereClause, site, string);
+            dialect.unparse(whereClause, unit, string);
         }
         
         final @Nullable SQLGroupClause groupClause = getGroupClause();
-        if (groupClause != null) { dialect.unparse(groupClause, site, string); }
+        if (groupClause != null) { dialect.unparse(groupClause, unit, string); }
     }
     
 }

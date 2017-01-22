@@ -14,7 +14,7 @@ import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.SQLNode;
 import net.digitalid.database.dialect.expression.SQLExpression;
 import net.digitalid.database.dialect.identifier.column.SQLColumnName;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * This type models an assignment in an update statement.
@@ -44,10 +44,10 @@ public interface SQLAssignment extends SQLNode {
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
-        dialect.unparse(getColumn(), site, string);
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        dialect.unparse(getColumn(), unit, string);
         string.append(" = ");
-        dialect.unparse(getExpression(), site, string);
+        dialect.unparse(getExpression(), unit, string);
     }
     
 }

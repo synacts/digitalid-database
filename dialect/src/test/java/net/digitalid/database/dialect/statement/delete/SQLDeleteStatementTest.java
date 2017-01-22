@@ -6,7 +6,7 @@ import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.expression.SQLParameter;
 import net.digitalid.database.dialect.expression.bool.SQLNumberComparisonBooleanExpression;
 import net.digitalid.database.dialect.statement.SQLStatementTest;
-import net.digitalid.database.subject.site.SimpleSite;
+import net.digitalid.database.unit.Unit;
 
 import org.junit.Test;
 
@@ -16,7 +16,7 @@ public class SQLDeleteStatementTest extends SQLStatementTest {
     public void testDeleteStatement() {
         final @Nonnull SQLNumberComparisonBooleanExpression whereClause = firstColumn.equal(SQLParameter.NUMBER);
         final @Nonnull SQLDeleteStatement deleteStatement = SQLDeleteStatementBuilder.withTable(qualifiedTable).withWhereClause(whereClause).build();
-        assertEquals("DELETE FROM \"default\".\"test_table\" WHERE (\"first_column\") = (?)", SQLDialect.unparse(deleteStatement, SimpleSite.INSTANCE));
+        assertEquals("DELETE FROM \"default\".\"test_table\" WHERE (\"first_column\") = (?)", SQLDialect.unparse(deleteStatement, Unit.DEFAULT));
     }
     
 }

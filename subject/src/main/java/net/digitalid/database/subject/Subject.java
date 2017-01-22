@@ -2,30 +2,33 @@ package net.digitalid.database.subject;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.rootclass.RootInterface;
+import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Provided;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.subject.annotations.GenerateSubjectModule;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
- * A subject belongs to a {@link Site site} and can have persistent properties.
+ * A subject belongs to a {@link Unit database unit} and can have persistent properties.
  */
 @Immutable
-public interface Subject<SITE extends Site<?>> extends RootInterface {
+public interface Subject<@Unspecifiable UNIT extends Unit> extends RootInterface {
     
-    /* -------------------------------------------------- Site -------------------------------------------------- */
+    /* -------------------------------------------------- Unit -------------------------------------------------- */
     
     /**
-     * Returns the site of this subject.
+     * Returns the unit to which this subject belongs.
      */
     @Pure
     @Provided
-    public @Nonnull SITE getSite();
+    @Default("Unit.DEFAULT")
+    public @Nonnull UNIT getUnit();
     
     /* -------------------------------------------------- Module -------------------------------------------------- */
     
@@ -35,6 +38,6 @@ public interface Subject<SITE extends Site<?>> extends RootInterface {
     @Pure
     @GenerateSubjectModule
     @TODO(task = "Make it possible that this method can be called getModule() without generating a corresponding field.", date = "2016-12-11", author = Author.KASPAR_ETTER)
-    public @Nonnull SubjectModule<SITE, ?> module();
+    public @Nonnull SubjectModule<UNIT, ?> module();
     
 }

@@ -15,7 +15,7 @@ import net.digitalid.database.dialect.identifier.SQLIdentifier;
 import net.digitalid.database.dialect.statement.SQLStatement;
 import net.digitalid.database.dialect.statement.insert.SQLExpressions;
 import net.digitalid.database.dialect.statement.insert.SQLValues;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * All SQL syntax tree nodes implement this interface.
@@ -35,9 +35,9 @@ public interface SQLNode extends RootInterface {
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     
     /**
-     * Appends this node as SQL in the given dialect at the given site to the given string.
+     * Appends this node as SQL in the given dialect at the given unit to the given string.
      */
     @Pure
-    public void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string);
+    public void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string);
     
 }

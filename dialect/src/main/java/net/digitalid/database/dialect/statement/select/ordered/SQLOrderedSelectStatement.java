@@ -17,7 +17,7 @@ import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.statement.select.SQLSelectStatement;
 import net.digitalid.database.dialect.statement.select.unordered.SQLUnorderedSelectStatement;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * An SQL select statement with an order or limit clause.
@@ -63,12 +63,12 @@ public interface SQLOrderedSelectStatement extends SQLSelectStatement {
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
-        dialect.unparse(getSelectStatement(), site, string);
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        dialect.unparse(getSelectStatement(), unit, string);
         final @Nullable @NonNullableElements @NonEmpty ImmutableList<? extends SQLOrderingTerm> orders = getOrders();
         if (orders != null) {
             string.append(" ORDER BY ");
-            dialect.unparse(orders, site, string);
+            dialect.unparse(orders, unit, string);
         }
         final @Nullable Integer limit = getLimit();
         final @Nullable Integer offset = getOffset();

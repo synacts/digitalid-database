@@ -12,7 +12,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.statement.table.create.SQLReference;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * A foreign key constraint in a create table statement.
@@ -34,12 +34,12 @@ public interface SQLForeignKeyConstraint extends SQLColumnsConstraint {
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
-        SQLColumnsConstraint.super.unparse(dialect, site, string);
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        SQLColumnsConstraint.super.unparse(dialect, unit, string);
         string.append(" FOREIGN KEY (");
-        dialect.unparse(getColumns(), site, string);
+        dialect.unparse(getColumns(), unit, string);
         string.append(")");
-        dialect.unparse(getReference(), site, string);
+        dialect.unparse(getReference(), unit, string);
     }
     
     /* -------------------------------------------------- Utility -------------------------------------------------- */

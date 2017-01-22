@@ -18,7 +18,7 @@ import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.SQLNode;
 import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
 import net.digitalid.database.dialect.identifier.column.SQLColumn;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * This SQL node represents a group clause for an SQL select statement.
@@ -46,13 +46,13 @@ public interface SQLGroupClause extends SQLNode {
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         string.append(" GROUP BY ");
-        dialect.unparse(getColumns(), site, string);
+        dialect.unparse(getColumns(), unit, string);
         final @Nullable SQLBooleanExpression expression = getExpression();
         if (expression != null) {
             string.append(" HAVING ");
-            dialect.unparse(expression, site, string);
+            dialect.unparse(expression, unit, string);
         }
     }
     

@@ -12,7 +12,7 @@ import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.expression.bool.SQLBinaryBooleanExpression;
 import net.digitalid.database.dialect.expression.number.SQLBinaryNumberExpression;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * All binary SQL expressions implement this interface.
@@ -51,13 +51,13 @@ public interface SQLBinaryExpression<@Unspecifiable OPERATOR extends SQLBinaryOp
     
     @Pure
     @Override
-    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Site<?> site, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+    public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         string.append("(");
-        dialect.unparse(getLeftExpression(), site, string);
+        dialect.unparse(getLeftExpression(), unit, string);
         string.append(") ");
-        dialect.unparse(getOperator(), site, string);
+        dialect.unparse(getOperator(), unit, string);
         string.append(" (");
-        dialect.unparse(getRightExpression(), site, string);
+        dialect.unparse(getRightExpression(), unit, string);
         string.append(")");
     }
     

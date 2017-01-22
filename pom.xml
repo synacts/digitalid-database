@@ -34,6 +34,7 @@
         <module>annotations</module>
         <module>exceptions</module>
         <module>storage</module>
+        <module>unit</module>
         <module>subject</module>
         <module>dialect</module>
 <!--        <module>mysql</module>-->

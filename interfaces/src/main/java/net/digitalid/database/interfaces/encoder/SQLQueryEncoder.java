@@ -3,6 +3,7 @@ package net.digitalid.database.interfaces.encoder;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.SQLDecoder;
@@ -17,12 +18,13 @@ import net.digitalid.database.interfaces.SQLDecoder;
  * 
  * @see SQLDataManipulationLanguageEncoder
  */
-public interface SQLQueryEncoder {
+@Mutable
+public abstract class SQLQueryEncoder extends SQLEncoder {
     
     /**
      * Executes the SELECT statement.
      */
     @PureWithSideEffects
-    public @Nonnull SQLDecoder execute() throws DatabaseException;
+    public abstract @Nonnull SQLDecoder execute() throws DatabaseException;
     
 }

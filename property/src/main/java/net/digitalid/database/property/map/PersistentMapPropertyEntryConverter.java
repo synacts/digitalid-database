@@ -29,7 +29,7 @@ import net.digitalid.database.annotations.constraints.PrimaryKey;
 import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.property.PersistentPropertyEntryConverter;
 import net.digitalid.database.subject.Subject;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.unit.Unit;
 
 /**
  * This class converts the {@link PersistentMapPropertyEntry entries} of the {@link PersistentMapPropertyTable map property table}.
@@ -37,7 +37,7 @@ import net.digitalid.database.subject.site.Site;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class PersistentMapPropertyEntryConverter<SITE extends Site<?>, SUBJECT extends Subject<SITE>, KEY, VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> extends PersistentPropertyEntryConverter<SITE, SUBJECT, PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>> {
+public abstract class PersistentMapPropertyEntryConverter<SITE extends Unit<?>, SUBJECT extends Subject<SITE>, KEY, VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> extends PersistentPropertyEntryConverter<SITE, SUBJECT, PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>> {
     
     /* -------------------------------------------------- Property Table -------------------------------------------------- */
     
