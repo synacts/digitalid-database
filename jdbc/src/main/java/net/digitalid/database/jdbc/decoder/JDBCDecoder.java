@@ -31,7 +31,14 @@ public abstract class JDBCDecoder extends SQLDecoder {
      */
     private final @Nonnull ResultSet resultSet;
     
+    /* -------------------------------------------------- Column Index -------------------------------------------------- */
+    
+    /**
+     * Indicates at which column we currently are.
+     */
     private int columnIndex;
+    
+    /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
     /**
      * Constructs a new JDBC decoder
@@ -40,6 +47,8 @@ public abstract class JDBCDecoder extends SQLDecoder {
         this.resultSet = resultSet;
         this.columnIndex = 1;
     }
+    
+    /* -------------------------------------------------- Move -------------------------------------------------- */
     
     @Impure
     @Override
@@ -62,15 +71,7 @@ public abstract class JDBCDecoder extends SQLDecoder {
         }
     }
     
-    @Impure
-    @Override
-    public boolean wasNull() throws DatabaseException {
-        try {
-            return resultSet.wasNull();
-        } catch (SQLException exception) {
-            throw DatabaseExceptionBuilder.withCause(exception).build();
-        }
-    }
+    /* -------------------------------------------------- Closing -------------------------------------------------- */
     
     @Impure
     @Override
@@ -81,6 +82,20 @@ public abstract class JDBCDecoder extends SQLDecoder {
             throw DatabaseExceptionBuilder.withCause(exception).build();
         }
     }
+    
+    /* -------------------------------------------------- Nullness -------------------------------------------------- */
+    
+    @Impure
+    @Override
+    public boolean wasNull() throws DatabaseException {
+        try {
+            return resultSet.wasNull();
+        } catch (SQLException exception) {
+            throw DatabaseExceptionBuilder.withCause(exception).build();
+        }
+    }
+    
+    /* -------------------------------------------------- Decoding -------------------------------------------------- */
     
     @Impure
     @Override

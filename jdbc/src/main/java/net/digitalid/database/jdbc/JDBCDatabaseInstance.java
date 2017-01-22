@@ -32,7 +32,6 @@ import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.interfaces.encoder.SQLDataManipulationLanguageEncoder;
 import net.digitalid.database.interfaces.encoder.SQLQueryEncoder;
-import net.digitalid.database.jdbc.encoder.JDBCDataManipulationLanguageEncoder;
 import net.digitalid.database.jdbc.encoder.JDBCDataManipulationLanguageEncoderBuilder;
 import net.digitalid.database.subject.site.Site;
 
