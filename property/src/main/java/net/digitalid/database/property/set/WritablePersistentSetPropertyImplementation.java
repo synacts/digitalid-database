@@ -1,8 +1,8 @@
 package net.digitalid.database.property.set;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
@@ -13,21 +13,22 @@ import net.digitalid.utility.annotations.type.ThreadSafe;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collaboration.enumerations.Priority;
+import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.collections.set.FreezableSet;
 import net.digitalid.utility.collections.set.ReadOnlySet;
-import net.digitalid.utility.concurrency.exceptions.ReentranceException;
 import net.digitalid.utility.contracts.Validate;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.functional.interfaces.Predicate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.property.set.WritableSetPropertyImplementation;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.lock.LockNotHeldByCurrentThread;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
-import net.digitalid.database.dialect.identifier.SQLBooleanAlias;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.subject.Subject;
 import net.digitalid.database.unit.Unit;
@@ -40,7 +41,7 @@ import net.digitalid.database.unit.Unit;
 @ThreadSafe
 @GenerateBuilder
 @GenerateSubclass
-public abstract class WritablePersistentSetPropertyImplementation<SITE extends Unit<?>, SUBJECT extends Subject<SITE>, VALUE, READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>, FREEZABLE_SET extends FreezableSet<@Nonnull @Valid VALUE>> extends WritableSetPropertyImplementation<VALUE, READONLY_SET, DatabaseException, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>, ReadOnlyPersistentSetProperty<SUBJECT, VALUE, READONLY_SET>> implements WritablePersistentSetProperty<SUBJECT, VALUE, READONLY_SET, FREEZABLE_SET> {
+public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>, @Unspecifiable VALUE, @Unspecifiable READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>, @Unspecifiable FREEZABLE_SET extends FreezableSet<@Nonnull @Valid VALUE>> extends WritableSetPropertyImplementation<VALUE, READONLY_SET, DatabaseException, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>, ReadOnlyPersistentSetProperty<SUBJECT, VALUE, READONLY_SET>> implements WritablePersistentSetProperty<SUBJECT, VALUE, READONLY_SET, FREEZABLE_SET> {
     
     /* -------------------------------------------------- Validator -------------------------------------------------- */
     
@@ -59,7 +60,7 @@ public abstract class WritablePersistentSetPropertyImplementation<SITE extends U
     
     @Pure
     @Override
-    public abstract @Nonnull PersistentSetPropertyTable<SITE, SUBJECT, VALUE, ?> getTable();
+    public abstract @Nonnull PersistentSetPropertyTable<UNIT, SUBJECT, VALUE, ?> getTable();
     
     /* -------------------------------------------------- Loading -------------------------------------------------- */
     
@@ -73,12 +74,12 @@ public abstract class WritablePersistentSetPropertyImplementation<SITE extends U
     @Pure
     @NonCommitting
     @TODO(task = "Instead of reading and adding a single entry, select and add all entries of the subject to the freezable set.", date = "2016-09-30", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.HIGH)
-    protected void load(final boolean locking) throws DatabaseException, ReentranceException {
+    protected void load(final boolean locking) throws DatabaseException {
         if (locking) { lock.lock(); }
         try {
             getSet().clear();
-            final @Nullable PersistentSetPropertyEntry<SUBJECT, VALUE> entry = SQL.select(getTable().getEntryConverter(), SQLBooleanAlias.with("key = 'TODO'"), getSubject().getSite(), getSubject().getSite());
-            if (entry != null) {
+            final @Nonnull @NonNullableElements FreezableList<PersistentSetPropertyEntry<SUBJECT, VALUE>> entries = SQL.selectAll(getTable().getEntryConverter(), getSubject().getUnit(), getSubject(), getTable().getParentModule().getSubjectConverter(), getSubject().getUnit());
+            for (@Nonnull PersistentSetPropertyEntry<SUBJECT, VALUE> entry : entries) {
                 getSet().add(entry.getValue());
             }
             this.loaded = true;
@@ -103,7 +104,8 @@ public abstract class WritablePersistentSetPropertyImplementation<SITE extends U
     @Impure
     @Override
     @Committing
-    public boolean add(@Captured @Nonnull @Valid VALUE value) throws DatabaseException, ReentranceException {
+    @LockNotHeldByCurrentThread
+    public boolean add(@Captured @Nonnull @Valid VALUE value) throws DatabaseException {
         lock.lock();
         try {
             if (!loaded) { load(false); }
@@ -111,7 +113,7 @@ public abstract class WritablePersistentSetPropertyImplementation<SITE extends U
                 return false;
             } else {
                 final @Nonnull PersistentSetPropertyEntry<SUBJECT, VALUE> entry = new PersistentSetPropertyEntrySubclass<>(getSubject(), value);
-                SQL.insert(entry, getTable().getEntryConverter(), getSubject().getSite());
+                SQL.insert(entry, getTable().getEntryConverter(), getSubject().getUnit());
                 getSet().add(value);
                 notifyObservers(value, true);
                 return true;
@@ -124,14 +126,14 @@ public abstract class WritablePersistentSetPropertyImplementation<SITE extends U
     @Impure
     @Override
     @Committing
-    @TODO(task = "Implement and use SQL.delete().", date = "2016-09-30", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.HIGH)
-    public boolean remove(@NonCaptured @Unmodified @Nonnull @Valid VALUE value) throws DatabaseException, ReentranceException {
+    @LockNotHeldByCurrentThread
+    public boolean remove(@NonCaptured @Unmodified @Nonnull @Valid VALUE value) throws DatabaseException {
         lock.lock();
         try {
             if (!loaded) { load(false); }
             if (getSet().contains(value)) {
                 final @Nonnull PersistentSetPropertyEntry<SUBJECT, VALUE> entry = new PersistentSetPropertyEntrySubclass<>(getSubject(), value);
-                SQL.insert(entry, getTable().getEntryConverter(), getSubject().getSite()); // TODO: SQL.delete()
+                SQL.delete(getTable().getEntryConverter(), entry, getTable().getEntryConverter(), getSubject().getUnit());
                 getSet().remove(value);
                 notifyObservers(value, false);
                 return true;
@@ -148,7 +150,8 @@ public abstract class WritablePersistentSetPropertyImplementation<SITE extends U
     @Impure
     @Override
     @NonCommitting
-    public void reset() throws DatabaseException, ReentranceException {
+    @LockNotHeldByCurrentThread
+    public void reset() throws DatabaseException {
         lock.lock();
         try {
             if (loaded) {

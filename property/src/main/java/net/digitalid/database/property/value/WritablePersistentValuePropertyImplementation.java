@@ -5,20 +5,20 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.generics.Specifiable;
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.Captured;
 import net.digitalid.utility.annotations.type.ThreadSafe;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
-import net.digitalid.utility.collaboration.enumerations.Priority;
 import net.digitalid.utility.functional.interfaces.Predicate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.property.value.WritableValuePropertyImplementation;
 import net.digitalid.utility.tuples.Pair;
+import net.digitalid.utility.validation.annotations.lock.LockNotHeldByCurrentThread;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.annotations.transaction.Committing;
@@ -26,7 +26,6 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeBuilder;
 import net.digitalid.database.conversion.SQL;
-import net.digitalid.database.dialect.identifier.SQLBooleanAlias;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.subject.Subject;
 import net.digitalid.database.unit.Unit;
@@ -37,7 +36,7 @@ import net.digitalid.database.unit.Unit;
 @ThreadSafe
 @GenerateBuilder
 @GenerateSubclass
-public abstract class WritablePersistentValuePropertyImplementation<SITE extends Unit<?>, SUBJECT extends Subject<SITE>, VALUE> extends WritableValuePropertyImplementation<VALUE, DatabaseException, PersistentValueObserver<SUBJECT, VALUE>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE>> implements WritablePersistentValueProperty<SUBJECT, VALUE> {
+public abstract class WritablePersistentValuePropertyImplementation<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>, @Specifiable VALUE> extends WritableValuePropertyImplementation<VALUE, DatabaseException, PersistentValueObserver<SUBJECT, VALUE>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE>> implements WritablePersistentValueProperty<SUBJECT, VALUE> {
     
     /* -------------------------------------------------- Validator -------------------------------------------------- */
     
@@ -51,7 +50,7 @@ public abstract class WritablePersistentValuePropertyImplementation<SITE extends
     
     @Pure
     @Override
-    public abstract @Nonnull PersistentValuePropertyTable<SITE, SUBJECT, VALUE, ?> getTable();
+    public abstract @Nonnull PersistentValuePropertyTable<UNIT, SUBJECT, VALUE, ?> getTable();
     
     /* -------------------------------------------------- Loading -------------------------------------------------- */
     
@@ -64,10 +63,10 @@ public abstract class WritablePersistentValuePropertyImplementation<SITE extends
      */
     @Pure
     @NonCommitting
-    protected void load(final boolean locking) throws DatabaseException, ReentranceException {
+    protected void load(final boolean locking) throws DatabaseException {
         if (locking) { lock.lock(); }
         try {
-            final @Nullable PersistentValuePropertyEntry<SUBJECT, VALUE> entry = SQL.select(getTable().getEntryConverter(), SQLBooleanAlias.with("key = 123"), getSubject().getSite(), getSubject().getSite());
+            final @Nullable PersistentValuePropertyEntry<SUBJECT, VALUE> entry = SQL.selectFirst(getTable().getEntryConverter(), getSubject().getUnit(), getSubject(), getTable().getParentModule().getSubjectConverter(), getSubject().getUnit());
             if (entry != null) {
                 this.time = entry.getTime();
                 this.value = entry.getValue();
@@ -108,8 +107,8 @@ public abstract class WritablePersistentValuePropertyImplementation<SITE extends
     @Impure
     @Override
     @Committing
-    @TODO(task = "Implement and use SQL.insertOrUpdate() instead of using SQL.insert().", date = "2016-09-27", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.HIGH)
-    public @Capturable @Valid VALUE set(@Captured @Valid VALUE newValue) throws DatabaseException, ReentranceException {
+    @LockNotHeldByCurrentThread
+    public @Capturable @Valid VALUE set(@Captured @Valid VALUE newValue) throws DatabaseException {
         lock.lock();
         try {
             if (!loaded) { load(false); }
@@ -117,7 +116,7 @@ public abstract class WritablePersistentValuePropertyImplementation<SITE extends
             if (!Objects.equals(newValue, oldValue)) {
                 final @Nonnull Time newTime = TimeBuilder.build();
                 final @Nonnull PersistentValuePropertyEntry<SUBJECT, VALUE> entry = new PersistentValuePropertyEntrySubclass<>(getSubject(), newTime, newValue);
-                SQL.insert(entry, getTable().getEntryConverter(), getSubject().getSite());
+                SQL.insertOrUpdate(entry, getTable().getEntryConverter(), getSubject().getUnit());
                 this.time = newTime;
                 this.value = newValue;
                 notifyObservers(oldValue, newValue);
@@ -133,7 +132,8 @@ public abstract class WritablePersistentValuePropertyImplementation<SITE extends
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull Pair<@Valid VALUE, @Nullable Time> getValueWithTimeOfLastModification() throws DatabaseException, ReentranceException {
+    @LockNotHeldByCurrentThread
+    public @Nonnull Pair<@Valid VALUE, @Nullable Time> getValueWithTimeOfLastModification() throws DatabaseException {
         lock.lock();
         try {
             if (!loaded) { load(false); }
@@ -148,7 +148,8 @@ public abstract class WritablePersistentValuePropertyImplementation<SITE extends
     @Impure
     @Override
     @NonCommitting
-    public void reset() throws DatabaseException, ReentranceException {
+    @LockNotHeldByCurrentThread
+    public void reset() throws DatabaseException {
         lock.lock();
         try {
             if (loaded) {

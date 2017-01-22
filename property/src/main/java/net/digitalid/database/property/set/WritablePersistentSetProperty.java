@@ -2,6 +2,7 @@ package net.digitalid.database.property.set;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.type.ThreadSafe;
 import net.digitalid.utility.collections.set.FreezableSet;
 import net.digitalid.utility.collections.set.ReadOnlySet;
@@ -26,4 +27,4 @@ import net.digitalid.database.subject.Subject;
  */
 @ThreadSafe
 @Mutable(ReadOnlyPersistentSetProperty.class)
-public interface WritablePersistentSetProperty<SUBJECT extends Subject<?>, VALUE, READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>, FREEZABLE_SET extends FreezableSet<@Nonnull @Valid VALUE>> extends WritableSetProperty<VALUE, READONLY_SET, DatabaseException, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>, ReadOnlyPersistentSetProperty<SUBJECT, VALUE, READONLY_SET>>, ReadOnlyPersistentSetProperty<SUBJECT, VALUE, READONLY_SET> {}
+public interface WritablePersistentSetProperty<@Unspecifiable SUBJECT extends Subject<?>, @Unspecifiable VALUE, @Unspecifiable READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>, @Unspecifiable FREEZABLE_SET extends FreezableSet<@Nonnull @Valid VALUE>> extends WritableSetProperty<VALUE, READONLY_SET, DatabaseException, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>, ReadOnlyPersistentSetProperty<SUBJECT, VALUE, READONLY_SET>>, ReadOnlyPersistentSetProperty<SUBJECT, VALUE, READONLY_SET> {}

@@ -2,6 +2,8 @@ package net.digitalid.database.property.map;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Specifiable;
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.functional.interfaces.BinaryFunction;
@@ -23,14 +25,14 @@ import net.digitalid.database.unit.Unit;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface PersistentMapPropertyTable<SITE extends Unit<?>, SUBJECT extends Subject<SITE>, KEY, VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> extends PersistentPropertyTable<SITE, SUBJECT, PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>>, Valid.Key<KEY>, Valid.Value<VALUE> {
+public interface PersistentMapPropertyTable<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>, @Unspecifiable KEY, @Unspecifiable VALUE, @Specifiable PROVIDED_FOR_KEY, @Specifiable PROVIDED_FOR_VALUE> extends PersistentPropertyTable<UNIT, SUBJECT, PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>>, Valid.Key<KEY>, Valid.Value<VALUE> {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
     @Pure
     @Override
     @Derive("PersistentMapPropertyEntryConverterBuilder.withPropertyTable(this).build()")
-    public @Nonnull PersistentMapPropertyEntryConverter<SITE, SUBJECT, KEY, VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> getEntryConverter();
+    public @Nonnull PersistentMapPropertyEntryConverter<UNIT, SUBJECT, KEY, VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> getEntryConverter();
     
     /* -------------------------------------------------- Extractors -------------------------------------------------- */
     

@@ -2,6 +2,7 @@ package net.digitalid.database.property.map;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.type.ThreadSafe;
 import net.digitalid.utility.collections.map.FreezableMap;
@@ -21,7 +22,7 @@ import net.digitalid.database.unit.Unit;
 @ThreadSafe
 @GenerateBuilder
 @GenerateSubclass
-public abstract class WritablePersistentSimpleMapPropertyImplementation<SITE extends Unit<?>, SUBJECT extends Subject<SITE>, KEY, VALUE> extends WritablePersistentMapPropertyImplementation<SITE, SUBJECT, KEY, VALUE, ReadOnlyMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>, FreezableMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>> implements WritablePersistentSimpleMapProperty<SUBJECT, KEY, VALUE> {
+public abstract class WritablePersistentSimpleMapPropertyImplementation<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>, @Unspecifiable KEY, @Unspecifiable VALUE> extends WritablePersistentMapPropertyImplementation<UNIT, SUBJECT, KEY, VALUE, ReadOnlyMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>, FreezableMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>> implements WritablePersistentSimpleMapProperty<SUBJECT, KEY, VALUE> {
     
     @Pure
     @Override

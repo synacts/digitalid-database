@@ -2,6 +2,7 @@ package net.digitalid.database.property;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
@@ -18,7 +19,7 @@ import net.digitalid.database.unit.Unit;
  * @see PersistentValuePropertyEntryConverter
  */
 @Immutable
-public abstract class PersistentPropertyEntryConverter<SITE extends Unit<?>, SUBJECT extends Subject<SITE>, ENTRY extends PersistentPropertyEntry<SUBJECT>> implements Converter<ENTRY, @Nonnull SITE> {
+public abstract class PersistentPropertyEntryConverter<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>, @Unspecifiable ENTRY extends PersistentPropertyEntry<SUBJECT>> implements Converter<ENTRY, @Nonnull UNIT> {
     
     /* -------------------------------------------------- Property Table -------------------------------------------------- */
     
@@ -26,7 +27,7 @@ public abstract class PersistentPropertyEntryConverter<SITE extends Unit<?>, SUB
      * Returns the property table to which this entry converter belongs.
      */
     @Pure
-    public abstract @Nonnull PersistentPropertyTable<SITE, SUBJECT, ENTRY> getPropertyTable();
+    public abstract @Nonnull PersistentPropertyTable<UNIT, SUBJECT, ENTRY> getPropertyTable();
     
     /* -------------------------------------------------- Name -------------------------------------------------- */
     

@@ -97,6 +97,15 @@ public abstract class SQL {
 //        DatabaseUtility.getInstance().commit();
     }
     
+    /**
+     * Inserts or updates the given object with the given converter into its table in the given unit.
+     */
+    @Committing
+    @PureWithSideEffects
+    public static <@Unspecifiable TYPE> void insertOrUpdate(@Nonnull TYPE object, @Nonnull Converter<TYPE, ?> converter, @Nonnull Unit unit) throws DatabaseException {
+        // TODO
+    }
+    
     /* -------------------------------------------------- Update -------------------------------------------------- */
     
     /**

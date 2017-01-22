@@ -1,5 +1,6 @@
 package net.digitalid.database.property.set;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
@@ -19,7 +20,7 @@ import net.digitalid.database.subject.Subject;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class PersistentSetPropertyEntry<SUBJECT extends Subject<?>, VALUE> extends PersistentPropertyEntry<SUBJECT> {
+public abstract class PersistentSetPropertyEntry<@Unspecifiable SUBJECT extends Subject<?>, @Unspecifiable VALUE> extends PersistentPropertyEntry<SUBJECT> {
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
     

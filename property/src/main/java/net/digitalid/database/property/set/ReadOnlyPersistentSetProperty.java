@@ -2,6 +2,7 @@ package net.digitalid.database.property.set;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.type.ThreadSafe;
 import net.digitalid.utility.collections.set.ReadOnlySet;
@@ -23,7 +24,7 @@ import net.digitalid.database.subject.Subject;
  */
 @ThreadSafe
 @ReadOnly(WritablePersistentSetPropertyImplementation.class)
-public interface ReadOnlyPersistentSetProperty<SUBJECT extends Subject<?>, VALUE, READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>> extends ReadOnlySetProperty<VALUE, READONLY_SET, DatabaseException, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>, ReadOnlyPersistentSetProperty<SUBJECT, VALUE, READONLY_SET>>, PersistentProperty<SUBJECT, PersistentSetPropertyEntry<SUBJECT, VALUE>, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>> {
+public interface ReadOnlyPersistentSetProperty<@Unspecifiable SUBJECT extends Subject<?>, @Unspecifiable VALUE, @Unspecifiable READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>> extends ReadOnlySetProperty<VALUE, READONLY_SET, DatabaseException, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>, ReadOnlyPersistentSetProperty<SUBJECT, VALUE, READONLY_SET>>, PersistentProperty<SUBJECT, PersistentSetPropertyEntry<SUBJECT, VALUE>, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>> {
     
     /* -------------------------------------------------- Getter -------------------------------------------------- */
     

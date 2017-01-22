@@ -2,6 +2,7 @@ package net.digitalid.database.property.map;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.type.ThreadSafe;
 import net.digitalid.utility.collections.map.FreezableMap;
 import net.digitalid.utility.collections.map.ReadOnlyMap;
@@ -27,4 +28,4 @@ import net.digitalid.database.subject.Subject;
  */
 @ThreadSafe
 @Mutable(ReadOnlyPersistentMapProperty.class)
-public interface WritablePersistentMapProperty<SUBJECT extends Subject<?>, KEY, VALUE, READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>, FREEZABLE_MAP extends FreezableMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>> extends WritableMapProperty<KEY, VALUE, READONLY_MAP, DatabaseException, PersistentMapObserver<SUBJECT, KEY, VALUE, READONLY_MAP>, ReadOnlyPersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP>>, ReadOnlyPersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP> {}
+public interface WritablePersistentMapProperty<@Unspecifiable SUBJECT extends Subject<?>, @Unspecifiable KEY, @Unspecifiable VALUE, @Unspecifiable READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>, @Unspecifiable FREEZABLE_MAP extends FreezableMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>> extends WritableMapProperty<KEY, VALUE, READONLY_MAP, DatabaseException, PersistentMapObserver<SUBJECT, KEY, VALUE, READONLY_MAP>, ReadOnlyPersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP>>, ReadOnlyPersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP> {}

@@ -3,12 +3,14 @@ package net.digitalid.database.property.value;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.generics.Specifiable;
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCapturable;
 import net.digitalid.utility.annotations.type.ThreadSafe;
-import net.digitalid.utility.concurrency.exceptions.ReentranceException;
 import net.digitalid.utility.property.value.ReadOnlyValueProperty;
 import net.digitalid.utility.tuples.Pair;
+import net.digitalid.utility.validation.annotations.lock.LockNotHeldByCurrentThread;
 import net.digitalid.utility.validation.annotations.type.ReadOnly;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
@@ -25,7 +27,7 @@ import net.digitalid.database.subject.Subject;
  */
 @ThreadSafe
 @ReadOnly(WritablePersistentValuePropertyImplementation.class)
-public interface ReadOnlyPersistentValueProperty<SUBJECT extends Subject<?>, VALUE> extends ReadOnlyValueProperty<VALUE, DatabaseException, PersistentValueObserver<SUBJECT, VALUE>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE>>, PersistentProperty<SUBJECT, PersistentValuePropertyEntry<SUBJECT, VALUE>, PersistentValueObserver<SUBJECT, VALUE>> {
+public interface ReadOnlyPersistentValueProperty<@Unspecifiable SUBJECT extends Subject<?>, @Specifiable VALUE> extends ReadOnlyValueProperty<VALUE, DatabaseException, PersistentValueObserver<SUBJECT, VALUE>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE>>, PersistentProperty<SUBJECT, PersistentValuePropertyEntry<SUBJECT, VALUE>, PersistentValueObserver<SUBJECT, VALUE>> {
     
     /* -------------------------------------------------- Getter -------------------------------------------------- */
     
@@ -55,11 +57,10 @@ public interface ReadOnlyPersistentValueProperty<SUBJECT extends Subject<?>, VAL
     /**
      * Returns the value of this property with the time of its last modification or null if it has never been set.
      * Contrary to calling {@link #get()} and {@link #getTime()} separately, this method guarantees that the value and time belong together.
-     * 
-     * @throws ReentranceException if this method is called by an observer of this property.
      */
     @Pure
     @NonCommitting
-    public @Nonnull Pair<@Valid VALUE, @Nullable Time> getValueWithTimeOfLastModification() throws DatabaseException, ReentranceException;
+    @LockNotHeldByCurrentThread
+    public @Nonnull Pair<@Valid VALUE, @Nullable Time> getValueWithTimeOfLastModification() throws DatabaseException;
     
 }
