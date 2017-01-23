@@ -2,6 +2,8 @@ package net.digitalid.database.storage;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Specifiable;
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
@@ -14,7 +16,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface Table<ENTRY, PROVIDED> extends Storage {
+public interface Table<@Unspecifiable ENTRY, @Specifiable PROVIDED> extends Storage {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     

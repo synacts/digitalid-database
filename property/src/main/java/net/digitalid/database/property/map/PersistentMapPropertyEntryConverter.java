@@ -1,8 +1,9 @@
 package net.digitalid.database.property.map;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.generics.Specifiable;
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
@@ -12,16 +13,17 @@ import net.digitalid.utility.collaboration.annotations.Review;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collaboration.enumerations.Priority;
-import net.digitalid.utility.conversion.model.CustomAnnotation;
-import net.digitalid.utility.conversion.model.CustomField;
+import net.digitalid.utility.conversion.enumerations.Representation;
+import net.digitalid.utility.conversion.exceptions.ConnectionException;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Decoder;
 import net.digitalid.utility.conversion.interfaces.Encoder;
-import net.digitalid.utility.conversion.enumerations.Representation;
+import net.digitalid.utility.conversion.model.CustomAnnotation;
+import net.digitalid.utility.conversion.model.CustomField;
 import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
-import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -37,13 +39,13 @@ import net.digitalid.database.unit.Unit;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class PersistentMapPropertyEntryConverter<SITE extends Unit<?>, SUBJECT extends Subject<SITE>, KEY, VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> extends PersistentPropertyEntryConverter<SITE, SUBJECT, PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>> {
+public abstract class PersistentMapPropertyEntryConverter<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>, @Unspecifiable KEY, @Unspecifiable VALUE, @Specifiable PROVIDED_FOR_KEY, @Specifiable PROVIDED_FOR_VALUE> extends PersistentPropertyEntryConverter<UNIT, SUBJECT, PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>> {
     
     /* -------------------------------------------------- Property Table -------------------------------------------------- */
     
     @Pure
     @Override
-    public abstract @Nonnull PersistentMapPropertyTable<SITE, SUBJECT, KEY, VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> getPropertyTable();
+    public abstract @Nonnull PersistentMapPropertyTable<UNIT, SUBJECT, KEY, VALUE, PROVIDED_FOR_KEY, PROVIDED_FOR_VALUE> getPropertyTable();
     
     /* -------------------------------------------------- Type -------------------------------------------------- */
     
@@ -78,12 +80,10 @@ public abstract class PersistentMapPropertyEntryConverter<SITE extends Unit<?>, 
     
     @Pure
     @Override
-    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified PersistentMapPropertyEntry<SUBJECT, KEY, VALUE> entry, @Nonnull @NonCaptured @Modified Encoder<X> encoder) throws X {
-        int i = 1;
-        i *= getPropertyTable().getParentModule().getSubjectConverter().convert(entry == null ? null : entry.getSubject(), encoder);
-        i *= getPropertyTable().getKeyConverter().convert(entry == null ? null : entry.getKey(), encoder);
-        i *= getPropertyTable().getValueConverter().convert(entry == null ? null : entry.getValue(), encoder);
-        return i;
+    public <@Unspecifiable EXCEPTION extends ConnectionException> void convert(@Nonnull @NonCaptured @Unmodified PersistentMapPropertyEntry<SUBJECT, KEY, VALUE> entry, @Nonnull @NonCaptured @Modified Encoder<EXCEPTION> encoder) throws EXCEPTION {
+        getPropertyTable().getParentModule().getSubjectConverter().convert(entry.getSubject(), encoder);
+        getPropertyTable().getKeyConverter().convert(entry.getKey(), encoder);
+        getPropertyTable().getValueConverter().convert(entry.getValue(), encoder);
     }
     
     /* -------------------------------------------------- Recover -------------------------------------------------- */
@@ -91,13 +91,10 @@ public abstract class PersistentMapPropertyEntryConverter<SITE extends Unit<?>, 
     @Pure
     @Override
     @Review(comment = "How would you handle the nullable recovered objects?", date = "2016-09-30", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.LOW)
-    public @Capturable <X extends ExternalException> @Nullable PersistentMapPropertyEntry<SUBJECT, KEY, VALUE> recover(@Nonnull @NonCaptured @Modified Decoder<X> decoder, @Nonnull SITE site) throws X {
-        final @Nullable SUBJECT subject = getPropertyTable().getParentModule().getSubjectConverter().recover(decoder, site);
-        if (subject == null) { return null; }
-        final @Nullable KEY key = getPropertyTable().getKeyConverter().recover(decoder, getPropertyTable().getProvidedObjectForKeyExtractor().evaluate(subject));
-        if (key == null) { return null; }
-        final @Nullable VALUE value = getPropertyTable().getValueConverter().recover(decoder, getPropertyTable().getProvidedObjectForValueExtractor().evaluate(subject, key));
-        if (value == null) { return null; }
+    public @Capturable <@Unspecifiable EXCEPTION extends ConnectionException> @Nonnull PersistentMapPropertyEntry<SUBJECT, KEY, VALUE> recover(@Nonnull @NonCaptured @Modified Decoder<EXCEPTION> decoder, @Nonnull UNIT unit) throws EXCEPTION, RecoveryException {
+        final @Nonnull SUBJECT subject = getPropertyTable().getParentModule().getSubjectConverter().recover(decoder, unit);
+        final @Nonnull KEY key = getPropertyTable().getKeyConverter().recover(decoder, getPropertyTable().getProvidedObjectForKeyExtractor().evaluate(subject));
+        final @Nonnull VALUE value = getPropertyTable().getValueConverter().recover(decoder, getPropertyTable().getProvidedObjectForValueExtractor().evaluate(subject, key));
         return new PersistentMapPropertyEntrySubclass<>(subject, key, value);
     }
     

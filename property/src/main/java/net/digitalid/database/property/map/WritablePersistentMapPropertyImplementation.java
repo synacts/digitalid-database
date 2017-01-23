@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
@@ -14,25 +15,22 @@ import net.digitalid.utility.annotations.ownership.NonCapturable;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.annotations.type.ThreadSafe;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
-import net.digitalid.utility.collaboration.enumerations.Priority;
+import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.collections.map.FreezableMap;
 import net.digitalid.utility.collections.map.ReadOnlyMap;
-import net.digitalid.utility.concurrency.exceptions.ReentranceException;
 import net.digitalid.utility.contracts.Validate;
-import net.digitalid.utility.exceptions.CaseException;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.functional.interfaces.Predicate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.property.map.WritableMapPropertyImplementation;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.lock.LockNotHeldByCurrentThread;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
-import net.digitalid.database.dialect.identifier.SQLBooleanAlias;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.subject.Subject;
 import net.digitalid.database.unit.Unit;
@@ -43,7 +41,7 @@ import net.digitalid.database.unit.Unit;
 @ThreadSafe
 @GenerateBuilder
 @GenerateSubclass
-public abstract class WritablePersistentMapPropertyImplementation<SITE extends Unit<?>, SUBJECT extends Subject<SITE>, KEY, VALUE, READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>, FREEZABLE_MAP extends FreezableMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>> extends WritableMapPropertyImplementation<KEY, VALUE, READONLY_MAP, DatabaseException, PersistentMapObserver<SUBJECT, KEY, VALUE, READONLY_MAP>, ReadOnlyPersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP>> implements WritablePersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP, FREEZABLE_MAP> {
+public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>, @Unspecifiable KEY, @Unspecifiable VALUE, @Unspecifiable READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>, @Unspecifiable FREEZABLE_MAP extends FreezableMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>> extends WritableMapPropertyImplementation<KEY, VALUE, READONLY_MAP, DatabaseException, PersistentMapObserver<SUBJECT, KEY, VALUE, READONLY_MAP>, ReadOnlyPersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP>> implements WritablePersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP, FREEZABLE_MAP> {
     
     /* -------------------------------------------------- Validators -------------------------------------------------- */
     
@@ -68,7 +66,7 @@ public abstract class WritablePersistentMapPropertyImplementation<SITE extends U
     
     @Pure
     @Override
-    public abstract @Nonnull PersistentMapPropertyTable<SITE, SUBJECT, KEY, VALUE, ?, ?> getTable();
+    public abstract @Nonnull PersistentMapPropertyTable<UNIT, SUBJECT, KEY, VALUE, ?, ?> getTable();
     
     /* -------------------------------------------------- Loading -------------------------------------------------- */
     
@@ -81,13 +79,12 @@ public abstract class WritablePersistentMapPropertyImplementation<SITE extends U
      */
     @Pure
     @NonCommitting
-    @TODO(task = "Instead of reading and adding a single entry, select and add all entries of the subject to the freezable map.", date = "2016-09-30", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.HIGH)
-    protected void load(final boolean locking) throws DatabaseException, ReentranceException {
+    protected void load(final boolean locking) throws DatabaseException {
         if (locking) { lock.lock(); }
         try {
             getMap().clear();
-            final @Nullable PersistentMapPropertyEntry<SUBJECT, KEY, VALUE> entry = SQL.select(getTable().getEntryConverter(), SQLBooleanAlias.with("key = 'TODO'"), getSubject().getSite(), getSubject().getSite());
-            if (entry != null) {
+            final @Nonnull @NonNullableElements FreezableList<PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>> entries = SQL.selectAll(getTable().getEntryConverter(), getSubject().getUnit(), getSubject(), getTable().getParentModule().getSubjectConverter(), getSubject().getUnit());
+            for (@Nonnull PersistentMapPropertyEntry<SUBJECT, KEY, VALUE> entry : entries) {
                 getMap().put(entry.getKey(), entry.getValue());
             }
             this.loaded = true;
@@ -120,7 +117,8 @@ public abstract class WritablePersistentMapPropertyImplementation<SITE extends U
     @Impure
     @Override
     @Committing
-    public boolean add(@Captured @Nonnull @Valid("key") KEY key, @Captured @Nonnull @Valid VALUE value) throws DatabaseException, ReentranceException {
+    @LockNotHeldByCurrentThread
+    public boolean add(@Captured @Nonnull @Valid("key") KEY key, @Captured @Nonnull @Valid VALUE value) throws DatabaseException {
         lock.lock();
         try {
             if (!loaded) { load(false); }
@@ -128,7 +126,7 @@ public abstract class WritablePersistentMapPropertyImplementation<SITE extends U
                 return false;
             } else {
                 final @Nonnull PersistentMapPropertyEntry<SUBJECT, KEY, VALUE> entry = new PersistentMapPropertyEntrySubclass<>(getSubject(), key, value);
-                SQL.insert(entry, getTable().getEntryConverter(), getSubject().getSite());
+                SQL.insert(entry, getTable().getEntryConverter(), getSubject().getUnit());
                 getMap().put(key, value);
                 notifyObservers(key, value, true);
                 return true;
@@ -141,16 +139,17 @@ public abstract class WritablePersistentMapPropertyImplementation<SITE extends U
     @Impure
     @Override
     @Committing
-    @TODO(task = "Implement and use SQL.delete().", date = "2016-09-30", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.HIGH)
-    public @Capturable @Nullable @Valid VALUE remove(@NonCaptured @Unmodified @Nonnull @Valid("key") KEY key) throws DatabaseException, ReentranceException {
+    @LockNotHeldByCurrentThread
+    public @Capturable @Nullable @Valid VALUE remove(@NonCaptured @Unmodified @Nonnull @Valid("key") KEY key) throws DatabaseException {
         lock.lock();
         try {
             if (!loaded) { load(false); }
-            if (getMap().containsKey(key)) {
-                // TODO (of course without SQL injection!): SQL.delete(getTable().getEntryConverter(), SQLBooleanAlias.with("key = " + key), getSubject().getSite());
-                final @Nullable VALUE value = getMap().remove(key);
-                if (value != null) { notifyObservers(key, value, false); }
-                else { throw CaseException.with("value", value); }
+            final @Nullable VALUE value = getMap().get(key);
+            if (value != null) {
+                final @Nonnull PersistentMapPropertyEntry<SUBJECT, KEY, VALUE> entry = new PersistentMapPropertyEntrySubclass<>(getSubject(), key, value); // TODO: The value should actually not be necessary.
+                SQL.delete(getTable().getEntryConverter(), entry, getTable().getEntryConverter(), getSubject().getUnit());
+                getMap().remove(key);
+                notifyObservers(key, value, false);
                 return value;
             } else {
                 return null;
@@ -165,7 +164,8 @@ public abstract class WritablePersistentMapPropertyImplementation<SITE extends U
     @Impure
     @Override
     @NonCommitting
-    public void reset() throws DatabaseException, ReentranceException {
+    @LockNotHeldByCurrentThread
+    public void reset() throws DatabaseException {
         lock.lock();
         try {
             if (loaded) {

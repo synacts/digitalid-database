@@ -2,6 +2,8 @@ package net.digitalid.database.property.value;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Specifiable;
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
@@ -21,7 +23,7 @@ import net.digitalid.database.subject.Subject;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class PersistentValuePropertyEntry<SUBJECT extends Subject<?>, VALUE> extends PersistentPropertyEntry<SUBJECT> {
+public abstract class PersistentValuePropertyEntry<@Unspecifiable SUBJECT extends Subject<?>, @Specifiable VALUE> extends PersistentPropertyEntry<SUBJECT> {
     
     /* -------------------------------------------------- Time -------------------------------------------------- */
     

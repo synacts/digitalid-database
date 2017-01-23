@@ -2,6 +2,7 @@ package net.digitalid.database.property;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -17,7 +18,7 @@ import net.digitalid.database.subject.Subject;
  * @see PersistentValuePropertyEntry
  */
 @Immutable
-public abstract class PersistentPropertyEntry<SUBJECT extends Subject<?>> extends RootClass {
+public abstract class PersistentPropertyEntry<@Unspecifiable SUBJECT extends Subject<?>> extends RootClass {
     
     /* -------------------------------------------------- Subject -------------------------------------------------- */
     

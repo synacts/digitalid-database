@@ -3,6 +3,7 @@ package net.digitalid.database.property.map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCapturable;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
@@ -27,7 +28,7 @@ import net.digitalid.database.subject.Subject;
  */
 @ThreadSafe
 @ReadOnly(WritablePersistentMapPropertyImplementation.class)
-public interface ReadOnlyPersistentMapProperty<SUBJECT extends Subject<?>, KEY, VALUE, READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>> extends ReadOnlyMapProperty<KEY, VALUE, READONLY_MAP, DatabaseException, PersistentMapObserver<SUBJECT, KEY, VALUE, READONLY_MAP>, ReadOnlyPersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP>>, PersistentProperty<SUBJECT, PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>, PersistentMapObserver<SUBJECT, KEY, VALUE, READONLY_MAP>> {
+public interface ReadOnlyPersistentMapProperty<@Unspecifiable SUBJECT extends Subject<?>, @Unspecifiable KEY, @Unspecifiable VALUE, @Unspecifiable READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>> extends ReadOnlyMapProperty<KEY, VALUE, READONLY_MAP, DatabaseException, PersistentMapObserver<SUBJECT, KEY, VALUE, READONLY_MAP>, ReadOnlyPersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP>>, PersistentProperty<SUBJECT, PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>, PersistentMapObserver<SUBJECT, KEY, VALUE, READONLY_MAP>> {
     
     /* -------------------------------------------------- Getters -------------------------------------------------- */
     

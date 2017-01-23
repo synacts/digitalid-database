@@ -1,8 +1,9 @@
 package net.digitalid.database.property.set;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
+import net.digitalid.utility.annotations.generics.Specifiable;
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
@@ -12,16 +13,17 @@ import net.digitalid.utility.collaboration.annotations.Review;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collaboration.enumerations.Priority;
-import net.digitalid.utility.conversion.model.CustomAnnotation;
-import net.digitalid.utility.conversion.model.CustomField;
+import net.digitalid.utility.conversion.enumerations.Representation;
+import net.digitalid.utility.conversion.exceptions.ConnectionException;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Decoder;
 import net.digitalid.utility.conversion.interfaces.Encoder;
-import net.digitalid.utility.conversion.enumerations.Representation;
+import net.digitalid.utility.conversion.model.CustomAnnotation;
+import net.digitalid.utility.conversion.model.CustomField;
 import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
-import net.digitalid.utility.exceptions.ExternalException;
 import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -37,13 +39,13 @@ import net.digitalid.database.unit.Unit;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class PersistentSetPropertyEntryConverter<SITE extends Unit<?>, SUBJECT extends Subject<SITE>, VALUE, PROVIDED_FOR_VALUE> extends PersistentPropertyEntryConverter<SITE, SUBJECT, PersistentSetPropertyEntry<SUBJECT, VALUE>> {
+public abstract class PersistentSetPropertyEntryConverter<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>, @Unspecifiable VALUE, @Specifiable PROVIDED_FOR_VALUE> extends PersistentPropertyEntryConverter<UNIT, SUBJECT, PersistentSetPropertyEntry<SUBJECT, VALUE>> {
     
     /* -------------------------------------------------- Property Table -------------------------------------------------- */
     
     @Pure
     @Override
-    public abstract @Nonnull PersistentSetPropertyTable<SITE, SUBJECT, VALUE, PROVIDED_FOR_VALUE> getPropertyTable();
+    public abstract @Nonnull PersistentSetPropertyTable<UNIT, SUBJECT, VALUE, PROVIDED_FOR_VALUE> getPropertyTable();
     
     /* -------------------------------------------------- Type -------------------------------------------------- */
     
@@ -77,11 +79,9 @@ public abstract class PersistentSetPropertyEntryConverter<SITE extends Unit<?>, 
     
     @Pure
     @Override
-    public <X extends ExternalException> int convert(@Nullable @NonCaptured @Unmodified PersistentSetPropertyEntry<SUBJECT, VALUE> entry, @Nonnull @NonCaptured @Modified Encoder<X> encoder) throws X {
-        int i = 1;
-        i *= getPropertyTable().getParentModule().getSubjectConverter().convert(entry == null ? null : entry.getSubject(), encoder);
-        i *= getPropertyTable().getValueConverter().convert(entry == null ? null : entry.getValue(), encoder);
-        return i;
+    public <@Unspecifiable EXCEPTION extends ConnectionException> void convert(@Nonnull @NonCaptured @Unmodified PersistentSetPropertyEntry<SUBJECT, VALUE> entry, @Nonnull @NonCaptured @Modified Encoder<EXCEPTION> encoder) throws EXCEPTION {
+        getPropertyTable().getParentModule().getSubjectConverter().convert(entry.getSubject(), encoder);
+        getPropertyTable().getValueConverter().convert(entry.getValue(), encoder);
     }
     
     /* -------------------------------------------------- Recover -------------------------------------------------- */
@@ -89,14 +89,10 @@ public abstract class PersistentSetPropertyEntryConverter<SITE extends Unit<?>, 
     @Pure
     @Override
     @Review(comment = "How would you handle the nullable recovered objects?", date = "2016-09-30", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.LOW)
-    public @Capturable <X extends ExternalException> @Nullable PersistentSetPropertyEntry<SUBJECT, VALUE> recover(@Nonnull @NonCaptured @Modified Decoder<X> decoder, @Nonnull SITE site) throws X {
-        final @Nullable SUBJECT subject = getPropertyTable().getParentModule().getSubjectConverter().recover(decoder, site);
-        if (subject != null) {
-            final @Nullable VALUE value = getPropertyTable().getValueConverter().recover(decoder, getPropertyTable().getProvidedObjectExtractor().evaluate(subject));
-            return value != null ? new PersistentSetPropertyEntrySubclass<>(subject, value) : null;
-        } else {
-            return null;
-        }
+    public @Capturable <@Unspecifiable EXCEPTION extends ConnectionException> @Nonnull PersistentSetPropertyEntry<SUBJECT, VALUE> recover(@Nonnull @NonCaptured @Modified Decoder<EXCEPTION> decoder, @Nonnull UNIT site) throws EXCEPTION, RecoveryException {
+        final @Nonnull SUBJECT subject = getPropertyTable().getParentModule().getSubjectConverter().recover(decoder, site);
+        final @Nonnull VALUE value = getPropertyTable().getValueConverter().recover(decoder, getPropertyTable().getProvidedObjectExtractor().evaluate(subject));
+        return new PersistentSetPropertyEntrySubclass<>(subject, value);
     }
     
 }

@@ -2,6 +2,8 @@ package net.digitalid.database.property.set;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Specifiable;
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.functional.interfaces.UnaryFunction;
@@ -22,14 +24,14 @@ import net.digitalid.database.unit.Unit;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public interface PersistentSetPropertyTable<SITE extends Unit<?>, SUBJECT extends Subject<SITE>, VALUE, PROVIDED_FOR_VALUE> extends PersistentPropertyTable<SITE, SUBJECT, PersistentSetPropertyEntry<SUBJECT, VALUE>>, Valid.Value<VALUE> {
+public interface PersistentSetPropertyTable<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>, @Unspecifiable VALUE, @Specifiable PROVIDED_FOR_VALUE> extends PersistentPropertyTable<UNIT, SUBJECT, PersistentSetPropertyEntry<SUBJECT, VALUE>>, Valid.Value<VALUE> {
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
     @Pure
     @Override
     @Derive("PersistentSetPropertyEntryConverterBuilder.withPropertyTable(this).build()")
-    public @Nonnull PersistentSetPropertyEntryConverter<SITE, SUBJECT, VALUE, PROVIDED_FOR_VALUE> getEntryConverter();
+    public @Nonnull PersistentSetPropertyEntryConverter<UNIT, SUBJECT, VALUE, PROVIDED_FOR_VALUE> getEntryConverter();
     
     /* -------------------------------------------------- Provided Object Extractor -------------------------------------------------- */
     

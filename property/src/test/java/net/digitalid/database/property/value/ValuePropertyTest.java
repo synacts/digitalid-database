@@ -16,8 +16,8 @@ import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.subject.Subject;
 import net.digitalid.database.subject.annotations.GeneratePersistentProperty;
-import net.digitalid.database.unit.DefaultUnit;
 import net.digitalid.database.testing.SQLTestBase;
+import net.digitalid.database.unit.Unit;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -26,7 +26,7 @@ import org.junit.Test;
 @GenerateBuilder
 @GenerateSubclass
 @GenerateConverter
-abstract class ClassWithValueProperty extends RootClass implements Subject<DefaultUnit> {
+abstract class ClassWithValueProperty extends RootClass implements Subject<Unit> {
     
     /* -------------------------------------------------- Key -------------------------------------------------- */
     

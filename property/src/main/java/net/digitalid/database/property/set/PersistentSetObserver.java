@@ -2,6 +2,7 @@ package net.digitalid.database.property.set;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.property.Property;
 import net.digitalid.utility.property.set.SetObserver;
@@ -17,4 +18,4 @@ import net.digitalid.database.subject.Subject;
  */
 @Mutable
 @Functional
-public interface PersistentSetObserver<SUBJECT extends Subject<?>, VALUE, READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>> extends SetObserver<VALUE, READONLY_SET, DatabaseException, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>, ReadOnlyPersistentSetProperty<SUBJECT, VALUE, READONLY_SET>> {}
+public interface PersistentSetObserver<@Unspecifiable SUBJECT extends Subject<?>, @Unspecifiable VALUE, @Unspecifiable READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>> extends SetObserver<VALUE, READONLY_SET, DatabaseException, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>, ReadOnlyPersistentSetProperty<SUBJECT, VALUE, READONLY_SET>> {}

@@ -2,6 +2,7 @@ package net.digitalid.database.property;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -17,18 +18,18 @@ import net.digitalid.database.unit.Unit;
  * @see PersistentValuePropertyTable
  */
 @Immutable
-public interface PersistentPropertyTable<SITE extends Unit<?>, SUBJECT extends Subject<SITE>, ENTRY extends PersistentPropertyEntry<SUBJECT>> extends Table<ENTRY, @Nonnull SITE> {
+public interface PersistentPropertyTable<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>, @Unspecifiable ENTRY extends PersistentPropertyEntry<SUBJECT>> extends Table<ENTRY, @Nonnull UNIT> {
     
     /* -------------------------------------------------- Parent Module -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull SubjectModule<SITE, SUBJECT> getParentModule();
+    public @Nonnull SubjectModule<UNIT, SUBJECT> getParentModule();
     
     /* -------------------------------------------------- Entry Converter -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull PersistentPropertyEntryConverter<SITE, SUBJECT, ENTRY> getEntryConverter();
+    public @Nonnull PersistentPropertyEntryConverter<UNIT, SUBJECT, ENTRY> getEntryConverter();
     
 }

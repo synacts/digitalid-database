@@ -2,6 +2,7 @@ package net.digitalid.database.property.set;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.type.ThreadSafe;
 import net.digitalid.utility.collections.set.FreezableSet;
 import net.digitalid.utility.collections.set.ReadOnlySet;
@@ -17,4 +18,4 @@ import net.digitalid.database.subject.Subject;
  */
 @ThreadSafe
 @Mutable(ReadOnlyPersistentSimpleSetProperty.class)
-public interface WritablePersistentSimpleSetProperty<SUBJECT extends Subject<?>, VALUE> extends WritablePersistentSetProperty<SUBJECT, VALUE, ReadOnlySet<@Nonnull @Valid VALUE>, FreezableSet<@Nonnull @Valid VALUE>>, ReadOnlyPersistentSimpleSetProperty<SUBJECT, VALUE> {}
+public interface WritablePersistentSimpleSetProperty<@Unspecifiable SUBJECT extends Subject<?>, @Unspecifiable VALUE> extends WritablePersistentSetProperty<SUBJECT, VALUE, ReadOnlySet<@Nonnull @Valid VALUE>, FreezableSet<@Nonnull @Valid VALUE>>, ReadOnlyPersistentSimpleSetProperty<SUBJECT, VALUE> {}

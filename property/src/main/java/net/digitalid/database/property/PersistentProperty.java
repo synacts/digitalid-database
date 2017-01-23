@@ -2,11 +2,12 @@ package net.digitalid.database.property;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.type.ThreadSafe;
-import net.digitalid.utility.concurrency.exceptions.ReentranceException;
 import net.digitalid.utility.property.Observer;
 import net.digitalid.utility.property.Property;
+import net.digitalid.utility.validation.annotations.lock.LockNotHeldByCurrentThread;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
@@ -21,7 +22,7 @@ import net.digitalid.database.subject.Subject;
  */
 @Mutable
 @ThreadSafe
-public interface PersistentProperty<SUBJECT extends Subject<?>, ENTRY extends PersistentPropertyEntry<SUBJECT>, OBSERVER extends Observer> extends Property<OBSERVER> {
+public interface PersistentProperty<@Unspecifiable SUBJECT extends Subject<?>, @Unspecifiable ENTRY extends PersistentPropertyEntry<SUBJECT>, @Unspecifiable OBSERVER extends Observer> extends Property<OBSERVER> {
     
     /* -------------------------------------------------- Subject -------------------------------------------------- */
     
@@ -45,11 +46,10 @@ public interface PersistentProperty<SUBJECT extends Subject<?>, ENTRY extends Pe
      * Resets the values of this property so that they have to be reloaded from the database on the next retrieval.
      * If the state of the database changed in the meantime, then this method is impure.
      * However, read-only properties must be able to expose this method as well.
-     * 
-     * @throws ReentranceException if this method is called by an observer of this property.
      */
     @Pure
     @NonCommitting
-    public void reset() throws DatabaseException, ReentranceException;
+    @LockNotHeldByCurrentThread
+    public void reset() throws DatabaseException;
     
 }
