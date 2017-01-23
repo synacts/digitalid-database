@@ -12,14 +12,14 @@ import net.digitalid.database.interfaces.SQLDecoder;
  * The SQL query encoder helps to prepare statements that are considered to query the data set of
  * the SQL database. It executes SELECT statements.
  * 
- * We treat the SELECT statement different from the Data Manipulation Language (DML) encoder, 
+ * We treat the SELECT statement different from the SQL Action encoder, 
  * because the return value of the execute method is different and, technically, SELECT
  * does not manipulate the data set of the database (even though SELECT is defined as a DML statement).
  * 
- * @see SQLDataManipulationLanguageEncoder
+ * @see SQLActionEncoder
  */
 @Mutable
-public abstract class SQLQueryEncoder extends SQLEncoder {
+public interface SQLQueryEncoder extends SQLEncoder {
     
     /**
      * Executes the SELECT statement.

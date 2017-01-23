@@ -15,24 +15,32 @@ import net.digitalid.utility.validation.annotations.size.Size;
 
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
-import net.digitalid.database.interfaces.encoder.SQLEncoder;
+import net.digitalid.database.interfaces.encoder.SQLEncoderImplementation;
 
 /**
  * This classes uses the JDBC prepared statement to collect the values.
  */
 @GenerateBuilder
 @GenerateSubclass
-public abstract class JDBCEncoder extends SQLEncoder {
+public abstract class JDBCEncoder extends SQLEncoderImplementation {
     
+    /**
+     * The prepared statement collects parameter values for the SQL statement.
+     */
     protected final @Nonnull PreparedStatement preparedStatement;
     
-    private int parameterIndex;
+    /**
+     * The parameter index tracks at which position we are inserting the parameter. It is 1-indexed.
+     */
+    private int parameterIndex = 1;
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
+    /**
+     * Builds a new JDBC encoder based on a prepared statement object.
+     */
     protected JDBCEncoder(@Nonnull PreparedStatement preparedStatement) {
         this.preparedStatement = preparedStatement;
-        this.parameterIndex = 1;
     }
     
     /* -------------------------------------------------- SQL Encoder -------------------------------------------------- */

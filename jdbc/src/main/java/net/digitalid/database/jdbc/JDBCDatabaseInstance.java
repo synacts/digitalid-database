@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.conversion.enumerations.Representation;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
@@ -32,8 +33,10 @@ import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.interfaces.encoder.SQLActionEncoder;
 import net.digitalid.database.interfaces.encoder.SQLQueryEncoder;
-import net.digitalid.database.jdbc.encoder.JDBCDataManipulationLanguageEncoderBuilder;
-import net.digitalid.database.subject.site.Site;
+import net.digitalid.database.jdbc.encoder.JDBCActionEncoder;
+import net.digitalid.database.jdbc.encoder.JDBCActionEncoderBuilder;
+import net.digitalid.database.jdbc.encoder.JDBCQueryEncoderBuilder;
+import net.digitalid.database.unit.Unit;
 
 /**
  * This classes uses the JDBC connection to execute the statements.
@@ -49,14 +52,6 @@ public abstract class JDBCDatabaseInstance implements Database {
      * @param driver the JDBC driver of this database instance.
      */
     protected JDBCDatabaseInstance(@Nonnull Driver driver) {}
-    
-    /* -------------------------------------------------- Binary Stream -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public boolean supportsBinaryStreams() {
-        return true;
-    }
     
     /* -------------------------------------------------- Database -------------------------------------------------- */
     
@@ -220,9 +215,9 @@ public abstract class JDBCDatabaseInstance implements Database {
     /* -------------------------------------------------- Execution -------------------------------------------------- */
     
     @PureWithSideEffects
-    private void executeStatement(@Nonnull Site<?> site, @Nonnull SQLTableStatement tableStatement) throws DatabaseException {
+    private void executeStatement(@Nonnull Unit unit, @Nonnull SQLTableStatement tableStatement) throws DatabaseException {
         final @Nonnull StringBuilder sqlStringBuilder = new StringBuilder();
-        tableStatement.unparse(SQLDialect.instance.get(), site, sqlStringBuilder);
+        tableStatement.unparse(SQLDialect.instance.get(), unit, sqlStringBuilder);
         try {
             // TODO: do we really need to set the result set type and result set concurrency?
             getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).execute(sqlStringBuilder.toString());
@@ -231,58 +226,58 @@ public abstract class JDBCDatabaseInstance implements Database {
         }
     }
     
-    @Override
     @PureWithSideEffects
-    public void execute(@Nonnull Site<?> site, @Nonnull SQLTableStatement tableStatement) throws DatabaseException {
-        executeStatement(site, tableStatement);
+    protected void execute(@Nonnull SQLTableStatement tableStatement, @Nonnull Unit unit) throws DatabaseException {
+        executeStatement(unit, tableStatement);
     }
     
     @Override
     @PureWithSideEffects
-    public void execute(@Nonnull Site<?> site, @Nonnull SQLCreateTableStatement createTableStatement) throws DatabaseException {
-        executeStatement(site, createTableStatement);
+    public void execute(@Nonnull SQLCreateTableStatement createTableStatement, @Nonnull Unit unit) throws DatabaseException {
+        executeStatement(unit, createTableStatement);
     }
     
     @Override
     @PureWithSideEffects
-    public void execute(@Nonnull Site site, @Nonnull SQLDropTableStatement dropTableStatement) throws DatabaseException {
-        executeStatement(site, dropTableStatement);
+    public void execute(@Nonnull SQLDropTableStatement dropTableStatement, @Nonnull Unit unit) throws DatabaseException {
+        executeStatement(unit, dropTableStatement);
     }
     
     /* -------------------------------------------------- Encoder -------------------------------------------------- */
     
     @PureWithSideEffects
-    private @Nonnull SQLActionEncoder getEncoderForStatement(@Nonnull Site<?> site, @Nonnull SQLTableStatement tableStatement) throws DatabaseException {
+    private @Nonnull SQLActionEncoder getEncoderForStatement(@Nonnull SQLTableStatement tableStatement, @Nonnull Unit unit) throws DatabaseException {
         final @Nonnull StringBuilder sqlStringBuilder = new StringBuilder();
-        tableStatement.unparse(SQLDialect.instance.get(), site, sqlStringBuilder);
-        return JDBCDataManipulationLanguageEncoderBuilder.withPreparedStatement(prepare(sqlStringBuilder.toString())).build();
+        tableStatement.unparse(SQLDialect.instance.get(), unit, sqlStringBuilder);
+        // FIXME: The converter generator does not recognize that the sql encoder implementation already implements the methods getRepresentation(), isHashing(), isCompressing() and isEncryption().
+        return JDBCActionEncoderBuilder.withPreparedStatement(prepare(sqlStringBuilder.toString())).withRepresentation(Representation.INTERNAL).withHashing(false).withCompressing(false).withEncrypting(false).build();
     }
     
     @Override
     @PureWithSideEffects
-    public @Nonnull SQLActionEncoder getEncoder(@Nonnull Site site, @Nonnull SQLInsertStatement insertStatement) throws DatabaseException {
-        return getEncoderForStatement(site, insertStatement);
+    public @Nonnull SQLActionEncoder getEncoder(@Nonnull SQLInsertStatement insertStatement, @Nonnull Unit unit) throws DatabaseException {
+        return getEncoderForStatement(insertStatement, unit);
     }
     
     @Override
     @PureWithSideEffects
-    public @Nonnull SQLActionEncoder getEncoder(@Nonnull Site site, @Nonnull SQLUpdateStatement updateStatement) throws DatabaseException {
-        return getEncoderForStatement(site, updateStatement);
+    public @Nonnull SQLActionEncoder getEncoder(@Nonnull SQLUpdateStatement updateStatement, @Nonnull Unit unit) throws DatabaseException {
+        return getEncoderForStatement(updateStatement, unit);
     }
     
     @Override
     @PureWithSideEffects
-    public @Nonnull SQLActionEncoder getEncoder(@Nonnull Site site, @Nonnull SQLDeleteStatement deleteStatement) throws DatabaseException {
-        return getEncoderForStatement(site, deleteStatement);
+    public @Nonnull SQLActionEncoder getEncoder(@Nonnull SQLDeleteStatement deleteStatement, @Nonnull Unit unit) throws DatabaseException {
+        return getEncoderForStatement(deleteStatement, unit);
     }
     
     @Override
     @PureWithSideEffects
-    public @Nonnull SQLQueryEncoder getEncoder(@Nonnull Site site, @Nonnull SQLSelectStatement selectStatement) throws DatabaseException {
+    public @Nonnull SQLQueryEncoder getEncoder(@Nonnull SQLSelectStatement selectStatement, @Nonnull Unit unit) throws DatabaseException {
         final @Nonnull StringBuilder sqlStringBuilder = new StringBuilder();
-        selectStatement.unparse(SQLDialect.instance.get(), site, sqlStringBuilder);
-//        return JDBCQueryEncoderBuilder.withPreparedStatement(prepare(sqlStringBuilder.toString())).build();
-        return null;
+        selectStatement.unparse(SQLDialect.instance.get(), unit, sqlStringBuilder);
+        // FIXME: The converter generator does not recognize that the sql encoder implementation already implements the methods getRepresentation(), isHashing(), isCompressing() and isEncryption().
+        return JDBCQueryEncoderBuilder.withPreparedStatement(prepare(sqlStringBuilder.toString())).withRepresentation(Representation.INTERNAL).withHashing(false).withCompressing(false).withEncrypting(false).build();
     }
     
 }

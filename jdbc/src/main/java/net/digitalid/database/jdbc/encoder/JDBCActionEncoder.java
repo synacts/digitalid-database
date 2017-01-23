@@ -14,13 +14,13 @@ import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
 import net.digitalid.database.interfaces.encoder.SQLActionEncoder;
 
 /**
- *
+ * The JDBC action encoder collects values for the prepared statement and executes it.
  */
 @GenerateBuilder
 @GenerateSubclass
-public class JDBCDataManipulationLanguageEncoder extends JDBCEncoderSubclass implements SQLActionEncoder {
+public class JDBCActionEncoder extends JDBCEncoderSubclass implements SQLActionEncoder {
     
-    protected JDBCDataManipulationLanguageEncoder(@Nonnull PreparedStatement preparedStatement) {
+    protected JDBCActionEncoder(@Nonnull PreparedStatement preparedStatement) {
         super(preparedStatement);
     }
     

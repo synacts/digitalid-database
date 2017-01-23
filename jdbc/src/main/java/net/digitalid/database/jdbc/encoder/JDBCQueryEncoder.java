@@ -14,9 +14,11 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
 import net.digitalid.database.interfaces.SQLDecoder;
 import net.digitalid.database.interfaces.encoder.SQLQueryEncoder;
+import net.digitalid.database.jdbc.decoder.JDBCDecoderBuilder;
 
 /**
- * The JDBC query encoder collects values for the prepared and executes it.
+ * The JDBC query encoder collects values for the prepared statement and executes it. Upon successful execution 
+ * it returns an SQL decoder, which can be used to recover the data.
  */
 @GenerateBuilder
 @GenerateSubclass
@@ -33,8 +35,7 @@ public class JDBCQueryEncoder extends JDBCEncoderSubclass implements SQLQueryEnc
     public @Nonnull SQLDecoder execute() throws DatabaseException {
         try {
             final @Nonnull ResultSet resultSet = preparedStatement.executeQuery();
-//            return JDBCSQLDecoderBuilder.withResultSet(resultSet).build();
-            return null;
+            return JDBCDecoderBuilder.withResultSet(resultSet).build();
         } catch (SQLException exception) {
             throw DatabaseExceptionBuilder.withCause(exception).build();
         }

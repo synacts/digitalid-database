@@ -15,12 +15,14 @@ import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.enumerations.Representation;
 import net.digitalid.utility.conversion.interfaces.Converter;
-import net.digitalid.utility.conversion.interfaces.Encoder;
+import net.digitalid.utility.conversion.model.CustomField;
 import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
+import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.immutable.ImmutableMap;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
@@ -49,19 +51,21 @@ import net.digitalid.database.interfaces.SQLDecoder;
  */
 @Mutable
 @TODO(task = "Check ultimately whether it makes sense that the SQLEncoder extends AutoCloseable.", date = "2017-01-19", author = Author.KASPAR_ETTER)
-public interface SQLEncoder extends AutoCloseable, Encoder<DatabaseException> {
+public abstract class SQLEncoderImplementation implements SQLEncoder {
     
     /* -------------------------------------------------- Representation -------------------------------------------------- */
     
     @Pure
     @Override
-    public @Nonnull Representation getRepresentation();
+    public @Nonnull Representation getRepresentation() {
+        return Representation.INTERNAL;
+    }
     
     /* -------------------------------------------------- Closing -------------------------------------------------- */
     
     @Impure
     @Override
-    public void close() throws DatabaseException;
+    public abstract void close() throws DatabaseException;
     
     /* -------------------------------------------------- Null -------------------------------------------------- */
     
@@ -69,12 +73,12 @@ public interface SQLEncoder extends AutoCloseable, Encoder<DatabaseException> {
      * Sets the next parameter of the given SQL type to null.
 =     */
     @Impure
-    public void encodeNull(int typeCode) throws DatabaseException;
+    public abstract void encodeNull(int typeCode) throws DatabaseException;
     
     /**
      * Stores the mapping from custom types to SQL types.
      */
-    static @Nonnull ImmutableMap<@Nonnull CustomType, @Nonnull Integer> TYPES = ImmutableMap
+    private static @Nonnull ImmutableMap<@Nonnull CustomType, @Nonnull Integer> TYPES = ImmutableMap
             .with(CustomType.BOOLEAN, Types.BOOLEAN)
             .with(CustomType.INTEGER08, Types.TINYINT)
             .with(CustomType.INTEGER16, Types.SMALLINT)
@@ -105,86 +109,136 @@ public interface SQLEncoder extends AutoCloseable, Encoder<DatabaseException> {
      * Sets the next parameter of the given custom type to null.
 =     */
     @Impure
-    public void encodeNull(@Nonnull CustomType customType) throws DatabaseException;
+    public void encodeNull(@Nonnull CustomType customType) throws DatabaseException {
+        encodeNull(getSQLType(customType));
+    }
     
     /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Impure
     @Override
-    public <TYPE> void encodeObject(@Nonnull Converter<TYPE, ?> converter, @Nonnull @NonCaptured @Unmodified TYPE object) throws DatabaseException;
+    public <TYPE> void encodeObject(@Nonnull Converter<TYPE, ?> converter, @Nonnull @NonCaptured @Unmodified TYPE object) throws DatabaseException {
+        Require.that(object != null).orThrow("The given object, that should be encoded, may not be null.");
+        converter.convert(object, this);
+    }
     
     @Impure
     @Override
-    public <TYPE> void encodeNullableObject(@Nonnull Converter<TYPE, ?> converter, @Nullable @NonCaptured @Unmodified TYPE object) throws DatabaseException;
+    public <TYPE> void encodeNullableObject(@Nonnull Converter<TYPE, ?> converter, @Nullable @NonCaptured @Unmodified TYPE object) throws DatabaseException {
+        if (object == null) {
+            final @Nonnull ImmutableList<@Nonnull CustomField> fields = converter.getFields(Representation.INTERNAL);
+            for (@Nonnull CustomField field : fields) {
+                if (field.getCustomType().isObjectType()) {
+                    encodeNullableObject(((CustomType.CustomConverterType) field.getCustomType()).getConverter(), null);
+                } else {
+                    if (!field.getCustomType().isCompositeType()) {
+                        encodeNull(TYPES.get(field.getCustomType()));
+                    }
+                }
+            }
+        } else {
+            encodeObject(converter, object);
+        }
+    }
     
     /* -------------------------------------------------- Iterables -------------------------------------------------- */
     
     @Impure
     @Override
-    public <TYPE> void encodeOrderedIterable(@Nonnull Converter<TYPE, ?> converter, @Nonnull FiniteIterable<@Nonnull TYPE> iterable) throws DatabaseException;
+    public <TYPE> void encodeOrderedIterable(@Nonnull Converter<TYPE, ?> converter, @Nonnull FiniteIterable<@Nonnull TYPE> iterable) throws DatabaseException {
+        throw new UnsupportedOperationException("The SQL Encoder cannot encode ordered iterables.");
+    }
     
     @Impure
     @Override
-    public <TYPE> void encodeOrderedIterableWithNullableElements(@Nonnull Converter<TYPE, ?> converter, @Nonnull FiniteIterable<@Nullable TYPE> iterable) throws DatabaseException;
+    public <TYPE> void encodeOrderedIterableWithNullableElements(@Nonnull Converter<TYPE, ?> converter, @Nonnull FiniteIterable<@Nullable TYPE> iterable) throws DatabaseException {
+        throw new UnsupportedOperationException("The SQL Encoder cannot encode ordered iterables.");
+    }
     
     @Impure
     @Override
-    public <TYPE> void encodeUnorderedIterable(@Nonnull Converter<TYPE, ?> converter, @Nonnull FiniteIterable<@Nonnull TYPE> iterable) throws DatabaseException;
+    public <TYPE> void encodeUnorderedIterable(@Nonnull Converter<TYPE, ?> converter, @Nonnull FiniteIterable<@Nonnull TYPE> iterable) throws DatabaseException {
+        throw new UnsupportedOperationException("The SQL Encoder cannot encode unordered iterables.");
+    }
     
     @Impure
     @Override
-    public <TYPE> void encodeUnorderedIterableWithNullableElements(@Nonnull Converter<TYPE, ?> converter, @Nonnull FiniteIterable<@Nullable TYPE> iterable) throws DatabaseException;
+    public <TYPE> void encodeUnorderedIterableWithNullableElements(@Nonnull Converter<TYPE, ?> converter, @Nonnull FiniteIterable<@Nullable TYPE> iterable) throws DatabaseException {
+        throw new UnsupportedOperationException("The SQL Encoder cannot encode unordered iterables.");
+    }
     
     /* -------------------------------------------------- Maps -------------------------------------------------- */
     
     @Impure
     @Override
-    public <KEY, VALUE> void encodeMap(@Nonnull Converter<KEY, ?> keyConverter, @Nonnull Converter<VALUE, ?> valueConverter, @Nonnull Map<@Nonnull KEY, @Nonnull VALUE> map) throws DatabaseException;
+    public <KEY, VALUE> void encodeMap(@Nonnull Converter<KEY, ?> keyConverter, @Nonnull Converter<VALUE, ?> valueConverter, @Nonnull Map<@Nonnull KEY, @Nonnull VALUE> map) throws DatabaseException {
+        throw new UnsupportedOperationException("The SQL Encoder cannot encode maps.");
+    }
     
     @Impure
     @Override
-    public <KEY, VALUE> void encodeMapWithNullableValues(@Nonnull Converter<KEY, ?> keyConverter, @Nonnull Converter<VALUE, ?> valueConverter, @Nonnull Map<@Nullable KEY, @Nullable VALUE> map) throws DatabaseException;
+    public <KEY, VALUE> void encodeMapWithNullableValues(@Nonnull Converter<KEY, ?> keyConverter, @Nonnull Converter<VALUE, ?> valueConverter, @Nonnull Map<@Nullable KEY, @Nullable VALUE> map) throws DatabaseException {
+        throw new UnsupportedOperationException("The SQL Encoder cannot encode maps.");
+    }
     
     /* -------------------------------------------------- Hashing -------------------------------------------------- */
     
     @Pure
     @Override
-    public boolean isHashing();
+    public boolean isHashing() {
+        return false;
+    }
     
     @Impure
     @Override
-    public void startHashing(@Nonnull MessageDigest digest);
+    public void startHashing(@Nonnull MessageDigest digest) {
+        throw new UnsupportedOperationException("The SQL Encoder cannot handle hashes.");
+    }
     
     @Impure
     @Override
-    public @Nonnull byte[] stopHashing();
+    public @Nonnull byte[] stopHashing() {
+        throw new UnsupportedOperationException("The SQL Encoder cannot handle hashes.");
+    }
     
     /* -------------------------------------------------- Compression -------------------------------------------------- */
     
     @Pure
     @Override
-    public boolean isCompressing();
+    public boolean isCompressing() {
+        return false;
+    }
     
     @Impure
     @Override
-    public void startCompressing(@Nonnull Deflater deflater);
+    public void startCompressing(@Nonnull Deflater deflater) {
+        throw new UnsupportedOperationException("The SQL Encoder cannot handle compression.");
+    }
     
     @Impure
     @Override
-    public void stopCompressing() throws DatabaseException;
+    public void stopCompressing() throws DatabaseException {
+        throw new UnsupportedOperationException("The SQL Encoder cannot handle compression.");
+    }
     
     /* -------------------------------------------------- Encryption -------------------------------------------------- */
     
     @Pure
     @Override
-    public boolean isEncrypting();
+    public boolean isEncrypting() {
+        return false;
+    }
     
     @Impure
     @Override
-    public void startEncrypting(@Nonnull Cipher cipher);
+    public void startEncrypting(@Nonnull Cipher cipher) {
+        throw new UnsupportedOperationException("The SQL Encoder cannot handle encryption.");
+    }
     
     @Impure
     @Override
-    public void stopEncrypting() throws DatabaseException;
+    public void stopEncrypting() throws DatabaseException {
+        throw new UnsupportedOperationException("The SQL Encoder cannot handle encryption.");
+    }
  
 }
