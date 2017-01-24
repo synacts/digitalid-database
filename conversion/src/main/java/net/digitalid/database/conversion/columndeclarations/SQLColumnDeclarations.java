@@ -14,13 +14,12 @@ import net.digitalid.utility.collections.list.FreezableLinkedList;
 import net.digitalid.utility.collections.map.FreezableHashMap;
 import net.digitalid.utility.collections.map.FreezableHashMapBuilder;
 import net.digitalid.utility.collections.map.ReadOnlyMap;
+import net.digitalid.utility.conversion.enumerations.Representation;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.conversion.model.CustomAnnotation;
 import net.digitalid.utility.conversion.model.CustomField;
-import net.digitalid.utility.conversion.model.Declaration;
-import net.digitalid.utility.conversion.enumerations.Representation;
 import net.digitalid.utility.conversion.model.CustomType;
-import net.digitalid.utility.exceptions.UncheckedException;
+import net.digitalid.utility.conversion.model.Declaration;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.immutable.ImmutableMap;
@@ -30,9 +29,6 @@ import net.digitalid.utility.validation.annotations.math.NonNegative;
 import net.digitalid.database.annotations.constraints.ForeignKey;
 import net.digitalid.database.annotations.constraints.PrimaryKey;
 import net.digitalid.database.annotations.type.Embedded;
-import net.digitalid.database.conversion.exceptions.ConformityViolationException;
-import net.digitalid.database.dialect.statement.table.create.SQLTypeNode;
-import net.digitalid.database.enumerations.SQLType;
 
 /**
  * The SQL column declarations class collects information about the SQL table columns that are required to convert an object to SQL.
@@ -143,7 +139,7 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
      * Additional remark: Not all column declarations have or require the type (e.g. the insert or select declaration). Thus, it is nullable.
      */
     @Pure
-    protected abstract @Nonnull Pair<@Nonnull CD, @Nonnull ImmutableList<@Nonnull CustomAnnotation>> getColumnDeclaration(@Nonnull String columnName, @Nullable SQLTypeNode type, @Nonnull ImmutableList<@Nonnull CustomAnnotation> annotations);
+    protected abstract @Nonnull Pair<@Nonnull CD, @Nonnull ImmutableList<@Nonnull CustomAnnotation>> getColumnDeclaration(@Nonnull String columnName, @Nullable CustomType type, @Nonnull ImmutableList<@Nonnull CustomAnnotation> annotations);
     
     /**
      * Returns a pair of the column and the field annotations for a given field.
@@ -167,7 +163,7 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
      * Returns the column type for a given column declaration if the information is available for the declarations instance.
      */
     @Pure
-    protected abstract @Nullable SQLTypeNode getColumnType(@Nonnull CD columnDeclaration);
+    protected abstract @Nullable CustomType getColumnType(@Nonnull CD columnDeclaration);
     
     /**
      * Returns the column name of a given column declaration.
@@ -193,7 +189,7 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
                 return columnOfReferencedTable.get1();
             }
         }
-        throw UncheckedException.with("Could not find column name in referenced table with the name " + Quotes.inSingle(columnName));
+        throw new RuntimeException("Could not find column name in referenced table with the name " + Quotes.inSingle(columnName));
     }
     
     /**
@@ -242,11 +238,11 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
                 referencedTablesColumnDeclarations.put(references.get("foreignTable", String.class), referencedTableColumnDeclarations);
                 columnCountForGroup.addAll(referencedTableColumnDeclarations.getColumnCountForGroup());
                 currentColumn = referencedTableColumnDeclarations.currentColumn;
-                final @Nonnull Pair<@Nonnull CD, @Nonnull ImmutableList<@Nonnull CustomAnnotation>> columnDeclaration = getColumnDeclaration(field.getName(), SQLTypeNode.of(references.get("columnType", SQLType.class)), field.getAnnotations());
+                final @Nonnull Pair<@Nonnull CD, @Nonnull ImmutableList<@Nonnull CustomAnnotation>> columnDeclaration = getColumnDeclaration(field.getName(), references.get("columnType", CustomType.class), field.getAnnotations());
                 addReferenceColumnDeclarationToList(columnDeclaration, getIndexOfReferencedColumnDeclaration(references.get("columnName", String.class), referencedTableColumnDeclarations));
                 columnCountForGroup.add(1);
             } else {
-                throw ConformityViolationException.with("Expected @$ or @$ annotation on non-primitive field $", Embedded.class.getSimpleName(), ForeignKey.class.getSimpleName(), field.getName());
+                throw new RuntimeException(String.format("Expected @$ or @$ annotation on non-primitive field $", Embedded.class.getSimpleName(), ForeignKey.class.getSimpleName(), field.getName())); // TODO: Was ConformityViolationException
             }
         } else if (field.getCustomType().isCompositeType()) {
             if (field.isAnnotatedWith(Embedded.class)) {
@@ -254,7 +250,7 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
                 int i = 0;
                 while (fieldType.isCompositeType()) {
                     fieldType = ((CustomType.CompositeType) fieldType).getCompositeType();
-                    final @Nonnull Pair<@Nonnull CD, @Nonnull ImmutableList<@Nonnull CustomAnnotation>> indexColumnDeclaration = getColumnDeclaration("_" + field.getName() + "_index_" + i, SQLTypeNode.of(SQLType.INTEGER32), ImmutableList.withElementsOfCollection(Collections.emptyList()));
+                    final @Nonnull Pair<@Nonnull CD, @Nonnull ImmutableList<@Nonnull CustomAnnotation>> indexColumnDeclaration = getColumnDeclaration("_" + field.getName() + "_index_" + i, CustomType.INTEGER32, ImmutableList.withElementsOfCollection(Collections.emptyList()));
                     addColumnDeclarationToList(indexColumnDeclaration);
                     i++;
                 }
