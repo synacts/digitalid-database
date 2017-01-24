@@ -37,7 +37,7 @@ public class H2Dialect extends SQLDialect {
             final @Nonnull SQLIdentifier identifier = (SQLIdentifier) node;
             string.append(identifier.getString().toUpperCase());
         } else {
-            super.unparse(node, site, string);
+            super.unparse(node, unit, string);
         }
     }
     
