@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.type.ThreadSafe;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.property.Observer;
 import net.digitalid.utility.property.Property;
 import net.digitalid.utility.validation.annotations.lock.LockNotHeldByCurrentThread;
@@ -50,6 +51,6 @@ public interface PersistentProperty<@Unspecifiable SUBJECT extends Subject<?>, @
     @Pure
     @NonCommitting
     @LockNotHeldByCurrentThread
-    public void reset() throws DatabaseException;
+    public void reset() throws DatabaseException, RecoveryException;
     
 }

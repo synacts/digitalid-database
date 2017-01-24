@@ -13,6 +13,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.Captured;
 import net.digitalid.utility.annotations.type.ThreadSafe;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.functional.interfaces.Predicate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -36,7 +37,7 @@ import net.digitalid.database.unit.Unit;
 @ThreadSafe
 @GenerateBuilder
 @GenerateSubclass
-public abstract class WritablePersistentValuePropertyImplementation<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>, @Specifiable VALUE> extends WritableValuePropertyImplementation<VALUE, DatabaseException, PersistentValueObserver<SUBJECT, VALUE>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE>> implements WritablePersistentValueProperty<SUBJECT, VALUE> {
+public abstract class WritablePersistentValuePropertyImplementation<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>, @Specifiable VALUE> extends WritableValuePropertyImplementation<VALUE, DatabaseException, RecoveryException, PersistentValueObserver<SUBJECT, VALUE>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE>> implements WritablePersistentValueProperty<SUBJECT, VALUE> {
     
     /* -------------------------------------------------- Validator -------------------------------------------------- */
     
@@ -63,7 +64,7 @@ public abstract class WritablePersistentValuePropertyImplementation<@Unspecifiab
      */
     @Pure
     @NonCommitting
-    protected void load(final boolean locking) throws DatabaseException {
+    protected void load(final boolean locking) throws DatabaseException, RecoveryException {
         if (locking) { lock.lock(); }
         try {
             final @Nullable PersistentValuePropertyEntry<SUBJECT, VALUE> entry = SQL.selectFirst(getTable().getEntryConverter(), getSubject().getUnit(), getSubject(), getTable().getParentModule().getSubjectConverter(), getSubject().getUnit());
@@ -87,7 +88,7 @@ public abstract class WritablePersistentValuePropertyImplementation<@Unspecifiab
     @Pure
     @Override
     @NonCommitting
-    public @Nullable Time getTime() throws DatabaseException {
+    public @Nullable Time getTime() throws DatabaseException, RecoveryException {
         if (!loaded) { load(true); } // This should never trigger a reentrance exception as both set(value) and reset() that call external code ensure that the time is loaded.
         return time;
     }
@@ -99,7 +100,7 @@ public abstract class WritablePersistentValuePropertyImplementation<@Unspecifiab
     @Pure
     @Override
     @NonCommitting
-    public @Valid VALUE get() throws DatabaseException {
+    public @Valid VALUE get() throws DatabaseException, RecoveryException {
         if (!loaded) { load(true); } // This should never trigger a reentrance exception as both set(value) and reset() that call external code ensure that the value is loaded.
         return value;
     }
@@ -108,7 +109,7 @@ public abstract class WritablePersistentValuePropertyImplementation<@Unspecifiab
     @Override
     @Committing
     @LockNotHeldByCurrentThread
-    public @Capturable @Valid VALUE set(@Captured @Valid VALUE newValue) throws DatabaseException {
+    public @Capturable @Valid VALUE set(@Captured @Valid VALUE newValue) throws DatabaseException, RecoveryException {
         lock.lock();
         try {
             if (!loaded) { load(false); }
@@ -133,7 +134,7 @@ public abstract class WritablePersistentValuePropertyImplementation<@Unspecifiab
     @Override
     @NonCommitting
     @LockNotHeldByCurrentThread
-    public @Nonnull Pair<@Valid VALUE, @Nullable Time> getValueWithTimeOfLastModification() throws DatabaseException {
+    public @Nonnull Pair<@Valid VALUE, @Nullable Time> getValueWithTimeOfLastModification() throws DatabaseException, RecoveryException {
         lock.lock();
         try {
             if (!loaded) { load(false); }
@@ -149,7 +150,7 @@ public abstract class WritablePersistentValuePropertyImplementation<@Unspecifiab
     @Override
     @NonCommitting
     @LockNotHeldByCurrentThread
-    public void reset() throws DatabaseException {
+    public void reset() throws DatabaseException, RecoveryException {
         lock.lock();
         try {
             if (loaded) {

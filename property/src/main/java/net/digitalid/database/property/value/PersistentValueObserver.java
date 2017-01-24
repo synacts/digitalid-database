@@ -2,6 +2,7 @@ package net.digitalid.database.property.value;
 
 import net.digitalid.utility.annotations.generics.Specifiable;
 import net.digitalid.utility.annotations.generics.Unspecifiable;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.property.Property;
 import net.digitalid.utility.property.value.ValueObserver;
 import net.digitalid.utility.validation.annotations.type.Functional;
@@ -15,4 +16,4 @@ import net.digitalid.database.subject.Subject;
  */
 @Mutable
 @Functional
-public interface PersistentValueObserver<@Unspecifiable SUBJECT extends Subject<?>, @Specifiable VALUE> extends ValueObserver<VALUE, DatabaseException, PersistentValueObserver<SUBJECT, VALUE>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE>> {}
+public interface PersistentValueObserver<@Unspecifiable SUBJECT extends Subject<?>, @Specifiable VALUE> extends ValueObserver<VALUE, DatabaseException, RecoveryException, PersistentValueObserver<SUBJECT, VALUE>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE>> {}

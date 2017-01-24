@@ -19,6 +19,7 @@ import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.collections.map.FreezableMap;
 import net.digitalid.utility.collections.map.ReadOnlyMap;
 import net.digitalid.utility.contracts.Validate;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.functional.interfaces.Predicate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
@@ -41,7 +42,7 @@ import net.digitalid.database.unit.Unit;
 @ThreadSafe
 @GenerateBuilder
 @GenerateSubclass
-public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>, @Unspecifiable KEY, @Unspecifiable VALUE, @Unspecifiable READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>, @Unspecifiable FREEZABLE_MAP extends FreezableMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>> extends WritableMapPropertyImplementation<KEY, VALUE, READONLY_MAP, DatabaseException, PersistentMapObserver<SUBJECT, KEY, VALUE, READONLY_MAP>, ReadOnlyPersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP>> implements WritablePersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP, FREEZABLE_MAP> {
+public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>, @Unspecifiable KEY, @Unspecifiable VALUE, @Unspecifiable READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>, @Unspecifiable FREEZABLE_MAP extends FreezableMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>> extends WritableMapPropertyImplementation<KEY, VALUE, READONLY_MAP, DatabaseException, RecoveryException, PersistentMapObserver<SUBJECT, KEY, VALUE, READONLY_MAP>, ReadOnlyPersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP>> implements WritablePersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP, FREEZABLE_MAP> {
     
     /* -------------------------------------------------- Validators -------------------------------------------------- */
     
@@ -79,7 +80,7 @@ public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable
      */
     @Pure
     @NonCommitting
-    protected void load(final boolean locking) throws DatabaseException {
+    protected void load(final boolean locking) throws DatabaseException, RecoveryException {
         if (locking) { lock.lock(); }
         try {
             getMap().clear();
@@ -99,7 +100,7 @@ public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable
     @Override
     @NonCommitting
     @SuppressWarnings("unchecked")
-    public @Nonnull @NonFrozen READONLY_MAP get() throws DatabaseException {
+    public @Nonnull @NonFrozen READONLY_MAP get() throws DatabaseException, RecoveryException {
         if (!loaded) { load(true); } // This should never trigger a reentrance exception as add(key, value), remove(key, value) and reset() that call external code ensure that the map is loaded.
         return (READONLY_MAP) getMap();
     }
@@ -107,7 +108,7 @@ public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable
     @Pure
     @Override
     @NonCommitting
-    public @NonCapturable @Nullable @Valid VALUE get(@NonCaptured @Unmodified @Nonnull @Valid("key") KEY key) throws DatabaseException {
+    public @NonCapturable @Nullable @Valid VALUE get(@NonCaptured @Unmodified @Nonnull @Valid("key") KEY key) throws DatabaseException, RecoveryException {
         if (!loaded) { load(true); } // This should never trigger a reentrance exception as add(key, value), remove(key, value) and reset() that call external code ensure that the map is loaded.
         return getMap().get(key);
     }
@@ -118,7 +119,7 @@ public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable
     @Override
     @Committing
     @LockNotHeldByCurrentThread
-    public boolean add(@Captured @Nonnull @Valid("key") KEY key, @Captured @Nonnull @Valid VALUE value) throws DatabaseException {
+    public boolean add(@Captured @Nonnull @Valid("key") KEY key, @Captured @Nonnull @Valid VALUE value) throws DatabaseException, RecoveryException {
         lock.lock();
         try {
             if (!loaded) { load(false); }
@@ -140,7 +141,7 @@ public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable
     @Override
     @Committing
     @LockNotHeldByCurrentThread
-    public @Capturable @Nullable @Valid VALUE remove(@NonCaptured @Unmodified @Nonnull @Valid("key") KEY key) throws DatabaseException {
+    public @Capturable @Nullable @Valid VALUE remove(@NonCaptured @Unmodified @Nonnull @Valid("key") KEY key) throws DatabaseException, RecoveryException {
         lock.lock();
         try {
             if (!loaded) { load(false); }
@@ -165,7 +166,7 @@ public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable
     @Override
     @NonCommitting
     @LockNotHeldByCurrentThread
-    public void reset() throws DatabaseException {
+    public void reset() throws DatabaseException, RecoveryException {
         lock.lock();
         try {
             if (loaded) {

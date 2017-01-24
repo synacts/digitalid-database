@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -53,7 +54,7 @@ public class ValuePropertyTest extends SQLTestBase {
     }
     
     @Test
-    public void testProperty() throws DatabaseException {
+    public void testProperty() throws DatabaseException, RecoveryException {
         final @Nonnull ClassWithValueProperty object = ClassWithValuePropertyBuilder.withKey(123).build();
         object.name().set("test");
         // TODO: Uncomment again as soon as the methods in SQL are implemented: object.name().reset();

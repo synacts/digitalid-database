@@ -3,6 +3,7 @@ package net.digitalid.database.property.value;
 import net.digitalid.utility.annotations.generics.Specifiable;
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.type.ThreadSafe;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.property.value.WritableValueProperty;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
@@ -16,4 +17,4 @@ import net.digitalid.database.subject.Subject;
  */
 @ThreadSafe
 @Mutable(ReadOnlyPersistentValueProperty.class)
-public interface WritablePersistentValueProperty<@Unspecifiable SUBJECT extends Subject<?>, @Specifiable VALUE> extends WritableValueProperty<VALUE, DatabaseException, PersistentValueObserver<SUBJECT, VALUE>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE>>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE> {}
+public interface WritablePersistentValueProperty<@Unspecifiable SUBJECT extends Subject<?>, @Specifiable VALUE> extends WritableValueProperty<VALUE, DatabaseException, RecoveryException, PersistentValueObserver<SUBJECT, VALUE>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE>>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE> {}

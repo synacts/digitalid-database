@@ -17,6 +17,7 @@ import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.collections.set.FreezableSet;
 import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.contracts.Validate;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.functional.interfaces.Predicate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
@@ -41,7 +42,7 @@ import net.digitalid.database.unit.Unit;
 @ThreadSafe
 @GenerateBuilder
 @GenerateSubclass
-public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>, @Unspecifiable VALUE, @Unspecifiable READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>, @Unspecifiable FREEZABLE_SET extends FreezableSet<@Nonnull @Valid VALUE>> extends WritableSetPropertyImplementation<VALUE, READONLY_SET, DatabaseException, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>, ReadOnlyPersistentSetProperty<SUBJECT, VALUE, READONLY_SET>> implements WritablePersistentSetProperty<SUBJECT, VALUE, READONLY_SET, FREEZABLE_SET> {
+public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>, @Unspecifiable VALUE, @Unspecifiable READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>, @Unspecifiable FREEZABLE_SET extends FreezableSet<@Nonnull @Valid VALUE>> extends WritableSetPropertyImplementation<VALUE, READONLY_SET, DatabaseException, RecoveryException, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>, ReadOnlyPersistentSetProperty<SUBJECT, VALUE, READONLY_SET>> implements WritablePersistentSetProperty<SUBJECT, VALUE, READONLY_SET, FREEZABLE_SET> {
     
     /* -------------------------------------------------- Validator -------------------------------------------------- */
     
@@ -74,7 +75,7 @@ public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable
     @Pure
     @NonCommitting
     @TODO(task = "Instead of reading and adding a single entry, select and add all entries of the subject to the freezable set.", date = "2016-09-30", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.HIGH)
-    protected void load(final boolean locking) throws DatabaseException {
+    protected void load(final boolean locking) throws DatabaseException, RecoveryException {
         if (locking) { lock.lock(); }
         try {
             getSet().clear();
@@ -94,7 +95,7 @@ public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable
     @Override
     @NonCommitting
     @SuppressWarnings("unchecked")
-    public @Nonnull @NonFrozen READONLY_SET get() throws DatabaseException {
+    public @Nonnull @NonFrozen READONLY_SET get() throws DatabaseException, RecoveryException {
         if (!loaded) { load(true); } // This should never trigger a reentrance exception as add(value), remove(value) and reset() that call external code ensure that the set is loaded.
         return (READONLY_SET) getSet();
     }
@@ -105,7 +106,7 @@ public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable
     @Override
     @Committing
     @LockNotHeldByCurrentThread
-    public boolean add(@Captured @Nonnull @Valid VALUE value) throws DatabaseException {
+    public boolean add(@Captured @Nonnull @Valid VALUE value) throws DatabaseException, RecoveryException {
         lock.lock();
         try {
             if (!loaded) { load(false); }
@@ -127,7 +128,7 @@ public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable
     @Override
     @Committing
     @LockNotHeldByCurrentThread
-    public boolean remove(@NonCaptured @Unmodified @Nonnull @Valid VALUE value) throws DatabaseException {
+    public boolean remove(@NonCaptured @Unmodified @Nonnull @Valid VALUE value) throws DatabaseException, RecoveryException {
         lock.lock();
         try {
             if (!loaded) { load(false); }
@@ -151,7 +152,7 @@ public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable
     @Override
     @NonCommitting
     @LockNotHeldByCurrentThread
-    public void reset() throws DatabaseException {
+    public void reset() throws DatabaseException, RecoveryException {
         lock.lock();
         try {
             if (loaded) {

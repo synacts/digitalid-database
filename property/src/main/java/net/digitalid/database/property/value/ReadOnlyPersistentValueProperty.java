@@ -8,6 +8,7 @@ import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCapturable;
 import net.digitalid.utility.annotations.type.ThreadSafe;
+import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.property.value.ReadOnlyValueProperty;
 import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.lock.LockNotHeldByCurrentThread;
@@ -27,14 +28,14 @@ import net.digitalid.database.subject.Subject;
  */
 @ThreadSafe
 @ReadOnly(WritablePersistentValuePropertyImplementation.class)
-public interface ReadOnlyPersistentValueProperty<@Unspecifiable SUBJECT extends Subject<?>, @Specifiable VALUE> extends ReadOnlyValueProperty<VALUE, DatabaseException, PersistentValueObserver<SUBJECT, VALUE>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE>>, PersistentProperty<SUBJECT, PersistentValuePropertyEntry<SUBJECT, VALUE>, PersistentValueObserver<SUBJECT, VALUE>> {
+public interface ReadOnlyPersistentValueProperty<@Unspecifiable SUBJECT extends Subject<?>, @Specifiable VALUE> extends ReadOnlyValueProperty<VALUE, DatabaseException, RecoveryException, PersistentValueObserver<SUBJECT, VALUE>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE>>, PersistentProperty<SUBJECT, PersistentValuePropertyEntry<SUBJECT, VALUE>, PersistentValueObserver<SUBJECT, VALUE>> {
     
     /* -------------------------------------------------- Getter -------------------------------------------------- */
     
     @Pure
     @Override
     @NonCommitting
-    public @NonCapturable @Valid VALUE get() throws DatabaseException;
+    public @NonCapturable @Valid VALUE get() throws DatabaseException, RecoveryException;
     
     /* -------------------------------------------------- Table -------------------------------------------------- */
     
@@ -50,7 +51,7 @@ public interface ReadOnlyPersistentValueProperty<@Unspecifiable SUBJECT extends 
      */
     @Pure
     @NonCommitting
-    public @Nullable Time getTime() throws DatabaseException;
+    public @Nullable Time getTime() throws DatabaseException, RecoveryException;
     
     /* -------------------------------------------------- Combination -------------------------------------------------- */
     
@@ -61,6 +62,6 @@ public interface ReadOnlyPersistentValueProperty<@Unspecifiable SUBJECT extends 
     @Pure
     @NonCommitting
     @LockNotHeldByCurrentThread
-    public @Nonnull Pair<@Valid VALUE, @Nullable Time> getValueWithTimeOfLastModification() throws DatabaseException;
+    public @Nonnull Pair<@Valid VALUE, @Nullable Time> getValueWithTimeOfLastModification() throws DatabaseException, RecoveryException;
     
 }
