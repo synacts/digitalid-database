@@ -1,7 +1,6 @@
 package net.digitalid.database.android.encoder;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
@@ -10,7 +9,6 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.database.android.decoder.AndroidDecoderBuilder;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.SQLDecoder;
-import net.digitalid.database.interfaces.encoder.SQLActionEncoder;
 import net.digitalid.database.interfaces.encoder.SQLQueryEncoder;
 
 import android.database.Cursor;

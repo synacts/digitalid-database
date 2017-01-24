@@ -33,7 +33,6 @@ import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.interfaces.encoder.SQLActionEncoder;
 import net.digitalid.database.interfaces.encoder.SQLQueryEncoder;
-import net.digitalid.database.jdbc.encoder.JDBCActionEncoder;
 import net.digitalid.database.jdbc.encoder.JDBCActionEncoderBuilder;
 import net.digitalid.database.jdbc.encoder.JDBCQueryEncoderBuilder;
 import net.digitalid.database.unit.Unit;
