@@ -6,11 +6,14 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.dialect.expression.SQLExpression;
+import net.digitalid.database.dialect.expression.SQLParameter;
 import net.digitalid.database.dialect.expression.bool.SQLComparisonOperator;
 import net.digitalid.database.dialect.expression.bool.SQLNumberComparisonBooleanExpression;
 import net.digitalid.database.dialect.expression.bool.SQLNumberComparisonBooleanExpressionBuilder;
 import net.digitalid.database.dialect.expression.bool.SQLNumberInRangeBooleanExpression;
 import net.digitalid.database.dialect.expression.bool.SQLNumberInRangeBooleanExpressionBuilder;
+import net.digitalid.database.dialect.identifier.column.SQLColumn;
+import net.digitalid.database.dialect.statement.select.SQLSelectStatement;
 
 /**
  * A number expression evaluates to a number.

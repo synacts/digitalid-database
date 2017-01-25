@@ -11,6 +11,8 @@ import net.digitalid.database.dialect.expression.bool.SQLSelectionExistsBooleanE
 import net.digitalid.database.dialect.expression.number.SQLNumberExpression;
 import net.digitalid.database.dialect.expression.string.SQLStringExpression;
 import net.digitalid.database.dialect.statement.SQLStatement;
+import net.digitalid.database.dialect.statement.select.ordered.SQLOrderedSelectStatement;
+import net.digitalid.database.dialect.statement.select.unordered.SQLUnorderedSelectStatement;
 
 /**
  * This SQL node represents an SQL select statement.

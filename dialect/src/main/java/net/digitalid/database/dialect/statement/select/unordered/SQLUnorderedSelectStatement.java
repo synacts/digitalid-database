@@ -9,6 +9,7 @@ import net.digitalid.database.dialect.statement.select.SQLSelectStatement;
 import net.digitalid.database.dialect.statement.select.unordered.compound.SQLCompoundOperator;
 import net.digitalid.database.dialect.statement.select.unordered.compound.SQLCompoundSelectStatement;
 import net.digitalid.database.dialect.statement.select.unordered.compound.SQLCompoundSelectStatementBuilder;
+import net.digitalid.database.dialect.statement.select.unordered.simple.SQLSimpleSelectStatement;
 
 /**
  * An SQL select statement without an order or limit clause.

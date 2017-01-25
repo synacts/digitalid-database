@@ -7,11 +7,14 @@ import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.dialect.expression.SQLExpression;
+import net.digitalid.database.dialect.expression.SQLParameter;
 import net.digitalid.database.dialect.expression.bool.SQLComparisonOperator;
 import net.digitalid.database.dialect.expression.bool.SQLStringComparisonBooleanExpression;
 import net.digitalid.database.dialect.expression.bool.SQLStringComparisonBooleanExpressionBuilder;
 import net.digitalid.database.dialect.expression.bool.SQLStringInRangeBooleanExpression;
 import net.digitalid.database.dialect.expression.bool.SQLStringInRangeBooleanExpressionBuilder;
+import net.digitalid.database.dialect.identifier.column.SQLColumn;
+import net.digitalid.database.dialect.statement.select.SQLSelectStatement;
 
 /**
  * A string expression evaluates to a string.
