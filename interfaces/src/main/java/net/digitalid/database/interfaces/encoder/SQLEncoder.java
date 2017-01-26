@@ -13,8 +13,6 @@ import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Unmodified;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.enumerations.Representation;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.conversion.interfaces.Encoder;
@@ -48,20 +46,13 @@ import net.digitalid.database.interfaces.SQLDecoder;
  * @see SQLDecoder
  */
 @Mutable
-@TODO(task = "Check ultimately whether it makes sense that the SQLEncoder extends AutoCloseable.", date = "2017-01-19", author = Author.KASPAR_ETTER)
-public interface SQLEncoder extends AutoCloseable, Encoder<DatabaseException> {
+public interface SQLEncoder extends Encoder<DatabaseException> {
     
     /* -------------------------------------------------- Representation -------------------------------------------------- */
     
     @Pure
     @Override
     public @Nonnull Representation getRepresentation();
-    
-    /* -------------------------------------------------- Closing -------------------------------------------------- */
-    
-    @Impure
-    @Override
-    public void close() throws DatabaseException;
     
     /* -------------------------------------------------- Null -------------------------------------------------- */
     
@@ -106,6 +97,8 @@ public interface SQLEncoder extends AutoCloseable, Encoder<DatabaseException> {
 =     */
     @Impure
     public void encodeNull(@Nonnull CustomType customType) throws DatabaseException;
+    
+    // TODO: Why are all the following methods (and the getRepresentation() above) redeclared here?
     
     /* -------------------------------------------------- Object -------------------------------------------------- */
     

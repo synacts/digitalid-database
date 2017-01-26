@@ -12,6 +12,8 @@ import javax.crypto.Cipher;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Shared;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.contracts.Ensure;
 import net.digitalid.utility.conversion.enumerations.Representation;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
@@ -30,7 +32,7 @@ import net.digitalid.database.interfaces.encoder.SQLEncoder;
  * @see SQLEncoder
  */
 @Mutable
-public abstract class SQLDecoder implements AutoCloseable, Decoder<DatabaseException> {
+public abstract class SQLDecoder implements Decoder<DatabaseException> {
     
     /* -------------------------------------------------- Iteration -------------------------------------------------- */
     
@@ -44,25 +46,9 @@ public abstract class SQLDecoder implements AutoCloseable, Decoder<DatabaseExcep
     
     /**
      * Moves the cursor to the first row of the selection result.
-     * 
      */
     @Impure
     public abstract void moveToFirstRow() throws DatabaseException;
-    
-    /* -------------------------------------------------- Closing -------------------------------------------------- */
-    
-    @Impure
-    @Override
-    public abstract void close() throws DatabaseException;
-    
-    
-    /* -------------------------------------------------- Representation -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public @Nonnull Representation getRepresentation() {
-        return Representation.INTERNAL;
-    }
     
     /* -------------------------------------------------- Null -------------------------------------------------- */
     
@@ -72,10 +58,19 @@ public abstract class SQLDecoder implements AutoCloseable, Decoder<DatabaseExcep
     @Pure
     public abstract boolean wasNull() throws DatabaseException;
     
+    /* -------------------------------------------------- Representation -------------------------------------------------- */
+    
+    @Pure
+    @Override
+    public @Nonnull Representation getRepresentation() {
+        return Representation.INTERNAL;
+    }
+    
     /* -------------------------------------------------- Object -------------------------------------------------- */
     
     @Pure
     @Override
+    @TODO(task = "This is wrong. The converter expects non-null values. This method returns null when all columns are null and calls the decodeObject method otherwise.", date = "2017-01-25", author = Author.KASPAR_ETTER)
     public <TYPE, PROVIDED> @Nullable TYPE decodeNullableObject(@Nonnull Converter<TYPE, PROVIDED> converter, @Nonnull @Shared PROVIDED provided) throws DatabaseException, RecoveryException {
         return converter.recover(this, provided);
     }
