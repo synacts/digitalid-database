@@ -50,7 +50,7 @@ public interface SQLCreateTableStatement extends SQLTableStatement {
     public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         string.append("CREATE TABLE IF NOT EXISTS ");
         dialect.unparse(getTable(), unit, string);
-        string.append("(");
+        string.append(" (");
         dialect.unparse(getColumnDeclarations(), unit, string);
         final @Nullable @NonNullableElements @NonEmpty ImmutableList<? extends SQLTableConstraint> tableConstraints = getTableConstraints();
         if (tableConstraints != null) {

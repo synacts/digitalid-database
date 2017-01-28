@@ -34,7 +34,7 @@ public class SQLCreateTableStatementTest extends SQLStatementTest {
         final @Nonnull SQLForeignKeyConstraint foreignKeyConstraint = SQLForeignKeyConstraintBuilder.withColumns(columns).withReference(reference).withName(constraintName).build();
         
         final @Nonnull SQLCreateTableStatement createTableStatement = SQLCreateTableStatementBuilder.withTable(qualifiedTable).withColumnDeclarations(ImmutableList.withElements(firstColumnDeclaration, secondColumnDeclaration, thirdColumnDeclaration)).withTableConstraints(ImmutableList.withElements(foreignKeyConstraint)).build();
-        assertEquals("CREATE TABLE IF NOT EXISTS \"default\".\"test_table\"(\"first_column\" INT NOT NULL PRIMARY KEY AUTOINCREMENT, \"second_column\" BOOLEAN NOT NULL DEFAULT (TRUE), \"third_column\" VARCHAR(64) COLLATE utf16_bin NOT NULL CHECK ((\"third_column\") BETWEEN (\"hello\") AND (\"world\")), CONSTRAINT \"self_reference\" FOREIGN KEY (\"first_column\") REFERENCES \"default\".\"test_table\" (\"first_column\") ON DELETE RESTRICT ON UPDATE CASCADE)", SQLDialect.unparse(createTableStatement, Unit.DEFAULT));
+        assertEquals("CREATE TABLE IF NOT EXISTS \"default\".\"test_table\" (\"first_column\" INT NOT NULL PRIMARY KEY AUTOINCREMENT, \"second_column\" BOOLEAN NOT NULL DEFAULT (TRUE), \"third_column\" VARCHAR(64) NOT NULL CHECK ((\"third_column\") BETWEEN (\"hello\") AND (\"world\")), CONSTRAINT \"self_reference\" FOREIGN KEY (\"first_column\") REFERENCES \"default\".\"test_table\" (\"first_column\") ON DELETE RESTRICT ON UPDATE CASCADE)", SQLDialect.unparse(createTableStatement, Unit.DEFAULT));
     }
     
 }
