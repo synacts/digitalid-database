@@ -2,6 +2,19 @@ package net.digitalid.database.conversion;
 
 // TODO
 
+import javax.annotation.Nonnull;
+
+import net.digitalid.database.conversion.testenvironment.columnconstraints.BooleanColumnDefaultTrueTableConverter;
+import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColumnTableConverter;
+import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
+import net.digitalid.database.testing.SQLTestBase;
+import net.digitalid.database.testing.assertion.ExpectedColumnDeclarationBuilder;
+import net.digitalid.database.testing.assertion.ExpectedColumnDeclarations;
+import net.digitalid.database.testing.assertion.ExpectedColumnDeclarationsBuilder;
+import net.digitalid.database.unit.Unit;
+
+import org.junit.Test;
+
 //import java.util.HashMap;
 //import java.util.Map;
 //
@@ -29,10 +42,10 @@ package net.digitalid.database.conversion;
 //import org.junit.Assert;
 //import org.junit.Test;
 //
-//public class SQLCreateTableTest extends SQLTestBase {
-//    
-//    private static final @Nonnull Unit unit = Unit.DEFAULT;
-//    
+public class SQLCreateTableTest extends SQLTestBase {
+    
+    private static final @Nonnull Unit unit = Unit.DEFAULT;
+    
 //    @Impure
 //    @AfterClass
 //    public static void tearDown() throws DatabaseException {
@@ -49,49 +62,38 @@ package net.digitalid.database.conversion;
 //        dropTable(ReferencedCollectionClassConverter.INSTANCE.getTypeName()+ "_listofintegers", unit);
 //        dropTable(ReferencedCollectionClassConverter.INSTANCE, unit);
 //    }
-//    
-//    @Test
-//    public void shouldCreateTableWithoutColumns() throws Exception {
-//        final @Nonnull TableImplementation table = SQL.create(EmptyClassConverter.INSTANCE, unit);
-//        Assert.assertEquals(EmptyClassConverter.INSTANCE.getTypeName(), table.getName());
-//        
-//        assertTableExists(EmptyClassConverter.INSTANCE.getTypeName(), unit.getName());
-//    }
-//    
-//    @Test
-//    public void shouldCreateTableWithSingleBooleanColumn() throws Exception {
-//        TableImplementation table = SQL.create(SingleBooleanColumnTableConverter.INSTANCE, unit);
-//        Assert.assertEquals(SingleBooleanColumnTableConverter.INSTANCE.getTypeName(), table.getName());
-//
-//        assertTableExists(SingleBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName());
-//        Map<String, String[]> expectedResult = new HashMap<>();
-//        expectedResult.put("value", new String[]{"boolean(1)" });
-//        assertTableHasColumns(SingleBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), expectedResult);
-//    }
-//    
-//    @Test
-//    public void shouldCreateTableWithMultipleBooleanColumns() throws Exception {
-//        TableImplementation table = SQL.create(MultiBooleanColumnTableConverter.INSTANCE, unit);
-//        Assert.assertEquals(MultiBooleanColumnTableConverter.INSTANCE.getTypeName(), table.getName());
-//        
-//        assertTableExists(MultiBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName());
-//        Map<String, String[]> expectedResult = new HashMap<>();
-//        expectedResult.put("firstvalue", new String[] { "boolean(1)" });
-//        expectedResult.put("secondvalue", new String[] { "boolean(1)" });
-//        assertTableHasColumns(MultiBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), expectedResult);
-//    }
-//    
+    
+    @Test
+    public void shouldCreateTableWithSingleBooleanColumn() throws Exception {
+        SQL.createTable(SingleBooleanColumnTableConverter.INSTANCE, unit);
+        assertTableExists(SingleBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName());
+        final @Nonnull ExpectedColumnDeclarations expectedColumnDeclarations = ExpectedColumnDeclarationsBuilder.build();
+        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("value").withDBType("boolean(1)").build());
+        assertTableHasColumns(SingleBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), expectedColumnDeclarations);
+    }
+
+    @Test
+    public void shouldCreateTableWithMultipleBooleanColumns() throws Exception {
+        SQL.createTable(MultiBooleanColumnTableConverter.INSTANCE, unit);
+
+        assertTableExists(MultiBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName());
+    
+        final @Nonnull ExpectedColumnDeclarations expectedColumnDeclarations = ExpectedColumnDeclarationsBuilder.build();
+        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("firstvalue").withDBType("boolean(1)").build());
+        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("secondvalue").withDBType("boolean(1)").build());
+        assertTableHasColumns(MultiBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), expectedColumnDeclarations);
+    }
+
 //    @Test
 //    public void shouldCreateTableWithBooleanColumnWithDefaultValue() throws Exception {
-//        TableImplementation table = SQL.create(BooleanColumnDefaultTrueTableConverter.INSTANCE, unit);
-//        Assert.assertEquals(BooleanColumnDefaultTrueTableConverter.INSTANCE.getTypeName(), table.getName());
-//        
+//        SQL.createTable(BooleanColumnDefaultTrueTableConverter.INSTANCE, unit);
+//
 //        assertTableExists(BooleanColumnDefaultTrueTableConverter.INSTANCE.getTypeName(), unit.getName());
-//        Map<String, String[]> expectedResult = new HashMap<>();
-//        expectedResult.put("value", new String[] { "boolean(1)", "NO", "", "TRUE" });
-//        assertTableHasColumns(BooleanColumnDefaultTrueTableConverter.INSTANCE.getTypeName(), unit.getName(), expectedResult);
+//        final @Nonnull ExpectedColumnDeclarations expectedColumnDeclarations = ExpectedColumnDeclarationsBuilder.build();
+//        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("value").withDBType("boolean(1)").withNullAllowed(false).withDefaultValue("TRUE").build());
+//        assertTableHasColumns(BooleanColumnDefaultTrueTableConverter.INSTANCE.getTypeName(), unit.getName(), expectedColumnDeclarations);
 //    }
-//    
+
 //    @Test
 //    public void shouldCreateTableWithConstrainedInteger() throws Exception {
 //        final @Nonnull TableImplementation table = SQL.create(ConstraintIntegerColumnTableConverter.INSTANCE, unit);
@@ -192,4 +194,4 @@ package net.digitalid.database.conversion;
 //        }
 //    }
 //    
-//}
+}

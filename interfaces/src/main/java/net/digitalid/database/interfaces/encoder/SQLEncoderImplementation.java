@@ -64,7 +64,6 @@ public abstract class SQLEncoderImplementation implements SQLEncoder {
     /* -------------------------------------------------- Closing -------------------------------------------------- */
     
     @Impure
-    @Override
     public abstract void close() throws DatabaseException;
     
     /* -------------------------------------------------- Null -------------------------------------------------- */

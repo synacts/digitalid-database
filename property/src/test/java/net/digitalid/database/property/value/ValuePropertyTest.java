@@ -44,8 +44,6 @@ abstract class ClassWithValueProperty extends RootClass implements Subject<Unit>
 
 public class ValuePropertyTest extends SQLTestBase {
     
-    static { runInMemory = true; }
-    
     @Impure
     @BeforeClass
     public static void createTables() throws Exception {

@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.generics.Specifiable;
 import net.digitalid.utility.annotations.generics.Unspecifiable;
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.Shared;
@@ -12,14 +13,41 @@ import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.FreezableList;
+import net.digitalid.utility.conversion.enumerations.Representation;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
+import net.digitalid.utility.conversion.model.CustomField;
+import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
+import net.digitalid.utility.functional.iterables.InfiniteIterable;
+import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.database.annotations.transaction.NonCommitting;
+import net.digitalid.database.dialect.expression.SQLParameter;
+import net.digitalid.database.dialect.identifier.column.SQLColumnName;
+import net.digitalid.database.dialect.identifier.column.SQLColumnNameBuilder;
+import net.digitalid.database.dialect.identifier.schema.SQLSchemaName;
+import net.digitalid.database.dialect.identifier.schema.SQLSchemaNameBuilder;
+import net.digitalid.database.dialect.identifier.table.SQLExplicitlyQualifiedTableBuilder;
+import net.digitalid.database.dialect.identifier.table.SQLQualifiedTable;
+import net.digitalid.database.dialect.identifier.table.SQLTableName;
+import net.digitalid.database.dialect.identifier.table.SQLTableNameBuilder;
+import net.digitalid.database.dialect.statement.insert.SQLExpressionsBuilder;
+import net.digitalid.database.dialect.statement.insert.SQLInsertStatement;
+import net.digitalid.database.dialect.statement.insert.SQLInsertStatementBuilder;
+import net.digitalid.database.dialect.statement.insert.SQLRows;
+import net.digitalid.database.dialect.statement.insert.SQLRowsBuilder;
+import net.digitalid.database.dialect.statement.table.create.SQLColumnDeclaration;
+import net.digitalid.database.dialect.statement.table.create.SQLColumnDeclarationBuilder;
+import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatement;
+import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatementBuilder;
+import net.digitalid.database.dialect.statement.table.create.SQLTypeBuilder;
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.interfaces.encoder.SQLActionEncoder;
 import net.digitalid.database.unit.Unit;
 
 /**
@@ -30,12 +58,35 @@ public abstract class SQL {
     
     /* -------------------------------------------------- Create Table -------------------------------------------------- */
     
+    @Pure
+    private static <@Unspecifiable TYPE> void fillColumnDeclarations(@Nonnull Converter<TYPE, ?> converter, @Nonnull FreezableArrayList<@Nonnull SQLColumnDeclaration> columnDeclarations) {
+        final @Nonnull ImmutableList<@Nonnull CustomField> fields = converter.getFields(Representation.INTERNAL);
+        for (@Nonnull CustomField field : fields) {
+            if (!field.getCustomType().isCompositeType()) {
+                if (field.getCustomType().isObjectType()) {
+                    final @Nonnull CustomType.CustomConverterType customConverterType = (CustomType.CustomConverterType) field.getCustomType();
+                    fillColumnDeclarations(customConverterType.getConverter(), columnDeclarations);
+                } else {
+                    columnDeclarations.add(SQLColumnDeclarationBuilder.withName(SQLColumnNameBuilder.withString(field.getName()).build()).withType(SQLTypeBuilder.withType(field.getCustomType()).build()).build());
+                }
+            } else {
+                throw new UnsupportedOperationException("Composite types such as iterables or maps are currently not supported by the SQL encoders");
+            }
+        }
+    }
+    
     /**
      * Creates a table for the given converter in the given unit.
      */
     @Committing
     @PureWithSideEffects
     public static void createTable(@Nonnull Converter<?, ?> converter, @Nonnull Unit unit) throws DatabaseException {
+        final @Nonnull FreezableArrayList<@Nonnull SQLColumnDeclaration> columnDeclarations = FreezableArrayList.withNoElements();
+        fillColumnDeclarations(converter, columnDeclarations);
+        final @Nonnull SQLQualifiedTable tableName = SQLExplicitlyQualifiedTableBuilder.withTable(SQLTableNameBuilder.withString(converter.getTypeName()).build()).withSchema(SQLSchemaNameBuilder.withString(unit.getName()).build()).build();
+        final @Nonnull SQLCreateTableStatement createTableStatement = SQLCreateTableStatementBuilder.withTable(tableName).withColumnDeclarations(ImmutableList.withElementsOf(columnDeclarations)).build();
+        Database.instance.get().execute(createTableStatement, unit);
+        Database.instance.get().commit();
         // TODO
 //        final @Nonnull String tableName = converter.getTypeName();
 //        final @Nonnull SQLCreateTableColumnDeclarations columnDeclarations = SQLCreateTableColumnDeclarations.get(tableName);
@@ -79,23 +130,42 @@ public abstract class SQL {
         // TODO
     }
     
+    @Pure
+    private static <@Unspecifiable TYPE> void fillColumnNames(@Nonnull Converter<TYPE, ?> converter, @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columnNames) {
+        final @Nonnull ImmutableList<@Nonnull CustomField> fields = converter.getFields(Representation.INTERNAL);
+        for (@Nonnull CustomField field : fields) {
+            if (!field.getCustomType().isCompositeType()) {
+                if (field.getCustomType().isObjectType()) {
+                    fillColumnNames(converter, columnNames);
+                } else {
+                    columnNames.add(SQLColumnNameBuilder.withString(field.getName()).build());
+                }
+            } else {
+                throw new UnsupportedOperationException("Composite types such as iterables or maps are currently not supported by the SQL encoders");
+            }
+        }
+    }
+    
     /* -------------------------------------------------- Insert -------------------------------------------------- */
     
     /**
      * Inserts the given object with the given converter into its table in the given unit.
      */
-    @Committing
+    @NonCommitting
     @PureWithSideEffects
     public static <@Unspecifiable TYPE> void insert(@Nonnull TYPE object, @Nonnull Converter<TYPE, ?> converter, @Nonnull Unit unit) throws DatabaseException {
-        // TODO
-//        final @Nonnull SQLOrderedStatements<@Nonnull SQLInsertStatement, @Nonnull SQLInsertIntoTableColumnDeclarations> orderedInsertStatements = SQLOrderedStatementCache.INSTANCE.getOrderedInsertStatements(converter);
-//        
-//        final @Nonnull SQLEncoder encoder = DatabaseUtility.getInstance().getValueCollector(orderedInsertStatements.getStatementsOrderedByExecution().map(insertStatement -> 
-//                insertStatement.toPreparedStatement(SQLDialect.getDialect(), site)
-//               ), orderedInsertStatements.getOrderByColumn(), orderedInsertStatements.getColumnCountForGroup());
-//        converter.convert(object, encoder);
-//        DatabaseUtility.getInstance().execute(encoder);
-//        DatabaseUtility.getInstance().commit();
+        final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columns = FreezableArrayList.withNoElements();
+        fillColumnNames(converter, columns);
+        final @Nonnull ImmutableList<@Nonnull SQLParameter> row = ImmutableList.withElementsOf(InfiniteIterable.repeat(SQLParameter.INSTANCE).limit(columns.size()));
+        final @Nonnull SQLRows rows = SQLRowsBuilder.withRows(ImmutableList.withElements(SQLExpressionsBuilder.withExpressions(row).build())).build();
+        final @Nonnull SQLTableName tableName = SQLTableNameBuilder.withString(converter.getTypeName()).build();
+        final @Nonnull SQLSchemaName schema = SQLSchemaNameBuilder.withString(unit.getName()).build();
+        final @Nonnull SQLQualifiedTable qualifiedTable = SQLExplicitlyQualifiedTableBuilder.withTable(tableName).withSchema(schema).build();
+        final SQLInsertStatement sqlInsertStatement = SQLInsertStatementBuilder.withTable(qualifiedTable).withColumns(ImmutableList.withElementsOf(columns)).withValues(rows).build();
+    
+        final @Nonnull SQLActionEncoder actionEncoder = Database.instance.get().getEncoder(sqlInsertStatement, unit);
+        converter.convert(object, actionEncoder);
+        actionEncoder.execute();
     }
     
     /**
@@ -139,7 +209,7 @@ public abstract class SQL {
     @Committing
     @PureWithSideEffects
     @TODO(task = "Probably add a prefix parameter for both the select and where converter.", date = "2017-01-22", author = Author.KASPAR_ETTER)
-    public static <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Capturable @Nonnull @NonNullableElements @NonFrozen FreezableList<SELECT_TYPE> selectAll(@Nonnull Converter<SELECT_TYPE, PROVIDED> selectConverter, @Shared PROVIDED provided, @Nullable WHERE_TYPE whereObject, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
+    public static @Capturable <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Nonnull @NonNullableElements @NonFrozen FreezableList<SELECT_TYPE> selectAll(@Nonnull Converter<SELECT_TYPE, PROVIDED> selectConverter, @Shared PROVIDED provided, @Nullable WHERE_TYPE whereObject, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
         // TODO
         return FreezableArrayList.withNoElements();
     }

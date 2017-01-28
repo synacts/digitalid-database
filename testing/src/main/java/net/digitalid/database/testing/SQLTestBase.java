@@ -1,8 +1,8 @@
 package net.digitalid.database.testing;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Nonnull;
 
@@ -15,38 +15,44 @@ import net.digitalid.utility.validation.annotations.elements.NonNullableElements
 
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.testing.assertion.ExpectedColumnDeclarations;
 import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
 import net.digitalid.database.unit.Unit;
 
 import org.h2.tools.Server;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  * The base class for all unit tests that interact with a database.
  */
 public class SQLTestBase extends RootTest {
     
-    private static Server server;
+    private static @Nonnull Server server;
+    
+    private static @Nonnull H2JDBCDatabaseInstance h2DatabaseInstance;
     
     /* -------------------------------------------------- Set Up -------------------------------------------------- */
     
     private static boolean initialized = false;
     
     /**
-     * In order to inspect the database during debugging, set this boolean to false in a static block of the subclass.
+     * In order to inspect the database during debugging, set the system property "debugH2" to true.
      * Start '~/.m2/repository/com/h2database/h2/1.4.190/h2-1.4.190.jar' before running the test cases, which opens a
      * browser window, and connect to the database with the address below and both user and password set to 'sa'.
+     * 
+     * Database URL: jdbc:h2:tcp://localhost:9092/mem:test;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS Default;mode=MySQL;
+     * 
+     * When building with Maven, run the following command to debug:
+     * mvn test -DargLine="-DdebugH2=true"
      */
-    @SuppressWarnings("ProtectedField")
-    protected static boolean runInMemory = true;
-    
     @Impure
     @BeforeClass
     public static void setUpSQL() throws Exception {
+        final boolean debugH2 = Boolean.parseBoolean(System.getProperty("debugH2"));
         if (!initialized) {
-            Database.instance.set(H2JDBCDatabaseInstance.get("jdbc:h2:" + (runInMemory ? "" : "tcp://localhost:9092/") + "mem:test;" + (runInMemory ? "" : "DB_CLOSE_DELAY=-1;") + "INIT=CREATE SCHEMA IF NOT EXISTS " + Unit.DEFAULT.getName()+ ";mode=MySQL;"));
+            h2DatabaseInstance = H2JDBCDatabaseInstance.get("jdbc:h2:" + (debugH2 ? "tcp://localhost:9092/" : "") + "mem:test;" + (debugH2 ? "DB_CLOSE_DELAY=-1;" : "") + "INIT=CREATE SCHEMA IF NOT EXISTS " + Unit.DEFAULT.getName()+ ";mode=MySQL;");
+            Database.instance.set(h2DatabaseInstance);
             server = Server.createTcpServer();
             initialized = true;
         }
@@ -85,19 +91,6 @@ public class SQLTestBase extends RootTest {
     @AfterClass
     public static void tearDownSQL() throws Exception {
         server.shutdown();
-    }
-    
-    /**
-     * A generic test that verifies that a connection to the database could be established, and that a table could be created by issuing an SQL statement.
-     */
-    @Pure
-    @Test
-    public void shouldConnectToDatabase() throws Exception {
-        Database instance = Database.instance.get();
-        // TODO: instance.execute("CREATE TABLE IF NOT EXISTS blubb");
-        // TODO: SQLDecoder tableExistsQuery = instance.executeSelect("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'BLUBB'");
-        // TODO: tableExistsQuery.moveToFirstRow();
-        // TODO: Assert.assertSame(1, tableExistsQuery.decodeInteger32());
     }
     
     @Pure
@@ -172,53 +165,11 @@ public class SQLTestBase extends RootTest {
     }
     
     @Pure
-    protected void assertTableHasColumns(@Nonnull String tableName, @Nonnull String schema, @Nonnull Map<@Nonnull String, @Nonnull String[]> expectedResults) throws DatabaseException {
+    protected void assertTableHasColumns(@Nonnull String tableName, @Nonnull String schema, @Nonnull ExpectedColumnDeclarations expectedColumnDeclarations) throws DatabaseException {
         final @Nonnull String query = "SHOW COLUMNS FROM " + schema.toLowerCase() + "." + tableName.toLowerCase();
-        final @Nonnull Database instance = Database.instance.get();
-        // TODO:
-//        final @Nonnull SQLDecoder tableColumnsQuery = instance.executeSelect(query);
-//    
-//        tableColumnsQuery.moveToFirstRow();
-//        final @Nonnull String constraintQuery = "SELECT CHECK_CONSTRAINT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tableName.toLowerCase() + "' AND COLUMN_NAME = ";
-//        final @Nonnull Set<String> checkedSet = FreezableHashSetBuilder.build();
-//        do {
-//            tableColumnsQuery.moveToFirstColumn();
-//            @Nullable String field = tableColumnsQuery.getString();
-//            Assert.assertNotNull("A column name was expected, but none defined", field);
-//            Assert.assertTrue("Column name '" + field + "' is unexpected", expectedResults.containsKey(field));
-//            @Nonnull String[] column = expectedResults.get(field);
-//            checkedSet.add(field);
-//            
-//            @Nullable String type = tableColumnsQuery.getString();
-//            Assert.assertNotNull("A column type was expected, but none defined", field);
-//            Assert.assertEquals(column[0], type);
-//            
-//            if (column.length > 1) {
-//                @Nullable String nullness = tableColumnsQuery.getString();
-//                Assert.assertEquals(column[1], nullness);
-//            }
-//            if (column.length > 2) {
-//                @Nullable String key = tableColumnsQuery.getString();
-//                Assert.assertEquals(column[2], key);
-//            }
-//            if (column.length > 3) {
-//                @Nullable String defaultValue = tableColumnsQuery.getString();
-//                Assert.assertEquals(column[3], defaultValue);
-//            }
-//            if (column.length > 4) {
-//                String constraintQueryString = constraintQuery + "'" + field + "'";
-//                final @Nonnull SQLDecoder constraintResult = instance.executeSelect(constraintQueryString);
-//                constraintResult.moveToFirstRow();
-//                @Nullable String constraint = constraintResult.getString();
-//                Assert.assertNotNull("A constraint was expected, but none defined.", constraint);
-//                Assert.assertEquals(column[4], constraint);
-//            }
-//        } while (tableColumnsQuery.moveToNextRow());
-//        
-//        expectedResults.keySet().removeAll(checkedSet);
-//        if (expectedResults.size() > 0) {
-//            Assert.fail("Column name(s) '" + expectedResults.keySet() + "' not declared.");
-//        }
+        final @Nonnull ResultSet resultSet = h2DatabaseInstance.executeQuery(query);
+        
+        expectedColumnDeclarations.assertColumnFieldsExist(resultSet);
     }
     
     @Pure

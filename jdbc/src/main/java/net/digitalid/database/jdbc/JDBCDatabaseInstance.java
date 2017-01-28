@@ -217,6 +217,8 @@ public abstract class JDBCDatabaseInstance implements Database {
     private void executeStatement(@Nonnull Unit unit, @Nonnull SQLTableStatement tableStatement) throws DatabaseException {
         final @Nonnull StringBuilder sqlStringBuilder = new StringBuilder();
         tableStatement.unparse(SQLDialect.instance.get(), unit, sqlStringBuilder);
+        Log.debugging("Executing $", sqlStringBuilder.toString());
+        System.out.println(sqlStringBuilder.toString());
         try {
             // TODO: do we really need to set the result set type and result set concurrency?
             getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).execute(sqlStringBuilder.toString());

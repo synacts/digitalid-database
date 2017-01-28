@@ -11,12 +11,15 @@ import net.digitalid.utility.validation.annotations.size.NonEmpty;
 
 import net.digitalid.database.android.encoder.AndroidDeleteEncoderBuilder;
 import net.digitalid.database.android.encoder.AndroidInsertEncoderBuilder;
+import net.digitalid.database.android.encoder.AndroidSelectEncoderBuilder;
 import net.digitalid.database.android.encoder.AndroidUpdateEncoderBuilder;
 import net.digitalid.database.android.encoder.AndroidWhereClauseEncoder;
 import net.digitalid.database.android.encoder.AndroidWhereClauseEncoderBuilder;
+import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
 import net.digitalid.database.dialect.identifier.SQLIdentifier;
+import net.digitalid.database.dialect.statement.SQLTableStatement;
 import net.digitalid.database.dialect.statement.delete.SQLDeleteStatement;
 import net.digitalid.database.dialect.statement.insert.SQLInsertStatement;
 import net.digitalid.database.dialect.statement.select.SQLSelectStatement;
@@ -56,31 +59,49 @@ public abstract class AndroidDatabaseInstance extends SQLiteOpenHelper implement
         // TODO: do we need to remember if there was a difference in the version?
     }
     
-    private final @Nonnull ThreadLocal<SQLiteDatabase> connection = new ThreadLocal<>();
+    /* -------------------------------------------------- Transactions -------------------------------------------------- */
+    
+    /**
+     * Begins a new transaction.
+     */
+    @Impure
+    @NonCommitting
+    protected void begin() throws DatabaseException {
+        if (!getWritableDatabase().inTransaction()) {
+            getWritableDatabase().beginTransaction();
+        }
+    }
     
     @Impure
     @Override
     public void commit() throws DatabaseException {
-        connection.get().setTransactionSuccessful();
-        connection.get().endTransaction();
+        getWritableDatabase().setTransactionSuccessful();
+        getWritableDatabase().endTransaction();
     }
     
     @Impure
     @Override
     public void rollback() {
-        connection.get().endTransaction();
+        getWritableDatabase().endTransaction();
+    }
+    
+    @Impure
+    private void executeStatement(@Nonnull SQLTableStatement tableStatement, @Nonnull Unit unit) throws DatabaseException {
+        final @Nonnull StringBuilder stringBuilder = new StringBuilder();
+        tableStatement.unparse(SQLDialect.instance.get(), unit, stringBuilder);
+        getWritableDatabase().execSQL(stringBuilder.toString());
     }
     
     @Impure
     @Override
     public void execute(@Nonnull SQLCreateTableStatement createTableStatement, @Nonnull Unit unit) throws DatabaseException {
-        execute(createTableStatement, unit);
+        executeStatement(createTableStatement, unit);
     }
     
     @Impure
     @Override
     public void execute(@Nonnull SQLDropTableStatement dropTableStatement, @Nonnull Unit unit) throws DatabaseException {
-        execute(dropTableStatement, unit);
+        executeStatement(dropTableStatement, unit);
     }
     
     @Pure
@@ -88,7 +109,7 @@ public abstract class AndroidDatabaseInstance extends SQLiteOpenHelper implement
     public @Nonnull SQLActionEncoder getEncoder(@Nonnull SQLInsertStatement insertStatement, @Nonnull Unit unit) throws DatabaseException {
         final @Nonnull @NonEmpty @MaxSize(63) String tableName = insertStatement.getTable().getTable().getString();
         final @Nonnull @NonNullableElements String[] columnNames = insertStatement.getColumns().map(SQLIdentifier::getString).toArray(new String[0]);
-        return AndroidInsertEncoderBuilder.withSqLiteDatabase(connection.get()).withTableName(tableName).withColumnNames(columnNames).build();
+        return AndroidInsertEncoderBuilder.withSqLiteDatabase(getWritableDatabase()).withTableName(tableName).withColumnNames(columnNames).build();
     }
     
     @Pure
@@ -123,8 +144,8 @@ public abstract class AndroidDatabaseInstance extends SQLiteOpenHelper implement
         final @Nullable SQLBooleanExpression whereClause = updateStatement.getWhereClause();
         final @Nullable String whereClauseString = getWhereClauseString(whereClause, unit);
         final int sizeWhereArgs = getNumberWhereClauseParameters(whereClauseString);
-        final @Nonnull AndroidWhereClauseEncoder whereClauseEncoder = AndroidWhereClauseEncoderBuilder.withSqliteDatabase(connection.get()).withSizeWhereArgs(sizeWhereArgs).withWhereClause(whereClauseString).build();
-        return AndroidUpdateEncoderBuilder.withSqLiteDatabase(connection.get()).withTableName(tableName).withColumnNames(columnNames).withWhereClauseEncoder(whereClauseEncoder).build();
+        final @Nonnull AndroidWhereClauseEncoder whereClauseEncoder = AndroidWhereClauseEncoderBuilder.withSqliteDatabase(getWritableDatabase()).withSizeWhereArgs(sizeWhereArgs).withWhereClause(whereClauseString).build();
+        return AndroidUpdateEncoderBuilder.withSqLiteDatabase(getWritableDatabase()).withTableName(tableName).withColumnNames(columnNames).withWhereClauseEncoder(whereClauseEncoder).build();
     }
     
     @Pure
@@ -133,14 +154,17 @@ public abstract class AndroidDatabaseInstance extends SQLiteOpenHelper implement
         final @Nonnull @NonEmpty @MaxSize(63) String tableName = deleteStatement.getTable().getTable().getString();
         final @Nullable String whereClauseString = getWhereClauseString(deleteStatement.getWhereClause(), unit);
         final int sizeWhereArgs = getNumberWhereClauseParameters(whereClauseString);
-        return AndroidDeleteEncoderBuilder.withSqliteDatabase(connection.get()).withTableName(tableName).withSizeWhereArgs(sizeWhereArgs).build();
+        return AndroidDeleteEncoderBuilder.withSqliteDatabase(getWritableDatabase()).withTableName(tableName).withSizeWhereArgs(sizeWhereArgs).build();
     }
     
     @Pure
     @Override
     public @Nonnull SQLQueryEncoder getEncoder(@Nonnull SQLSelectStatement selectStatement, @Nonnull Unit unit) throws DatabaseException {
-//        return AndroidSelectEncoderBuilder
-        return null;
+        final @Nonnull StringBuilder stringBuilder = new StringBuilder();
+        selectStatement.unparse(SQLDialect.instance.get(), unit, stringBuilder);
+        final @Nullable String whereClauseString = getWhereClauseString(selectStatement, unit);
+        final int sizeWhereArgs = getNumberWhereClauseParameters(whereClauseString);
+        return AndroidSelectEncoderBuilder.withSqliteDatabase(getWritableDatabase()).withQuery(stringBuilder.toString()).withSizeWhereArgs(sizeWhereArgs).build();
     }
     
 }
