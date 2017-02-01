@@ -19,12 +19,14 @@ import net.digitalid.utility.generator.annotations.meta.Interceptor;
 import net.digitalid.utility.generator.information.method.MethodInformation;
 import net.digitalid.utility.generator.information.type.TypeInformation;
 import net.digitalid.utility.generator.interceptor.MethodInterceptor;
+import net.digitalid.utility.processing.utility.ProcessingUtility;
 import net.digitalid.utility.processor.generator.JavaFileGenerator;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.subject.SubjectModule;
 import net.digitalid.database.subject.SubjectModuleBuilder;
+import net.digitalid.database.unit.Unit;
 
 /**
  * This method interceptor generates a subject module with the name of the surrounding class and its converter.
@@ -54,11 +56,11 @@ public @interface GenerateSubjectModule {
         @TODO(task = "Clean up this method.", date = "2017-01-22", author = Author.KASPAR_ETTER)
         public void generateFieldsRequiredByMethod(@Nonnull JavaFileGenerator javaFileGenerator, @Nonnull MethodInformation method, @Nonnull TypeInformation typeInformation) {
             final @Nonnull String subjectConverter;
-//            if (ProcessingUtility.isRawSubtype(typeInformation.getType(), Unit.class)) {
-//                subjectConverter = javaFileGenerator.importIfPossible(SiteConverterBuilder.class) + ".withType" + Brackets.inRound(typeInformation.getName() + ".class") + ".build()";
-//            } else {
+            if (ProcessingUtility.isRawSubtype(typeInformation.getType(), Unit.class)) {
+                subjectConverter = javaFileGenerator.importIfPossible("net.digitalid.core.entity.CoreUnitConverterBuilder") + ".withType" + Brackets.inRound(typeInformation.getName() + ".class") + ".build()";
+            } else {
                 subjectConverter = typeInformation.getSimpleNameOfGeneratedConverter() + ".INSTANCE";
-//            }
+            }
             
             final @Nonnull TypeMirror unitType = ((DeclaredType) method.getReturnType()).getTypeArguments().get(0);
             javaFileGenerator.addField("static final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(SubjectModule.class) + Brackets.inPointy(javaFileGenerator.importIfPossible(unitType) + ", " + javaFileGenerator.importIfPossible(typeInformation.getType())) + " MODULE = " + javaFileGenerator.importIfPossible(SubjectModuleBuilder.class) + ".withSubjectConverter" + Brackets.inRound(subjectConverter) + ".build()");
