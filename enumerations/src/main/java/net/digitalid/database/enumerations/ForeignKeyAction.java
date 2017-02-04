@@ -10,7 +10,7 @@ public enum ForeignKeyAction {
     RESTRICT("RESTRICT"), 
     CASCADE("CASCADE"), 
     SET_NULL("SET NULL"), 
-    NO_ACTION("UPDATE");
+    NO_ACTION("NO ACTION");
 
     public final @Nonnull String value;
 

@@ -16,7 +16,6 @@ import net.digitalid.database.enumerations.SQLType;
 @GenerateConverter
 public class Entity  {
     
-    @ForeignKey(foreignTable = "referenced_table_1", columnName = "id", onDelete = ForeignKeyAction.CASCADE, columnType = SQLType.INTEGER32)
     public final @Nonnull ReferencedEntity referencedEntity;
     
     Entity(@Nonnull ReferencedEntity referencedEntity) {

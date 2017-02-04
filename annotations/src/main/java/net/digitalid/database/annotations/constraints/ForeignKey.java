@@ -17,16 +17,9 @@ import net.digitalid.database.enumerations.SQLType;
 /**
  *
  */
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
 public @interface ForeignKey {
-    
-    @Nonnull String foreignTable();
-    
-    @Nonnull SQLType columnType();
-    
-    @TODO(task = "Shouldn't this rather be an array of column names?", date = "2016-10-13", author = Author.KASPAR_ETTER)
-    @Nonnull @NonNullableElements String columnName();
     
     @Nonnull ForeignKeyAction onDelete() default ForeignKeyAction.RESTRICT;
     

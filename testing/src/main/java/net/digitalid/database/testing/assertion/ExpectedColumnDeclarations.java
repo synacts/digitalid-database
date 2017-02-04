@@ -2,6 +2,7 @@ package net.digitalid.database.testing.assertion;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
@@ -14,6 +15,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
+import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
 
 import org.junit.Assert;
 
@@ -32,13 +34,16 @@ public abstract class ExpectedColumnDeclarations {
     }
     
     @Pure
-    public void assertColumnFieldsExist(@Nonnull ResultSet resultSet) throws DatabaseException {
+    public void assertColumnFieldsExist(@Nonnull String tableName, @Nonnull H2JDBCDatabaseInstance h2DatabaseInstance) throws DatabaseException {
+        final @Nonnull String query = "SHOW COLUMNS FROM " + tableName;
+        final @Nonnull ResultSet resultSet = h2DatabaseInstance.executeQuery(query);
+    
         try {
             while (resultSet.next()) {
                 final @Nonnull String field = resultSet.getString("field");
                 if (expectedColumnDeclarations.containsKey(field)) {
                     final @Nonnull ExpectedColumnDeclaration expectedColumnDeclaration = expectedColumnDeclarations.get(field);
-                    expectedColumnDeclaration.found = true;
+                    expectedColumnDeclaration.setFound(true);
                     
                     final @Nonnull String type = resultSet.getString("type");
                     if (!expectedColumnDeclaration.getDBType().equals(type)) {
@@ -63,7 +68,7 @@ public abstract class ExpectedColumnDeclarations {
             
             final @Nonnull StringBuilder stringBuilder = new StringBuilder();
             for (@Nonnull ExpectedColumnDeclaration expectedColumnDeclaration : expectedColumnDeclarations.values()) {
-                if (!expectedColumnDeclaration.found) {
+                if (!expectedColumnDeclaration.isFound()) {
                     if (stringBuilder.length() != 0) {
                         stringBuilder.append(", ");
                     }
@@ -78,4 +83,25 @@ public abstract class ExpectedColumnDeclarations {
         }
     }
     
+    /**
+     * Checks whether the expected column constraints exist in the Database definition.
+     */
+    @Pure
+    public void assertColumnConstraintsExist(@Nonnull String tableName, @Nonnull H2JDBCDatabaseInstance h2DatabaseInstance) throws DatabaseException {
+        for (Map.Entry<@Nonnull String, @Nonnull ExpectedColumnDeclaration> entry : expectedColumnDeclarations.entrySet()) {
+            if (entry.getValue().getColumnConstraint() != null) {
+                final @Nonnull String columnName = entry.getKey();
+                final @Nonnull String columnConstraint = entry.getValue().getColumnConstraint();
+                final @Nonnull String constraintQuery = "SELECT CHECK_CONSTRAINT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tableName + "' AND COLUMN_NAME = '" + columnName + "'";
+                final @Nonnull ResultSet resultSet = h2DatabaseInstance.executeQuery(constraintQuery);
+                try {
+                    resultSet.next();
+                    final @Nonnull String actualColumnConstraint = resultSet.getString(1);
+                    Assert.assertEquals(columnConstraint, actualColumnConstraint);
+                } catch (SQLException e) {
+                    throw DatabaseExceptionBuilder.withCause(e).build();
+                }
+            }
+        }
+    }
 }

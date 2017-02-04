@@ -1,17 +1,20 @@
 package net.digitalid.database.dialect.statement.table.create.constraints;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.statement.table.create.SQLReference;
+import net.digitalid.database.enumerations.ForeignKeyAction;
 import net.digitalid.database.unit.Unit;
 
 /**
@@ -30,6 +33,22 @@ public interface SQLForeignKeyConstraint extends SQLColumnsConstraint {
     @Pure
     public @Nonnull SQLReference getReference();
     
+    /* -------------------------------------------------- Delete Action -------------------------------------------------- */
+    
+    /**
+     * Returns the action of this foreign key for delete.
+     */
+    @Pure
+    public @Nullable ForeignKeyAction getOnDeleteAction();
+    
+    /* -------------------------------------------------- Update Action -------------------------------------------------- */
+    
+    /**
+     * Returns the action of this foreign key for update.
+     */
+    @Pure
+    public @Nullable ForeignKeyAction getOnUpdateAction();
+    
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     
     @Pure
@@ -40,6 +59,14 @@ public interface SQLForeignKeyConstraint extends SQLColumnsConstraint {
         dialect.unparse(getColumns(), unit, string);
         string.append(")");
         dialect.unparse(getReference(), unit, string);
+        if (getOnDeleteAction() != null) {
+            string.append(" ON DELETE ");
+            string.append(getOnDeleteAction().value);
+        }
+        if (getOnUpdateAction() != null) {
+            string.append(" ON UPDATE ");
+            string.append(getOnUpdateAction().value);
+        }
     }
     
     /* -------------------------------------------------- Utility -------------------------------------------------- */

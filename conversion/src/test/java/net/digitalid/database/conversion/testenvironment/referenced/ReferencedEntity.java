@@ -1,23 +1,29 @@
 package net.digitalid.database.conversion.testenvironment.referenced;
 
+import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+
+import net.digitalid.database.annotations.constraints.ForeignKey;
+import net.digitalid.database.enumerations.ForeignKeyAction;
+import net.digitalid.database.subject.Subject;
+import net.digitalid.database.unit.Unit;
 
 
 /**
  *
  */
 @GenerateBuilder
+@GenerateSubclass
 @GenerateConverter
-public class ReferencedEntity  {
+@ForeignKey(onDelete = ForeignKeyAction.CASCADE)
+public interface ReferencedEntity extends Subject<Unit> {
     
-    public final int id;
+    @Pure
+    public abstract int getId();
     
-    public final int otherValue;
-    
-    ReferencedEntity(int id, int otherValue) {
-        this.id = id;
-        this.otherValue = otherValue;
-    }
+    @Pure
+    public abstract int getOtherValue();
     
 }

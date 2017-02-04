@@ -16,6 +16,8 @@ import net.digitalid.utility.validation.annotations.elements.NonNullableElements
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.testing.assertion.ExpectedColumnDeclarations;
+import net.digitalid.database.testing.assertion.ExpectedTableConstraint;
+import net.digitalid.database.testing.assertion.ExpectedTableConstraints;
 import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
 import net.digitalid.database.unit.Unit;
 
@@ -145,9 +147,8 @@ public class SQLTestBase extends RootTest {
     }
     
     @Pure
-    protected void assertTableReferences(@Nonnull String tableName, @Nonnull String schema, @Nonnull String column, @Nonnull String referencedTable, @Nonnull String referencedColumn, @Nonnull UpdateAction updateAction, @Nonnull DeleteAction deleteAction) throws DatabaseException {
-        final @Nonnull String query = "SELECT PKTABLE_NAME, PKCOLUMN_NAME, FKCOLUMN_NAME, UPDATE_RULE, DELETE_RULE FROM INFORMATION_SCHEMA.CROSS_REFERENCES WHERE FKTABLE_SCHEMA = '" + schema.toUpperCase() + "' AND FKTABLE_NAME = '" + tableName.toUpperCase() + "'";
-        final @Nonnull Database instance = Database.instance.get();
+    protected void assertTableReferences(@Nonnull ExpectedTableConstraints expectedTableConstraints) throws DatabaseException {
+        expectedTableConstraints.assertTableConstraints(h2DatabaseInstance);
         // TODO: final @Nonnull SQLDecoder tableReferencesResult = instance.executeSelect(query);
         // TODO:
 //        tableReferencesResult.moveToFirstRow();
@@ -165,11 +166,15 @@ public class SQLTestBase extends RootTest {
     }
     
     @Pure
-    protected void assertTableHasColumns(@Nonnull String tableName, @Nonnull String schema, @Nonnull ExpectedColumnDeclarations expectedColumnDeclarations) throws DatabaseException {
-        final @Nonnull String query = "SHOW COLUMNS FROM " + schema.toLowerCase() + "." + tableName.toLowerCase();
-        final @Nonnull ResultSet resultSet = h2DatabaseInstance.executeQuery(query);
-        
-        expectedColumnDeclarations.assertColumnFieldsExist(resultSet);
+    protected void assertTableHasExpectedTableConstraints(@Nonnull ExpectedTableConstraints expectedTableConstraints) throws DatabaseException {
+        expectedTableConstraints.assertTableConstraints(h2DatabaseInstance);
+    }
+    
+    @Pure
+    protected void assertTableHasExpectedColumnsDeclaration(@Nonnull String tableName, @Nonnull String schema, @Nonnull ExpectedColumnDeclarations expectedColumnDeclarations) throws DatabaseException {
+        final @Nonnull String qualifiedTableName = schema + "." + tableName;
+        expectedColumnDeclarations.assertColumnFieldsExist(qualifiedTableName, h2DatabaseInstance);
+        expectedColumnDeclarations.assertColumnConstraintsExist(tableName, h2DatabaseInstance);
     }
     
     @Pure

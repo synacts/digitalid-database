@@ -2,15 +2,31 @@ package net.digitalid.database.conversion;
 
 // TODO
 
+import java.util.Set;
+
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.collections.set.FreezableHashSet;
+
 import net.digitalid.database.conversion.testenvironment.columnconstraints.BooleanColumnDefaultTrueTableConverter;
+import net.digitalid.database.conversion.testenvironment.columnconstraints.ConstraintIntegerColumnTableConverter;
+import net.digitalid.database.conversion.testenvironment.embedded.EmbeddedConvertiblesConverter;
+import net.digitalid.database.conversion.testenvironment.inherited.SubClassConverter;
+import net.digitalid.database.conversion.testenvironment.referenced.EntityConverter;
+import net.digitalid.database.conversion.testenvironment.referenced.ReferencedEntityConverter;
 import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColumnTableConverter;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
+import net.digitalid.database.enumerations.ForeignKeyAction;
 import net.digitalid.database.testing.SQLTestBase;
 import net.digitalid.database.testing.assertion.ExpectedColumnDeclarationBuilder;
 import net.digitalid.database.testing.assertion.ExpectedColumnDeclarations;
 import net.digitalid.database.testing.assertion.ExpectedColumnDeclarationsBuilder;
+import net.digitalid.database.testing.assertion.ExpectedForeignKeyConstraint;
+import net.digitalid.database.testing.assertion.ExpectedForeignKeyConstraintBuilder;
+import net.digitalid.database.testing.assertion.ExpectedTableConstraint;
+import net.digitalid.database.testing.assertion.ExpectedTableConstraintBuilder;
+import net.digitalid.database.testing.assertion.ExpectedTableConstraints;
+import net.digitalid.database.testing.assertion.ExpectedTableConstraintsBuilder;
 import net.digitalid.database.unit.Unit;
 
 import org.junit.Test;
@@ -68,8 +84,8 @@ public class SQLCreateTableTest extends SQLTestBase {
         SQL.createTable(SingleBooleanColumnTableConverter.INSTANCE, unit);
         assertTableExists(SingleBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName());
         final @Nonnull ExpectedColumnDeclarations expectedColumnDeclarations = ExpectedColumnDeclarationsBuilder.build();
-        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("value").withDBType("boolean(1)").build());
-        assertTableHasColumns(SingleBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), expectedColumnDeclarations);
+        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("value").withDBType("boolean(1)").withNullAllowed(false).withKey("PRI").build());
+        assertTableHasExpectedColumnsDeclaration(SingleBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), expectedColumnDeclarations);
     }
 
     @Test
@@ -79,45 +95,42 @@ public class SQLCreateTableTest extends SQLTestBase {
         assertTableExists(MultiBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName());
     
         final @Nonnull ExpectedColumnDeclarations expectedColumnDeclarations = ExpectedColumnDeclarationsBuilder.build();
-        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("firstvalue").withDBType("boolean(1)").build());
-        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("secondvalue").withDBType("boolean(1)").build());
-        assertTableHasColumns(MultiBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), expectedColumnDeclarations);
+        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("firstvalue").withDBType("boolean(1)").withNullAllowed(false).withKey("PRI").build());
+        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("secondvalue").withDBType("boolean(1)").withNullAllowed(false).withKey("PRI").build());
+        assertTableHasExpectedColumnsDeclaration(MultiBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), expectedColumnDeclarations);
     }
 
-//    @Test
-//    public void shouldCreateTableWithBooleanColumnWithDefaultValue() throws Exception {
-//        SQL.createTable(BooleanColumnDefaultTrueTableConverter.INSTANCE, unit);
-//
-//        assertTableExists(BooleanColumnDefaultTrueTableConverter.INSTANCE.getTypeName(), unit.getName());
-//        final @Nonnull ExpectedColumnDeclarations expectedColumnDeclarations = ExpectedColumnDeclarationsBuilder.build();
-//        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("value").withDBType("boolean(1)").withNullAllowed(false).withDefaultValue("TRUE").build());
-//        assertTableHasColumns(BooleanColumnDefaultTrueTableConverter.INSTANCE.getTypeName(), unit.getName(), expectedColumnDeclarations);
-//    }
+    @Test
+    public void shouldCreateTableWithBooleanColumnWithDefaultValue() throws Exception {
+        SQL.createTable(BooleanColumnDefaultTrueTableConverter.INSTANCE, unit);
 
-//    @Test
-//    public void shouldCreateTableWithConstrainedInteger() throws Exception {
-//        final @Nonnull TableImplementation table = SQL.create(ConstraintIntegerColumnTableConverter.INSTANCE, unit);
-//        Assert.assertEquals(ConstraintIntegerColumnTableConverter.INSTANCE.getTypeName(), table.getName());
-//        
-//        assertTableExists(ConstraintIntegerColumnTableConverter.INSTANCE.getTypeName(), unit.getName());
-//        Map<String, String[]> expectedResult = new HashMap<>();
-//        // TODO: check if integer(10) is really expected.
-//        expectedResult.put("value", new String[] { "integer(10)", "NO", "", "NULL", "((VALUE % 7) = 0)" });
-//        assertTableHasColumns(ConstraintIntegerColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), expectedResult);
-//    }
-//    
-//    @Test
-//    public void shouldCreateTableWithInheritance() throws Exception {
-//        final @Nonnull TableImplementation table = SQL.create(SubClassConverter.INSTANCE, unit);
-//        Assert.assertEquals(SubClassConverter.INSTANCE.getTypeName(), table.getName());
-//        
-//        assertTableExists(SubClassConverter.INSTANCE.getTypeName(), unit.getName());
-//        Map<String, String[]> expectedResult = new HashMap<>();
-//        expectedResult.put("flag", new String[] { "boolean(1)" });
-//        expectedResult.put("number", new String[] { "integer(10)" });
-//        assertTableHasColumns(SubClassConverter.INSTANCE.getTypeName(), unit.getName(), expectedResult);
-//    }
-//    
+        assertTableExists(BooleanColumnDefaultTrueTableConverter.INSTANCE.getTypeName(), unit.getName());
+        final @Nonnull ExpectedColumnDeclarations expectedColumnDeclarations = ExpectedColumnDeclarationsBuilder.build();
+        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("value").withDBType("boolean(1)").withNullAllowed(false).withDefaultValue("TRUE").withKey("PRI").build());
+        assertTableHasExpectedColumnsDeclaration(BooleanColumnDefaultTrueTableConverter.INSTANCE.getTypeName(), unit.getName(), expectedColumnDeclarations);
+    }
+
+    @Test
+    public void shouldCreateTableWithConstrainedInteger() throws Exception {
+        SQL.createTable(ConstraintIntegerColumnTableConverter.INSTANCE, unit);
+
+        assertTableExists(ConstraintIntegerColumnTableConverter.INSTANCE.getTypeName(), unit.getName());
+        final @Nonnull ExpectedColumnDeclarations expectedColumnDeclarations = ExpectedColumnDeclarationsBuilder.build();
+        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("value").withDBType("integer(10)").withNullAllowed(false).withColumnConstraint("((VALUE % 7) = 0)").withKey("PRI").build());
+        assertTableHasExpectedColumnsDeclaration(ConstraintIntegerColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), expectedColumnDeclarations);
+    }
+
+    @Test
+    public void shouldCreateTableWithInheritance() throws Exception {
+        SQL.createTable(SubClassConverter.INSTANCE, unit);
+
+        assertTableExists(SubClassConverter.INSTANCE.getTypeName(), unit.getName());
+        final @Nonnull ExpectedColumnDeclarations expectedColumnDeclarations = ExpectedColumnDeclarationsBuilder.build();
+        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("flag").withDBType("boolean(1)").withNullAllowed(false).withKey("PRI").build());
+        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("number").withDBType("integer(10)").withNullAllowed(false).withKey("PRI").build());
+        assertTableHasExpectedColumnsDeclaration(SubClassConverter.INSTANCE.getTypeName(), unit.getName(), expectedColumnDeclarations);
+    }
+
 //    // TODO: fix
 ////    @Test
 ////    public void shouldCreateTableWithProperty() throws Exception {
@@ -129,39 +142,28 @@ public class SQLCreateTableTest extends SQLTestBase {
 ////        expectedResult.put("myproperty", new String[] { "boolean(1)" });
 ////        assertTableHasColumns(PropertyTableConverter.INSTANCE.getTypeName(), site.getName(), expectedResult);
 ////    }
-//    
-//    @Test
-//    public void shouldCreateTableWithEmbeddedConvertibles() throws Exception {
-//        final @Nonnull TableImplementation table = SQL.create(EmbeddedConvertiblesConverter.INSTANCE, unit);
-//        Assert.assertEquals(EmbeddedConvertiblesConverter.INSTANCE.getTypeName(), table.getName());
-//        
-//        assertTableExists(EmbeddedConvertiblesConverter.INSTANCE.getTypeName(), unit.getName());
-//        Map<String, String[]> expectedResult = new HashMap<>();
-//        expectedResult.put("value1", new String[] { "integer(10)" });
-//        expectedResult.put("value2", new String[] { "integer(10)" });
-//        assertTableHasColumns(EmbeddedConvertiblesConverter.INSTANCE.getTypeName(), unit.getName(), expectedResult);
-//    }
-//    
-//    @Test
-//    public void shouldCreateTableWithReference() throws Exception {
-//        final @Nonnull TableImplementation table = SQL.create(EntityConverter.INSTANCE, unit);
-//        Assert.assertEquals(EntityConverter.INSTANCE.getTypeName(), table.getName());
-//        
-//        final @Nonnull String referencedTableName = Entity.class.getField("referencedEntity").getAnnotation(ForeignKey.class).foreignTable();
-//        
-//        assertTableExists(referencedTableName, unit.getName());
-//        Map<String, String[]> expectedResult = new HashMap<>();
-//        expectedResult.put("id", new String[]{"integer(10)"});
-//        expectedResult.put("othervalue", new String[]{"integer(10)"});
-//        assertTableHasColumns(referencedTableName, unit.getName(), expectedResult);
-//        
-//        Map<String, String[]> expectedResult2 = new HashMap<>();
-//        expectedResult2.put("referencedentity", new String[]{"integer(10)"});
-//        assertTableHasColumns(EntityConverter.INSTANCE.getTypeName(), unit.getName(), expectedResult2);
-//        
-//        assertTableReferences(EntityConverter.INSTANCE.getTypeName(), unit.getName(), "referencedentity", "referenced_table_1", "id", UpdateAction.RESTRICT, DeleteAction.CASCADE);
-//    }
-//    
+    @Test
+    public void shouldCreateTableWithReference() throws Exception {
+        SQL.createTable(ReferencedEntityConverter.INSTANCE, unit);
+        SQL.createTable(EntityConverter.INSTANCE, unit);
+
+        final @Nonnull ExpectedColumnDeclarations expectedColumnDeclarations = ExpectedColumnDeclarationsBuilder.build();
+        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("id").withDBType("integer(10)").withNullAllowed(false).withKey("PRI").build());
+        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("othervalue").withDBType("integer(10)").withNullAllowed(false).withKey("PRI").build());
+        
+        assertTableHasExpectedColumnsDeclaration(ReferencedEntityConverter.INSTANCE.getTypeName(), unit.getName(), expectedColumnDeclarations);
+        assertTableHasExpectedColumnsDeclaration(EntityConverter.INSTANCE.getTypeName(), unit.getName(), expectedColumnDeclarations);
+        
+        final @Nonnull ExpectedTableConstraints expectedTableConstraints = ExpectedTableConstraintsBuilder.build();
+        final @Nonnull ExpectedForeignKeyConstraint expectedForeignKeyConstraintOnId = ExpectedForeignKeyConstraintBuilder.withForeignKeyColumn("id").withReferencedTable(ReferencedEntityConverter.INSTANCE.getTypeName()).withReferencedColumn("id").withDeleteAction(ForeignKeyAction.CASCADE).withUpdateAction(ForeignKeyAction.RESTRICT).build();
+        final @Nonnull ExpectedForeignKeyConstraint expectedForeignKeyConstraintOnOtherValue = ExpectedForeignKeyConstraintBuilder.withForeignKeyColumn("othervalue").withReferencedTable(ReferencedEntityConverter.INSTANCE.getTypeName()).withReferencedColumn("othervalue").withDeleteAction(ForeignKeyAction.CASCADE).withUpdateAction(ForeignKeyAction.RESTRICT).build();
+        
+        final @Nonnull Set<ExpectedForeignKeyConstraint> foreignKeyConstraints = FreezableHashSet.withElements(expectedForeignKeyConstraintOnId, expectedForeignKeyConstraintOnOtherValue);
+        final @Nonnull ExpectedTableConstraint expectedTableConstraint = ExpectedTableConstraintBuilder.withTableName(EntityConverter.INSTANCE.getTypeName()).withSchema(unit.getName()).withForeignKeyConstraints(foreignKeyConstraints).build();
+        expectedTableConstraints.addExpectedResult(expectedTableConstraint);
+        assertTableReferences(expectedTableConstraints);
+    }
+
 //    @Test
 //    public void shouldCreateTableWithSimpleCollectionClass() throws Exception {
 //        final @Nonnull TableImplementation collectionTable = SQL.create(SimpleCollectionsClassConverter.INSTANCE, unit);
