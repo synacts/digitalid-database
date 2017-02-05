@@ -5,7 +5,6 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.generics.Specifiable;
 import net.digitalid.utility.annotations.generics.Unspecifiable;
-import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.Shared;
@@ -13,12 +12,8 @@ import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.FreezableList;
-import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.conversion.enumerations.Representation;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
-import net.digitalid.utility.conversion.model.CustomField;
-import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.functional.iterables.InfiniteIterable;
 import net.digitalid.utility.immutable.ImmutableList;
@@ -30,7 +25,6 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.utility.SQLConversionUtility;
 import net.digitalid.database.dialect.expression.SQLParameter;
 import net.digitalid.database.dialect.identifier.column.SQLColumnName;
-import net.digitalid.database.dialect.identifier.column.SQLColumnNameBuilder;
 import net.digitalid.database.dialect.identifier.schema.SQLSchemaName;
 import net.digitalid.database.dialect.identifier.schema.SQLSchemaNameBuilder;
 import net.digitalid.database.dialect.identifier.table.SQLExplicitlyQualifiedTableBuilder;
@@ -43,10 +37,8 @@ import net.digitalid.database.dialect.statement.insert.SQLInsertStatementBuilder
 import net.digitalid.database.dialect.statement.insert.SQLRows;
 import net.digitalid.database.dialect.statement.insert.SQLRowsBuilder;
 import net.digitalid.database.dialect.statement.table.create.SQLColumnDeclaration;
-import net.digitalid.database.dialect.statement.table.create.SQLColumnDeclarationBuilder;
 import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatement;
 import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatementBuilder;
-import net.digitalid.database.dialect.statement.table.create.SQLTypeBuilder;
 import net.digitalid.database.dialect.statement.table.create.constraints.SQLTableConstraint;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
@@ -61,44 +53,6 @@ public abstract class SQL {
     
     /* -------------------------------------------------- Create Table -------------------------------------------------- */
     
-    // TODO: move to a column declaration utility class
-    @Pure
-    private static <@Unspecifiable TYPE> void fillColumnDeclarations(@Nonnull Converter<TYPE, ?> converter, @Nonnull FreezableArrayList<@Nonnull SQLColumnDeclaration> columnDeclarations, boolean mustBeNullable) {
-        final @Nonnull ImmutableList<@Nonnull CustomField> fields = converter.getFields(Representation.INTERNAL);
-        for (@Nonnull CustomField field : fields) {
-            @Nonnull CustomType customType = field.getCustomType();
-            if (!customType.isCompositeType()) {
-                boolean primitive = true;
-                if (customType.isObjectType()) {
-                    final @Nonnull CustomType.CustomConverterType customConverterType = (CustomType.CustomConverterType) customType;
-                    if (!customConverterType.getConverter().isPrimitiveConverter()) {
-                        fillColumnDeclarations(customConverterType.getConverter(), columnDeclarations, mustBeNullable || !SQLConversionUtility.isNotNull(field));
-                        return;
-                    } else { // otherwise we have a boxed primitive type
-                        @Nullable CustomType primitiveType = SQLConversionUtility.getEmbeddedPrimitiveType(customConverterType);
-                        Require.that(primitiveType != null).orThrow("The custom converter type $ is expected to embed a primitive type", customConverterType);
-                        assert primitiveType != null; // suppress compiler warning
-                        customType = primitiveType;
-                        primitive = false;
-                    }
-                }
-                final @Nonnull SQLColumnDeclaration sqlColumnDeclaration = SQLColumnDeclarationBuilder
-                        .withName(SQLColumnNameBuilder.withString(field.getName()).build())
-                        .withType(SQLTypeBuilder.withType(customType).build())
-                        .withNotNull(!mustBeNullable && (primitive || SQLConversionUtility.isNotNull(field)))
-                        .withDefaultValue(SQLConversionUtility.getDefaultValue(field))
-                        .withPrimaryKey(SQLConversionUtility.isPrimaryKey(field))
-                        .withReference(SQLConversionUtility.isForeignKey(field))
-                        .withUnique(SQLConversionUtility.isUnique(field))
-                        .withCheck(SQLConversionUtility.getCheck(field))
-                        .build();
-                columnDeclarations.add(sqlColumnDeclaration);
-            } else {
-                throw new UnsupportedOperationException("Composite types such as iterables or maps are currently not supported by the SQL encoders");
-            }
-        }
-    }
-    
     /**
      * Creates a table for the given converter in the given unit.
      */
@@ -106,7 +60,7 @@ public abstract class SQL {
     @PureWithSideEffects
     public static void createTable(@Nonnull Converter<?, ?> converter, @Nonnull Unit unit) throws DatabaseException {
         final @Nonnull FreezableArrayList<@Nonnull SQLColumnDeclaration> columnDeclarations = FreezableArrayList.withNoElements();
-        fillColumnDeclarations(converter, columnDeclarations, false);
+        SQLConversionUtility.fillColumnDeclarations(converter, columnDeclarations, false, "");
         final @Nonnull SQLQualifiedTable tableName = SQLExplicitlyQualifiedTableBuilder.withTable(SQLTableNameBuilder.withString(converter.getTypeName()).build()).withSchema(SQLSchemaNameBuilder.withString(unit.getName()).build()).build();
         SQLCreateTableStatementBuilder.@Nonnull InnerSQLCreateTableStatementBuilder sqlCreateTableStatementBuilder = SQLCreateTableStatementBuilder.withTable(tableName).withColumnDeclarations(ImmutableList.withElementsOf(columnDeclarations));
         // TODO: what if the referenced table is in another unit?
@@ -169,7 +123,7 @@ public abstract class SQL {
     @PureWithSideEffects
     public static <@Unspecifiable TYPE> void insert(@Nonnull TYPE object, @Nonnull Converter<TYPE, ?> converter, @Nonnull Unit unit) throws DatabaseException {
         final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columns = FreezableArrayList.withNoElements();
-        SQLConversionUtility.fillColumnNames(converter, columns);
+        SQLConversionUtility.fillColumnNames(converter, columns, "");
         final @Nonnull ImmutableList<@Nonnull SQLParameter> row = ImmutableList.withElementsOf(InfiniteIterable.repeat(SQLParameter.INSTANCE).limit(columns.size()));
         final @Nonnull SQLRows rows = SQLRowsBuilder.withRows(ImmutableList.withElements(SQLExpressionsBuilder.withExpressions(row).build())).build();
         final @Nonnull SQLTableName tableName = SQLTableNameBuilder.withString(converter.getTypeName()).build();

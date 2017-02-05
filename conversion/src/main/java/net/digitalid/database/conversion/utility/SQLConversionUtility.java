@@ -27,7 +27,6 @@ import net.digitalid.utility.validation.annotations.type.Utility;
 import net.digitalid.database.annotations.constraints.ForeignKey;
 import net.digitalid.database.annotations.constraints.PrimaryKey;
 import net.digitalid.database.annotations.constraints.Unique;
-import net.digitalid.database.annotations.type.Embedded;
 import net.digitalid.database.dialect.expression.SQLExpression;
 import net.digitalid.database.dialect.expression.bool.SQLBinaryBooleanExpressionBuilder;
 import net.digitalid.database.dialect.expression.bool.SQLBinaryBooleanOperator;
@@ -46,8 +45,11 @@ import net.digitalid.database.dialect.identifier.schema.SQLSchemaNameBuilder;
 import net.digitalid.database.dialect.identifier.table.SQLExplicitlyQualifiedTableBuilder;
 import net.digitalid.database.dialect.identifier.table.SQLQualifiedTable;
 import net.digitalid.database.dialect.identifier.table.SQLTableNameBuilder;
+import net.digitalid.database.dialect.statement.table.create.SQLColumnDeclaration;
+import net.digitalid.database.dialect.statement.table.create.SQLColumnDeclarationBuilder;
 import net.digitalid.database.dialect.statement.table.create.SQLReference;
 import net.digitalid.database.dialect.statement.table.create.SQLReferenceBuilder;
+import net.digitalid.database.dialect.statement.table.create.SQLTypeBuilder;
 import net.digitalid.database.dialect.statement.table.create.constraints.SQLForeignKeyConstraint;
 import net.digitalid.database.dialect.statement.table.create.constraints.SQLForeignKeyConstraintBuilder;
 import net.digitalid.database.dialect.statement.table.create.constraints.SQLPrimaryKeyConstraint;
@@ -200,18 +202,55 @@ public abstract class SQLConversionUtility {
     }
     
     @Pure
-    public static <@Unspecifiable TYPE> void fillColumnNames(@Nonnull Converter<TYPE, ?> converter, @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columnNames) {
+    public static <@Unspecifiable TYPE> void fillColumnDeclarations(@Nonnull Converter<TYPE, ?> converter, @Nonnull FreezableArrayList<@Nonnull SQLColumnDeclaration> columnDeclarations, boolean mustBeNullable, @Nonnull String prefix) {
+        final @Nonnull ImmutableList<@Nonnull CustomField> fields = converter.getFields(Representation.INTERNAL);
+        for (@Nonnull CustomField field : fields) {
+            @Nonnull CustomType customType = field.getCustomType();
+            if (!customType.isCompositeType()) {
+                boolean primitive = true;
+                if (customType.isObjectType()) {
+                    final @Nonnull CustomType.CustomConverterType customConverterType = (CustomType.CustomConverterType) customType;
+                    if (!customConverterType.getConverter().isPrimitiveConverter()) {
+                        fillColumnDeclarations(customConverterType.getConverter(), columnDeclarations, mustBeNullable || !SQLConversionUtility.isNotNull(field), field.getName().toLowerCase() + "_");
+                        continue;
+                    } else { // otherwise we have a boxed primitive type
+                        @Nullable CustomType primitiveType = SQLConversionUtility.getEmbeddedPrimitiveType(customConverterType);
+                        Require.that(primitiveType != null).orThrow("The custom converter type $ is expected to embed a primitive type", customConverterType);
+                        assert primitiveType != null; // suppress compiler warning
+                        customType = primitiveType;
+                        primitive = false;
+                    }
+                }
+                final @Nonnull SQLColumnDeclaration sqlColumnDeclaration = SQLColumnDeclarationBuilder
+                        .withName(SQLColumnNameBuilder.withString(prefix + field.getName()).build())
+                        .withType(SQLTypeBuilder.withType(customType).build())
+                        .withNotNull(!mustBeNullable && (primitive || SQLConversionUtility.isNotNull(field)))
+                        .withDefaultValue(SQLConversionUtility.getDefaultValue(field))
+                        .withPrimaryKey(SQLConversionUtility.isPrimaryKey(field))
+                        .withReference(SQLConversionUtility.isForeignKey(field))
+                        .withUnique(SQLConversionUtility.isUnique(field))
+                        .withCheck(SQLConversionUtility.getCheck(field))
+                        .build();
+                columnDeclarations.add(sqlColumnDeclaration);
+            } else {
+                throw new UnsupportedOperationException("Composite types such as iterables or maps are currently not supported by the SQL encoders");
+            }
+        }
+    }
+    
+    @Pure
+    public static <@Unspecifiable TYPE> void fillColumnNames(@Nonnull Converter<TYPE, ?> converter, @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columnNames, @Nonnull String prefix) {
         final @Nonnull ImmutableList<@Nonnull CustomField> fields = converter.getFields(Representation.INTERNAL);
         for (@Nonnull CustomField field : fields) {
             if (!field.getCustomType().isCompositeType()) {
                 if (field.getCustomType().isObjectType()) {
                     final @Nonnull CustomType.CustomConverterType customConverterType = (CustomType.CustomConverterType) field.getCustomType();
                     if (!customConverterType.getConverter().isPrimitiveConverter()) {
-                        fillColumnNames(customConverterType.getConverter(), columnNames);
-                        return;
+                        fillColumnNames(customConverterType.getConverter(), columnNames, field.getName().toLowerCase() + "_");
+                        continue;
                     }
                 }
-                columnNames.add(SQLColumnNameBuilder.withString(field.getName()).build());
+                columnNames.add(SQLColumnNameBuilder.withString(prefix + field.getName()).build());
             } else {
                 throw new UnsupportedOperationException("Composite types such as iterables or maps are currently not supported by the SQL encoders");
             }
@@ -232,9 +271,11 @@ public abstract class SQLConversionUtility {
                 final @Nonnull CustomType.CustomConverterType customConverterType = (CustomType.CustomConverterType) customField.getCustomType();
                 final @Nonnull Class<?> referencedType = customConverterType.getConverter().getType();
                 if (Subject.class.isAssignableFrom(referencedType)) {
+                    final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> referencedColumnNames = FreezableArrayList.withNoElements();
+                    fillColumnNames(customConverterType.getConverter(), referencedColumnNames, "");
                     final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columnNames = FreezableArrayList.withNoElements();
-                    fillColumnNames(customConverterType.getConverter(), columnNames);
-                    final @Nonnull SQLReference reference = SQLReferenceBuilder.withTable(getQualifiedTableName(customConverterType.getConverter(), unit)).withColumns(ImmutableList.withElementsOf(columnNames)).build();
+                    fillColumnNames(customConverterType.getConverter(), columnNames, customField.getName().toLowerCase() + "_");
+                    final @Nonnull SQLReference reference = SQLReferenceBuilder.withTable(getQualifiedTableName(customConverterType.getConverter(), unit)).withColumns(ImmutableList.withElementsOf(referencedColumnNames)).build();
                     final @Nonnull SQLForeignKeyConstraintBuilder.@Nonnull InnerSQLForeignKeyConstraintBuilder sqlForeignKeyConstraintBuilder = SQLForeignKeyConstraintBuilder.withColumns(ImmutableList.withElementsOf(columnNames)).withReference(reference);
                     if (referencedType.isAnnotationPresent(ForeignKey.class)) {
                         final @Nonnull ForeignKey foreignKeyAnnotation = referencedType.getAnnotation(ForeignKey.class);
@@ -251,7 +292,7 @@ public abstract class SQLConversionUtility {
         }
         if (!primaryKeySpecified) {
             final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columnNames = FreezableArrayList.withNoElements();
-            fillColumnNames(converter, columnNames);
+            fillColumnNames(converter, columnNames, "");
             final @Nonnull SQLPrimaryKeyConstraint primaryKeyConstraint = SQLPrimaryKeyConstraintBuilder.withColumns(ImmutableList.withElementsOf(columnNames)).build();
             tableConstraints.add(primaryKeyConstraint);
         }

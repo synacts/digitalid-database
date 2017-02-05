@@ -1,6 +1,7 @@
 package net.digitalid.database.testing;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import net.digitalid.utility.testing.RootTest;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.testing.assertion.ExpectedColumnDeclarations;
 import net.digitalid.database.testing.assertion.ExpectedTableConstraint;
@@ -23,6 +25,7 @@ import net.digitalid.database.unit.Unit;
 
 import org.h2.tools.Server;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 
 /**
@@ -178,12 +181,15 @@ public class SQLTestBase extends RootTest {
     }
     
     @Pure
-    protected static void assertRowCount(@Nonnull String tableName, long rowCount) throws DatabaseException {
-        final @Nonnull String rowCountQuery = "SELECT COUNT(*) AS count FROM " + tableName.toLowerCase();
-        final @Nonnull Database instance = Database.instance.get();
-//        final @Nonnull SQLDecoder rowCountResult = instance.executeSelect(rowCountQuery);
-//        rowCountResult.moveToFirstRow();
-//        Assert.assertSame("Table '" + tableName + "' does not contain " + rowCount + " rows.", rowCount, rowCountResult.getInteger64());
+    protected static void assertRowCount(@Nonnull String tableName, @Nonnull String schema, long rowCount) throws DatabaseException {
+        final @Nonnull String rowCountQuery = "SELECT COUNT(*) AS count FROM " + schema + "." + tableName.toLowerCase();
+        final @Nonnull ResultSet resultSet = h2DatabaseInstance.executeQuery(rowCountQuery);
+        try {
+            resultSet.next();
+            Assert.assertSame("Table '" + tableName + "' does not contain " + rowCount + " rows.", rowCount, resultSet.getLong(1));
+        } catch (SQLException e) {
+            throw DatabaseExceptionBuilder.withCause(e).build();
+        }
     }
     
 //    @Pure
@@ -192,10 +198,9 @@ public class SQLTestBase extends RootTest {
 //    }
     
     @Pure
-    protected static void assertTableContains(@Nonnull String tableName, @Nonnull @NonNullableElements Expected... expectedArray) throws DatabaseException {
-        final @Nonnull Database instance = Database.instance.get();
+    protected static void assertTableContains(@Nonnull String tableName, @Nonnull String schema, @Nonnull @NonNullableElements Expected... expectedArray) throws DatabaseException {
         for (@Nonnull Expected expected : expectedArray) {
-            @Nonnull String rowCountQuery = "SELECT COUNT(*) AS count FROM " + tableName.toLowerCase() ;
+            @Nonnull String rowCountQuery = "SELECT COUNT(*) AS count FROM " + schema + "." + tableName.toLowerCase() ;
             if (expected.expectedColumnClauses.size() > 0) {
                 rowCountQuery += " WHERE ";
             }
@@ -211,9 +216,13 @@ public class SQLTestBase extends RootTest {
                     columnsInfo += ", ";
                 }
             }
-//            final @Nonnull SQLDecoder rowCountResult = instance.executeSelect(rowCountQuery);
-//            rowCountResult.moveToFirstRow();
-//            Assert.assertTrue("Table '" + tableName + "' does not contain column(s) " + columnsInfo, rowCountResult.getInteger64() >= 1L);
+            final @Nonnull ResultSet rowCountResult = h2DatabaseInstance.executeQuery(rowCountQuery);
+            try {
+                rowCountResult.next();
+                Assert.assertTrue("Table '" + tableName + "' does not contain column(s) " + columnsInfo, rowCountResult.getLong(1) >= 1L);
+            } catch (SQLException e) {
+                throw DatabaseExceptionBuilder.withCause(e).build();
+            }
         }
     }
     

@@ -11,10 +11,10 @@ import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 @GenerateConverter
 public class Convertible1  {
     
-    public final int value1;
+    public final int value;
     
-    Convertible1(int value1) {
-        this.value1 = value1;
+    Convertible1(int value) {
+        this.value = value;
     }
     
 }
