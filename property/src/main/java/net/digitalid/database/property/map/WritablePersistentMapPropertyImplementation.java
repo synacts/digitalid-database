@@ -127,7 +127,7 @@ public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable
                 return false;
             } else {
                 final @Nonnull PersistentMapPropertyEntry<SUBJECT, KEY, VALUE> entry = new PersistentMapPropertyEntrySubclass<>(getSubject(), key, value);
-                SQL.insert(entry, getTable().getEntryConverter(), getSubject().getUnit());
+                SQL.insert(getTable().getEntryConverter(), entry, getSubject().getUnit());
                 getMap().put(key, value);
                 notifyObservers(key, value, true);
                 return true;

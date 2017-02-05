@@ -4,8 +4,6 @@ package net.digitalid.database.conversion;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.collections.list.FreezableArrayList;
-
 import net.digitalid.database.conversion.testenvironment.columnconstraints.ConstraintIntegerColumnTable;
 import net.digitalid.database.conversion.testenvironment.columnconstraints.ConstraintIntegerColumnTableConverter;
 import net.digitalid.database.conversion.testenvironment.embedded.Convertible1;
@@ -122,7 +120,7 @@ public class SQLInsertTableTest extends SQLTestBase {
     public void shouldInsertIntoSimpleBooleanTable() throws Exception {
         SQL.createTable(SingleBooleanColumnTableConverter.INSTANCE, unit);
         final @Nonnull SingleBooleanColumnTable convertibleObject = SingleBooleanColumnTable.get(true);
-        SQL.insert(convertibleObject, SingleBooleanColumnTableConverter.INSTANCE, unit);
+        SQL.insert(SingleBooleanColumnTableConverter.INSTANCE, convertibleObject, unit);
         
         assertRowCount(SingleBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), 1);
         assertTableContains(SingleBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), Expected.column("value").value("TRUE"));
@@ -132,7 +130,7 @@ public class SQLInsertTableTest extends SQLTestBase {
     public void shouldInsertIntoMultiColumnBooleanTable() throws Exception {
         SQL.createTable(MultiBooleanColumnTableConverter.INSTANCE, unit);
         final @Nonnull MultiBooleanColumnTable convertibleObject = MultiBooleanColumnTable.get(true, false);
-        SQL.insert(convertibleObject, MultiBooleanColumnTableConverter.INSTANCE, unit);
+        SQL.insert(MultiBooleanColumnTableConverter.INSTANCE, convertibleObject, unit);
 
         assertRowCount(MultiBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), 1);
         assertTableContains(MultiBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), Expected.column("firstvalue").value("TRUE"), Expected.column("secondValue").value("FALSE"));
@@ -142,7 +140,7 @@ public class SQLInsertTableTest extends SQLTestBase {
     public void shouldInsertIntoConstraintIntegerColumnTable() throws Exception {
         SQL.createTable(ConstraintIntegerColumnTableConverter.INSTANCE, unit);
         final @Nonnull ConstraintIntegerColumnTable convertibleObject = ConstraintIntegerColumnTable.get(14);
-        SQL.insert(convertibleObject, ConstraintIntegerColumnTableConverter.INSTANCE, unit);
+        SQL.insert(ConstraintIntegerColumnTableConverter.INSTANCE, convertibleObject, unit);
     
         assertRowCount(ConstraintIntegerColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), 1);
         assertTableContains(ConstraintIntegerColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), Expected.column("value").value("14"));
@@ -171,7 +169,7 @@ public class SQLInsertTableTest extends SQLTestBase {
         });
 
         final @Nonnull ConstraintIntegerColumnTable convertibleObject = ConstraintIntegerColumnTable.get(2);
-        SQL.insert(convertibleObject, ConstraintIntegerColumnTableConverter.INSTANCE, unit);
+        SQL.insert(ConstraintIntegerColumnTableConverter.INSTANCE, convertibleObject, unit);
     }
     
     // TODO: either implement here or move to property module.
@@ -191,7 +189,7 @@ public class SQLInsertTableTest extends SQLTestBase {
         final @Nonnull Convertible1 convertible1 = Convertible1Builder.withValue(2).build();
         final @Nonnull Convertible2 convertible2 = Convertible2Builder.withValue(3).build();
         final @Nonnull EmbeddedConvertibles embeddedConvertibles = EmbeddedConvertiblesBuilder.withConvertible1(convertible1).withConvertible2(convertible2).build();
-        SQL.insert(embeddedConvertibles, EmbeddedConvertiblesConverter.INSTANCE, unit);
+        SQL.insert(EmbeddedConvertiblesConverter.INSTANCE, embeddedConvertibles, unit);
 
         assertRowCount(EmbeddedConvertiblesConverter.INSTANCE.getTypeName(), unit.getName(), 1);
         assertTableContains(EmbeddedConvertiblesConverter.INSTANCE.getTypeName(), unit.getName(), Expected.column("convertible1_value").value("2"), Expected.column("convertible2_value").value("3"));

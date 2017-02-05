@@ -84,17 +84,17 @@ public class SQLCreateTableTest extends SQLTestBase {
         assertTableHasExpectedColumnsDeclaration(SubClassConverter.INSTANCE.getTypeName(), unit.getName(), expectedColumnDeclarations);
     }
 
-//    // TODO: fix or move to property module
-////    @Test
-////    public void shouldCreateTableWithProperty() throws Exception {
-////        final @Nonnull Table table = SQL.create(PropertyTableConverter.INSTANCE, site);
-////        Assert.assertEquals(PropertyTableConverter.INSTANCE.getTypeName(), table.getName(site));
-////        
-////        assertTableExists(PropertyTableConverter.INSTANCE.getTypeName(), site.getName());
-////        Map<String, String[]> expectedResult = new HashMap<>();
-////        expectedResult.put("myproperty", new String[] { "boolean(1)" });
-////        assertTableHasColumns(PropertyTableConverter.INSTANCE.getTypeName(), site.getName(), expectedResult);
-////    }
+    // TODO: fix or move to property module
+//    @Test
+//    public void shouldCreateTableWithProperty() throws Exception {
+//        final @Nonnull Table table = SQL.create(PropertyTableConverter.INSTANCE, site);
+//        Assert.assertEquals(PropertyTableConverter.INSTANCE.getTypeName(), table.getName(site));
+//        
+//        assertTableExists(PropertyTableConverter.INSTANCE.getTypeName(), site.getName());
+//        Map<String, String[]> expectedResult = new HashMap<>();
+//        expectedResult.put("myproperty", new String[] { "boolean(1)" });
+//        assertTableHasColumns(PropertyTableConverter.INSTANCE.getTypeName(), site.getName(), expectedResult);
+//    }
     
     @Test
     public void shouldCreateTableWithReference() throws Exception {

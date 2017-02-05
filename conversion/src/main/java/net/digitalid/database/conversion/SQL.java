@@ -15,6 +15,7 @@ import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
+import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.functional.iterables.InfiniteIterable;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
@@ -24,6 +25,9 @@ import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.utility.SQLConversionUtility;
 import net.digitalid.database.dialect.expression.SQLParameter;
+import net.digitalid.database.dialect.expression.bool.SQLBinaryBooleanExpressionBuilder;
+import net.digitalid.database.dialect.expression.bool.SQLBinaryBooleanOperator;
+import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
 import net.digitalid.database.dialect.identifier.column.SQLColumnName;
 import net.digitalid.database.dialect.identifier.schema.SQLSchemaName;
 import net.digitalid.database.dialect.identifier.schema.SQLSchemaNameBuilder;
@@ -40,6 +44,12 @@ import net.digitalid.database.dialect.statement.table.create.SQLColumnDeclaratio
 import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatement;
 import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatementBuilder;
 import net.digitalid.database.dialect.statement.table.create.constraints.SQLTableConstraint;
+import net.digitalid.database.dialect.statement.table.drop.SQLDropTableStatement;
+import net.digitalid.database.dialect.statement.table.drop.SQLDropTableStatementBuilder;
+import net.digitalid.database.dialect.statement.update.SQLAssignment;
+import net.digitalid.database.dialect.statement.update.SQLAssignmentBuilder;
+import net.digitalid.database.dialect.statement.update.SQLUpdateStatement;
+import net.digitalid.database.dialect.statement.update.SQLUpdateStatementBuilder;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.interfaces.encoder.SQLActionEncoder;
@@ -71,36 +81,6 @@ public abstract class SQL {
         final @Nonnull SQLCreateTableStatement createTableStatement = sqlCreateTableStatementBuilder.build();
         Database.instance.get().execute(createTableStatement, unit);
         Database.instance.get().commit();
-        // TODO
-//        final @Nonnull String tableName = converter.getTypeName();
-//        final @Nonnull SQLCreateTableColumnDeclarations columnDeclarations = SQLCreateTableColumnDeclarations.get(tableName);
-//        for (@Nonnull CustomField field : converter.getFields(Representation.INTERNAL)) {
-//            columnDeclarations.setField(field);
-//        }
-//        
-//        final @Nonnull SQLOrderedStatements<SQLCreateTableStatement, ? extends SQLCreateTableColumnDeclarations> orderedCreateStatements = columnDeclarations.getOrderedStatements();
-//    
-//        @Nullable TableImplementation mainTable = null;
-//        final @Nonnull FreezableHashMap<@Nonnull String, @Nonnull TableImplementation> constructedTables = FreezableHashMapBuilder.build();
-//        for (@Nonnull SQLCreateTableStatement sqlCreateTableStatement : orderedCreateStatements.getStatementsOrderedByExecution()) {
-//            final @Nonnull String createTableStatementString = SQLDialect.getDialect().transcribe(site, sqlCreateTableStatement);
-//            sqlCreateTableStatement.columnDeclarations.size();
-//            
-//            final @Nonnull TableImplementation table = TableImplementation.get(sqlCreateTableStatement, constructedTables, columnDeclarations.getNumberOfColumnsForField(), site);
-//            constructedTables.put(table.getName(), table);
-//            if (table.getName().equals(tableName)) {
-//                mainTable = table;
-//            }
-//            Tables.add(table);
-//            Log.debugging(createTableStatementString);
-//            DatabaseUtility.getInstance().execute(createTableStatementString);
-//        }
-//        if (mainTable == null) {
-//            DatabaseUtility.rollback();
-//            throw UncheckedException.with("The conversion failed due to a failure in the ordering of tables.");
-//        }
-//        DatabaseUtility.commit();
-//        return mainTable;
     }
     
     /* -------------------------------------------------- Drop Table -------------------------------------------------- */
@@ -111,7 +91,10 @@ public abstract class SQL {
     @Committing
     @PureWithSideEffects
     public static void dropTable(@Nonnull Converter<?, ?> converter, @Nonnull Unit unit) throws DatabaseException {
-        // TODO
+        final @Nonnull SQLQualifiedTable tableName = SQLExplicitlyQualifiedTableBuilder.withTable(SQLTableNameBuilder.withString(converter.getTypeName()).build()).withSchema(SQLSchemaNameBuilder.withString(unit.getName()).build()).build();
+        final @Nonnull SQLDropTableStatement dropTableStatement = SQLDropTableStatementBuilder.withTable(tableName).build();
+        Database.instance.get().execute(dropTableStatement, unit);
+        Database.instance.get().commit();
     }
     
     /* -------------------------------------------------- Insert -------------------------------------------------- */
@@ -121,7 +104,7 @@ public abstract class SQL {
      */
     @NonCommitting
     @PureWithSideEffects
-    public static <@Unspecifiable TYPE> void insert(@Nonnull TYPE object, @Nonnull Converter<TYPE, ?> converter, @Nonnull Unit unit) throws DatabaseException {
+    public static <@Unspecifiable TYPE> void insert(@Nonnull Converter<TYPE, ?> converter, @Nonnull TYPE object, @Nonnull Unit unit) throws DatabaseException {
         final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columns = FreezableArrayList.withNoElements();
         SQLConversionUtility.fillColumnNames(converter, columns, "");
         final @Nonnull ImmutableList<@Nonnull SQLParameter> row = ImmutableList.withElementsOf(InfiniteIterable.repeat(SQLParameter.INSTANCE).limit(columns.size()));
@@ -141,7 +124,7 @@ public abstract class SQL {
      */
     @Committing
     @PureWithSideEffects
-    public static <@Unspecifiable TYPE> void insertOrUpdate(@Nonnull TYPE object, @Nonnull Converter<TYPE, ?> converter, @Nonnull Unit unit) throws DatabaseException {
+    public static <@Unspecifiable TYPE> void insertOrUpdate(@Nonnull Converter<TYPE, ?> converter, @Nonnull TYPE object, @Nonnull Unit unit) throws DatabaseException {
         // TODO
     }
     
@@ -153,8 +136,34 @@ public abstract class SQL {
     @Committing
     @PureWithSideEffects
     @TODO(task = "Probably add a prefix parameter for both the update and the where converter.", date = "2017-01-22", author = Author.KASPAR_ETTER)
-    public static <@Unspecifiable UPDATE_TYPE, @Unspecifiable WHERE_TYPE> void update(@Nullable UPDATE_TYPE updateObject, @Nonnull Converter<UPDATE_TYPE, ?> updateConverter, @Nullable WHERE_TYPE whereObject, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nonnull Unit unit) throws DatabaseException {
-        // TODO
+    public static <@Unspecifiable UPDATE_TYPE, @Unspecifiable WHERE_TYPE> void update(@Nonnull Converter<UPDATE_TYPE, ?> updateConverter, @Nonnull UPDATE_TYPE updateObject, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull Unit unit) throws DatabaseException {
+        final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columns = FreezableArrayList.withNoElements();
+        SQLConversionUtility.fillColumnNames(updateConverter, columns, "");
+    
+        final @Nonnull FiniteIterable<SQLAssignment> assignments = columns.map(column -> SQLAssignmentBuilder.withColumn(column).withExpression(SQLParameter.INSTANCE).build());
+    
+        final @Nonnull ImmutableList<@Nonnull SQLParameter> row = ImmutableList.withElementsOf(InfiniteIterable.repeat(SQLParameter.INSTANCE).limit(columns.size()));
+        final @Nonnull SQLRows rows = SQLRowsBuilder.withRows(ImmutableList.withElements(SQLExpressionsBuilder.withExpressions(row).build())).build();
+        final @Nonnull SQLTableName tableName = SQLTableNameBuilder.withString(updateConverter.getTypeName()).build();
+        final @Nonnull SQLSchemaName schema = SQLSchemaNameBuilder.withString(unit.getName()).build();
+        final @Nonnull SQLQualifiedTable qualifiedTable = SQLExplicitlyQualifiedTableBuilder.withTable(tableName).withSchema(schema).build();
+        final @Nonnull SQLUpdateStatementBuilder.@Nonnull InnerSQLUpdateStatementBuilder updateStatementBuilder = SQLUpdateStatementBuilder.withTable(qualifiedTable).withAssignments(ImmutableList.withElementsOf(assignments));
+        if (whereConverter != null) {
+            final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> whereColumns = FreezableArrayList.withNoElements();
+            SQLConversionUtility.fillColumnNames(whereConverter, whereColumns, "");
+    
+            final @Nonnull FiniteIterable<@Nonnull SQLBooleanExpression> whereClauseExpressions = whereColumns.map(column -> SQLBinaryBooleanExpressionBuilder.withOperator(SQLBinaryBooleanOperator.EQUAL).withLeftExpression(column).withRightExpression(SQLParameter.INSTANCE).build());
+            final @Nonnull SQLBooleanExpression whereClauseExpression = whereClauseExpressions.reduce((left, right) -> SQLBinaryBooleanExpressionBuilder.withOperator(SQLBinaryBooleanOperator.AND).withLeftExpression(left).withRightExpression(right).build());
+            updateStatementBuilder.withWhereClause(whereClauseExpression);
+        }
+        final SQLUpdateStatement updateStatement = updateStatementBuilder.build();
+    
+        final @Nonnull SQLActionEncoder actionEncoder = Database.instance.get().getEncoder(updateStatement, unit);
+        actionEncoder.encodeNullableObject(updateConverter, updateObject);
+        if (whereConverter != null) {
+            actionEncoder.encodeNullableObject(whereConverter, whereObject);
+        }
+        actionEncoder.execute();
     }
     
     /* -------------------------------------------------- Delete -------------------------------------------------- */

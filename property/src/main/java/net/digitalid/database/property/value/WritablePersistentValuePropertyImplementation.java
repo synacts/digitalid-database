@@ -117,7 +117,7 @@ public abstract class WritablePersistentValuePropertyImplementation<@Unspecifiab
             if (!Objects.equals(newValue, oldValue)) {
                 final @Nonnull Time newTime = TimeBuilder.build();
                 final @Nonnull PersistentValuePropertyEntry<SUBJECT, VALUE> entry = new PersistentValuePropertyEntrySubclass<>(getSubject(), newTime, newValue);
-                SQL.insertOrUpdate(entry, getTable().getEntryConverter(), getSubject().getUnit());
+                SQL.insertOrUpdate(getTable().getEntryConverter(), entry, getSubject().getUnit());
                 this.time = newTime;
                 this.value = newValue;
                 notifyObservers(oldValue, newValue);

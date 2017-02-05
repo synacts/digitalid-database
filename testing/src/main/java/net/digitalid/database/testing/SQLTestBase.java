@@ -18,7 +18,6 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.testing.assertion.ExpectedColumnDeclarations;
-import net.digitalid.database.testing.assertion.ExpectedTableConstraint;
 import net.digitalid.database.testing.assertion.ExpectedTableConstraints;
 import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
 import net.digitalid.database.unit.Unit;
@@ -101,10 +100,25 @@ public class SQLTestBase extends RootTest {
     @Pure
     protected void assertTableExists(@Nonnull String tableName, @Nonnull String schema) throws DatabaseException {
         final @Nonnull String query = "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = '" + tableName.toLowerCase() + "' and table_schema = '" + schema.toLowerCase() + "'";
-        Database instance = Database.instance.get();
-        // TODO: SQLDecoder tableExistsQuery = instance.executeSelect(query);
-        // TODO: tableExistsQuery.moveToFirstRow();
-        // TODO: Assert.assertSame("Table does not exist (" + query + ")", 1, tableExistsQuery.decodeInteger32());
+        final @Nonnull ResultSet resultSet = h2DatabaseInstance.executeQuery(query);
+        try {
+            resultSet.next();
+            Assert.assertSame("Table does not exist (" + query + ")", 1, resultSet.getInt(1));
+        } catch (SQLException e) {
+            throw DatabaseExceptionBuilder.withCause(e).build();
+        }
+    }
+    
+    @Pure
+    protected void assertTableDoesNotExist(@Nonnull String tableName, @Nonnull String schema) throws DatabaseException {
+        final @Nonnull String query = "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = '" + tableName.toLowerCase() + "' and table_schema = '" + schema.toLowerCase() + "'";
+        final @Nonnull ResultSet resultSet = h2DatabaseInstance.executeQuery(query);
+        try {
+            resultSet.next();
+            Assert.assertSame("Table does exist (" + query + ")", 0, resultSet.getInt(1));
+        } catch (SQLException e) {
+            throw DatabaseExceptionBuilder.withCause(e).build();
+        }
     }
     
     protected enum UpdateAction {
