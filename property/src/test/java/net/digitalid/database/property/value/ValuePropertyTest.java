@@ -47,7 +47,7 @@ public class ValuePropertyTest extends SQLTestBase {
     @Impure
     @BeforeClass
     public static void createTables() throws Exception {
-        System.out.println(ClassWithValuePropertySubclass.NAME_TABLE.getEntryConverter().getTypeName());
+        SQL.createTable(ClassWithValuePropertyConverter.INSTANCE, Unit.DEFAULT);
         SQL.createTable(ClassWithValuePropertySubclass.NAME_TABLE.getEntryConverter(), Unit.DEFAULT);
     }
     

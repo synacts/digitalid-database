@@ -16,13 +16,10 @@ import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
-import net.digitalid.database.annotations.type.Embedded;
-
 /**
  * This class models time in milliseconds for both dates and intervals.
  * Dates are calculated as milliseconds since 1 January 1970, 00:00:00 GMT.
  */
-@Embedded
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
