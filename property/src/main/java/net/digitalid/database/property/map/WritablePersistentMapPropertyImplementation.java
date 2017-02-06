@@ -148,7 +148,7 @@ public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable
             final @Nullable VALUE value = getMap().get(key);
             if (value != null) {
                 final @Nonnull PersistentMapPropertyEntry<SUBJECT, KEY, VALUE> entry = new PersistentMapPropertyEntrySubclass<>(getSubject(), key, value); // TODO: The value should actually not be necessary.
-                SQL.delete(getTable().getEntryConverter(), entry, getTable().getEntryConverter(), getSubject().getUnit());
+                SQL.delete(getTable().getEntryConverter(), getTable().getEntryConverter(), entry, getSubject().getUnit());
                 getMap().remove(key);
                 notifyObservers(key, value, false);
                 return value;

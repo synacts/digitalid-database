@@ -35,6 +35,8 @@ import net.digitalid.database.dialect.identifier.table.SQLExplicitlyQualifiedTab
 import net.digitalid.database.dialect.identifier.table.SQLQualifiedTable;
 import net.digitalid.database.dialect.identifier.table.SQLTableName;
 import net.digitalid.database.dialect.identifier.table.SQLTableNameBuilder;
+import net.digitalid.database.dialect.statement.delete.SQLDeleteStatement;
+import net.digitalid.database.dialect.statement.delete.SQLDeleteStatementBuilder;
 import net.digitalid.database.dialect.statement.insert.SQLExpressionsBuilder;
 import net.digitalid.database.dialect.statement.insert.SQLInsertStatement;
 import net.digitalid.database.dialect.statement.insert.SQLInsertStatementBuilder;
@@ -115,42 +117,53 @@ public abstract class SQL {
         final SQLInsertStatement sqlInsertStatement = SQLInsertStatementBuilder.withTable(qualifiedTable).withColumns(ImmutableList.withElementsOf(columns)).withValues(rows).build();
     
         final @Nonnull SQLActionEncoder actionEncoder = Database.instance.get().getEncoder(sqlInsertStatement, unit);
-        converter.convert(object, actionEncoder);
+        actionEncoder.encodeObject(converter, object);
         actionEncoder.execute();
     }
     
     /**
      * Inserts or updates the given object with the given converter into its table in the given unit.
      */
-    @Committing
+    @TODO(task="Do we need to allow keys/where clauses that indicate which row should be updated if already inserted?", date="2017-02-05", author = Author.STEPHANIE_STROKA)
+    @NonCommitting
     @PureWithSideEffects
     public static <@Unspecifiable TYPE> void insertOrUpdate(@Nonnull Converter<TYPE, ?> converter, @Nonnull TYPE object, @Nonnull Unit unit) throws DatabaseException {
-        // TODO
+        final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columns = FreezableArrayList.withNoElements();
+        SQLConversionUtility.fillColumnNames(converter, columns, "");
+    
+        final @Nonnull ImmutableList<@Nonnull SQLParameter> row = ImmutableList.withElementsOf(InfiniteIterable.repeat(SQLParameter.INSTANCE).limit(columns.size()));
+        final @Nonnull SQLRows rows = SQLRowsBuilder.withRows(ImmutableList.withElements(SQLExpressionsBuilder.withExpressions(row).build())).build();
+        final @Nonnull SQLTableName tableName = SQLTableNameBuilder.withString(converter.getTypeName()).build();
+        final @Nonnull SQLSchemaName schema = SQLSchemaNameBuilder.withString(unit.getName()).build();
+        final @Nonnull SQLQualifiedTable qualifiedTable = SQLExplicitlyQualifiedTableBuilder.withTable(tableName).withSchema(schema).build();
+        final @Nonnull SQLInsertStatement insertStatement = SQLInsertStatementBuilder.withTable(qualifiedTable).withColumns(ImmutableList.withElementsOf(columns)).withValues(rows).withReplacing(true).build();
+        
+        final @Nonnull SQLActionEncoder actionEncoder = Database.instance.get().getEncoder(insertStatement, unit);
+        actionEncoder.encodeObject(converter, object);
+        actionEncoder.execute();
     }
     
     /* -------------------------------------------------- Update -------------------------------------------------- */
     
     /**
      * Updates the columns of the given converter to the values of the given object with the given where condition in the given unit.
+     * The where-prefix indicates on which field the where clause should match.
      */
-    @Committing
+    @NonCommitting
     @PureWithSideEffects
-    @TODO(task = "Probably add a prefix parameter for both the update and the where converter.", date = "2017-01-22", author = Author.KASPAR_ETTER)
-    public static <@Unspecifiable UPDATE_TYPE, @Unspecifiable WHERE_TYPE> void update(@Nonnull Converter<UPDATE_TYPE, ?> updateConverter, @Nonnull UPDATE_TYPE updateObject, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull Unit unit) throws DatabaseException {
+    public static <@Unspecifiable UPDATE_TYPE, @Unspecifiable WHERE_TYPE> void update(@Nonnull Converter<UPDATE_TYPE, ?> updateConverter, @Nonnull UPDATE_TYPE updateObject, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException {
         final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columns = FreezableArrayList.withNoElements();
         SQLConversionUtility.fillColumnNames(updateConverter, columns, "");
     
         final @Nonnull FiniteIterable<SQLAssignment> assignments = columns.map(column -> SQLAssignmentBuilder.withColumn(column).withExpression(SQLParameter.INSTANCE).build());
     
-        final @Nonnull ImmutableList<@Nonnull SQLParameter> row = ImmutableList.withElementsOf(InfiniteIterable.repeat(SQLParameter.INSTANCE).limit(columns.size()));
-        final @Nonnull SQLRows rows = SQLRowsBuilder.withRows(ImmutableList.withElements(SQLExpressionsBuilder.withExpressions(row).build())).build();
         final @Nonnull SQLTableName tableName = SQLTableNameBuilder.withString(updateConverter.getTypeName()).build();
         final @Nonnull SQLSchemaName schema = SQLSchemaNameBuilder.withString(unit.getName()).build();
         final @Nonnull SQLQualifiedTable qualifiedTable = SQLExplicitlyQualifiedTableBuilder.withTable(tableName).withSchema(schema).build();
         final @Nonnull SQLUpdateStatementBuilder.@Nonnull InnerSQLUpdateStatementBuilder updateStatementBuilder = SQLUpdateStatementBuilder.withTable(qualifiedTable).withAssignments(ImmutableList.withElementsOf(assignments));
         if (whereConverter != null) {
             final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> whereColumns = FreezableArrayList.withNoElements();
-            SQLConversionUtility.fillColumnNames(whereConverter, whereColumns, "");
+            SQLConversionUtility.fillColumnNames(whereConverter, whereColumns, wherePrefix);
     
             final @Nonnull FiniteIterable<@Nonnull SQLBooleanExpression> whereClauseExpressions = whereColumns.map(column -> SQLBinaryBooleanExpressionBuilder.withOperator(SQLBinaryBooleanOperator.EQUAL).withLeftExpression(column).withRightExpression(SQLParameter.INSTANCE).build());
             final @Nonnull SQLBooleanExpression whereClauseExpression = whereClauseExpressions.reduce((left, right) -> SQLBinaryBooleanExpressionBuilder.withOperator(SQLBinaryBooleanOperator.AND).withLeftExpression(left).withRightExpression(right).build());
@@ -159,23 +172,64 @@ public abstract class SQL {
         final SQLUpdateStatement updateStatement = updateStatementBuilder.build();
     
         final @Nonnull SQLActionEncoder actionEncoder = Database.instance.get().getEncoder(updateStatement, unit);
-        actionEncoder.encodeNullableObject(updateConverter, updateObject);
+        actionEncoder.encodeObject(updateConverter, updateObject);
         if (whereConverter != null) {
             actionEncoder.encodeNullableObject(whereConverter, whereObject);
         }
         actionEncoder.execute();
     }
     
+    /**
+     * Updates the columns of the given converter to the values of the given object with the given where condition in the given unit.
+     */
+    @NonCommitting
+    @PureWithSideEffects
+    public static <@Unspecifiable UPDATE_TYPE, @Unspecifiable WHERE_TYPE> void update(@Nonnull Converter<UPDATE_TYPE, ?> updateConverter, @Nonnull UPDATE_TYPE updateObject, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull Unit unit) throws DatabaseException {
+        update(updateConverter, updateObject, whereConverter, whereObject, "", unit);
+    }
+    
     /* -------------------------------------------------- Delete -------------------------------------------------- */
     
     /**
      * Deletes the entries of the given converter's table with the given where condition in the given unit.
+     * The where-prefix indicates on which field the where clause should match.
      */
-    @Committing
+    @NonCommitting
     @PureWithSideEffects
-    @TODO(task = "Probably add a prefix parameter for the where converter.", date = "2017-01-22", author = Author.KASPAR_ETTER)
-    public static <@Unspecifiable WHERE_TYPE> void delete(@Nonnull Converter<?, ?> deleteConverter, @Nullable WHERE_TYPE whereObject, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nonnull Unit unit) throws DatabaseException {
-        // TODO
+    public static <@Unspecifiable WHERE_TYPE> void delete(@Nonnull Converter<?, ?> deleteConverter, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException {
+        final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columns = FreezableArrayList.withNoElements();
+        SQLConversionUtility.fillColumnNames(deleteConverter, columns, "");
+    
+        final @Nonnull SQLTableName tableName = SQLTableNameBuilder.withString(deleteConverter.getTypeName()).build();
+        final @Nonnull SQLSchemaName schema = SQLSchemaNameBuilder.withString(unit.getName()).build();
+        final @Nonnull SQLQualifiedTable qualifiedTable = SQLExplicitlyQualifiedTableBuilder.withTable(tableName).withSchema(schema).build();
+        final @Nonnull SQLDeleteStatementBuilder.@Nonnull InnerSQLDeleteStatementBuilder deleteStatementBuilder = SQLDeleteStatementBuilder.withTable(qualifiedTable);
+        
+        if (whereConverter != null) {
+            final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> whereColumns = FreezableArrayList.withNoElements();
+            SQLConversionUtility.fillColumnNames(whereConverter, whereColumns, wherePrefix);
+    
+            final @Nonnull FiniteIterable<@Nonnull SQLBooleanExpression> whereClauseExpressions = whereColumns.map(column -> SQLBinaryBooleanExpressionBuilder.withOperator(SQLBinaryBooleanOperator.EQUAL).withLeftExpression(column).withRightExpression(SQLParameter.INSTANCE).build());
+            final @Nonnull SQLBooleanExpression whereClauseExpression = whereClauseExpressions.reduce((left, right) -> SQLBinaryBooleanExpressionBuilder.withOperator(SQLBinaryBooleanOperator.AND).withLeftExpression(left).withRightExpression(right).build());
+            deleteStatementBuilder.withWhereClause(whereClauseExpression);
+        }
+    
+        final SQLDeleteStatement deleteStatement = deleteStatementBuilder.build();
+    
+        final @Nonnull SQLActionEncoder actionEncoder = Database.instance.get().getEncoder(deleteStatement, unit);
+        if (whereConverter != null) {
+            actionEncoder.encodeNullableObject(whereConverter, whereObject);
+        }
+        actionEncoder.execute();
+    }
+    
+    /**
+     * Deletes the entries of the given converter's table with the given where condition in the given unit.
+     */
+    @NonCommitting
+    @PureWithSideEffects
+    public static <@Unspecifiable WHERE_TYPE> void delete(@Nonnull Converter<?, ?> deleteConverter, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull Unit unit) throws DatabaseException {
+        delete(deleteConverter, whereConverter, whereObject, "", unit);
     }
     
     /* -------------------------------------------------- Select -------------------------------------------------- */

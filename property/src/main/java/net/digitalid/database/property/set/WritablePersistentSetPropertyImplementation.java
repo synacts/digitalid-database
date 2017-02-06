@@ -134,7 +134,7 @@ public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable
             if (!loaded) { load(false); }
             if (getSet().contains(value)) {
                 final @Nonnull PersistentSetPropertyEntry<SUBJECT, VALUE> entry = new PersistentSetPropertyEntrySubclass<>(getSubject(), value);
-                SQL.delete(getTable().getEntryConverter(), entry, getTable().getEntryConverter(), getSubject().getUnit());
+                SQL.delete(getTable().getEntryConverter(), getTable().getEntryConverter(), entry, getSubject().getUnit());
                 getSet().remove(value);
                 notifyObservers(value, false);
                 return true;
