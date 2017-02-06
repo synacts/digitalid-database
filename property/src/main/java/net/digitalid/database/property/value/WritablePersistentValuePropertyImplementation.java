@@ -67,7 +67,7 @@ public abstract class WritablePersistentValuePropertyImplementation<@Unspecifiab
     protected void load(final boolean locking) throws DatabaseException, RecoveryException {
         if (locking) { lock.lock(); }
         try {
-            final @Nullable PersistentValuePropertyEntry<SUBJECT, VALUE> entry = SQL.selectFirst(getTable().getEntryConverter(), getSubject().getUnit(), getSubject(), getTable().getParentModule().getSubjectConverter(), getSubject().getUnit());
+            final @Nullable PersistentValuePropertyEntry<SUBJECT, VALUE> entry = SQL.selectFirst(getTable().getEntryConverter(), getSubject().getUnit(), getTable().getParentModule().getSubjectConverter(), getSubject(), getSubject().getUnit());
             if (entry != null) {
                 this.time = entry.getTime();
                 this.value = entry.getValue();

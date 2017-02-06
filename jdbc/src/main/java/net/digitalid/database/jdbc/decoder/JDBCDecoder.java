@@ -63,9 +63,9 @@ public abstract class JDBCDecoder extends SQLDecoder {
     // TODO: why not return boolean in this case?
     @Impure
     @Override
-    public void moveToFirstRow() throws DatabaseException {
+    public boolean moveToFirstRow() throws DatabaseException {
         try {
-            resultSet.first();
+            return resultSet.first();
         } catch (SQLException exception) {
             throw DatabaseExceptionBuilder.withCause(exception).build();
         }

@@ -47,8 +47,8 @@ public abstract class AndroidDecoder extends SQLDecoder {
     
     @Impure
     @Override
-    public void moveToFirstRow() throws DatabaseException {
-        cursor.moveToFirst();
+    public boolean moveToFirstRow() throws DatabaseException {
+        return cursor.moveToFirst();
     }
     
     /* -------------------------------------------------- Closing -------------------------------------------------- */

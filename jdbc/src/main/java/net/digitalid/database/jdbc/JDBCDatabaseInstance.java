@@ -217,7 +217,6 @@ public abstract class JDBCDatabaseInstance implements Database {
     private void executeStatement(@Nonnull Unit unit, @Nonnull SQLTableStatement tableStatement) throws DatabaseException {
         final @Nonnull String statementAsString = SQLDialect.unparse(tableStatement, unit);
         Log.debugging("Executing $", statementAsString);
-        System.out.println(statementAsString);
         try {
             // TODO: do we really need to set the result set type and result set concurrency?
             getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).execute(statementAsString);
@@ -248,7 +247,6 @@ public abstract class JDBCDatabaseInstance implements Database {
     @PureWithSideEffects
     private @Nonnull SQLActionEncoder getEncoderForStatement(@Nonnull SQLTableStatement tableStatement, @Nonnull Unit unit) throws DatabaseException {
         final @Nonnull String statementAsString = SQLDialect.unparse(tableStatement, unit);
-        System.out.println(statementAsString);
         // FIXME: The converter generator does not recognize that the sql encoder implementation already implements the methods getRepresentation(), isHashing(), isCompressing() and isEncryption().
         return JDBCActionEncoderBuilder.withPreparedStatement(prepare(statementAsString)).withRepresentation(Representation.INTERNAL).withHashing(false).withCompressing(false).withEncrypting(false).build();
     }

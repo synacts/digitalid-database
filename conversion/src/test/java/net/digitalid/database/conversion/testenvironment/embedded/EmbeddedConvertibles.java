@@ -17,9 +17,9 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 public interface EmbeddedConvertibles  {
     
     @Pure
-    public abstract @Nonnull Convertible1 getConvertible1();
+    public @Nonnull Convertible1 getConvertible1();
     
     @Pure
-    public abstract @Nonnull Convertible2 getConvertible2();
+    public @Nonnull Convertible2 getConvertible2();
     
 }

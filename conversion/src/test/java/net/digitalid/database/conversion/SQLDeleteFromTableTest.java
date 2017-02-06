@@ -51,7 +51,7 @@ public class SQLDeleteFromTableTest extends SQLTestBase {
      * Tests whether delete works on rows with cells that match the where-object.
      */
     @Test
-    public void shouldUpdateTableWithEmbeddedConvertibles() throws Exception {
+    public void shouldDeleteTableWithEmbeddedConvertibles() throws Exception {
         SQL.createTable(EmbeddedConvertiblesConverter.INSTANCE, unit);
         try {
             final @Nonnull Convertible1 convertible1 = Convertible1Builder.withValue(2).build();

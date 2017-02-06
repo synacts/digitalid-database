@@ -48,7 +48,7 @@ public abstract class SQLDecoder implements Decoder<DatabaseException> {
      * Moves the cursor to the first row of the selection result.
      */
     @Impure
-    public abstract void moveToFirstRow() throws DatabaseException;
+    public abstract boolean moveToFirstRow() throws DatabaseException;
     
     /* -------------------------------------------------- Null -------------------------------------------------- */
     
@@ -71,13 +71,13 @@ public abstract class SQLDecoder implements Decoder<DatabaseException> {
     @Pure
     @Override
     @TODO(task = "This is wrong. The converter expects non-null values. This method returns null when all columns are null and calls the decodeObject method otherwise.", date = "2017-01-25", author = Author.KASPAR_ETTER)
-    public <TYPE, PROVIDED> @Nullable TYPE decodeNullableObject(@Nonnull Converter<TYPE, PROVIDED> converter, @Nonnull @Shared PROVIDED provided) throws DatabaseException, RecoveryException {
+    public <TYPE, PROVIDED> @Nullable TYPE decodeNullableObject(@Nonnull Converter<TYPE, PROVIDED> converter, @Shared PROVIDED provided) throws DatabaseException, RecoveryException {
         return converter.recover(this, provided);
     }
     
     @Pure
     @Override
-    public <TYPE, PROVIDED> @Nonnull TYPE decodeObject(@Nonnull Converter<TYPE, PROVIDED> converter, @Nonnull @Shared PROVIDED provided) throws DatabaseException, RecoveryException {
+    public <TYPE, PROVIDED> @Nonnull TYPE decodeObject(@Nonnull Converter<TYPE, PROVIDED> converter, @Shared PROVIDED provided) throws DatabaseException, RecoveryException {
         final @Nullable TYPE object = decodeNullableObject(converter, provided);
         Ensure.that(object != null).orThrow("The object may not be null");
         return object;
