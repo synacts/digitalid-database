@@ -373,6 +373,7 @@ public abstract class SQLConversionUtility {
         final @Nonnull FreezableArrayList<@Nonnull SQLTableConstraint> tableConstraints = FreezableArrayList.withNoElements();
         boolean primaryKeySpecified = false;
         final boolean multiplePrimaryKeys = hasMultiplePrimaryKeys(converter);
+        final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> primaryKeyColumns = FreezableArrayList.withNoElements();
         for (@Nonnull CustomField customField : converter.getFields(Representation.INTERNAL)) {
             final @Nonnull CustomType fieldType = customField.getCustomType();
             if (fieldType.isObjectType()) {
@@ -403,12 +404,19 @@ public abstract class SQLConversionUtility {
             if (isPrimaryKey(customField)) {
                 primaryKeySpecified = true;
                 if (multiplePrimaryKeys) {
-                    final @Nonnull Converter<?, ?> fieldTypeConverter = ((CustomType.CustomConverterType) fieldType).getConverter();
-                    final @Nonnull ImmutableList<@Nonnull SQLColumnName> columnNames = getColumnNames(fieldTypeConverter, customField.getName().toLowerCase() + "_");
-                    final @Nonnull SQLPrimaryKeyConstraint primaryKeyConstraint = SQLPrimaryKeyConstraintBuilder.withColumns(columnNames).build();
-                    tableConstraints.add(primaryKeyConstraint);
+                    if (fieldType.isObjectType()) {
+                        final @Nonnull Converter<?, ?> fieldTypeConverter = ((CustomType.CustomConverterType) fieldType).getConverter();
+                        fillColumnNames(fieldTypeConverter, primaryKeyColumns, customField.getName().toLowerCase() + "_");
+                    } else {
+                        primaryKeyColumns.add(SQLColumnNameBuilder.withString(customField.getName()).build());
+                    }
                 }
             }
+        }
+        if (!primaryKeyColumns.isEmpty()) {
+            final @Nonnull ImmutableList<@Nonnull SQLColumnName> columnNames = ImmutableList.withElementsOf(primaryKeyColumns);
+            final @Nonnull SQLPrimaryKeyConstraint primaryKeyConstraint = SQLPrimaryKeyConstraintBuilder.withColumns(columnNames).build();
+            tableConstraints.add(primaryKeyConstraint);
         }
         if (!primaryKeySpecified) {
             final @Nonnull ImmutableList<@Nonnull SQLColumnName> columnNames = getColumnNames(converter);

@@ -79,7 +79,8 @@ public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable
         if (locking) { lock.lock(); }
         try {
             getSet().clear();
-            final @Nonnull @NonNullableElements FreezableList<PersistentSetPropertyEntry<SUBJECT, VALUE>> entries = SQL.selectAll(getTable().getEntryConverter(), getSubject().getUnit(), getTable().getParentModule().getSubjectConverter(), getSubject(), getSubject().getUnit());
+            final @Nonnull String prefix = getTable().getParentModule().getSubjectConverter().getTypeName().toLowerCase() + "_";
+            final @Nonnull @NonNullableElements FreezableList<PersistentSetPropertyEntry<SUBJECT, VALUE>> entries = SQL.selectAll(getTable().getEntryConverter(), getSubject().getUnit(), getTable().getParentModule().getSubjectConverter(), getSubject(), prefix, getSubject().getUnit());
             for (@Nonnull PersistentSetPropertyEntry<SUBJECT, VALUE> entry : entries) {
                 getSet().add(entry.getValue());
             }
