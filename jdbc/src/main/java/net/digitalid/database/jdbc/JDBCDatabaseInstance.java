@@ -247,6 +247,7 @@ public abstract class JDBCDatabaseInstance implements Database {
     @PureWithSideEffects
     private @Nonnull SQLActionEncoder getEncoderForStatement(@Nonnull SQLTableStatement tableStatement, @Nonnull Unit unit) throws DatabaseException {
         final @Nonnull String statementAsString = SQLDialect.unparse(tableStatement, unit);
+        Log.debugging("Executing $", statementAsString);
         // FIXME: The converter generator does not recognize that the sql encoder implementation already implements the methods getRepresentation(), isHashing(), isCompressing() and isEncryption().
         return JDBCActionEncoderBuilder.withPreparedStatement(prepare(statementAsString)).withRepresentation(Representation.INTERNAL).withHashing(false).withCompressing(false).withEncrypting(false).build();
     }

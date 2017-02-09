@@ -14,6 +14,7 @@ import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.Captured;
 import net.digitalid.utility.annotations.type.ThreadSafe;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
+import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.functional.interfaces.Predicate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -67,7 +68,8 @@ public abstract class WritablePersistentValuePropertyImplementation<@Unspecifiab
     protected void load(final boolean locking) throws DatabaseException, RecoveryException {
         if (locking) { lock.lock(); }
         try {
-            final @Nullable PersistentValuePropertyEntry<SUBJECT, VALUE> entry = SQL.selectFirst(getTable().getEntryConverter(), getSubject().getUnit(), getTable().getParentModule().getSubjectConverter(), getSubject(), getSubject().getUnit());
+            final @Nonnull Converter<SUBJECT, ?> subjectConverter = getTable().getParentModule().getSubjectConverter();
+            final @Nullable PersistentValuePropertyEntry<SUBJECT, VALUE> entry = SQL.selectFirst(getTable().getEntryConverter(), getSubject().getUnit(), subjectConverter, getSubject(), subjectConverter.getTypeName().toLowerCase() + "_", getSubject().getUnit());
             if (entry != null) {
                 this.time = entry.getTime();
                 this.value = entry.getValue();

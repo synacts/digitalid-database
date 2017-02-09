@@ -19,6 +19,7 @@ import net.digitalid.utility.circumfixes.Quotes;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.interfaces.Converter;
+import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.generator.annotations.meta.Interceptor;
 import net.digitalid.utility.generator.information.method.MethodInformation;
 import net.digitalid.utility.generator.information.type.TypeInformation;
@@ -32,6 +33,7 @@ import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.subject.Subject;
+import net.digitalid.database.unit.Unit;
 
 /**
  * This method interceptor generates a persistent property with the corresponding property table.
@@ -99,6 +101,8 @@ public @interface GeneratePersistentProperty {
             final @Nonnull String externallyProvidedType;
             if (valueType.endsWith("Role")) { // TODO: This hardcoding is only temporary, of course, and should be replaced as soon as the type information can be cached and retrieved.
                 externallyProvidedType = javaFileGenerator.importIfPossible("net.digitalid.core.client.Client");
+            } else if (valueType.equals("Student")) { // TODO: This hardcoding is only temporary, of course, and should be replaced as soon as the type information can be cached and retrieved.
+                externallyProvidedType = javaFileGenerator.importIfPossible(Unit.class);
             } else if (valueConverter != null) {
                 externallyProvidedType = javaFileGenerator.importIfPossible(valueConverter.getTypeArguments().get(1));
             } else {
@@ -107,7 +111,8 @@ public @interface GeneratePersistentProperty {
             
             final @Nonnull String unitType = javaFileGenerator.importIfPossible(ProcessingUtility.getSupertype(typeInformation.getType(), Subject.class).getTypeArguments().get(0));
             
-            final @Nonnull String converter = (valueType.equals("String") ? javaFileGenerator.importIfPossible("net.digitalid.utility.conversion.converters.StringConverter") : javaFileGenerator.importIfPossible(ProcessingUtility.getQualifiedName(typeArguments.get(1)) + "Converter")) + ".INSTANCE";
+            final @Nonnull String converter = CustomType.importConverterType(typeArguments.get(1), javaFileGenerator);
+//            final @Nonnull String converter = (valueType.equals("String") ? javaFileGenerator.importIfPossible("net.digitalid.utility.conversion.converters.StringConverter") : javaFileGenerator.importIfPossible(ProcessingUtility.getQualifiedName(typeArguments.get(1)) + "Converter")) + ".INSTANCE";
             
             javaFileGenerator.addField("/* TODO: private */ static final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(propertyPackage + "." + propertyType.replace("Simple", "") + "Table") + Brackets.inPointy(unitType + ", " + surroundingType + ", " + valueType + ", " + externallyProvidedType) + " " + upperCasePropertyName + "_TABLE = " + javaFileGenerator.importIfPossible(propertyPackage + "." + propertyType.replace("Simple", "") + "TableBuilder") + "." + Brackets.inPointy(unitType + ", " + surroundingType + ", " + valueType + ", " + externallyProvidedType) + "withName" + Brackets.inRound(Quotes.inDouble(method.getName())) + ".withParentModule(MODULE).withValueConverter" + Brackets.inRound(converter) + (propertyType.contains("Value") ? ".withDefaultValue" + Brackets.inRound(method.hasAnnotation(Default.class) ? method.getAnnotation(Default.class).value() : "null") : "") + ".build()");
             

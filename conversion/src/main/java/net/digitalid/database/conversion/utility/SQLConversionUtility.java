@@ -7,6 +7,8 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.parameter.Modified;
+import net.digitalid.utility.annotations.state.Modifiable;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.conversion.enumerations.Representation;
@@ -27,6 +29,7 @@ import net.digitalid.utility.validation.annotations.type.Utility;
 import net.digitalid.database.annotations.constraints.ForeignKey;
 import net.digitalid.database.annotations.constraints.PrimaryKey;
 import net.digitalid.database.annotations.constraints.Unique;
+import net.digitalid.database.annotations.type.UnitName;
 import net.digitalid.database.dialect.expression.SQLExpression;
 import net.digitalid.database.dialect.expression.bool.SQLBinaryBooleanExpressionBuilder;
 import net.digitalid.database.dialect.expression.bool.SQLBinaryBooleanOperator;
@@ -66,28 +69,72 @@ import net.digitalid.database.unit.Unit;
 @Utility
 public abstract class SQLConversionUtility {
     
+    /* -------------------------------------------------- Not Null -------------------------------------------------- */
+    
+    /**
+     * Returns true if the given field is annotated with {@link Nonnull}.
+     */
     @Pure
     public static boolean isNotNull(@Nonnull CustomField customField) {
         return customField.isAnnotatedWith(Nonnull.class);
     }
     
+    /* -------------------------------------------------- Primary Key -------------------------------------------------- */
+    
+    /**
+     * Returns true if the given field is annotated with {@link PrimaryKey}.
+     */
     @Pure
     public static boolean isPrimaryKey(@Nonnull CustomField customField) {
         return customField.isAnnotatedWith(PrimaryKey.class);
     }
     
+    /**
+     * Returns true if the given field translates to multiple columns.
+     */
+    @Pure
+    private static boolean consistsOfMultipleColumns(@Nonnull CustomField customField) {
+        final @Nonnull CustomType fieldType = customField.getCustomType();
+        if (fieldType.isObjectType()) {
+            final @Nonnull CustomType.CustomConverterType converterType = (CustomType.CustomConverterType) fieldType;
+            if (converterType.getConverter().getFields(Representation.INTERNAL).size() > 1) {
+                return true;
+            } else {
+                return consistsOfMultipleColumns(converterType.getConverter().getFields(Representation.INTERNAL).getFirst());
+            }
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Returns true if the type has multiple fields annotated with {@link PrimaryKey}.
+     */
+    @Pure
+    public static boolean hasMultiplePrimaryKeys(@Nonnull Converter<?, ?> converter) {
+        boolean hasOne = false;
+        for (@Nonnull CustomField customField : converter.getFields(Representation.INTERNAL)) {
+            if (isPrimaryKey(customField)) {
+                if (hasOne || consistsOfMultipleColumns(customField)) {
+                    return true;
+                }
+                hasOne = true;
+            }
+        }
+        return false;
+    }
+    
+    /* -------------------------------------------------- Unique -------------------------------------------------- */
+    
+    /**
+     * Returns true if the given field is annotated with {@link Unique}.
+     */
     @Pure
     public static boolean isUnique(@Nonnull CustomField customField) {
         return customField.isAnnotatedWith(Unique.class);
     }
     
-    @Pure
-    public static @Nonnull SQLReference isForeignKey(@Nonnull CustomField customField) {
-//        SQLExplicitlyQualifiedTableBuilder.withTable(tableName).withSchema(schema).build();
-//        SQLReferenceBuilder.withTable(table)
-//        customField.isAnnotatedWith(Referenced.class);
-        return null;
-    }
+    /* -------------------------------------------------- Embedded Primitive Type -------------------------------------------------- */
     
     @Pure
     public static @Nullable CustomType getEmbeddedPrimitiveType(@Nonnull CustomType customType) {
@@ -201,9 +248,15 @@ public abstract class SQLConversionUtility {
         return result;
     }
     
+    /* -------------------------------------------------- Column Declarations -------------------------------------------------- */
+    
+    /**
+     * Given a converter, and some information about the nullness and prefix of the fields of the converter, this method fills the given column declarations list with column declarations derived from the converter.
+     */
     @Pure
-    public static <@Unspecifiable TYPE> void fillColumnDeclarations(@Nonnull Converter<TYPE, ?> converter, @Nonnull FreezableArrayList<@Nonnull SQLColumnDeclaration> columnDeclarations, boolean mustBeNullable, @Nonnull String prefix) {
+    public static <@Unspecifiable TYPE> void fillColumnDeclarations(@Nonnull Converter<TYPE, ?> converter, @Nonnull @Modified FreezableArrayList<@Nonnull SQLColumnDeclaration> columnDeclarations, boolean mustBeNullable, boolean mustBePrimaryKey, @Nonnull String prefix) {
         final @Nonnull ImmutableList<@Nonnull CustomField> fields = converter.getFields(Representation.INTERNAL);
+        final boolean multiplePrimaryKeys = hasMultiplePrimaryKeys(converter);
         for (@Nonnull CustomField field : fields) {
             @Nonnull CustomType customType = field.getCustomType();
             if (!customType.isCompositeType()) {
@@ -211,7 +264,7 @@ public abstract class SQLConversionUtility {
                 if (customType.isObjectType()) {
                     final @Nonnull CustomType.CustomConverterType customConverterType = (CustomType.CustomConverterType) customType;
                     if (!customConverterType.getConverter().isPrimitiveConverter()) {
-                        fillColumnDeclarations(customConverterType.getConverter(), columnDeclarations, mustBeNullable || !SQLConversionUtility.isNotNull(field), field.getName().toLowerCase() + "_");
+                        fillColumnDeclarations(customConverterType.getConverter(), columnDeclarations, mustBeNullable || !SQLConversionUtility.isNotNull(field), (mustBePrimaryKey || (!multiplePrimaryKeys && SQLConversionUtility.isPrimaryKey(field))), prefix + field.getName().toLowerCase() + "_");
                         continue;
                     } else { // otherwise we have a boxed primitive type
                         @Nullable CustomType primitiveType = SQLConversionUtility.getEmbeddedPrimitiveType(customConverterType);
@@ -226,8 +279,7 @@ public abstract class SQLConversionUtility {
                         .withType(SQLTypeBuilder.withType(customType).build())
                         .withNotNull(!mustBeNullable && (primitive || SQLConversionUtility.isNotNull(field)))
                         .withDefaultValue(SQLConversionUtility.getDefaultValue(field))
-                        .withPrimaryKey(SQLConversionUtility.isPrimaryKey(field))
-                        .withReference(SQLConversionUtility.isForeignKey(field))
+                        .withPrimaryKey(mustBePrimaryKey || (!multiplePrimaryKeys && SQLConversionUtility.isPrimaryKey(field)))
                         .withUnique(SQLConversionUtility.isUnique(field))
                         .withCheck(SQLConversionUtility.getCheck(field))
                         .build();
@@ -238,6 +290,21 @@ public abstract class SQLConversionUtility {
         }
     }
     
+    /**
+     * Returns an immutable list of column declarations for a given converter.
+     */
+    @Pure
+    public static <@Unspecifiable TYPE> @Nonnull ImmutableList<@Nonnull SQLColumnDeclaration> getColumnDeclarations(@Nonnull Converter<TYPE, ?> converter) {
+        final @Nonnull @Modifiable FreezableArrayList<@Nonnull SQLColumnDeclaration> columnDeclarations = FreezableArrayList.withNoElements();
+        SQLConversionUtility.fillColumnDeclarations(converter, columnDeclarations, false, false, "");
+        return ImmutableList.withElementsOf(columnDeclarations);
+    }
+    
+    /* -------------------------------------------------- Column Names -------------------------------------------------- */
+    
+    /**
+     * Given a converter, and some information about the prefix of the fields of the converter, this method fills the given column name list with column names derived from the converter.
+     */
     @Pure
     public static <@Unspecifiable TYPE> void fillColumnNames(@Nonnull Converter<TYPE, ?> converter, @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columnNames, @Nonnull String prefix) {
         final @Nonnull ImmutableList<@Nonnull CustomField> fields = converter.getFields(Representation.INTERNAL);
@@ -246,7 +313,7 @@ public abstract class SQLConversionUtility {
                 if (field.getCustomType().isObjectType()) {
                     final @Nonnull CustomType.CustomConverterType customConverterType = (CustomType.CustomConverterType) field.getCustomType();
                     if (!customConverterType.getConverter().isPrimitiveConverter()) {
-                        fillColumnNames(customConverterType.getConverter(), columnNames, field.getName().toLowerCase() + "_");
+                        fillColumnNames(customConverterType.getConverter(), columnNames, prefix + field.getName().toLowerCase() + "_");
                         continue;
                     }
                 }
@@ -257,26 +324,72 @@ public abstract class SQLConversionUtility {
         }
     }
     
+    /**
+     * Returns an immutable list of column names for the given converter. A non-null prefix can be specified.
+     */
     @Pure
-    public static @Nonnull SQLQualifiedTable getQualifiedTableName(@Nonnull Converter<?,?> converter, @Nonnull Unit unit) {
-        return SQLExplicitlyQualifiedTableBuilder.withTable(SQLTableNameBuilder.withString(converter.getTypeName()).build()).withSchema(SQLSchemaNameBuilder.withString(unit.getName()).build()).build();
+    public static @Nonnull ImmutableList<@Nonnull SQLColumnName> getColumnNames(@Nonnull Converter<?, ?> converter, @Nonnull String prefix) {
+        final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columnNames = FreezableArrayList.withNoElements();
+        fillColumnNames(converter, columnNames, prefix);
+        return ImmutableList.withElementsOf(columnNames);
     }
     
+    /**
+     * Returns an immutable list of column names for the given converter.
+     */
+    @Pure
+    public static @Nonnull ImmutableList<@Nonnull SQLColumnName> getColumnNames(@Nonnull Converter<?, ?> converter) {
+        return getColumnNames(converter, "");
+    }
+    
+    /* -------------------------------------------------- Qualified Table Name -------------------------------------------------- */
+    
+    /**
+     * Returns the qualified table name for a given converter in a given unit.
+     */
+    @Pure
+    public static @Nonnull SQLQualifiedTable getQualifiedTableName(@Nonnull Converter<?,?> converter, @Nonnull String unitName) {
+        return SQLExplicitlyQualifiedTableBuilder.withTable(SQLTableNameBuilder.withString(converter.getTypeName()).build()).withSchema(SQLSchemaNameBuilder.withString(unitName).build()).build();
+    }
+    
+    /**
+     * Returns the qualified table name for a given converter in a given unit.
+     */
+    @Pure
+    public static @Nonnull SQLQualifiedTable getQualifiedTableName(@Nonnull Converter<?,?> converter, @Nonnull Unit unit) {
+        return getQualifiedTableName(converter, unit.getName());
+    }
+    
+    /* -------------------------------------------------- Table Constraints -------------------------------------------------- */
+    
+    /**
+     * Returns the table constraints for a given converter and a given unit.
+     * Foreign key constraints and primary key constraints are supported.
+     * If the converter represents a table with a foreign key that references another table in another schema, the name of the unit is taken
+     * from the type annotation. In other cases, the name of the unit is taken from the given unit object.
+     */
     @Pure
     public static @Nonnull ImmutableList<SQLTableConstraint> getTableConstraints(@Nonnull Converter<?, ?> converter, @Nonnull Unit unit) {
         final @Nonnull FreezableArrayList<@Nonnull SQLTableConstraint> tableConstraints = FreezableArrayList.withNoElements();
         boolean primaryKeySpecified = false;
+        final boolean multiplePrimaryKeys = hasMultiplePrimaryKeys(converter);
         for (@Nonnull CustomField customField : converter.getFields(Representation.INTERNAL)) {
-            if (customField.getCustomType().isObjectType()) {
-                final @Nonnull CustomType.CustomConverterType customConverterType = (CustomType.CustomConverterType) customField.getCustomType();
-                final @Nonnull Class<?> referencedType = customConverterType.getConverter().getType();
+            final @Nonnull CustomType fieldType = customField.getCustomType();
+            if (fieldType.isObjectType()) {
+                final @Nonnull CustomType.CustomConverterType customConverterType = (CustomType.CustomConverterType) fieldType;
+                final @Nonnull Converter<?, ?> referenceConverter = customConverterType.getConverter();
+                final @Nonnull Class<?> referencedType = referenceConverter.getType();
                 if (Subject.class.isAssignableFrom(referencedType)) {
-                    final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> referencedColumnNames = FreezableArrayList.withNoElements();
-                    fillColumnNames(customConverterType.getConverter(), referencedColumnNames, "");
-                    final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columnNames = FreezableArrayList.withNoElements();
-                    fillColumnNames(customConverterType.getConverter(), columnNames, customField.getName().toLowerCase() + "_");
-                    final @Nonnull SQLReference reference = SQLReferenceBuilder.withTable(getQualifiedTableName(customConverterType.getConverter(), unit)).withColumns(ImmutableList.withElementsOf(referencedColumnNames)).build();
-                    final @Nonnull SQLForeignKeyConstraintBuilder.@Nonnull InnerSQLForeignKeyConstraintBuilder sqlForeignKeyConstraintBuilder = SQLForeignKeyConstraintBuilder.withColumns(ImmutableList.withElementsOf(columnNames)).withReference(reference);
+                    final @Nonnull ImmutableList<@Nonnull SQLColumnName> referencedColumnNames = getColumnNames(referenceConverter);
+                    final @Nonnull ImmutableList<@Nonnull SQLColumnName> columnNames = getColumnNames(referenceConverter, customField.getName().toLowerCase() + "_");
+                    final @Nonnull String unitName;
+                    if (referencedType.isAnnotationPresent(UnitName.class)) {
+                        unitName = referencedType.getAnnotation(UnitName.class).value();
+                    } else {
+                        unitName = unit.getName();
+                    }
+                    final @Nonnull SQLReference reference = SQLReferenceBuilder.withTable(getQualifiedTableName(referenceConverter, unitName)).withColumns(referencedColumnNames).build();
+                    final @Nonnull SQLForeignKeyConstraintBuilder.@Nonnull InnerSQLForeignKeyConstraintBuilder sqlForeignKeyConstraintBuilder = SQLForeignKeyConstraintBuilder.withColumns(columnNames).withReference(reference);
                     if (referencedType.isAnnotationPresent(ForeignKey.class)) {
                         final @Nonnull ForeignKey foreignKeyAnnotation = referencedType.getAnnotation(ForeignKey.class);
                         sqlForeignKeyConstraintBuilder.withOnDeleteAction(foreignKeyAnnotation.onDelete()).withOnUpdateAction(foreignKeyAnnotation.onUpdate());
@@ -286,61 +399,23 @@ public abstract class SQLConversionUtility {
                     final @Nonnull SQLForeignKeyConstraint foreignKeyConstraint = sqlForeignKeyConstraintBuilder.build();
                     tableConstraints.add(foreignKeyConstraint);
                 }
-            } else if (isPrimaryKey(customField)) {
+            } 
+            if (isPrimaryKey(customField)) {
                 primaryKeySpecified = true;
+                if (multiplePrimaryKeys) {
+                    final @Nonnull Converter<?, ?> fieldTypeConverter = ((CustomType.CustomConverterType) fieldType).getConverter();
+                    final @Nonnull ImmutableList<@Nonnull SQLColumnName> columnNames = getColumnNames(fieldTypeConverter, customField.getName().toLowerCase() + "_");
+                    final @Nonnull SQLPrimaryKeyConstraint primaryKeyConstraint = SQLPrimaryKeyConstraintBuilder.withColumns(columnNames).build();
+                    tableConstraints.add(primaryKeyConstraint);
+                }
             }
         }
         if (!primaryKeySpecified) {
-            final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columnNames = FreezableArrayList.withNoElements();
-            fillColumnNames(converter, columnNames, "");
-            final @Nonnull SQLPrimaryKeyConstraint primaryKeyConstraint = SQLPrimaryKeyConstraintBuilder.withColumns(ImmutableList.withElementsOf(columnNames)).build();
+            final @Nonnull ImmutableList<@Nonnull SQLColumnName> columnNames = getColumnNames(converter);
+            final @Nonnull SQLPrimaryKeyConstraint primaryKeyConstraint = SQLPrimaryKeyConstraintBuilder.withColumns(columnNames).build();
             tableConstraints.add(primaryKeyConstraint);
         }
         return ImmutableList.withElementsOf(tableConstraints);
     }
 
-//    /**
-//     * Transforms a list of annotations into a list of column definitions.
-//     */
-//    @Pure
-//    public static @Nonnull @Frozen ReadOnlyList<@Nonnull SQLColumnDefinition> of(@Nonnull ImmutableList<CustomAnnotation> annotations) {
-//        final @Nonnull FreezableArrayList<@Nonnull SQLColumnDefinition> columnConstraints = FreezableArrayList.withNoElements();
-//        for (@Nonnull CustomAnnotation annotation : annotations) {
-//            if (annotation.getAnnotationType().equals(Nonnull.class)) {
-//                columnConstraints.add(new SQLNotNullConstraint());
-//            } else if (annotation.getAnnotationType().equals(Default.class)) {
-//                columnConstraints.add(new SQLDefaultValueConstraint(annotation));
-//            }
-//        }
-//        return columnConstraints.freeze();
-//    }
-//     
-//    /**
-//     * Returns a list of column constrains derived from a list of annotations.
-//     */
-//    @Pure
-//    public static @Nonnull ReadOnlyList<@Nonnull SQLColumnConstraint> of(@Nonnull ImmutableList<@Nonnull CustomAnnotation> annotations, @Nonnull String columnName) {
-//        final @Nonnull FreezableArrayList<@Nonnull SQLColumnConstraint> columnConstraints = FreezableArrayList.withNoElements();
-//        for (@Nonnull CustomAnnotation annotation : annotations) {
-//            if (annotation.getAnnotationType().equals(Unique.class)) {
-//                columnConstraints.add(new SQLUniqueConstraint());
-//            } else if (annotation.getAnnotationType().equals(PrimaryKey.class)) {
-//                columnConstraints.add(new SQLPrimaryKeyConstraint());
-//            } else if (annotation.getAnnotationType().equals(ForeignKey.class)) {
-//                columnConstraints.add(new SQLForeignKeyConstraint(annotation));
-//            } else if (annotation.getAnnotationType().equals(MultipleOf.class)) {
-//                columnConstraints.add(new SQLCheckMultipleOfConstraint(annotation, columnName));
-//            } else if (annotation.getAnnotationType().equals(Negative.class)) {
-//                columnConstraints.add(new SQLCheckNegativeConstraint(annotation, columnName));
-//            } else if (annotation.getAnnotationType().equals(NonNegative.class)) {
-//                columnConstraints.add(new SQLCheckNonNegativeConstraint(annotation, columnName));
-//            } else if (annotation.getAnnotationType().equals(Positive.class)) {
-//                columnConstraints.add(new SQLCheckPositiveConstraint(annotation, columnName));
-//            } else if (annotation.getAnnotationType().equals(NonPositive.class)) {
-//                columnConstraints.add(new SQLCheckNonPositiveConstraint(annotation, columnName));
-//            }
-//        }
-//        return columnConstraints;
-//    }
-// 
 }

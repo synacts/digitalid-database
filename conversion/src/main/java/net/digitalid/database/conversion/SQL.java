@@ -46,7 +46,6 @@ import net.digitalid.database.dialect.statement.select.unordered.simple.SQLSimpl
 import net.digitalid.database.dialect.statement.select.unordered.simple.SQLSimpleSelectStatementBuilder;
 import net.digitalid.database.dialect.statement.select.unordered.simple.columns.SQLAllColumnsBuilder;
 import net.digitalid.database.dialect.statement.select.unordered.simple.sources.SQLTableSourceBuilder;
-import net.digitalid.database.dialect.statement.table.create.SQLColumnDeclaration;
 import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatement;
 import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatementBuilder;
 import net.digitalid.database.dialect.statement.table.create.constraints.SQLTableConstraint;
@@ -77,14 +76,12 @@ public abstract class SQL {
     @Committing
     @PureWithSideEffects
     public static void createTable(@Nonnull Converter<?, ?> converter, @Nonnull Unit unit) throws DatabaseException {
-        final @Nonnull FreezableArrayList<@Nonnull SQLColumnDeclaration> columnDeclarations = FreezableArrayList.withNoElements();
-        SQLConversionUtility.fillColumnDeclarations(converter, columnDeclarations, false, "");
-        final @Nonnull SQLQualifiedTable tableName = SQLExplicitlyQualifiedTableBuilder.withTable(SQLTableNameBuilder.withString(converter.getTypeName()).build()).withSchema(SQLSchemaNameBuilder.withString(unit.getName()).build()).build();
-        SQLCreateTableStatementBuilder.@Nonnull InnerSQLCreateTableStatementBuilder sqlCreateTableStatementBuilder = SQLCreateTableStatementBuilder.withTable(tableName).withColumnDeclarations(ImmutableList.withElementsOf(columnDeclarations));
+        final @Nonnull SQLQualifiedTable tableName = SQLConversionUtility.getQualifiedTableName(converter, unit);
+        @Nonnull SQLCreateTableStatementBuilder.@Nonnull InnerSQLCreateTableStatementBuilder sqlCreateTableStatementBuilder = SQLCreateTableStatementBuilder.withTable(tableName).withColumnDeclarations(SQLConversionUtility.getColumnDeclarations(converter));
         // TODO: what if the referenced table is in another unit?
         final @Nonnull ImmutableList<SQLTableConstraint> tableConstraints = SQLConversionUtility.getTableConstraints(converter, unit);
         if (!tableConstraints.isEmpty()) {
-            sqlCreateTableStatementBuilder = sqlCreateTableStatementBuilder.withTableConstraints(tableConstraints);
+            sqlCreateTableStatementBuilder.withTableConstraints(tableConstraints);
         }
         final @Nonnull SQLCreateTableStatement createTableStatement = sqlCreateTableStatementBuilder.build();
         Database.instance.get().execute(createTableStatement, unit);
@@ -99,7 +96,7 @@ public abstract class SQL {
     @Committing
     @PureWithSideEffects
     public static void dropTable(@Nonnull Converter<?, ?> converter, @Nonnull Unit unit) throws DatabaseException {
-        final @Nonnull SQLQualifiedTable tableName = SQLExplicitlyQualifiedTableBuilder.withTable(SQLTableNameBuilder.withString(converter.getTypeName()).build()).withSchema(SQLSchemaNameBuilder.withString(unit.getName()).build()).build();
+        final @Nonnull SQLQualifiedTable tableName = SQLConversionUtility.getQualifiedTableName(converter, unit);
         final @Nonnull SQLDropTableStatement dropTableStatement = SQLDropTableStatementBuilder.withTable(tableName).build();
         Database.instance.get().execute(dropTableStatement, unit);
         Database.instance.get().commit();
