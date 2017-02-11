@@ -406,7 +406,11 @@ public abstract class SQLConversionUtility {
                 if (multiplePrimaryKeys) {
                     if (fieldType.isObjectType()) {
                         final @Nonnull Converter<?, ?> fieldTypeConverter = ((CustomType.CustomConverterType) fieldType).getConverter();
-                        fillColumnNames(fieldTypeConverter, primaryKeyColumns, customField.getName().toLowerCase() + "_");
+                        if (!fieldTypeConverter.isPrimitiveConverter()) {
+                            fillColumnNames(fieldTypeConverter, primaryKeyColumns, customField.getName().toLowerCase() + "_");
+                        } else {
+                            primaryKeyColumns.add(SQLColumnNameBuilder.withString(customField.getName()).build());
+                        }
                     } else {
                         primaryKeyColumns.add(SQLColumnNameBuilder.withString(customField.getName()).build());
                     }

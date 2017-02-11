@@ -54,6 +54,7 @@ public abstract class JDBCDecoder extends SQLDecoder {
     @Override
     public boolean moveToNextRow() throws DatabaseException {
         try {
+            this.columnIndex = 1;
             return resultSet.next();
         } catch (SQLException exception) {
             throw DatabaseExceptionBuilder.withCause(exception).build();
@@ -65,6 +66,7 @@ public abstract class JDBCDecoder extends SQLDecoder {
     @Override
     public boolean moveToFirstRow() throws DatabaseException {
         try {
+            this.columnIndex = 1;
             return resultSet.first();
         } catch (SQLException exception) {
             throw DatabaseExceptionBuilder.withCause(exception).build();

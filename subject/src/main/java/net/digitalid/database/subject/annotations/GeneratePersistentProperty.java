@@ -60,6 +60,30 @@ public @interface GeneratePersistentProperty {
         }
         
         @Pure
+        private @Nonnull String getExternallyProvidedType(@Nonnull JavaFileGenerator javaFileGenerator, @Nonnull String type, @Nullable DeclaredType converter) {
+            final @Nonnull String externallyProvidedType;
+            if (type.endsWith("Role")) { // TODO: This hardcoding is only temporary, of course, and should be replaced as soon as the type information can be cached and retrieved.
+                externallyProvidedType = javaFileGenerator.importIfPossible("net.digitalid.core.client.Client");
+            } else if (type.equals("Student")) { // TODO: This hardcoding is only temporary, of course, and should be replaced as soon as the type information can be cached and retrieved.
+                externallyProvidedType = javaFileGenerator.importIfPossible(Unit.class);
+            } else if (converter != null) {
+                externallyProvidedType = javaFileGenerator.importIfPossible(converter.getTypeArguments().get(1));
+            } else {
+                externallyProvidedType = "Void";
+            }
+            return externallyProvidedType;
+        }
+        
+        @Pure
+        private @Nullable DeclaredType getDeclaredConverterType(@Nonnull TypeMirror typeArgument) {
+            final @Nonnull String valueConverterName = ProcessingUtility.getQualifiedName(typeArgument) + "Converter";
+            final @Nullable TypeElement valueConverterElement = StaticProcessingEnvironment.getElementUtils().getTypeElement(valueConverterName);
+            if (valueConverterElement == null) { ProcessingLog.warning("No type element was found for $, which might be because that type will only be generated in this round.", valueConverterElement); }
+            final @Nullable DeclaredType valueConverterType = valueConverterElement == null ? null : ProcessingUtility.getSupertype((DeclaredType) valueConverterElement.asType(), Converter.class);
+            return valueConverterType;
+        }
+        
+        @Pure
         @Override
         @TODO(task = "Implement the value validation part as well!", date = "2016-12-09", author = Author.KASPAR_ETTER)
         public void generateFieldsRequiredByMethod(@Nonnull JavaFileGenerator javaFileGenerator, @Nonnull MethodInformation method, @Nonnull TypeInformation typeInformation) {
@@ -90,33 +114,52 @@ public @interface GeneratePersistentProperty {
             
             final @Nonnull String surroundingType = typeInformation.getName();
             final @Nonnull List<@Nonnull ? extends TypeMirror> typeArguments = ((DeclaredType) method.getReturnType()).getTypeArguments();
-            final @Nonnull String valueType = javaFileGenerator.importIfPossible(typeArguments.get(1));
             
-            // TODO: The following code does not yet work for value converters that do not yet exist (i.e. will be generated in the same round).
-            final @Nonnull String valueConverterName = ProcessingUtility.getQualifiedName(typeArguments.get(1)) + "Converter";
-            final @Nullable TypeElement valueConverterElement = StaticProcessingEnvironment.getElementUtils().getTypeElement(valueConverterName);
-            if (valueConverterElement == null) { ProcessingLog.warning("No type element was found for $, which might be because that type will only be generated in this round.", valueConverterElement); }
-            final @Nullable DeclaredType valueConverter = valueConverterElement == null ? null : ProcessingUtility.getSupertype((DeclaredType) valueConverterElement.asType(), Converter.class);
-            
-            final @Nonnull String externallyProvidedType;
-            if (valueType.endsWith("Role")) { // TODO: This hardcoding is only temporary, of course, and should be replaced as soon as the type information can be cached and retrieved.
-                externallyProvidedType = javaFileGenerator.importIfPossible("net.digitalid.core.client.Client");
-            } else if (valueType.equals("Student")) { // TODO: This hardcoding is only temporary, of course, and should be replaced as soon as the type information can be cached and retrieved.
-                externallyProvidedType = javaFileGenerator.importIfPossible(Unit.class);
-            } else if (valueConverter != null) {
-                externallyProvidedType = javaFileGenerator.importIfPossible(valueConverter.getTypeArguments().get(1));
-            } else {
-                externallyProvidedType = "Void";
-            }
             
             final @Nonnull String unitType = javaFileGenerator.importIfPossible(ProcessingUtility.getSupertype(typeInformation.getType(), Subject.class).getTypeArguments().get(0));
             
-            final @Nonnull String converter = CustomType.importConverterType(typeArguments.get(1), javaFileGenerator);
 //            final @Nonnull String converter = (valueType.equals("String") ? javaFileGenerator.importIfPossible("net.digitalid.utility.conversion.converters.StringConverter") : javaFileGenerator.importIfPossible(ProcessingUtility.getQualifiedName(typeArguments.get(1)) + "Converter")) + ".INSTANCE";
             
-            javaFileGenerator.addField("/* TODO: private */ static final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(propertyPackage + "." + propertyType.replace("Simple", "") + "Table") + Brackets.inPointy(unitType + ", " + surroundingType + ", " + valueType + ", " + externallyProvidedType) + " " + upperCasePropertyName + "_TABLE = " + javaFileGenerator.importIfPossible(propertyPackage + "." + propertyType.replace("Simple", "") + "TableBuilder") + "." + Brackets.inPointy(unitType + ", " + surroundingType + ", " + valueType + ", " + externallyProvidedType) + "withName" + Brackets.inRound(Quotes.inDouble(method.getName())) + ".withParentModule(MODULE).withValueConverter" + Brackets.inRound(converter) + (propertyType.contains("Value") ? ".withDefaultValue" + Brackets.inRound(method.hasAnnotation(Default.class) ? method.getAnnotation(Default.class).value() : "null") : "") + ".build()");
+            final @Nonnull String withConverters;
+            final @Nonnull String genericTypesTable;
+            final @Nonnull String genericTypesProperty;
+            final @Nonnull String genericTypesPropertyTable;
+            if (propertyType.contains("Map")) {
+                final @Nullable DeclaredType keyConverterType = getDeclaredConverterType(typeArguments.get(1));
+                final @Nullable DeclaredType valueConverterType = getDeclaredConverterType(typeArguments.get(2));
+                
+                final @Nonnull String keyType = javaFileGenerator.importIfPossible(typeArguments.get(1));
+                final @Nonnull String valueType = javaFileGenerator.importIfPossible(typeArguments.get(2));
+    
+                final @Nonnull String externallyProvidedTypeForKey = getExternallyProvidedType(javaFileGenerator, keyType, keyConverterType);
+                final @Nonnull String externallyProvidedTypeForValue = getExternallyProvidedType(javaFileGenerator, valueType, valueConverterType);
+    
+                final @Nonnull String keyConverter = CustomType.importConverterType(typeArguments.get(1), javaFileGenerator);
+                final @Nonnull String valueConverter = CustomType.importConverterType(typeArguments.get(2), javaFileGenerator);
+    
+                withConverters = ".withKeyConverter" + Brackets.inRound(keyConverter) + ".withValueConverter" + Brackets.inRound(valueConverter);
+                genericTypesTable = Brackets.inPointy(unitType + ", " + surroundingType + ", " + keyType + ", " + valueType + ", " + externallyProvidedTypeForKey + ", " + externallyProvidedTypeForValue);
+                
+                genericTypesProperty = Brackets.inPointy(surroundingType + ", " + keyType + ", " + valueType);
+                genericTypesPropertyTable = Brackets.inPointy(unitType + ", " + surroundingType + ", " + keyType + ", " + valueType);
+            } else {
+                final @Nullable DeclaredType valueConverterType = getDeclaredConverterType(typeArguments.get(1));
+                
+                final @Nonnull String valueType = javaFileGenerator.importIfPossible(typeArguments.get(1));
+                
+                final @Nonnull String externallyProvidedType = getExternallyProvidedType(javaFileGenerator, valueType, valueConverterType);
+    
+                final @Nonnull String valueConverter = CustomType.importConverterType(typeArguments.get(1), javaFileGenerator);
+                
+                withConverters = ".withValueConverter" + Brackets.inRound(valueConverter);
+                genericTypesTable = Brackets.inPointy(unitType + ", " + surroundingType + ", " + valueType + ", " + externallyProvidedType);
+                genericTypesProperty = Brackets.inPointy(surroundingType + ", " + valueType);
+                genericTypesPropertyTable = Brackets.inPointy(unitType + ", " + surroundingType + ", " + valueType);
+            }
             
-            javaFileGenerator.addField("private final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(propertyPackage + ".Writable" + propertyType) + Brackets.inPointy(surroundingType + ", " + valueType) + " " + method.getName() + " = " + javaFileGenerator.importIfPossible(propertyPackage + ".Writable" + propertyType + "ImplementationBuilder") + "." + Brackets.inPointy(unitType + ", " + surroundingType + ", " + valueType) + "withSubject(this).withTable" + Brackets.inRound(upperCasePropertyName + "_TABLE") + ".build()");
+            javaFileGenerator.addField("/* TODO: private */ static final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(propertyPackage + "." + propertyType.replace("Simple", "") + "Table") + genericTypesTable + " " + upperCasePropertyName + "_TABLE = " + javaFileGenerator.importIfPossible(propertyPackage + "." + propertyType.replace("Simple", "") + "TableBuilder") + "." + genericTypesTable + "withName" + Brackets.inRound(Quotes.inDouble(method.getName())) + ".withParentModule(MODULE)" + withConverters + (propertyType.contains("Value") ? ".withDefaultValue" + Brackets.inRound(method.hasAnnotation(Default.class) ? method.getAnnotation(Default.class).value() : "null") : "") + ".build()");
+            
+            javaFileGenerator.addField("private final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(propertyPackage + ".Writable" + propertyType) + genericTypesProperty + " " + method.getName() + " = " + javaFileGenerator.importIfPossible(propertyPackage + ".Writable" + propertyType + "ImplementationBuilder") + "." + genericTypesPropertyTable + "withSubject(this).withTable" + Brackets.inRound(upperCasePropertyName + "_TABLE") + ".build()");
         }
         
         @Pure
