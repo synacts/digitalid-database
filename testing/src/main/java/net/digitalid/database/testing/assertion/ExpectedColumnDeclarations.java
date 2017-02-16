@@ -19,9 +19,6 @@ import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
 
 import org.junit.Assert;
 
-/**
- *
- */
 @GenerateBuilder
 @GenerateSubclass
 public abstract class ExpectedColumnDeclarations {

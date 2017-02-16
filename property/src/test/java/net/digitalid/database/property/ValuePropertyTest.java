@@ -13,7 +13,6 @@ import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.validation.annotations.generation.Default;
-import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
@@ -85,14 +84,14 @@ public class ValuePropertyTest extends SQLTestBase {
     public void testStringProperty() throws DatabaseException, RecoveryException {
         object.name().set("test");
         object.name().reset();
-        assertEquals("test", object.name().get());
+        assertThat(object.name().get()).isEqualTo("test");
     }
     
     @Test
     public void testIntegerProperty() throws DatabaseException, RecoveryException {
         object.age().set(29);
         object.age().reset();
-        assertSame(29, object.age().get());
+        assertThat(object.age().get()).isEqualTo(29);
     }
     
     @Test
@@ -101,10 +100,10 @@ public class ValuePropertyTest extends SQLTestBase {
         object.friends().add(friend);
         object.friends().reset();
         final @Nonnull @NonFrozen ReadOnlySet<@Nonnull @Valid Student> friends = object.friends().get();
-        assertSame(2, friends.size());
-        assertTrue(friends.get(0).getKey() == 123 || friends.get(0).getKey() == 124);
-        assertTrue(friends.get(1).getKey() == 123 || friends.get(1).getKey() == 124);
-        assertTrue(friends.get(0).getKey() != friends.get(1).getKey());
+        assertThat(friends).hasSize(2);
+        assertThat(friends.get(0).getKey() == 123 || friends.get(0).getKey() == 124).isTrue();
+        assertThat(friends.get(1).getKey() == 123 || friends.get(1).getKey() == 124).isTrue();
+        assertThat(friends.get(0).getKey() != friends.get(1).getKey()).isTrue();
         // TODO: contains does not work yet
 //        assertTrue(friends.contains(object));
 //        assertTrue(friends.contains(friend));
@@ -116,10 +115,10 @@ public class ValuePropertyTest extends SQLTestBase {
         object.grades().add(2, 2);
         object.grades().reset();
         final @Nonnull @NonFrozen ReadOnlyMap<@Nonnull @Valid("key") Integer, @Nonnull @Valid Integer> grades = object.grades().get();
-        assertSame(2, grades.size());
-        assertTrue(grades.containsKey(1));
-        assertSame(5, grades.get(1));
-        assertSame(2, grades.get(2));
+        assertThat(grades.entrySet()).hasSize(2); // TODO: Why is there no assert for maps? (This is probably due to the read-only interface.)
+        assertThat(grades.containsKey(1)).isTrue();
+        assertThat(grades.get(1)).isEqualTo(5);
+        assertThat(grades.get(2)).isEqualTo(2);
     }
     
 }

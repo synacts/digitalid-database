@@ -24,7 +24,7 @@ public class SubjectTest extends RootTest {
     @Test
     public void testGeneratedModule() {
         final @Nonnull TestSubject subject = TestSubjectBuilder.build();
-        assertEquals("TestSubject", subject.module().getName());
+        assertThat(subject.module().getName()).as("the name of the generated module").isEqualTo("TestSubject");
     }
     
 }

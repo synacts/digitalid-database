@@ -16,7 +16,7 @@ public class SQLDeleteStatementTest extends SQLStatementTest {
     public void testDeleteStatement() {
         final @Nonnull SQLNumberComparisonBooleanExpression whereClause = firstColumn.equal(SQLParameter.NUMBER);
         final @Nonnull SQLDeleteStatement deleteStatement = SQLDeleteStatementBuilder.withTable(qualifiedTable).withWhereClause(whereClause).build();
-        assertEquals("DELETE FROM \"default\".\"test_table\" WHERE (\"first_column\") = (?)", SQLDialect.unparse(deleteStatement, Unit.DEFAULT));
+        assertThat(SQLDialect.unparse(deleteStatement, Unit.DEFAULT)).isEqualTo("DELETE FROM \"default\".\"test_table\" WHERE (\"first_column\") = (?)");
     }
     
 }

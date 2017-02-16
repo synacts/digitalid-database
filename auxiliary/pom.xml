@@ -9,6 +9,10 @@
     
     <artifactId>database-auxiliary</artifactId>
     
+    <properties>
+        <assertj.classes>net.digitalid.database.auxiliary.Time</assertj.classes>
+    </properties>
+    
     <dependencies>
         <dependency>
             <groupId>net.digitalid.database</groupId>

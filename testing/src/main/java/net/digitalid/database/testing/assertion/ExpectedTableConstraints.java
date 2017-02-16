@@ -16,7 +16,6 @@ import net.digitalid.utility.collections.map.FreezableHashMapBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 
-import net.digitalid.database.annotations.constraints.ForeignKey;
 import net.digitalid.database.enumerations.ForeignKeyAction;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
@@ -24,9 +23,6 @@ import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
 
 import org.junit.Assert;
 
-/**
- *
- */
 @GenerateBuilder
 @GenerateSubclass
 public class ExpectedTableConstraints {

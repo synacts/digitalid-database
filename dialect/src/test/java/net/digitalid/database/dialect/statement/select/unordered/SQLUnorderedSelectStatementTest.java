@@ -40,7 +40,7 @@ public class SQLUnorderedSelectStatementTest extends SQLStatementTest {
         final @Nonnull SQLNumberComparisonBooleanExpression whereClause = qualifiedColumn.equal(SQLNumberLiteralBuilder.withValue(8l).build());
         final @Nonnull SQLGroupClause groupClause = SQLGroupClauseBuilder.withColumns(ImmutableList.withElements(firstColumn)).withExpression(whereClause).build();
         final @Nonnull SQLSimpleSelectStatement selectStatement = SQLSimpleSelectStatementBuilder.withColumns(ImmutableList.withElements(SQLAllColumnsBuilder.withTable(tableAlias).build())).withSources(ImmutableList.withElements(joinSource)).withDistinct(true).withWhereClause(whereClause).withGroupClause(groupClause).build();
-        assertEquals("SELECT DISTINCT \"t\".* FROM ((\"default\".\"test_table\") INNER (\"default\".\"test_table\") USING (\"first_column\", \"second_column\", \"third_column\")) AS \"t\" WHERE (\"t\".\"first_column\") = (8) GROUP BY \"first_column\" HAVING (\"t\".\"first_column\") = (8)", SQLDialect.unparse(selectStatement, Unit.DEFAULT));
+        assertThat(SQLDialect.unparse(selectStatement, Unit.DEFAULT)).isEqualTo("SELECT DISTINCT \"t\".* FROM ((\"default\".\"test_table\") INNER (\"default\".\"test_table\") USING (\"first_column\", \"second_column\", \"third_column\")) AS \"t\" WHERE (\"t\".\"first_column\") = (8) GROUP BY \"first_column\" HAVING (\"t\".\"first_column\") = (8)");
     }
     
 }

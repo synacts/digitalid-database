@@ -24,8 +24,8 @@ public class SQLInsertStatementTest extends SQLStatementTest {
         final @Nonnull SQLStringLiteral thirdExpression = SQLStringLiteralBuilder.withString("name").build();
         final @Nonnull SQLExpressions expressions = SQLExpressionsBuilder.withExpressions(ImmutableList.withElements(firstExpression, secondExpression, thirdExpression)).build();
         final @Nonnull SQLRows rows = SQLRowsBuilder.withRows(ImmutableList.withElements(expressions, expressions)).build();
-        final @Nonnull SQLInsertStatement deleteStatement = SQLInsertStatementBuilder.withTable(qualifiedTable).withColumns(columns).withValues(rows).withReplacing(true).build();
-        assertEquals("INSERT OR REPLACE INTO \"default\".\"test_table\" (\"first_column\", \"second_column\", \"third_column\") VALUES (8, TRUE, \"name\"), (8, TRUE, \"name\")", SQLDialect.unparse(deleteStatement, Unit.DEFAULT));
+        final @Nonnull SQLInsertStatement insertStatement = SQLInsertStatementBuilder.withTable(qualifiedTable).withColumns(columns).withValues(rows).withReplacing(true).build();
+        assertThat(SQLDialect.unparse(insertStatement, Unit.DEFAULT)).isEqualTo("INSERT OR REPLACE INTO \"default\".\"test_table\" (\"first_column\", \"second_column\", \"third_column\") VALUES (8, TRUE, \"name\"), (8, TRUE, \"name\")");
     }
     
 }
