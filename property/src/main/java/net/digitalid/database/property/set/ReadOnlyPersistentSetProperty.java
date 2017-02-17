@@ -20,11 +20,11 @@ import net.digitalid.database.subject.Subject;
 /**
  * This read-only property stores a set of values in the persistent database.
  * 
- * @see WritablePersistentSetPropertyImplementation
+ * @see WritablePersistentSetProperty
  * @see ReadOnlyPersistentSimpleSetProperty
  */
 @ThreadSafe
-@ReadOnly(WritablePersistentSetPropertyImplementation.class)
+@ReadOnly(WritablePersistentSetProperty.class)
 public interface ReadOnlyPersistentSetProperty<@Unspecifiable SUBJECT extends Subject<?>, @Unspecifiable VALUE, @Unspecifiable READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>> extends ReadOnlySetProperty<VALUE, READONLY_SET, DatabaseException, RecoveryException, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>, ReadOnlyPersistentSetProperty<SUBJECT, VALUE, READONLY_SET>>, PersistentProperty<SUBJECT, PersistentSetPropertyEntry<SUBJECT, VALUE>, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>> {
     
     /* -------------------------------------------------- Getter -------------------------------------------------- */

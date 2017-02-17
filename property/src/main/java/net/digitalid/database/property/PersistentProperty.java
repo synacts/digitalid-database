@@ -13,12 +13,16 @@ import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.property.map.ReadOnlyPersistentMapProperty;
+import net.digitalid.database.property.set.ReadOnlyPersistentSetProperty;
 import net.digitalid.database.property.value.ReadOnlyPersistentValueProperty;
 import net.digitalid.database.subject.Subject;
 
 /**
  * A persistent property belongs to a {@link Subject subject} and stores its values in the database with the subject used as the key.
  * 
+ * @see ReadOnlyPersistentMapProperty
+ * @see ReadOnlyPersistentSetProperty
  * @see ReadOnlyPersistentValueProperty
  */
 @Mutable

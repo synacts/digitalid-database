@@ -24,11 +24,11 @@ import net.digitalid.database.subject.Subject;
 /**
  * This read-only property stores a map of key-value pairs in the persistent database.
  * 
- * @see WritablePersistentMapPropertyImplementation
+ * @see WritablePersistentMapProperty
  * @see ReadOnlyPersistentSimpleMapProperty
  */
 @ThreadSafe
-@ReadOnly(WritablePersistentMapPropertyImplementation.class)
+@ReadOnly(WritablePersistentMapProperty.class)
 public interface ReadOnlyPersistentMapProperty<@Unspecifiable SUBJECT extends Subject<?>, @Unspecifiable KEY, @Unspecifiable VALUE, @Unspecifiable READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>> extends ReadOnlyMapProperty<KEY, VALUE, READONLY_MAP, DatabaseException, RecoveryException, PersistentMapObserver<SUBJECT, KEY, VALUE, READONLY_MAP>, ReadOnlyPersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP>>, PersistentProperty<SUBJECT, PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>, PersistentMapObserver<SUBJECT, KEY, VALUE, READONLY_MAP>> {
     
     /* -------------------------------------------------- Getters -------------------------------------------------- */

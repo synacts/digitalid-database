@@ -24,10 +24,10 @@ import net.digitalid.database.subject.Subject;
 /**
  * This read-only property stores a value in the persistent database.
  * 
- * @see WritablePersistentValuePropertyImplementation
+ * @see WritablePersistentValueProperty
  */
 @ThreadSafe
-@ReadOnly(WritablePersistentValuePropertyImplementation.class)
+@ReadOnly(WritablePersistentValueProperty.class)
 public interface ReadOnlyPersistentValueProperty<@Unspecifiable SUBJECT extends Subject<?>, @Specifiable VALUE> extends ReadOnlyValueProperty<VALUE, DatabaseException, RecoveryException, PersistentValueObserver<SUBJECT, VALUE>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE>>, PersistentProperty<SUBJECT, PersistentValuePropertyEntry<SUBJECT, VALUE>, PersistentValueObserver<SUBJECT, VALUE>> {
     
     /* -------------------------------------------------- Getter -------------------------------------------------- */

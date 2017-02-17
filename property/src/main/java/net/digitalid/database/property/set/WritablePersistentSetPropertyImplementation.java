@@ -10,9 +10,6 @@ import net.digitalid.utility.annotations.ownership.Captured;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Unmodified;
 import net.digitalid.utility.annotations.type.ThreadSafe;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
-import net.digitalid.utility.collaboration.enumerations.Priority;
 import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.collections.set.FreezableSet;
 import net.digitalid.utility.collections.set.ReadOnlySet;
@@ -74,7 +71,6 @@ public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable
      */
     @Pure
     @NonCommitting
-    @TODO(task = "Instead of reading and adding a single entry, select and add all entries of the subject to the freezable set.", date = "2016-09-30", author = Author.KASPAR_ETTER, assignee = Author.STEPHANIE_STROKA, priority = Priority.HIGH)
     protected void load(final boolean locking) throws DatabaseException, RecoveryException {
         if (locking) { lock.lock(); }
         try {

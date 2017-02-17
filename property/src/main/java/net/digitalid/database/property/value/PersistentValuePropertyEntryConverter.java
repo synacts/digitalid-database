@@ -9,7 +9,6 @@ import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.annotations.parameter.Unmodified;
-import net.digitalid.utility.collaboration.annotations.Review;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collaboration.enumerations.Priority;
@@ -91,8 +90,8 @@ public abstract class PersistentValuePropertyEntryConverter<@Unspecifiable UNIT 
     
     @Pure
     @Override
-    public @Capturable <@Unspecifiable EXCEPTION extends ConnectionException> @Nonnull PersistentValuePropertyEntry<SUBJECT, VALUE> recover(@Nonnull @NonCaptured @Modified Decoder<EXCEPTION> decoder, @Nonnull UNIT site) throws EXCEPTION, RecoveryException {
-        final @Nonnull SUBJECT subject = getPropertyTable().getParentModule().getSubjectConverter().recover(decoder, site);
+    public @Capturable <@Unspecifiable EXCEPTION extends ConnectionException> @Nonnull PersistentValuePropertyEntry<SUBJECT, VALUE> recover(@Nonnull @NonCaptured @Modified Decoder<EXCEPTION> decoder, @Nonnull UNIT unit) throws EXCEPTION, RecoveryException {
+        final @Nonnull SUBJECT subject = getPropertyTable().getParentModule().getSubjectConverter().recover(decoder, unit);
         final @Nonnull Time time = TimeConverter.INSTANCE.recover(decoder, null);
         final VALUE value = getPropertyTable().getValueConverter().recover(decoder, getPropertyTable().getProvidedObjectExtractor().evaluate(subject));
         return new PersistentValuePropertyEntrySubclass<>(subject, time, value);

@@ -1,10 +1,13 @@
 package net.digitalid.database.property;
 
+import java.util.Map;
+
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collections.map.ReadOnlyMap;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
@@ -54,6 +57,7 @@ abstract class Student extends RootClass implements Subject<Unit> {
     
     @Pure
     @GeneratePersistentProperty
+    @TODO(task = "Introduce a way to pass a 'provided object extractor' to the friends table that provides the unit of the subject to the value recovery .", date = "2017-02-17", author = Author.KASPAR_ETTER)
     public abstract @Nonnull WritablePersistentSimpleSetProperty<Student, Student> friends();
 
     @Pure
@@ -100,25 +104,18 @@ public class ValuePropertyTest extends SQLTestBase {
         object.friends().add(friend);
         object.friends().reset();
         final @Nonnull @NonFrozen ReadOnlySet<@Nonnull @Valid Student> friends = object.friends().get();
-        assertThat(friends).hasSize(2);
-        assertThat(friends.get(0).getKey() == 123 || friends.get(0).getKey() == 124).isTrue();
-        assertThat(friends.get(1).getKey() == 123 || friends.get(1).getKey() == 124).isTrue();
-        assertThat(friends.get(0).getKey() != friends.get(1).getKey()).isTrue();
-        // TODO: contains does not work yet
-//        assertTrue(friends.contains(object));
-//        assertTrue(friends.contains(friend));
+        // TODO: Make the following work! assertThat(friends).as("friends").containsExactly/*InAnyOrder*/(object, friend); // TODO: Do we really guarantee the order in this case?
+        assertThat(friends).as("friends").extracting("key").containsExactly(123l, 124l); // TODO: Remove this line afterwards.
     }
     
     @Test
+    @SuppressWarnings("unchecked")
     public void testGradesProperty() throws DatabaseException, RecoveryException {
         object.grades().add(1, 5);
         object.grades().add(2, 2);
         object.grades().reset();
-        final @Nonnull @NonFrozen ReadOnlyMap<@Nonnull @Valid("key") Integer, @Nonnull @Valid Integer> grades = object.grades().get();
-        assertThat(grades.entrySet()).hasSize(2); // TODO: Why is there no assert for maps? (This is probably due to the read-only interface.)
-        assertThat(grades.containsKey(1)).isTrue();
-        assertThat(grades.get(1)).isEqualTo(5);
-        assertThat(grades.get(2)).isEqualTo(2);
+        final @Nonnull Map<@Nonnull @Valid("key") Integer, @Nonnull @Valid Integer> grades = (Map<@Nonnull @Valid("key") Integer, @Nonnull @Valid Integer>) object.grades().get();
+        assertThat(grades).as("grades").hasSize(2).containsKey(1).containsEntry(1, 5).containsEntry(2, 2);
     }
     
 }
