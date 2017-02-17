@@ -5,6 +5,8 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
@@ -39,7 +41,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 /**
  *
  */
-public abstract class AndroidDatabaseInstance extends SQLiteOpenHelper implements Database {
+@GenerateBuilder
+@GenerateSubclass
+public class AndroidDatabaseInstance extends SQLiteOpenHelper implements Database {
     
     protected AndroidDatabaseInstance(@Nonnull Context context, @Nonnull String databaseName, int databaseVersion) {
         // The third parameter is the SQLite database cursor factory. If set to null, the default cursor factory is chosen.
@@ -87,6 +91,7 @@ public abstract class AndroidDatabaseInstance extends SQLiteOpenHelper implement
     
     @Impure
     private void executeStatement(@Nonnull SQLTableStatement tableStatement, @Nonnull Unit unit) throws DatabaseException {
+        begin();
         final @Nonnull StringBuilder stringBuilder = new StringBuilder();
         tableStatement.unparse(SQLDialect.instance.get(), unit, stringBuilder);
         getWritableDatabase().execSQL(stringBuilder.toString());
@@ -107,6 +112,7 @@ public abstract class AndroidDatabaseInstance extends SQLiteOpenHelper implement
     @Pure
     @Override
     public @Nonnull SQLActionEncoder getEncoder(@Nonnull SQLInsertStatement insertStatement, @Nonnull Unit unit) throws DatabaseException {
+        begin();
         final @Nonnull @NonEmpty @MaxSize(63) String tableName = insertStatement.getTable().getTable().getString();
         final @Nonnull @NonNullableElements String[] columnNames = insertStatement.getColumns().map(SQLIdentifier::getString).toArray(new String[0]);
         return AndroidInsertEncoderBuilder.withSqLiteDatabase(getWritableDatabase()).withTableName(tableName).withColumnNames(columnNames).build();
@@ -139,6 +145,7 @@ public abstract class AndroidDatabaseInstance extends SQLiteOpenHelper implement
     @Pure
     @Override
     public @Nonnull SQLActionEncoder getEncoder(@Nonnull SQLUpdateStatement updateStatement, @Nonnull Unit unit) throws DatabaseException {
+        begin();
         final @Nonnull @NonEmpty @MaxSize(63) String tableName = updateStatement.getTable().getTable().getString();
         final @Nonnull @NonNullableElements String[] columnNames = updateStatement.getAssignments().map(assignment -> assignment.getColumn().getString()).toArray(new String[0]);
         final @Nullable SQLBooleanExpression whereClause = updateStatement.getWhereClause();
@@ -151,6 +158,7 @@ public abstract class AndroidDatabaseInstance extends SQLiteOpenHelper implement
     @Pure
     @Override
     public @Nonnull SQLActionEncoder getEncoder(@Nonnull SQLDeleteStatement deleteStatement, @Nonnull Unit unit) throws DatabaseException {
+        begin();
         final @Nonnull @NonEmpty @MaxSize(63) String tableName = deleteStatement.getTable().getTable().getString();
         final @Nullable String whereClauseString = getWhereClauseString(deleteStatement.getWhereClause(), unit);
         final int sizeWhereArgs = getNumberWhereClauseParameters(whereClauseString);
@@ -160,6 +168,7 @@ public abstract class AndroidDatabaseInstance extends SQLiteOpenHelper implement
     @Pure
     @Override
     public @Nonnull SQLQueryEncoder getEncoder(@Nonnull SQLSelectStatement selectStatement, @Nonnull Unit unit) throws DatabaseException {
+        begin();
         final @Nonnull StringBuilder stringBuilder = new StringBuilder();
         selectStatement.unparse(SQLDialect.instance.get(), unit, stringBuilder);
         final @Nullable String whereClauseString = getWhereClauseString(selectStatement, unit);

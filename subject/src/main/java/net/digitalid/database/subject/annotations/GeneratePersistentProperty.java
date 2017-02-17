@@ -20,6 +20,7 @@ import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.conversion.model.CustomType;
+import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.generator.annotations.meta.Interceptor;
 import net.digitalid.utility.generator.information.method.MethodInformation;
 import net.digitalid.utility.generator.information.type.TypeInformation;
@@ -134,8 +135,8 @@ public @interface GeneratePersistentProperty {
                 final @Nonnull String externallyProvidedTypeForKey = getExternallyProvidedType(javaFileGenerator, keyType, keyConverterType);
                 final @Nonnull String externallyProvidedTypeForValue = getExternallyProvidedType(javaFileGenerator, valueType, valueConverterType);
     
-                final @Nonnull String keyConverter = CustomType.importConverterType(typeArguments.get(1), javaFileGenerator);
-                final @Nonnull String valueConverter = CustomType.importConverterType(typeArguments.get(2), javaFileGenerator);
+                final @Nonnull String keyConverter = CustomType.importConverterType(typeArguments.get(1), FiniteIterable.of(), javaFileGenerator);
+                final @Nonnull String valueConverter = CustomType.importConverterType(typeArguments.get(2), FiniteIterable.of(), javaFileGenerator);
     
                 withConverters = ".withKeyConverter" + Brackets.inRound(keyConverter) + ".withValueConverter" + Brackets.inRound(valueConverter);
                 genericTypesTable = Brackets.inPointy(unitType + ", " + surroundingType + ", " + keyType + ", " + valueType + ", " + externallyProvidedTypeForKey + ", " + externallyProvidedTypeForValue);
@@ -149,7 +150,7 @@ public @interface GeneratePersistentProperty {
                 
                 final @Nonnull String externallyProvidedType = getExternallyProvidedType(javaFileGenerator, valueType, valueConverterType);
     
-                final @Nonnull String valueConverter = CustomType.importConverterType(typeArguments.get(1), javaFileGenerator);
+                final @Nonnull String valueConverter = CustomType.importConverterType(typeArguments.get(1), FiniteIterable.of(), javaFileGenerator);
                 
                 withConverters = ".withValueConverter" + Brackets.inRound(valueConverter);
                 genericTypesTable = Brackets.inPointy(unitType + ", " + surroundingType + ", " + valueType + ", " + externallyProvidedType);

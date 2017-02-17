@@ -24,6 +24,7 @@ import net.digitalid.utility.validation.annotations.math.NonNegative;
 import net.digitalid.utility.validation.annotations.math.NonPositive;
 import net.digitalid.utility.validation.annotations.math.Positive;
 import net.digitalid.utility.validation.annotations.math.modulo.MultipleOf;
+import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
 import net.digitalid.database.annotations.constraints.ForeignKey;
@@ -294,7 +295,7 @@ public abstract class SQLConversionUtility {
      * Returns an immutable list of column declarations for a given converter.
      */
     @Pure
-    public static <@Unspecifiable TYPE> @Nonnull ImmutableList<@Nonnull SQLColumnDeclaration> getColumnDeclarations(@Nonnull Converter<TYPE, ?> converter) {
+    public static <@Unspecifiable TYPE> @Nonnull @NonEmpty ImmutableList<@Nonnull SQLColumnDeclaration> getColumnDeclarations(@Nonnull Converter<TYPE, ?> converter) {
         final @Nonnull @Modifiable FreezableArrayList<@Nonnull SQLColumnDeclaration> columnDeclarations = FreezableArrayList.withNoElements();
         SQLConversionUtility.fillColumnDeclarations(converter, columnDeclarations, false, false, "");
         return ImmutableList.withElementsOf(columnDeclarations);
