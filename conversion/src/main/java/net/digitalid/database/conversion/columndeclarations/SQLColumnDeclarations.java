@@ -28,7 +28,6 @@ import net.digitalid.utility.validation.annotations.math.NonNegative;
 
 import net.digitalid.database.annotations.constraints.ForeignKey;
 import net.digitalid.database.annotations.constraints.PrimaryKey;
-import net.digitalid.database.annotations.type.Embedded;
 
 /**
  * The SQL column declarations class collects information about the SQL table columns that are required to convert an object to SQL.
@@ -228,7 +227,7 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
         int columnCount = currentColumn;
         if (field.getCustomType().isObjectType()) {
             final CustomType.@Nonnull TupleType tupleType = (CustomType.@Nonnull TupleType) field.getCustomType();
-            if (field.isAnnotatedWith(Embedded.class)) {
+            if (false) { // TODO: if (field.isAnnotatedWith(Embedded.class)) {
                 declareColumns(((CustomType.CustomConverterType) tupleType).getConverter());
             } else if (field.isAnnotatedWith(ForeignKey.class)) {
                 final @Nonnull CustomAnnotation references = field.getAnnotation(ForeignKey.class);
@@ -242,10 +241,10 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
                 addReferenceColumnDeclarationToList(columnDeclaration, getIndexOfReferencedColumnDeclaration(references.get("columnName", String.class), referencedTableColumnDeclarations));
                 columnCountForGroup.add(1);
             } else {
-                throw new RuntimeException(String.format("Expected @$ or @$ annotation on non-primitive field $", Embedded.class.getSimpleName(), ForeignKey.class.getSimpleName(), field.getName())); // TODO: Was ConformityViolationException
+                throw new RuntimeException(String.format("Expected @Embedded or @$ annotation on non-primitive field $", ForeignKey.class.getSimpleName(), field.getName())); // TODO: Was ConformityViolationException
             }
         } else if (field.getCustomType().isCompositeType()) {
-            if (field.isAnnotatedWith(Embedded.class)) {
+            if (false) { // TODO: if (field.isAnnotatedWith(Embedded.class)) {
                 @Nonnull CustomType fieldType = field.getCustomType();
                 int i = 0;
                 while (fieldType.isCompositeType()) {
@@ -266,7 +265,7 @@ public abstract class SQLColumnDeclarations<@Nonnull I extends SQLColumnDeclarat
                         allOtherAnnotations.add(annotation);
                     }
                 }
-                allOtherAnnotations.add(CustomAnnotation.with(Embedded.class, ImmutableMap.withMappingsOf(Collections.emptyMap())));
+                // TODO: allOtherAnnotations.add(CustomAnnotation.with(Embedded.class, ImmutableMap.withMappingsOf(Collections.emptyMap())));
                 dependentTableColumnDeclarations.setField(CustomField.with(field.getCustomType(), field.getName(), ImmutableList.withElementsOf(allOtherAnnotations)));
                 // add columns that reference the primary key(s) of the main table
                 dependentTablesColumnDeclarations.put(tableName + "_" + field.getName(), dependentTableColumnDeclarations);

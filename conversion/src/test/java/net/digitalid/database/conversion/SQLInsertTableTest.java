@@ -16,7 +16,7 @@ import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColu
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTable;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.testing.SQLTestBase;
+import net.digitalid.database.testing.DatabaseTest;
 import net.digitalid.database.unit.Unit;
 
 import org.h2.jdbc.JdbcBatchUpdateException;
@@ -27,7 +27,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public class SQLInsertTableTest extends SQLTestBase {
+public class SQLInsertTableTest extends DatabaseTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();

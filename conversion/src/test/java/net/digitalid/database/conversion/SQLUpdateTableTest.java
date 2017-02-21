@@ -12,14 +12,14 @@ import net.digitalid.database.conversion.testenvironment.embedded.EmbeddedConver
 import net.digitalid.database.conversion.testenvironment.embedded.EmbeddedConvertiblesConverter;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTable;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
-import net.digitalid.database.testing.SQLTestBase;
+import net.digitalid.database.testing.DatabaseTest;
 import net.digitalid.database.unit.Unit;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public class SQLUpdateTableTest extends SQLTestBase {
+public class SQLUpdateTableTest extends DatabaseTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();

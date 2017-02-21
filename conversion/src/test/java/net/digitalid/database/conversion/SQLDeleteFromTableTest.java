@@ -12,17 +12,15 @@ import net.digitalid.database.conversion.testenvironment.embedded.EmbeddedConver
 import net.digitalid.database.conversion.testenvironment.embedded.EmbeddedConvertiblesConverter;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTable;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
-import net.digitalid.database.testing.SQLTestBase;
+import net.digitalid.database.testing.DatabaseTest;
 import net.digitalid.database.unit.Unit;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 /**
  * Tests whether SQL delete statement works.
  */
-public class SQLDeleteFromTableTest extends SQLTestBase {
+public class SQLDeleteFromTableTest extends DatabaseTest {
 
     private static final @Nonnull Unit unit = Unit.DEFAULT;
     

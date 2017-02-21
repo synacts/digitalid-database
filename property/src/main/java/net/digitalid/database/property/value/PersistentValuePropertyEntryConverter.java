@@ -23,11 +23,11 @@ import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.string.DomainName;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.constraints.PrimaryKey;
-import net.digitalid.database.auxiliary.Time;
 import net.digitalid.database.auxiliary.TimeConverter;
 import net.digitalid.database.property.PersistentPropertyEntryConverter;
 import net.digitalid.database.subject.Subject;

@@ -7,16 +7,10 @@ import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 
-import net.digitalid.database.annotations.type.Embedded;
-
-/**
- *
- */
 @GenerateBuilder
 @GenerateConverter
 public class CollectionAndAdditionalFieldClass  {
     
-    @Embedded
     public final @Nonnull @NonNullableElements FreezableArrayList<Integer> listOfIntegers;
     
     public final Integer additionalField;

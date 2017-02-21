@@ -9,10 +9,12 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.interfaces.Converter;
-import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.testing.RootTest;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
@@ -22,15 +24,25 @@ import net.digitalid.database.testing.assertion.ExpectedTableConstraints;
 import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
 import net.digitalid.database.unit.Unit;
 
+import org.assertj.db.api.Assertions;
+import org.assertj.db.api.ChangesAssert;
+import org.assertj.db.api.RequestAssert;
+import org.assertj.db.api.TableAssert;
+import org.assertj.db.type.Changes;
+import org.assertj.db.type.Request;
+import org.assertj.db.type.Table;
 import org.h2.tools.Server;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 
 /**
- * The base class for all unit tests that interact with a database.
+ * The base class for all unit tests that interact with the database.
  */
-public class SQLTestBase extends RootTest {
+@Stateless
+public class DatabaseTest extends RootTest {
+    
+    /* -------------------------------------------------- Instance -------------------------------------------------- */
     
     private static @Nonnull Server server;
     
@@ -52,6 +64,7 @@ public class SQLTestBase extends RootTest {
      */
     @Impure
     @BeforeClass
+    @TODO(task = "Is it not sufficient to start the TCP server only when debugging?", date = "2017-02-21", author = Author.KASPAR_ETTER)
     public static void setUpSQL() throws Exception {
         final boolean debugH2 = Boolean.parseBoolean(System.getProperty("debugH2"));
         if (!initialized) {
@@ -62,6 +75,42 @@ public class SQLTestBase extends RootTest {
         }
         server.start();
     }
+    
+    /* -------------------------------------------------- Tear Down -------------------------------------------------- */
+    
+    @Impure
+    @AfterClass
+    public static void tearDownSQL() throws Exception {
+        server.shutdown();
+    }
+    
+    /* -------------------------------------------------- Assertions -------------------------------------------------- */
+    
+    /**
+     * Returns an assertion about the given table.
+     */
+    @Pure
+    public static @Nonnull TableAssert assertThat(@Nonnull Table table) {
+        return Assertions.assertThat(table);
+    }
+    
+    /**
+     * Returns an assertion about the given request.
+     */
+    @Pure
+    public static @Nonnull RequestAssert assertThat(@Nonnull Request request) {
+        return Assertions.assertThat(request);
+    }
+    
+    /**
+     * Returns an assertion about the given changes.
+     */
+    @Pure
+    public static @Nonnull ChangesAssert assertThat(@Nonnull Changes changes) {
+        return Assertions.assertThat(changes);
+    }
+    
+    // TODO: Clean up the following mess!
     
     /* -------------------------------------------------- Drop Table -------------------------------------------------- */
     
@@ -89,13 +138,7 @@ public class SQLTestBase extends RootTest {
         deleteFromTable(converter.getTypeName(), unit);
     }
     
-    /* -------------------------------------------------- Tear Down -------------------------------------------------- */
-    
-    @Impure
-    @AfterClass
-    public static void tearDownSQL() throws Exception {
-        server.shutdown();
-    }
+    /* -------------------------------------------------- Existence -------------------------------------------------- */
     
     @Pure
     protected void assertTableExists(@Nonnull String tableName, @Nonnull String schema) throws DatabaseException {
@@ -118,48 +161,6 @@ public class SQLTestBase extends RootTest {
             Assert.assertSame("Table does exist (" + query + ")", 0, resultSet.getInt(1));
         } catch (SQLException e) {
             throw DatabaseExceptionBuilder.withCause(e).build();
-        }
-    }
-    
-    protected enum UpdateAction {
-        CASCADE(0),
-        RESTRICT(1);
-        
-        final int i;
-        
-        UpdateAction(int i) {
-            this.i = i;
-        }
-        
-        @Pure
-        public static @Nonnull UpdateAction get(int i) {
-            for (UpdateAction action : UpdateAction.values()) {
-                if (action.i == i) {
-                    return action;
-                }
-            }
-            throw CaseExceptionBuilder.withVariable("UpdateAction").withValue(i).build();
-        }
-    }
-    
-    protected enum DeleteAction {
-        CASCADE(0),
-        RESTRICT(1);
-        
-        final int i;
-        
-        DeleteAction(int i) {
-            this.i = i;
-        }
-    
-        @Pure
-        public static @Nonnull DeleteAction get(int i) {
-            for (DeleteAction action : DeleteAction.values()) {
-                if (action.i == i) {
-                    return action;
-                }
-            }
-            throw CaseExceptionBuilder.withVariable("DeleteAction").withValue(i).build();
         }
     }
     

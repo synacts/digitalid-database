@@ -45,7 +45,6 @@
         <module>jdbc-java7</module>
         <module>android-java7</module>
         <module>conversion-java7</module>
-        <module>auxiliary-java7</module>
         <module>property-java7</module>
     </modules>
 

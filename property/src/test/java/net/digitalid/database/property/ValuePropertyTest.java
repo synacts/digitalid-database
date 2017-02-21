@@ -27,7 +27,7 @@ import net.digitalid.database.property.set.WritablePersistentSimpleSetProperty;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
 import net.digitalid.database.subject.Subject;
 import net.digitalid.database.subject.annotations.GeneratePersistentProperty;
-import net.digitalid.database.testing.SQLTestBase;
+import net.digitalid.database.testing.DatabaseTest;
 import net.digitalid.database.unit.Unit;
 
 import org.junit.BeforeClass;
@@ -66,7 +66,7 @@ abstract class Student extends RootClass implements Subject<Unit> {
     
 }
 
-public class ValuePropertyTest extends SQLTestBase {
+public class ValuePropertyTest extends DatabaseTest {
     
     private static final @Nonnull Student object = StudentBuilder.withKey(123).build();
     

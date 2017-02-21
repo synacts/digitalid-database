@@ -3,7 +3,7 @@ package net.digitalid.database.conversion;
 import javax.annotation.Nonnull;
 
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
-import net.digitalid.database.testing.SQLTestBase;
+import net.digitalid.database.testing.DatabaseTest;
 import net.digitalid.database.unit.Unit;
 
 import org.junit.Test;
@@ -11,7 +11,7 @@ import org.junit.Test;
 /**
  *
  */
-public class SQLDropTableTest extends SQLTestBase {
+public class SQLDropTableTest extends DatabaseTest {
     
     private static final @Nonnull Unit unit = Unit.DEFAULT;
     

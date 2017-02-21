@@ -29,7 +29,7 @@ import net.digitalid.utility.validation.annotations.type.Utility;
 import net.digitalid.database.annotations.constraints.ForeignKey;
 import net.digitalid.database.annotations.constraints.PrimaryKey;
 import net.digitalid.database.annotations.constraints.Unique;
-import net.digitalid.database.annotations.type.UnitName;
+import net.digitalid.database.annotations.unit.UnitName;
 import net.digitalid.database.dialect.expression.SQLExpression;
 import net.digitalid.database.dialect.expression.bool.SQLBinaryBooleanExpressionBuilder;
 import net.digitalid.database.dialect.expression.bool.SQLBinaryBooleanOperator;

@@ -7,12 +7,7 @@ import java.lang.annotation.Target;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
-import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
-
 import net.digitalid.database.enumerations.ForeignKeyAction;
-import net.digitalid.database.enumerations.SQLType;
 
 /**
  *

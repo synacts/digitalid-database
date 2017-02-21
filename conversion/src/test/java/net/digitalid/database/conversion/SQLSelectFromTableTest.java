@@ -13,7 +13,7 @@ import net.digitalid.database.conversion.testenvironment.embedded.EmbeddedConver
 import net.digitalid.database.conversion.testenvironment.embedded.EmbeddedConvertiblesConverter;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTable;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
-import net.digitalid.database.testing.SQLTestBase;
+import net.digitalid.database.testing.DatabaseTest;
 import net.digitalid.database.unit.Unit;
 
 import org.junit.Assert;
@@ -22,7 +22,7 @@ import org.junit.Test;
 /**
  * Tests whether SQL select statements works.
  */
-public class SQLSelectFromTableTest extends SQLTestBase {
+public class SQLSelectFromTableTest extends DatabaseTest {
 
     private static final @Nonnull Unit unit = Unit.DEFAULT;
     

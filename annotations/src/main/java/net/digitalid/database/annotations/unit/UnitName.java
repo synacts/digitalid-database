@@ -1,13 +1,19 @@
-package net.digitalid.database.annotations.type;
+package net.digitalid.database.annotations.unit;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javax.annotation.Nonnull;
+
 /**
- * @see Embedded
+ *
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
-public @interface Referenced {}
+@Target(ElementType.TYPE)
+public @interface UnitName {
+    
+    public @Nonnull String value();
+    
+}

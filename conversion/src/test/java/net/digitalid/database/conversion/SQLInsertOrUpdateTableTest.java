@@ -4,12 +4,12 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTable;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
-import net.digitalid.database.testing.SQLTestBase;
+import net.digitalid.database.testing.DatabaseTest;
 import net.digitalid.database.unit.Unit;
 
 import org.junit.Test;
 
-public class SQLInsertOrUpdateTableTest extends SQLTestBase {
+public class SQLInsertOrUpdateTableTest extends DatabaseTest {
 
     private static final @Nonnull Unit unit = Unit.DEFAULT;
 

@@ -45,7 +45,6 @@
         <module>jdbc</module>
         <module>android</module>
         <module>conversion</module>
-        <module>auxiliary</module>
         <module>property</module>
     </modules>
     

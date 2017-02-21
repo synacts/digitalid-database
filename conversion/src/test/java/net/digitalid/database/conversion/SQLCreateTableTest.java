@@ -14,7 +14,7 @@ import net.digitalid.database.conversion.testenvironment.referenced.ReferencedEn
 import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColumnTableConverter;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
 import net.digitalid.database.enumerations.ForeignKeyAction;
-import net.digitalid.database.testing.SQLTestBase;
+import net.digitalid.database.testing.DatabaseTest;
 import net.digitalid.database.testing.assertion.ExpectedColumnDeclarationBuilder;
 import net.digitalid.database.testing.assertion.ExpectedColumnDeclarations;
 import net.digitalid.database.testing.assertion.ExpectedColumnDeclarationsBuilder;
@@ -28,7 +28,7 @@ import net.digitalid.database.unit.Unit;
 
 import org.junit.Test;
 
-public class SQLCreateTableTest extends SQLTestBase {
+public class SQLCreateTableTest extends DatabaseTest {
     
     private static final @Nonnull Unit unit = Unit.DEFAULT;
     

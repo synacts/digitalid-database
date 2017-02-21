@@ -1,4 +1,4 @@
-package net.digitalid.database.auxiliary;
+package net.digitalid.database.conversion.utility;
 
 import java.util.Timer;
 import java.util.TimerTask;

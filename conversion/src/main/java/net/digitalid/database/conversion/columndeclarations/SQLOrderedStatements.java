@@ -12,9 +12,6 @@ import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.tuples.Pair;
 import net.digitalid.utility.validation.annotations.size.MinSize;
 
-/**
- * Provides 
- */
 public class SQLOrderedStatements<S, I extends SQLColumnDeclarations<I, ?, S>> {
     
     private final @MinSize(1) @Nonnull FreezableArrayList<@Nonnull FreezableArrayList<@Nonnull Pair<@Nonnull Integer, @Nonnull Integer>>> orderByColumn;
