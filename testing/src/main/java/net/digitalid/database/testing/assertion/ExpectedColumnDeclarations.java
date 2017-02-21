@@ -15,7 +15,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
-import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
+import net.digitalid.database.interfaces.Database;
 
 import org.junit.Assert;
 
@@ -31,9 +31,9 @@ public abstract class ExpectedColumnDeclarations {
     }
     
     @Pure
-    public void assertColumnFieldsExist(@Nonnull String tableName, @Nonnull H2JDBCDatabaseInstance h2DatabaseInstance) throws DatabaseException {
+    public void assertColumnFieldsExist(@Nonnull String tableName, @Nonnull Database database) throws DatabaseException {
         final @Nonnull String query = "SHOW COLUMNS FROM " + tableName;
-        final @Nonnull ResultSet resultSet = h2DatabaseInstance.executeQuery(query);
+        final @Nonnull ResultSet resultSet = database.executeQuery(query);
     
         try {
             while (resultSet.next()) {
@@ -84,13 +84,13 @@ public abstract class ExpectedColumnDeclarations {
      * Checks whether the expected column constraints exist in the Database definition.
      */
     @Pure
-    public void assertColumnConstraintsExist(@Nonnull String tableName, @Nonnull H2JDBCDatabaseInstance h2DatabaseInstance) throws DatabaseException {
+    public void assertColumnConstraintsExist(@Nonnull String tableName, @Nonnull Database database) throws DatabaseException {
         for (Map.Entry<@Nonnull String, @Nonnull ExpectedColumnDeclaration> entry : expectedColumnDeclarations.entrySet()) {
             if (entry.getValue().getColumnConstraint() != null) {
                 final @Nonnull String columnName = entry.getKey();
                 final @Nonnull String columnConstraint = entry.getValue().getColumnConstraint();
                 final @Nonnull String constraintQuery = "SELECT CHECK_CONSTRAINT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tableName + "' AND COLUMN_NAME = '" + columnName + "'";
-                final @Nonnull ResultSet resultSet = h2DatabaseInstance.executeQuery(constraintQuery);
+                final @Nonnull ResultSet resultSet = database.executeQuery(constraintQuery);
                 try {
                     resultSet.next();
                     final @Nonnull String actualColumnConstraint = resultSet.getString(1);

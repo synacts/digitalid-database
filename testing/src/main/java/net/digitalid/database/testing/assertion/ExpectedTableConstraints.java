@@ -19,7 +19,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.database.enumerations.ForeignKeyAction;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
-import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
+import net.digitalid.database.interfaces.Database;
 
 import org.junit.Assert;
 
@@ -64,10 +64,10 @@ public class ExpectedTableConstraints {
     /* -------------------------------------------------- Asserts -------------------------------------------------- */
     
     @Pure
-    public void assertTableConstraints(@Nonnull H2JDBCDatabaseInstance h2DatabaseInstance) throws DatabaseException {
+    public void assertTableConstraints(@Nonnull Database database) throws DatabaseException {
         for (@Nonnull ExpectedTableConstraint expectedTableConstraint : expectedTableConstraints) {
             final @Nonnull String query = "SELECT PKTABLE_NAME, PKCOLUMN_NAME, FKCOLUMN_NAME, UPDATE_RULE, DELETE_RULE FROM INFORMATION_SCHEMA.CROSS_REFERENCES WHERE FKTABLE_SCHEMA = '" + expectedTableConstraint.getSchema().toUpperCase() + "' AND FKTABLE_NAME = '" + expectedTableConstraint.getTableName().toUpperCase() + "'";
-            final @Nonnull ResultSet tableReferencesResult = h2DatabaseInstance.executeQuery(query);
+            final @Nonnull ResultSet tableReferencesResult = database.executeQuery(query);
             
             try {
                 @Nonnull Set<@Nonnull ExpectedForeignKeyConstraint> expectedForeignKeyConstraintSet = expectedTableConstraint.getForeignKeyConstraints();

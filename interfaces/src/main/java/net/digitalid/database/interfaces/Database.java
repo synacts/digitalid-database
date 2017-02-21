@@ -1,12 +1,16 @@
 package net.digitalid.database.interfaces;
 
+import java.sql.ResultSet;
+
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
+import net.digitalid.database.annotations.sql.SQLStatement;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.dialect.statement.delete.SQLDeleteStatement;
 import net.digitalid.database.dialect.statement.insert.SQLInsertStatement;
@@ -108,5 +112,15 @@ public interface Database extends AutoCloseable {
      */
     @Pure
     public @Nonnull SQLQueryEncoder getEncoder(@Nonnull SQLSelectStatement selectStatement, @Nonnull Unit unit) throws DatabaseException;
+    
+    /* -------------------------------------------------- Testing -------------------------------------------------- */
+    
+    /**
+     * Executes the given SQL query.
+     * This method should only be executed by tests that need
+     * to verify that the database data was properly manipulated.
+     */
+    @PureWithSideEffects
+    public @Nonnull ResultSet executeQuery(@Nonnull @SQLStatement String query) throws DatabaseException;
     
 }

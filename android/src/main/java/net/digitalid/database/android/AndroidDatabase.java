@@ -1,10 +1,13 @@
 package net.digitalid.database.android;
 
+import java.sql.ResultSet;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
@@ -17,6 +20,7 @@ import net.digitalid.database.android.encoder.AndroidSelectEncoderBuilder;
 import net.digitalid.database.android.encoder.AndroidUpdateEncoderBuilder;
 import net.digitalid.database.android.encoder.AndroidWhereClauseEncoder;
 import net.digitalid.database.android.encoder.AndroidWhereClauseEncoderBuilder;
+import net.digitalid.database.annotations.sql.SQLStatement;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
@@ -39,13 +43,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
- *
+ * This class implements the database interface on Android.
  */
 @GenerateBuilder
 @GenerateSubclass
-public class AndroidDatabaseInstance extends SQLiteOpenHelper implements Database {
+public class AndroidDatabase extends SQLiteOpenHelper implements Database {
     
-    protected AndroidDatabaseInstance(@Nonnull Context context, @Nonnull String databaseName, int databaseVersion) {
+    protected AndroidDatabase(@Nonnull Context context, @Nonnull String databaseName, int databaseVersion) {
         // The third parameter is the SQLite database cursor factory. If set to null, the default cursor factory is chosen.
         super(context, databaseName, null, databaseVersion);
     }
@@ -174,6 +178,14 @@ public class AndroidDatabaseInstance extends SQLiteOpenHelper implements Databas
         final @Nullable String whereClauseString = getWhereClauseString(selectStatement, unit);
         final int sizeWhereArgs = getNumberWhereClauseParameters(whereClauseString);
         return AndroidSelectEncoderBuilder.withSqliteDatabase(getWritableDatabase()).withQuery(stringBuilder.toString()).withSizeWhereArgs(sizeWhereArgs).build();
+    }
+    
+    /* -------------------------------------------------- Testing -------------------------------------------------- */
+    
+    @Override
+    @PureWithSideEffects
+    public @Nonnull ResultSet executeQuery(@Nonnull @SQLStatement String query) throws DatabaseException {
+        throw new UnsupportedOperationException("Database testing is not supported on Android.");
     }
     
 }

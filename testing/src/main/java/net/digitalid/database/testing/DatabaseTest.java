@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
@@ -21,7 +22,7 @@ import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.testing.assertion.ExpectedColumnDeclarations;
 import net.digitalid.database.testing.assertion.ExpectedTableConstraints;
-import net.digitalid.database.testing.h2.H2JDBCDatabaseInstance;
+import net.digitalid.database.testing.h2.H2JDBCDatabaseBuilder;
 import net.digitalid.database.unit.Unit;
 
 import org.assertj.db.api.Assertions;
@@ -44,9 +45,10 @@ public class DatabaseTest extends RootTest {
     
     /* -------------------------------------------------- Instance -------------------------------------------------- */
     
-    private static @Nonnull Server server;
-    
-    private static @Nonnull H2JDBCDatabaseInstance h2DatabaseInstance;
+    /**
+     * Stores the H2 server to which you can connect when debugging.
+     */
+    private static @Nullable Server server = null;
     
     /* -------------------------------------------------- Set Up -------------------------------------------------- */
     
@@ -65,23 +67,24 @@ public class DatabaseTest extends RootTest {
     @Impure
     @BeforeClass
     @TODO(task = "Is it not sufficient to start the TCP server only when debugging?", date = "2017-02-21", author = Author.KASPAR_ETTER)
-    public static void setUpSQL() throws Exception {
-        final boolean debugH2 = Boolean.parseBoolean(System.getProperty("debugH2"));
+    public static void setUpDatabase() throws Exception {
         if (!initialized) {
-            h2DatabaseInstance = H2JDBCDatabaseInstance.get("jdbc:h2:" + (debugH2 ? "tcp://localhost:9092/" : "") + "mem:test;" + (debugH2 ? "DB_CLOSE_DELAY=-1;" : "") + "INIT=CREATE SCHEMA IF NOT EXISTS " + Unit.DEFAULT.getName()+ ";mode=MySQL;");
-            Database.instance.set(h2DatabaseInstance);
-            server = Server.createTcpServer();
+            final boolean debugH2 = Boolean.parseBoolean(System.getProperty("debugH2"));
+            if (!Database.instance.isSet()) {
+                Database.instance.set(H2JDBCDatabaseBuilder.withURL("jdbc:h2:" + (debugH2 ? "tcp://localhost:9092/" : "") + "mem:test;" + (debugH2 ? "DB_CLOSE_DELAY=-1;" : "") + "INIT=CREATE SCHEMA IF NOT EXISTS " + Unit.DEFAULT.getName()+ ";mode=MySQL;").build());
+                if (debugH2) { server = Server.createTcpServer(); }
+            }
             initialized = true;
         }
-        server.start();
+        if (server != null) { server.start(); }
     }
     
     /* -------------------------------------------------- Tear Down -------------------------------------------------- */
     
     @Impure
     @AfterClass
-    public static void tearDownSQL() throws Exception {
-        server.shutdown();
+    public static void tearDownDatabase() throws Exception {
+        if (server != null) { server.shutdown(); }
     }
     
     /* -------------------------------------------------- Assertions -------------------------------------------------- */
@@ -143,7 +146,7 @@ public class DatabaseTest extends RootTest {
     @Pure
     protected void assertTableExists(@Nonnull String tableName, @Nonnull String schema) throws DatabaseException {
         final @Nonnull String query = "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = '" + tableName.toLowerCase() + "' and table_schema = '" + schema.toLowerCase() + "'";
-        final @Nonnull ResultSet resultSet = h2DatabaseInstance.executeQuery(query);
+        final @Nonnull ResultSet resultSet = Database.instance.get().executeQuery(query);
         try {
             resultSet.next();
             Assert.assertSame("Table does not exist (" + query + ")", 1, resultSet.getInt(1));
@@ -155,7 +158,7 @@ public class DatabaseTest extends RootTest {
     @Pure
     protected void assertTableDoesNotExist(@Nonnull String tableName, @Nonnull String schema) throws DatabaseException {
         final @Nonnull String query = "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = '" + tableName.toLowerCase() + "' and table_schema = '" + schema.toLowerCase() + "'";
-        final @Nonnull ResultSet resultSet = h2DatabaseInstance.executeQuery(query);
+        final @Nonnull ResultSet resultSet = Database.instance.get().executeQuery(query);
         try {
             resultSet.next();
             Assert.assertSame("Table does exist (" + query + ")", 0, resultSet.getInt(1));
@@ -166,7 +169,7 @@ public class DatabaseTest extends RootTest {
     
     @Pure
     protected void assertTableReferences(@Nonnull ExpectedTableConstraints expectedTableConstraints) throws DatabaseException {
-        expectedTableConstraints.assertTableConstraints(h2DatabaseInstance);
+        expectedTableConstraints.assertTableConstraints(Database.instance.get());
         // TODO: final @Nonnull SQLDecoder tableReferencesResult = instance.executeSelect(query);
         // TODO:
 //        tableReferencesResult.moveToFirstRow();
@@ -185,20 +188,20 @@ public class DatabaseTest extends RootTest {
     
     @Pure
     protected void assertTableHasExpectedTableConstraints(@Nonnull ExpectedTableConstraints expectedTableConstraints) throws DatabaseException {
-        expectedTableConstraints.assertTableConstraints(h2DatabaseInstance);
+        expectedTableConstraints.assertTableConstraints(Database.instance.get());
     }
     
     @Pure
     protected void assertTableHasExpectedColumnsDeclaration(@Nonnull String tableName, @Nonnull String schema, @Nonnull ExpectedColumnDeclarations expectedColumnDeclarations) throws DatabaseException {
         final @Nonnull String qualifiedTableName = schema + "." + tableName;
-        expectedColumnDeclarations.assertColumnFieldsExist(qualifiedTableName, h2DatabaseInstance);
-        expectedColumnDeclarations.assertColumnConstraintsExist(tableName, h2DatabaseInstance);
+        expectedColumnDeclarations.assertColumnFieldsExist(qualifiedTableName, Database.instance.get());
+        expectedColumnDeclarations.assertColumnConstraintsExist(tableName, Database.instance.get());
     }
     
     @Pure
     protected static void assertRowCount(@Nonnull String tableName, @Nonnull String schema, long rowCount) throws DatabaseException {
         final @Nonnull String rowCountQuery = "SELECT COUNT(*) AS count FROM " + schema + "." + tableName.toLowerCase();
-        final @Nonnull ResultSet resultSet = h2DatabaseInstance.executeQuery(rowCountQuery);
+        final @Nonnull ResultSet resultSet = Database.instance.get().executeQuery(rowCountQuery);
         try {
             resultSet.next();
             Assert.assertSame("Table '" + tableName + "' does not contain " + rowCount + " rows.", rowCount, resultSet.getLong(1));
@@ -231,7 +234,7 @@ public class DatabaseTest extends RootTest {
                     columnsInfo += ", ";
                 }
             }
-            final @Nonnull ResultSet rowCountResult = h2DatabaseInstance.executeQuery(rowCountQuery);
+            final @Nonnull ResultSet rowCountResult = Database.instance.get().executeQuery(rowCountQuery);
             try {
                 rowCountResult.next();
                 Assert.assertTrue("Table '" + tableName + "' does not contain column(s) " + columnsInfo, rowCountResult.getLong(1) >= 1L);

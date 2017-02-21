@@ -18,6 +18,7 @@ import net.digitalid.utility.conversion.enumerations.Representation;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
+import net.digitalid.database.annotations.sql.SQLStatement;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.dialect.SQLDialect;
@@ -41,7 +42,7 @@ import net.digitalid.database.unit.Unit;
  * This classes uses the JDBC connection to execute the statements.
  */
 @Mutable
-public abstract class JDBCDatabaseInstance implements Database {
+public abstract class JDBCDatabase implements Database {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -50,15 +51,12 @@ public abstract class JDBCDatabaseInstance implements Database {
      * 
      * @param driver the JDBC driver of this database instance.
      */
-    protected JDBCDatabaseInstance(@Nonnull Driver driver) {}
+    protected JDBCDatabase(@Nonnull Driver driver) {}
     
     /* -------------------------------------------------- Database -------------------------------------------------- */
     
-    // TODO: we need to figure out how we can initialize it
     /**
      * Returns the URL of this database instance.
-     * 
-     * @return the URL of this database instance.
      */
     @Pure
     protected abstract @Nonnull String getURL();
@@ -67,21 +65,9 @@ public abstract class JDBCDatabaseInstance implements Database {
      * Returns the properties of this instance.
      * <p>
      * <em>Important:</em> Do not modify them!
-     * 
-     * @return the properties of this instance.
      */
     @Pure
-    // TODO: what properties are those?
     protected abstract @Nonnull Properties getProperties();
-//    
-//    /**
-//     * Drops this database instance.
-//     */
-//    @Impure
-//    @Committing
-//    public void dropDatabase() throws DatabaseException {
-//        
-//    }
     
     /* -------------------------------------------------- Connection -------------------------------------------------- */
     
@@ -133,12 +119,10 @@ public abstract class JDBCDatabaseInstance implements Database {
      * <p>
      * <em>Important:</em> Do not commit, roll back or close
      * the current connection as it will be reused later on!
-     * 
-     * @return the database connection of the current thread.
      */
     @Impure
     @NonCommitting
-    protected final @Nonnull Connection getConnection() throws DatabaseException {
+    protected @Nonnull Connection getConnection() throws DatabaseException {
         if (!transaction.get()) { begin(); }
         return connection.get();
     }
@@ -278,6 +262,18 @@ public abstract class JDBCDatabaseInstance implements Database {
         Log.debugging("Executing $", sqlStringBuilder.toString());
         // FIXME: The converter generator does not recognize that the sql encoder implementation already implements the methods getRepresentation(), isHashing(), isCompressing() and isEncryption().
         return JDBCQueryEncoderBuilder.withPreparedStatement(prepare(sqlStringBuilder.toString())).withRepresentation(Representation.INTERNAL).withHashing(false).withCompressing(false).withEncrypting(false).build();
+    }
+    
+    /* -------------------------------------------------- Testing -------------------------------------------------- */
+    
+    @Override
+    @PureWithSideEffects
+    public @Nonnull ResultSet executeQuery(@Nonnull @SQLStatement String query) throws DatabaseException {
+        try {
+            return getConnection().createStatement().executeQuery(query);
+        } catch (@Nonnull SQLException exception) {
+            throw DatabaseExceptionBuilder.withCause(exception).build();
+        }
     }
     
 }
