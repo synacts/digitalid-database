@@ -10,22 +10,20 @@
     <artifactId>database-property</artifactId>
     
     <dependencies>
-        <dependency>
-            <groupId>net.digitalid.database</groupId>
-            <artifactId>database-auxiliary</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        
         <dependency>
             <groupId>net.digitalid.database</groupId>
             <artifactId>database-conversion</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
         <dependency>
             <groupId>net.digitalid.database</groupId>
             <artifactId>database-testing</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        
     </dependencies>
     
 </project>
