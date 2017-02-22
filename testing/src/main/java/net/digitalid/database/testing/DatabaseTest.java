@@ -10,10 +10,8 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.interfaces.Converter;
-import net.digitalid.utility.testing.RootTest;
+import net.digitalid.utility.testing.UtilityTest;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
@@ -41,7 +39,7 @@ import org.junit.BeforeClass;
  * The base class for all unit tests that interact with the database.
  */
 @Stateless
-public class DatabaseTest extends RootTest {
+public class DatabaseTest extends UtilityTest {
     
     /* -------------------------------------------------- Instance -------------------------------------------------- */
     
@@ -66,7 +64,6 @@ public class DatabaseTest extends RootTest {
      */
     @Impure
     @BeforeClass
-    @TODO(task = "Is it not sufficient to start the TCP server only when debugging?", date = "2017-02-21", author = Author.KASPAR_ETTER)
     public static void setUpDatabase() throws Exception {
         if (!initialized) {
             final boolean debugH2 = Boolean.parseBoolean(System.getProperty("debugH2"));
