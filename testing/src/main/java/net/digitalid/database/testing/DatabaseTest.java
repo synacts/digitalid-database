@@ -10,7 +10,9 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.conversion.interfaces.Converter;
+import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.testing.UtilityTest;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Stateless;
@@ -48,9 +50,22 @@ public class DatabaseTest extends UtilityTest {
      */
     private static @Nullable Server server = null;
     
-    /* -------------------------------------------------- Set Up -------------------------------------------------- */
+    /* -------------------------------------------------- Initialization -------------------------------------------------- */
     
-    private static boolean initialized = false;
+    /**
+     * Initializes the database.
+     */
+    @PureWithSideEffects
+    @Initialize(target = Database.class)
+    public static void initializeDatabase() throws SQLException {
+        final boolean debugH2 = Boolean.parseBoolean(System.getProperty("debugH2"));
+        if (!Database.instance.isSet()) {
+            Database.instance.set(H2JDBCDatabaseBuilder.withURL("jdbc:h2:" + (debugH2 ? "tcp://localhost:9092/" : "") + "mem:test;" + (debugH2 ? "DB_CLOSE_DELAY=-1;" : "") + "INIT=CREATE SCHEMA IF NOT EXISTS " + Unit.DEFAULT.getName()+ ";mode=MySQL;").build());
+            if (debugH2) { server = Server.createTcpServer(); }
+        }
+    }
+    
+    /* -------------------------------------------------- Set Up -------------------------------------------------- */
     
     /**
      * In order to inspect the database during debugging, set the system property "debugH2" to true.
@@ -64,15 +79,7 @@ public class DatabaseTest extends UtilityTest {
      */
     @Impure
     @BeforeClass
-    public static void setUpDatabase() throws Exception {
-        if (!initialized) {
-            final boolean debugH2 = Boolean.parseBoolean(System.getProperty("debugH2"));
-            if (!Database.instance.isSet()) {
-                Database.instance.set(H2JDBCDatabaseBuilder.withURL("jdbc:h2:" + (debugH2 ? "tcp://localhost:9092/" : "") + "mem:test;" + (debugH2 ? "DB_CLOSE_DELAY=-1;" : "") + "INIT=CREATE SCHEMA IF NOT EXISTS " + Unit.DEFAULT.getName()+ ";mode=MySQL;").build());
-                if (debugH2) { server = Server.createTcpServer(); }
-            }
-            initialized = true;
-        }
+    public static void setUpDatabase() throws SQLException {
         if (server != null) { server.start(); }
     }
     
@@ -80,7 +87,7 @@ public class DatabaseTest extends UtilityTest {
     
     @Impure
     @AfterClass
-    public static void tearDownDatabase() throws Exception {
+    public static void tearDownDatabase() {
         if (server != null) { server.shutdown(); }
     }
     

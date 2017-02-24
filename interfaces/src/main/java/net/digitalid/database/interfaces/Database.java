@@ -36,17 +36,6 @@ public interface Database extends AutoCloseable {
      */
     public static final @Nonnull Configuration<Database> instance = Configuration.withUnknownProvider();
     
-    /* -------------------------------------------------- Single-Access -------------------------------------------------- */
-    
-    /**
-     * Stores whether the database is set up for single-access.
-     * In case of single-access, only one process accesses the
-     * database, which allows to keep the objects in memory up
-     * to date with no need to reload them all the time.
-     * (Clients on hosts are run in multi-access mode.)
-     */
-    public static final @Nonnull Configuration<Boolean> singleAccess = Configuration.with(Boolean.TRUE);
-    
     /* -------------------------------------------------- Transactions -------------------------------------------------- */
     
     /**
