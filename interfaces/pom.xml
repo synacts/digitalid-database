@@ -10,11 +10,19 @@
     <artifactId>database-interfaces</artifactId>
     
     <dependencies>
+        
         <dependency>
             <groupId>net.digitalid.database</groupId>
             <artifactId>database-dialect</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>net.digitalid.database</groupId>
+            <artifactId>database-access</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
     </dependencies>
     
 </project>
