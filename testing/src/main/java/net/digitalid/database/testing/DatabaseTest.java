@@ -60,7 +60,8 @@ public class DatabaseTest extends UtilityTest {
     public static void initializeDatabase() throws SQLException {
         final boolean debugH2 = Boolean.parseBoolean(System.getProperty("debugH2"));
         if (!Database.instance.isSet()) {
-            Database.instance.set(H2JDBCDatabaseBuilder.withURL("jdbc:h2:" + (debugH2 ? "tcp://localhost:9092/" : "") + "mem:test;" + (debugH2 ? "DB_CLOSE_DELAY=-1;" : "") + "INIT=CREATE SCHEMA IF NOT EXISTS " + Unit.DEFAULT.getName()+ ";mode=MySQL;").build());
+            final @Nonnull String URL = "jdbc:h2:" + (debugH2 ? "tcp://localhost:9092/" : "") + "mem:test;" + (debugH2 ? "DB_CLOSE_DELAY=-1;" : "") + "INIT=CREATE SCHEMA IF NOT EXISTS " + Unit.DEFAULT.getName()+ ";mode=MySQL;";
+            Database.instance.set(H2JDBCDatabaseBuilder.withURL(URL).build());
             if (debugH2) { server = Server.createTcpServer(); }
         }
     }
