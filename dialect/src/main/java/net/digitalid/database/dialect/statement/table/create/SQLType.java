@@ -52,6 +52,7 @@ public interface SQLType extends SQLNode {
         if (type == DECIMAL64) { return "DOUBLE"; }
         if (type == STRING01) { return "CHAR(1)"; }
         if (type == STRING64) { return "VARCHAR(64)"; } // TODO (at least in certain dialects): COLLATE utf16_bin
+        if (type == STRING128) { return "VARCHAR(128)"; } // TODO (at least in certain dialects): COLLATE utf16_bin
         if (type == STRING) { return "TEXT"; } // TODO (at least in certain dialects): COLLATE utf16_bin
         if (type == BINARY128) { return "BINARY(16)"; }
         if (type == BINARY256) { return "BINARY(32)"; }

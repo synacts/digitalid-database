@@ -76,6 +76,7 @@ public interface SQLEncoder extends Encoder<DatabaseException> {
             .with(CustomType.DECIMAL64, Types.DOUBLE)
             .with(CustomType.STRING01, Types.CHAR)
             .with(CustomType.STRING64, Types.VARCHAR)
+            .with(CustomType.STRING128, Types.VARCHAR)
             .with(CustomType.STRING, Types.VARCHAR)
             .with(CustomType.BINARY128, Types.BINARY)
             .with(CustomType.BINARY256, Types.BINARY)
