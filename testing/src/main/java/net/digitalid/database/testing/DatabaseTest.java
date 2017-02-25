@@ -17,6 +17,7 @@ import net.digitalid.utility.testing.UtilityTest;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
+import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
 import net.digitalid.database.interfaces.Database;
@@ -56,7 +57,7 @@ public class DatabaseTest extends UtilityTest {
      * Initializes the database.
      */
     @PureWithSideEffects
-    @Initialize(target = Database.class)
+    @Initialize(target = Database.class, dependencies = SQLDialect.class)
     public static void initializeDatabase() throws SQLException {
         final boolean debugH2 = Boolean.parseBoolean(System.getProperty("debugH2"));
         if (!Database.instance.isSet()) {

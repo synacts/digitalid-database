@@ -69,7 +69,7 @@ public class SQLCreateTableTest extends DatabaseTest {
 
         assertTableExists(ConstraintIntegerColumnTableConverter.INSTANCE.getTypeName(), unit.getName());
         final @Nonnull ExpectedColumnDeclarations expectedColumnDeclarations = ExpectedColumnDeclarationsBuilder.build();
-        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("value").withDBType("integer(10)").withNullAllowed(false).withColumnConstraint("((VALUE % 7) = 0)").withKey("PRI").build());
+        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("value").withDBType("integer(10)").withNullAllowed(false).withColumnConstraint("((VALUE % 7.0) = 0.0)").withKey("PRI").build());
         assertTableHasExpectedColumnsDeclaration(ConstraintIntegerColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), expectedColumnDeclarations);
     }
 

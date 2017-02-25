@@ -22,6 +22,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 import net.digitalid.database.annotations.constraints.PrimaryKey;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.property.map.WritablePersistentSimpleMapProperty;
 import net.digitalid.database.property.set.WritablePersistentSimpleSetProperty;
 import net.digitalid.database.property.value.WritablePersistentValueProperty;
@@ -51,6 +52,10 @@ abstract class Student extends RootClass implements Subject<Unit> {
     public abstract @Nonnull WritablePersistentValueProperty<Student, @Nonnull String> name();
     
     @Pure
+    @GeneratePersistentProperty
+    public abstract @Nonnull WritablePersistentValueProperty<Student, Student> spouse();
+    
+    @Pure
     @Default("0")
     @GeneratePersistentProperty
     public abstract @Nonnull WritablePersistentValueProperty<Student, @Nonnull Integer> age();
@@ -77,11 +82,13 @@ public class ValuePropertyTest extends DatabaseTest {
     public static void createTables() throws Exception {
         SQL.createTable(StudentConverter.INSTANCE, Unit.DEFAULT);
         SQL.createTable(StudentSubclass.NAME_TABLE.getEntryConverter(), Unit.DEFAULT);
+        SQL.createTable(StudentSubclass.SPOUSE_TABLE.getEntryConverter(), Unit.DEFAULT);
         SQL.createTable(StudentSubclass.AGE_TABLE.getEntryConverter(), Unit.DEFAULT);
         SQL.createTable(StudentSubclass.FRIENDS_TABLE.getEntryConverter(), Unit.DEFAULT);
         SQL.createTable(StudentSubclass.GRADES_TABLE.getEntryConverter(), Unit.DEFAULT);
         SQL.insert(StudentConverter.INSTANCE, object, Unit.DEFAULT);
         SQL.insert(StudentConverter.INSTANCE, friend, Unit.DEFAULT);
+        Database.instance.get().commit();
     }
     
     @Test

@@ -37,6 +37,7 @@ import net.digitalid.database.dialect.expression.bool.SQLBinaryBooleanOperator;
 import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
 import net.digitalid.database.dialect.expression.bool.SQLBooleanLiteral;
 import net.digitalid.database.dialect.expression.bool.SQLComparisonOperator;
+import net.digitalid.database.dialect.expression.bool.SQLNullLiteral;
 import net.digitalid.database.dialect.expression.bool.SQLNumberComparisonBooleanExpression;
 import net.digitalid.database.dialect.expression.bool.SQLNumberComparisonBooleanExpressionBuilder;
 import net.digitalid.database.dialect.expression.number.SQLBinaryNumberExpressionBuilder;
@@ -150,6 +151,9 @@ public abstract class SQLConversionUtility {
         if (!customField.isAnnotatedWith(Default.class)) { return null; }
         final @Nonnull CustomAnnotation annotation = customField.getAnnotation(Default.class);
         final @Nullable String defaultValue = annotation.get("value", String.class);
+        if ("null".equals(defaultValue)) {
+            return SQLNullLiteral.INSTANCE;
+        }
         @Nullable CustomType customType = customField.getCustomType();
         if (customType.isObjectType()) {
             customType = getEmbeddedPrimitiveType(customType);
@@ -158,15 +162,27 @@ public abstract class SQLConversionUtility {
             final int sqlType = SQLEncoder.getSQLType(customType);
             switch (sqlType) {
                 case Types.BOOLEAN:
-                    if (defaultValue == null) {
-                        return SQLBooleanLiteral.NULL;
-                    } else if (Boolean.parseBoolean(defaultValue)) {
+                    if (Boolean.parseBoolean(defaultValue)) {
                         return SQLBooleanLiteral.TRUE;
                     } else {
                         return SQLBooleanLiteral.FALSE;
                     }
+                case Types.TINYINT:
+                case Types.SMALLINT:
+                case Types.INTEGER:
+                case Types.BIGINT:
+                case Types.FLOAT:
+                case Types.DOUBLE:
+                    try {
+                        return SQLNumberLiteralBuilder.withValue(Double.parseDouble(defaultValue)).build();
+                    } catch (NumberFormatException exception) {
+                        return null;
+                    }
+                case Types.VARCHAR:
+                case Types.CHAR:
+                    return SQLStringLiteralBuilder.withString(defaultValue).build();
                 default:
-                    return SQLStringLiteralBuilder.buildWithString(defaultValue);
+                    return null;
             }
         } else {
             Log.warning("Ignoring default value for field $ of type $ in SQL conversion.", customField, customType);
@@ -182,8 +198,8 @@ public abstract class SQLConversionUtility {
         final @Nonnull SQLNumberComparisonBooleanExpression multipleOfValueExpression = SQLNumberComparisonBooleanExpressionBuilder.withOperator(SQLComparisonOperator.EQUAL)
                 .withLeftExpression(SQLBinaryNumberExpressionBuilder.withOperator(SQLBinaryNumberOperator.MODULO)
                         .withLeftExpression(SQLColumnNameBuilder.withString(customField.getName()).build())
-                        .withRightExpression(SQLNumberLiteralBuilder.buildWithValue(multipleOfValue)).build())
-                .withRightExpression(SQLNumberLiteralBuilder.buildWithValue(0L)).build();
+                        .withRightExpression(SQLNumberLiteralBuilder.withValue(multipleOfValue).build()).build())
+                .withRightExpression(SQLNumberLiteralBuilder.withValue(0L).build()).build();
         return multipleOfValueExpression;
     }
     
@@ -192,7 +208,7 @@ public abstract class SQLConversionUtility {
         if (!customField.isAnnotatedWith(NonNegative.class)) { return null; }
         final @Nonnull SQLNumberComparisonBooleanExpression nonNegativeValueExpression = SQLNumberComparisonBooleanExpressionBuilder.withOperator(SQLComparisonOperator.GREATER_OR_EQUAL)
                 .withLeftExpression(SQLColumnNameBuilder.withString(customField.getName()).build())
-                .withRightExpression(SQLNumberLiteralBuilder.buildWithValue(0L)).build();
+                .withRightExpression(SQLNumberLiteralBuilder.withValue(0L).build()).build();
         return nonNegativeValueExpression;
     }
     
@@ -201,7 +217,7 @@ public abstract class SQLConversionUtility {
         if (!customField.isAnnotatedWith(NonPositive.class)) { return null; }
         final @Nonnull SQLNumberComparisonBooleanExpression nonPositiveValueExpression = SQLNumberComparisonBooleanExpressionBuilder.withOperator(SQLComparisonOperator.LESS_OR_EQUAL)
                 .withLeftExpression(SQLColumnNameBuilder.withString(customField.getName()).build())
-                .withRightExpression(SQLNumberLiteralBuilder.buildWithValue(0L)).build();
+                .withRightExpression(SQLNumberLiteralBuilder.withValue(0L).build()).build();
         return nonPositiveValueExpression;
     }
     
@@ -210,7 +226,7 @@ public abstract class SQLConversionUtility {
         if (!customField.isAnnotatedWith(Negative.class)) { return null; }
         final @Nonnull SQLNumberComparisonBooleanExpression negativeValueExpression = SQLNumberComparisonBooleanExpressionBuilder.withOperator(SQLComparisonOperator.LESS)
                 .withLeftExpression(SQLColumnNameBuilder.withString(customField.getName()).build())
-                .withRightExpression(SQLNumberLiteralBuilder.buildWithValue(0L)).build();
+                .withRightExpression(SQLNumberLiteralBuilder.withValue(0L).build()).build();
         return negativeValueExpression;
     }
     
@@ -219,7 +235,7 @@ public abstract class SQLConversionUtility {
         if (!customField.isAnnotatedWith(Positive.class)) { return null; }
         final @Nonnull SQLNumberComparisonBooleanExpression positiveValueExpression = SQLNumberComparisonBooleanExpressionBuilder.withOperator(SQLComparisonOperator.GREATER)
                 .withLeftExpression(SQLColumnNameBuilder.withString(customField.getName()).build())
-                .withRightExpression(SQLNumberLiteralBuilder.buildWithValue(0L)).build();
+                .withRightExpression(SQLNumberLiteralBuilder.withValue(0L).build()).build();
         return positiveValueExpression;
     }
     
@@ -255,9 +271,9 @@ public abstract class SQLConversionUtility {
      * Given a converter, and some information about the nullness and prefix of the fields of the converter, this method fills the given column declarations list with column declarations derived from the converter.
      */
     @Pure
-    public static <@Unspecifiable TYPE> void fillColumnDeclarations(@Nonnull Converter<TYPE, ?> converter, @Nonnull @Modified FreezableArrayList<@Nonnull SQLColumnDeclaration> columnDeclarations, boolean mustBeNullable, boolean mustBePrimaryKey, @Nonnull String prefix) {
+    public static <@Unspecifiable TYPE> void fillColumnDeclarations(@Nonnull Converter<TYPE, ?> converter, @Nonnull @Modified FreezableArrayList<@Nonnull SQLColumnDeclaration> columnDeclarations, boolean mustBeNullable, boolean mustBePrimaryKey, boolean converterHasMultiplePrimaryKeys, boolean firstLevel, @Nonnull String prefix) {
         final @Nonnull ImmutableList<@Nonnull CustomField> fields = converter.getFields(Representation.INTERNAL);
-        final boolean multiplePrimaryKeys = hasMultiplePrimaryKeys(converter);
+        final boolean multiplePrimaryKeys = firstLevel && (converterHasMultiplePrimaryKeys || hasMultiplePrimaryKeys(converter));
         for (@Nonnull CustomField field : fields) {
             @Nonnull CustomType customType = field.getCustomType();
             if (!customType.isCompositeType()) {
@@ -265,7 +281,7 @@ public abstract class SQLConversionUtility {
                 if (customType.isObjectType()) {
                     final @Nonnull CustomType.CustomConverterType customConverterType = (CustomType.CustomConverterType) customType;
                     if (!customConverterType.getConverter().isPrimitiveConverter()) {
-                        fillColumnDeclarations(customConverterType.getConverter(), columnDeclarations, mustBeNullable || !SQLConversionUtility.isNotNull(field), (mustBePrimaryKey || (!multiplePrimaryKeys && SQLConversionUtility.isPrimaryKey(field))), prefix + field.getName().toLowerCase() + "_");
+                        fillColumnDeclarations(customConverterType.getConverter(), columnDeclarations, mustBeNullable || !SQLConversionUtility.isNotNull(field), (mustBePrimaryKey || (!multiplePrimaryKeys && SQLConversionUtility.isPrimaryKey(field))), multiplePrimaryKeys, false, prefix + field.getName().toLowerCase() + "_");
                         continue;
                     } else { // otherwise we have a boxed primitive type
                         @Nullable CustomType primitiveType = SQLConversionUtility.getEmbeddedPrimitiveType(customConverterType);
@@ -280,7 +296,7 @@ public abstract class SQLConversionUtility {
                         .withType(SQLTypeBuilder.withType(customType).build())
                         .withNotNull(!mustBeNullable && (primitive || SQLConversionUtility.isNotNull(field)))
                         .withDefaultValue(SQLConversionUtility.getDefaultValue(field))
-                        .withPrimaryKey(mustBePrimaryKey || (!multiplePrimaryKeys && SQLConversionUtility.isPrimaryKey(field)))
+                        .withPrimaryKey((mustBePrimaryKey || firstLevel && (!multiplePrimaryKeys && SQLConversionUtility.isPrimaryKey(field))))
                         .withUnique(SQLConversionUtility.isUnique(field))
                         .withCheck(SQLConversionUtility.getCheck(field))
                         .build();
@@ -297,7 +313,7 @@ public abstract class SQLConversionUtility {
     @Pure
     public static <@Unspecifiable TYPE> @Nonnull @NonEmpty ImmutableList<@Nonnull SQLColumnDeclaration> getColumnDeclarations(@Nonnull Converter<TYPE, ?> converter) {
         final @Nonnull @Modifiable FreezableArrayList<@Nonnull SQLColumnDeclaration> columnDeclarations = FreezableArrayList.withNoElements();
-        SQLConversionUtility.fillColumnDeclarations(converter, columnDeclarations, false, false, "");
+        SQLConversionUtility.fillColumnDeclarations(converter, columnDeclarations, false, false, false, true, "");
         return ImmutableList.withElementsOf(columnDeclarations);
     }
     

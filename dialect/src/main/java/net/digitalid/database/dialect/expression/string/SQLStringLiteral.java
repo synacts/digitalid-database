@@ -32,7 +32,7 @@ public interface SQLStringLiteral extends SQLStringExpression, SQLLiteral {
      * Returns the string of this string literal.
      */
     @Pure
-    public @Nullable String getString();
+    public @Nonnull String getString();
     
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     

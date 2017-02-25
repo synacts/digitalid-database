@@ -18,7 +18,7 @@ public class SQLUpdateStatementTest extends SQLStatementTest {
     public void testSQLUpdateStatement() {
         final @Nonnull SQLAssignment assignment = SQLAssignmentBuilder.withColumn(thirdColumn).withExpression(SQLParameter.INSTANCE).build();
         final @Nonnull SQLUpdateStatement updateStatement = SQLUpdateStatementBuilder.withTable(qualifiedTable).withAssignments(ImmutableList.withElements(assignment)).withWhereClause(firstColumn.equal(SQLNumberLiteralBuilder.withValue(8l).build())).build();
-        assertThat(SQLDialect.unparse(updateStatement, Unit.DEFAULT)).isEqualTo("UPDATE \"default\".\"test_table\" SET \"third_column\" = ? WHERE (\"first_column\") = (8)");
+        assertThat(SQLDialect.unparse(updateStatement, Unit.DEFAULT)).isEqualTo("UPDATE \"default\".\"test_table\" SET \"third_column\" = ? WHERE (\"first_column\") = (8.0)");
     }
     
 }

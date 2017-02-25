@@ -1,7 +1,6 @@
 package net.digitalid.database.dialect.expression.bool;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
@@ -33,18 +32,13 @@ public interface SQLBooleanLiteral extends SQLBooleanExpression, SQLLiteral {
      */
     public final @Nonnull SQLBooleanLiteral FALSE = new SQLBooleanLiteralSubclass(Boolean.FALSE);
     
-    /**
-     * Stores the SQL representation of 'null'.
-     */
-    public final @Nonnull SQLBooleanLiteral NULL = new SQLBooleanLiteralSubclass(null);
-    
     /* -------------------------------------------------- Value -------------------------------------------------- */
     
     /**
      * Returns the value of this boolean literal.
      */
     @Pure
-    public @Nullable Boolean getValue();
+    public boolean getValue();
     
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     
