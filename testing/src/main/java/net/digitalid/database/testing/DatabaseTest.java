@@ -79,16 +79,16 @@ public class DatabaseTest extends UtilityTest {
      * When building with Maven, run the following command to debug:
      * mvn test -DargLine="-DdebugH2=true"
      */
-    @Impure
     @BeforeClass
+    @PureWithSideEffects
     public static void setUpDatabase() throws SQLException {
         if (server != null) { server.start(); }
     }
     
     /* -------------------------------------------------- Tear Down -------------------------------------------------- */
     
-    @Impure
     @AfterClass
+    @PureWithSideEffects
     public static void tearDownDatabase() {
         if (server != null) { server.shutdown(); }
     }

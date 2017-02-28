@@ -13,6 +13,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
+import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.android.encoder.AndroidDeleteEncoderBuilder;
 import net.digitalid.database.android.encoder.AndroidInsertEncoderBuilder;
@@ -45,26 +46,39 @@ import android.database.sqlite.SQLiteOpenHelper;
 /**
  * This class implements the database interface on Android.
  */
+@Mutable
 @GenerateBuilder
 @GenerateSubclass
-public class AndroidDatabase extends SQLiteOpenHelper implements Database {
+public class AndroidDatabase extends Database {
+    
+    /* -------------------------------------------------- Helper -------------------------------------------------- */
+    
+    private final @Nonnull SQLiteOpenHelper helper;
     
     protected AndroidDatabase(@Nonnull Context context, @Nonnull String databaseName, int databaseVersion) {
         // The third parameter is the SQLite database cursor factory. If set to null, the default cursor factory is chosen.
-        super(context, databaseName, null, databaseVersion);
+        this.helper = new SQLiteOpenHelper(context, databaseName, null, databaseVersion) {
+            
+            @Impure
+            @Override
+            public void onCreate(@Nonnull SQLiteDatabase sqLiteDatabase) {
+                // The creation of the tables is done via the execute method. No need to prepare something here.
+            }
+            
+            @Impure
+            @Override
+            public void onUpgrade(@Nonnull SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+                // The creation of the tables is done via the execute method. No need to prepare something here.
+                // TODO: do we need to remember if there was a difference in the version?
+            }
+            
+        };
     }
     
-    @Impure
     @Override
-    public void onCreate(@Nonnull SQLiteDatabase sqLiteDatabase) {
-        // The creation of the tables is done via the execute method. No need to prepare something here.
-    }
-    
-    @Impure
-    @Override
-    public void onUpgrade(@Nonnull SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-        // The creation of the tables is done via the execute method. No need to prepare something here.
-        // TODO: do we need to remember if there was a difference in the version?
+    @PureWithSideEffects
+    public void close() {
+        helper.close();
     }
     
     /* -------------------------------------------------- Transactions -------------------------------------------------- */
@@ -74,31 +88,35 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
      */
     @Impure
     @NonCommitting
-    protected void begin() throws DatabaseException {
-        if (!getWritableDatabase().inTransaction()) {
-            getWritableDatabase().beginTransaction();
+    protected void begin() {
+        if (!helper.getWritableDatabase().inTransaction()) {
+            helper.getWritableDatabase().beginTransaction();
         }
     }
     
     @Impure
     @Override
-    public void commit() throws DatabaseException {
-        getWritableDatabase().setTransactionSuccessful();
-        getWritableDatabase().endTransaction();
+    public void commit() {
+        helper.getWritableDatabase().setTransactionSuccessful();
+        helper.getWritableDatabase().endTransaction();
+        runRunnablesAfterCommit();
     }
     
     @Impure
     @Override
     public void rollback() {
-        getWritableDatabase().endTransaction();
+        helper.getWritableDatabase().endTransaction();
+        runRunnablesAfterRollback();
     }
+    
+    /* -------------------------------------------------- Executions -------------------------------------------------- */
     
     @Impure
     private void executeStatement(@Nonnull SQLTableStatement tableStatement, @Nonnull Unit unit) throws DatabaseException {
         begin();
         final @Nonnull StringBuilder stringBuilder = new StringBuilder();
         tableStatement.unparse(SQLDialect.instance.get(), unit, stringBuilder);
-        getWritableDatabase().execSQL(stringBuilder.toString());
+        helper.getWritableDatabase().execSQL(stringBuilder.toString());
     }
     
     @Impure
@@ -113,13 +131,15 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
         executeStatement(dropTableStatement, unit);
     }
     
+    /* -------------------------------------------------- Encoders -------------------------------------------------- */
+    
     @Pure
     @Override
     public @Nonnull SQLActionEncoder getEncoder(@Nonnull SQLInsertStatement insertStatement, @Nonnull Unit unit) throws DatabaseException {
         begin();
         final @Nonnull @NonEmpty @MaxSize(63) String tableName = insertStatement.getTable().getTable().getString();
         final @Nonnull @NonNullableElements String[] columnNames = insertStatement.getColumns().map(SQLIdentifier::getString).toArray(new String[0]);
-        return AndroidInsertEncoderBuilder.withSqLiteDatabase(getWritableDatabase()).withTableName(tableName).withColumnNames(columnNames).build();
+        return AndroidInsertEncoderBuilder.withSqLiteDatabase(helper.getWritableDatabase()).withTableName(tableName).withColumnNames(columnNames).build();
     }
     
     @Pure
@@ -155,8 +175,8 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
         final @Nullable SQLBooleanExpression whereClause = updateStatement.getWhereClause();
         final @Nullable String whereClauseString = getWhereClauseString(whereClause, unit);
         final int sizeWhereArgs = getNumberWhereClauseParameters(whereClauseString);
-        final @Nonnull AndroidWhereClauseEncoder whereClauseEncoder = AndroidWhereClauseEncoderBuilder.withSqliteDatabase(getWritableDatabase()).withSizeWhereArgs(sizeWhereArgs).withWhereClause(whereClauseString).build();
-        return AndroidUpdateEncoderBuilder.withSqLiteDatabase(getWritableDatabase()).withTableName(tableName).withColumnNames(columnNames).withWhereClauseEncoder(whereClauseEncoder).build();
+        final @Nonnull AndroidWhereClauseEncoder whereClauseEncoder = AndroidWhereClauseEncoderBuilder.withSqliteDatabase(helper.getWritableDatabase()).withSizeWhereArgs(sizeWhereArgs).withWhereClause(whereClauseString).build();
+        return AndroidUpdateEncoderBuilder.withSqLiteDatabase(helper.getWritableDatabase()).withTableName(tableName).withColumnNames(columnNames).withWhereClauseEncoder(whereClauseEncoder).build();
     }
     
     @Pure
@@ -166,7 +186,7 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
         final @Nonnull @NonEmpty @MaxSize(63) String tableName = deleteStatement.getTable().getTable().getString();
         final @Nullable String whereClauseString = getWhereClauseString(deleteStatement.getWhereClause(), unit);
         final int sizeWhereArgs = getNumberWhereClauseParameters(whereClauseString);
-        return AndroidDeleteEncoderBuilder.withSqliteDatabase(getWritableDatabase()).withTableName(tableName).withSizeWhereArgs(sizeWhereArgs).build();
+        return AndroidDeleteEncoderBuilder.withSqliteDatabase(helper.getWritableDatabase()).withTableName(tableName).withSizeWhereArgs(sizeWhereArgs).build();
     }
     
     @Pure
@@ -177,7 +197,7 @@ public class AndroidDatabase extends SQLiteOpenHelper implements Database {
         selectStatement.unparse(SQLDialect.instance.get(), unit, stringBuilder);
         final @Nullable String whereClauseString = getWhereClauseString(selectStatement, unit);
         final int sizeWhereArgs = getNumberWhereClauseParameters(whereClauseString);
-        return AndroidSelectEncoderBuilder.withSqliteDatabase(getWritableDatabase()).withQuery(stringBuilder.toString()).withSizeWhereArgs(sizeWhereArgs).build();
+        return AndroidSelectEncoderBuilder.withSqliteDatabase(helper.getWritableDatabase()).withQuery(stringBuilder.toString()).withSizeWhereArgs(sizeWhereArgs).build();
     }
     
     /* -------------------------------------------------- Testing -------------------------------------------------- */

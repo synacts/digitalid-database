@@ -42,7 +42,7 @@ import net.digitalid.database.unit.Unit;
  * This classes uses the JDBC connection to execute the statements.
  */
 @Mutable
-public abstract class JDBCDatabase implements Database {
+public abstract class JDBCDatabase extends Database {
     
     /* -------------------------------------------------- Constructor -------------------------------------------------- */
     
@@ -153,8 +153,10 @@ public abstract class JDBCDatabase implements Database {
         try {
             getConnection().commit();
             transaction.set(Boolean.FALSE);
-        } catch (SQLException e) {
-            throw DatabaseExceptionBuilder.withCause(e).build();
+            runRunnablesAfterCommit();
+        } catch (@Nonnull SQLException exception) {
+            runRunnablesAfterRollback();
+            throw DatabaseExceptionBuilder.withCause(exception).build();
         }
     }
     
@@ -165,8 +167,10 @@ public abstract class JDBCDatabase implements Database {
         try {
             getConnection().rollback();
             transaction.set(Boolean.FALSE);
-        } catch (SQLException | DatabaseException exception) {
+        } catch (@Nonnull SQLException | DatabaseException exception) {
             Log.error("Could not roll back the transaction.", exception);
+        } finally {
+            runRunnablesAfterRollback();
         }
     }
     
