@@ -60,7 +60,7 @@ public class SQLDeleteFromTableTest extends DatabaseTest {
             assertRowCount(EmbeddedConvertiblesConverter.INSTANCE.getTypeName(), unit.getName(), 1);
             assertTableContains(EmbeddedConvertiblesConverter.INSTANCE.getTypeName(), unit.getName(), Expected.column("convertible1_value").value("2"), Expected.column("convertible2_value").value("3"));
     
-            SQL.delete(EmbeddedConvertiblesConverter.INSTANCE, Convertible1Converter.INSTANCE, convertible1, "convertible1_", unit);
+            SQL.delete(EmbeddedConvertiblesConverter.INSTANCE, Convertible1Converter.INSTANCE, convertible1, "convertible1", unit);
     
             assertRowCount(EmbeddedConvertiblesConverter.INSTANCE.getTypeName(), unit.getName(), 0);
         } finally {

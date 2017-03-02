@@ -69,7 +69,7 @@ public abstract class WritablePersistentValuePropertyImplementation<@Unspecifiab
         if (locking) { lock.lock(); }
         try {
             final @Nonnull Converter<SUBJECT, ?> subjectConverter = getTable().getParentModule().getSubjectConverter();
-            final @Nullable PersistentValuePropertyEntry<SUBJECT, VALUE> entry = SQL.selectFirst(getTable().getEntryConverter(), getSubject().getUnit(), subjectConverter, getSubject(), subjectConverter.getTypeName().toLowerCase() + "_", getSubject().getUnit());
+            final @Nullable PersistentValuePropertyEntry<SUBJECT, VALUE> entry = SQL.selectFirst(getTable().getEntryConverter(), getSubject().getUnit(), subjectConverter, getSubject(), subjectConverter.getTypeName().toLowerCase(), getSubject().getUnit());
             if (entry != null) {
                 this.time = entry.getTime();
                 this.value = entry.getValue();

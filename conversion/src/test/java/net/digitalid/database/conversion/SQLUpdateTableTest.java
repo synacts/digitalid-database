@@ -61,7 +61,7 @@ public class SQLUpdateTableTest extends DatabaseTest {
     
             final @Nonnull EmbeddedConvertibles updatedEmbeddedConvertibles = EmbeddedConvertiblesBuilder.withConvertible1(Convertible1Builder.withValue(4).build()).withConvertible2(Convertible2Builder.withValue(5).build()).build();
             
-            SQL.update(EmbeddedConvertiblesConverter.INSTANCE, updatedEmbeddedConvertibles, Convertible1Converter.INSTANCE, convertible1, "convertible1_", unit);
+            SQL.update(EmbeddedConvertiblesConverter.INSTANCE, updatedEmbeddedConvertibles, Convertible1Converter.INSTANCE, convertible1, "convertible1", unit);
     
             assertRowCount(EmbeddedConvertiblesConverter.INSTANCE.getTypeName(), unit.getName(), 1);
             assertTableContains(EmbeddedConvertiblesConverter.INSTANCE.getTypeName(), unit.getName(), Expected.column("convertible1_value").value("4"), Expected.column("convertible2_value").value("5"));

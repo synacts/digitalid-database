@@ -327,14 +327,22 @@ public abstract class SQLConversionUtility {
         final @Nonnull ImmutableList<@Nonnull CustomField> fields = converter.getFields(Representation.INTERNAL);
         for (@Nonnull CustomField field : fields) {
             if (!field.getCustomType().isCompositeType()) {
-                if (field.getCustomType().isObjectType()) {
-                    final @Nonnull CustomType.CustomConverterType customConverterType = (CustomType.CustomConverterType) field.getCustomType();
-                    if (!customConverterType.getConverter().isPrimitiveConverter()) {
-                        fillColumnNames(customConverterType.getConverter(), columnNames, prefix + field.getName().toLowerCase() + "_");
-                        continue;
+                final @Nonnull String fieldName;
+                if (converter.isPrimitiveConverter()) {
+                    Require.that(!prefix.isEmpty()).orThrow("The primitive converter $ requires a prefix.", converter);
+                    Require.that(!field.getCustomType().isObjectType()).orThrow("The primitive converter $ has a non-primitive field $", converter, field.getName());
+                    fieldName = prefix;
+                } else {
+                    fieldName = prefix.isEmpty() ? field.getName() : prefix + "_" + field.getName();
+                    if (field.getCustomType().isObjectType()) {
+                        final @Nonnull CustomType.CustomConverterType customConverterType = (CustomType.CustomConverterType) field.getCustomType();
+                        if (!customConverterType.getConverter().isPrimitiveConverter()) {
+                            fillColumnNames(customConverterType.getConverter(), columnNames, fieldName);
+                            continue;
+                        }
                     }
                 }
-                columnNames.add(SQLColumnNameBuilder.withString(prefix + field.getName()).build());
+                columnNames.add(SQLColumnNameBuilder.withString(fieldName.toLowerCase()).build());
             } else {
                 throw new UnsupportedOperationException("Composite types such as iterables or maps are currently not supported by the SQL encoders");
             }
@@ -399,7 +407,7 @@ public abstract class SQLConversionUtility {
                 final @Nonnull Class<?> referencedType = referenceConverter.getType();
                 if (Subject.class.isAssignableFrom(referencedType)) {
                     final @Nonnull ImmutableList<@Nonnull SQLColumnName> referencedColumnNames = getColumnNames(referenceConverter);
-                    final @Nonnull ImmutableList<@Nonnull SQLColumnName> columnNames = getColumnNames(referenceConverter, customField.getName().toLowerCase() + "_");
+                    final @Nonnull ImmutableList<@Nonnull SQLColumnName> columnNames = getColumnNames(referenceConverter, customField.getName().toLowerCase());
                     final @Nonnull String unitName;
                     if (referencedType.isAnnotationPresent(UnitName.class)) {
                         unitName = referencedType.getAnnotation(UnitName.class).value();
@@ -424,7 +432,7 @@ public abstract class SQLConversionUtility {
                     if (fieldType.isObjectType()) {
                         final @Nonnull Converter<?, ?> fieldTypeConverter = ((CustomType.CustomConverterType) fieldType).getConverter();
                         if (!fieldTypeConverter.isPrimitiveConverter()) {
-                            fillColumnNames(fieldTypeConverter, primaryKeyColumns, customField.getName().toLowerCase() + "_");
+                            fillColumnNames(fieldTypeConverter, primaryKeyColumns, customField.getName().toLowerCase());
                         } else {
                             primaryKeyColumns.add(SQLColumnNameBuilder.withString(customField.getName()).build());
                         }

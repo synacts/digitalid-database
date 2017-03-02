@@ -64,7 +64,7 @@ public class SQLSelectFromTableTest extends DatabaseTest {
             assertRowCount(EmbeddedConvertiblesConverter.INSTANCE.getTypeName(), unit.getName(), 1);
             assertTableContains(EmbeddedConvertiblesConverter.INSTANCE.getTypeName(), unit.getName(), Expected.column("convertible1_value").value("2"), Expected.column("convertible2_value").value("3"));
 
-            final @Nullable EmbeddedConvertibles embeddedConvertiblesTable = SQL.selectFirst(EmbeddedConvertiblesConverter.INSTANCE, null, Convertible1Converter.INSTANCE, convertible1, "convertible1_", unit);
+            final @Nullable EmbeddedConvertibles embeddedConvertiblesTable = SQL.selectFirst(EmbeddedConvertiblesConverter.INSTANCE, null, Convertible1Converter.INSTANCE, convertible1, "convertible1", unit);
     
             Assert.assertNotNull(embeddedConvertiblesTable);
             Assert.assertEquals(embeddedConvertibles, embeddedConvertiblesTable);
@@ -76,4 +76,5 @@ public class SQLSelectFromTableTest extends DatabaseTest {
         }
     }
     
+    // TODO: add a test with a type that contains an Integer or String field and check whether the prefix is properly constructed.
 }
