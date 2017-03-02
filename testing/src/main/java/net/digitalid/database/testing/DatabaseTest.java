@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
@@ -21,9 +20,9 @@ import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
 import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.jdbc.JDBCDatabaseBuilder;
 import net.digitalid.database.testing.assertion.ExpectedColumnDeclarations;
 import net.digitalid.database.testing.assertion.ExpectedTableConstraints;
-import net.digitalid.database.testing.h2.H2JDBCDatabaseBuilder;
 import net.digitalid.database.unit.Unit;
 
 import org.assertj.db.api.Assertions;
@@ -33,23 +32,22 @@ import org.assertj.db.api.TableAssert;
 import org.assertj.db.type.Changes;
 import org.assertj.db.type.Request;
 import org.assertj.db.type.Table;
-import org.h2.tools.Server;
-import org.junit.AfterClass;
+import org.h2.Driver;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 
 /**
  * The base class for all unit tests that interact with the database.
+ * 
+ * In order to inspect the database during debugging, set the system property 'debugH2' to true.
+ * Start '~/.m2/repository/com/h2database/h2/1.4.190/h2-1.4.190.jar' before running the test cases, which opens a
+ * browser window, and connect to the database with the address below and both user and password set to 'sa'.
+ * 
+ * Database URL: jdbc:h2:tcp://localhost:9092/mem:test;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS default
+ * 
+ * When building with Maven, run the following command to inspect the database: {@code mvn test -DdebugH2}.
  */
 @Stateless
 public class DatabaseTest extends UtilityTest {
-    
-    /* -------------------------------------------------- Instance -------------------------------------------------- */
-    
-    /**
-     * Stores the H2 server to which you can connect when debugging.
-     */
-    private static @Nullable Server server = null;
     
     /* -------------------------------------------------- Initialization -------------------------------------------------- */
     
@@ -59,38 +57,11 @@ public class DatabaseTest extends UtilityTest {
     @PureWithSideEffects
     @Initialize(target = Database.class, dependencies = SQLDialect.class)
     public static void initializeDatabase() throws SQLException {
-        final boolean debugH2 = Boolean.parseBoolean(System.getProperty("debugH2"));
         if (!Database.instance.isSet()) {
-            final @Nonnull String URL = "jdbc:h2:" + (debugH2 ? "tcp://localhost:9092/" : "") + "mem:test;" + (debugH2 ? "DB_CLOSE_DELAY=-1;" : "") + "INIT=CREATE SCHEMA IF NOT EXISTS " + Unit.DEFAULT.getName()+ ";mode=MySQL;";
-            Database.instance.set(H2JDBCDatabaseBuilder.withURL(URL).build());
-            if (debugH2) { server = Server.createTcpServer(); }
+            final boolean debugH2 = Boolean.parseBoolean(System.getProperty("debugH2"));
+            final @Nonnull String URL = "jdbc:h2:" + (debugH2 ? "tcp://localhost:9092/" : "") + "mem:test;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS " + Unit.DEFAULT.getName();
+            Database.instance.set(JDBCDatabaseBuilder.withDriver(new Driver()).withURL(URL).withUser("sa").withPassword("sa").build());
         }
-    }
-    
-    /* -------------------------------------------------- Set Up -------------------------------------------------- */
-    
-    /**
-     * In order to inspect the database during debugging, set the system property "debugH2" to true.
-     * Start '~/.m2/repository/com/h2database/h2/1.4.190/h2-1.4.190.jar' before running the test cases, which opens a
-     * browser window, and connect to the database with the address below and both user and password set to 'sa'.
-     * 
-     * Database URL: jdbc:h2:tcp://localhost:9092/mem:test;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS Default;mode=MySQL;
-     * 
-     * When building with Maven, run the following command to debug:
-     * mvn test -DargLine="-DdebugH2=true"
-     */
-    @BeforeClass
-    @PureWithSideEffects
-    public static void setUpDatabase() throws SQLException {
-        if (server != null) { server.start(); }
-    }
-    
-    /* -------------------------------------------------- Tear Down -------------------------------------------------- */
-    
-    @AfterClass
-    @PureWithSideEffects
-    public static void tearDownDatabase() {
-        if (server != null) { server.shutdown(); }
     }
     
     /* -------------------------------------------------- Assertions -------------------------------------------------- */

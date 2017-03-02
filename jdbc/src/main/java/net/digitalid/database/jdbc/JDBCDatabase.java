@@ -6,7 +6,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Properties;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -15,6 +14,8 @@ import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.conversion.enumerations.Representation;
+import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
@@ -39,35 +40,38 @@ import net.digitalid.database.jdbc.encoder.JDBCQueryEncoderBuilder;
 import net.digitalid.database.unit.Unit;
 
 /**
- * This classes uses the JDBC connection to execute the statements.
+ * This classes uses Java Database Connectivity (JDBC) to execute the statements.
  */
 @Mutable
+@GenerateBuilder
+@GenerateSubclass
 public abstract class JDBCDatabase extends Database {
     
-    /* -------------------------------------------------- Constructor -------------------------------------------------- */
+    /* -------------------------------------------------- Fields -------------------------------------------------- */
     
     /**
-     * Creates a new database instance with the given driver.
-     * 
-     * @param driver the JDBC driver of this database instance.
+     * Returns the JDBC driver of this database.
      */
-    protected JDBCDatabase(@Nonnull Driver driver) {}
-    
-    /* -------------------------------------------------- Database -------------------------------------------------- */
+    @Pure
+    protected abstract @Nonnull Driver getDriver();
     
     /**
-     * Returns the URL of this database instance.
+     * Returns the JDBC URL of this database.
      */
     @Pure
     protected abstract @Nonnull String getURL();
-
+    
     /**
-     * Returns the properties of this instance.
-     * <p>
-     * <em>Important:</em> Do not modify them!
+     * Returns the database user on whose behalf the connection is made.
      */
     @Pure
-    protected abstract @Nonnull Properties getProperties();
+    protected abstract @Nullable String getUser();
+    
+    /**
+     * Returns the password of the user or null if no password is needed.
+     */
+    @Pure
+    protected abstract @Nullable String getPassword();
     
     /* -------------------------------------------------- Connection -------------------------------------------------- */
     
@@ -83,7 +87,9 @@ public abstract class JDBCDatabase extends Database {
     @NonCommitting
     private void setConnection() throws DatabaseException {
         try {
-            final @Nonnull Connection connection = DriverManager.getConnection(getURL(), getProperties());
+            final @Nonnull Connection connection;
+            if (getUser() == null || getPassword() == null) { connection = DriverManager.getConnection(getURL()); }
+            else { connection = DriverManager.getConnection(getURL(), getUser(), getPassword()); }
             connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             connection.setAutoCommit(false);
             this.connection.set(connection);
@@ -178,10 +184,6 @@ public abstract class JDBCDatabase extends Database {
     
     /**
      * Prepares the given statement at the given site.
-     * 
-     * @param statement the statement which is to be prepared.
-     * 
-     * @return the prepared statement that is ready for execution.
      */
     @Pure
     protected @Nonnull PreparedStatement prepare(@Nonnull String statement) throws DatabaseException {
