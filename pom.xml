@@ -37,14 +37,21 @@
         <module>unit</module>
         <module>subject</module>
         <module>dialect</module>
-<!--        <module>postgres</module>-->
-<!--        <module>sqlite</module>-->
-<!--        <module>mysql</module>-->
+        
+        <module>h2</module>
+        <module>mysql</module>
+        <module>sqlite</module>
+        <module>postgres</module>
+        
         <module>access</module>
         <module>interfaces</module>
         <module>android</module>
         <module>jdbc</module>
+        
+        <module>client</module>
+        <module>server</module>
         <module>testing</module>
+        
         <module>conversion</module>
         <module>property</module>
     </modules>

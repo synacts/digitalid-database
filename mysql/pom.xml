@@ -10,16 +10,13 @@
     <artifactId>database-mysql</artifactId>
     
     <dependencies>
+        
         <dependency>
             <groupId>net.digitalid.database</groupId>
             <artifactId>database-dialect</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.37</version>
-        </dependency>
+        
     </dependencies>
     
 </project>

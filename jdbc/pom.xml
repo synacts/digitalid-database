@@ -10,11 +10,13 @@
     <artifactId>database-jdbc</artifactId>
     
     <dependencies>
+        
         <dependency>
             <groupId>net.digitalid.database</groupId>
             <artifactId>database-interfaces</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
     </dependencies>
     
 </project>

@@ -16,6 +16,7 @@ import net.digitalid.utility.testing.UtilityTest;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
+import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
@@ -33,6 +34,7 @@ import org.assertj.db.type.Changes;
 import org.assertj.db.type.Request;
 import org.assertj.db.type.Table;
 import org.h2.Driver;
+import org.junit.After;
 import org.junit.Assert;
 
 /**
@@ -62,6 +64,19 @@ public class DatabaseTest extends UtilityTest {
             final @Nonnull String URL = "jdbc:h2:" + (debugH2 ? "tcp://localhost:9092/" : "") + "mem:test;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS " + Unit.DEFAULT.getName();
             Database.instance.set(JDBCDatabaseBuilder.withDriver(new Driver()).withURL(URL).withUser("sa").withPassword("sa").build());
         }
+    }
+    
+    /* -------------------------------------------------- Commit -------------------------------------------------- */
+    
+    /**
+     * Commits the current transaction after each unit test.
+     * This is important in order to debug the stored data.
+     */
+    @After
+    @Committing
+    @PureWithSideEffects
+    public void commit() throws DatabaseException {
+        Database.instance.get().commit();
     }
     
     /* -------------------------------------------------- Assertions -------------------------------------------------- */

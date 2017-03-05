@@ -1,4 +1,4 @@
-package net.digitalid.database.sqlite;
+package net.digitalid.database.client;
 
 import java.io.File;
 import java.sql.Connection;
@@ -7,22 +7,24 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.junit.Test;
+import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 
-/**
- * Test the SQLite database.
- */
-public class SQLiteConfigurationTest {
+@TODO(task = "Rewrite.", date = "2017-03-05", author = Author.KASPAR_ETTER)
+public class ClientDatabaseInitializerTest {
     
     private static final File FILE = new File(System.getProperty("user.home") + File.separator + ".DigitalID" + File.separator + "Data" + File.separator + "Test.db");
     
+    @Pure
     private static Connection getConnection() throws SQLException {
         final Connection connection = DriverManager.getConnection("jdbc:sqlite:" + FILE.getAbsolutePath());
         connection.setAutoCommit(false);
         return connection;
     }
     
-    @Test
+//    @Test
+    @Pure
     public void testSomeMethod() throws SQLException, InterruptedException {
         new org.sqlite.JDBC();
         FILE.delete();

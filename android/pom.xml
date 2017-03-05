@@ -10,6 +10,19 @@
     <artifactId>database-android</artifactId>
 
     <dependencies>
+        
+        <dependency>
+            <groupId>net.digitalid.database</groupId>
+            <artifactId>database-interfaces</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>net.digitalid.database</groupId>
+            <artifactId>database-sqlite</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
         <dependency>
             <groupId>com.google.android</groupId>
             <artifactId>android</artifactId>
@@ -17,11 +30,7 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/../../libraries/android.jar</systemPath>
         </dependency>
-        <dependency>
-            <groupId>net.digitalid.database</groupId>
-            <artifactId>database-interfaces</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        
     </dependencies>
     
 </project>

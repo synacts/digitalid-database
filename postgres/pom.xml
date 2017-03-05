@@ -10,16 +10,19 @@
     <artifactId>database-postgres</artifactId>
     
     <dependencies>
+        
         <dependency>
             <groupId>net.digitalid.database</groupId>
             <artifactId>database-dialect</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
+        
+        <!-- <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>9.4-1206-jdbc42</version>
-        </dependency>
+        </dependency> -->
+        
     </dependencies>
     
 </project>

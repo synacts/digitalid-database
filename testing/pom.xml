@@ -18,9 +18,21 @@
         </dependency>
         
         <dependency>
+            <groupId>net.digitalid.database</groupId>
+            <artifactId>database-h2</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
             <groupId>net.digitalid.utility</groupId>
             <artifactId>utility-testing</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.193</version>
         </dependency>
         
         <dependency>
@@ -39,12 +51,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.4.193</version>
         </dependency>
         
     </dependencies>

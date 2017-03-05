@@ -1,4 +1,4 @@
-package net.digitalid.database.testing.h2;
+package net.digitalid.database.h2;
 
 import javax.annotation.Nonnull;
 
@@ -6,8 +6,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
@@ -18,8 +17,12 @@ import net.digitalid.database.dialect.identifier.SQLIdentifier;
 import net.digitalid.database.dialect.statement.insert.SQLInsertStatement;
 import net.digitalid.database.unit.Unit;
 
+/**
+ * This class implements the H2 dialect.
+ */
 @Stateless
-public class H2Dialect extends SQLDialect {
+@GenerateSubclass
+public abstract class H2Dialect extends SQLDialect {
     
     /**
      * Initializes the dialect.
@@ -27,12 +30,11 @@ public class H2Dialect extends SQLDialect {
     @PureWithSideEffects
     @Initialize(target = SQLDialect.class)
     public static void initializeDialect() {
-        SQLDialect.instance.set(new H2Dialect());
+        SQLDialect.instance.set(new H2DialectSubclass());
     }
     
     @Pure
     @Override
-    @TODO(task = "Default unparsing does not work because quotes are not accepted in identifiers (but http://www.h2database.com/html/grammar.html#quoted_name says something else).", date = "2017-02-05", author = Author.STEPHANIE_STROKA)
     public void unparse(@Nonnull SQLNode node, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         if (node instanceof SQLIdentifier) {
             final @Nonnull SQLIdentifier identifier = (SQLIdentifier) node;

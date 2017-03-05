@@ -1,4 +1,4 @@
-package net.digitalid.database.sqlite;
+package net.digitalid.database.mysql;
 
 import javax.annotation.Nonnull;
 
@@ -18,11 +18,11 @@ import net.digitalid.database.dialect.SQLNode;
 import net.digitalid.database.unit.Unit;
 
 /**
- * This class implements the SQLite dialect.
+ * This class implements the MySQL dialect.
  */
 @Stateless
 @GenerateSubclass
-public abstract class SQLiteDialect extends SQLDialect {
+public abstract class MySQLDialect extends SQLDialect {
     
     /**
      * Initializes the dialect.
@@ -30,7 +30,7 @@ public abstract class SQLiteDialect extends SQLDialect {
     @PureWithSideEffects
     @Initialize(target = SQLDialect.class)
     public static void initializeDialect() {
-        SQLDialect.instance.set(new SQLiteDialectSubclass());
+        SQLDialect.instance.set(new MySQLDialectSubclass());
     }
     
     @Pure
@@ -44,19 +44,20 @@ public abstract class SQLiteDialect extends SQLDialect {
 //    
 //    /**
 //     * The pattern that valid database identifiers have to match.
+//     * Identifiers may in principle begin with a digit but unless quoted may not consist solely of digits.
 //     */
-//    private static final @Nonnull Pattern PATTERN = Pattern.compile("[a-z_][a-z0-9_]*", Pattern.CASE_INSENSITIVE);
+//    private static final @Nonnull Pattern PATTERN = Pattern.compile("[a-z_][a-z0-9_$]*");
 //    
 //    @Pure
 //    @Override
 //    public boolean isValidIdentifier(@Nonnull String identifier) {
-//        return PATTERN.matcher(identifier).matches();
+//        return identifier.length() <= 64 && PATTERN.matcher(identifier).matches();
 //    }
 //    
 //    @Pure
 //    @Override
 //    public @Nonnull String PRIMARY_KEY() {
-//        return "INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT";
+//        return "BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY";
 //    }
 //    
 //    @Pure
@@ -68,13 +69,13 @@ public abstract class SQLiteDialect extends SQLDialect {
 //    @Pure
 //    @Override
 //    public @Nonnull String BINARY() {
-//        return "BINARY";
+//        return "utf16_bin";
 //    }
 //    
 //    @Pure
 //    @Override
 //    public @Nonnull String NOCASE() {
-//        return "NOCASE";
+//        return "utf16_general_ci";
 //    }
 //    
 //    @Pure
@@ -86,31 +87,31 @@ public abstract class SQLiteDialect extends SQLDialect {
 //    @Pure
 //    @Override
 //    public @Nonnull String BLOB() {
-//        return "BLOB";
+//        return "LONGBLOB";
 //    }
 //    
 //    @Pure
 //    @Override
 //    public @Nonnull String HASH() {
-//        return "BLOB";
+//        return "BINARY(33)";
 //    }
 //    
 //    @Pure
 //    @Override
 //    public @Nonnull String VECTOR() {
-//        return "BLOB";
+//        return "BINARY(17)";
 //    }
 //    
 //    @Pure
 //    @Override
 //    public @Nonnull String FLOAT() {
-//        return "REAL";
+//        return "FLOAT";
 //    }
 //    
 //    @Pure
 //    @Override
 //    public @Nonnull String DOUBLE() {
-//        return "REAL";
+//        return "DOUBLE";
 //    }
 //    
 //    @Pure
@@ -122,96 +123,48 @@ public abstract class SQLiteDialect extends SQLDialect {
 //    @Pure
 //    @Override
 //    public @Nonnull String IGNORE() {
-//        return " OR IGNORE";
+//        return " IGNORE";
 //    }
 //    
 //    @Pure
 //    @Override
 //    public @Nonnull String GREATEST() {
-//        return "MAX";
+//        return "GREATEST";
 //    }
 //    
 //    @Pure
 //    @Override
 //    public @Nonnull String CURRENT_TIME() {
-//        return "CAST((JULIANDAY('NOW') - 2440587.5)*86400000 AS INTEGER)";
+//        return "UNIX_TIMESTAMP(SYSDATE()) * 1000 + MICROSECOND(SYSDATE(3)) DIV 1000";
 //    }
 //    
 //    @Pure
 //    @Override
 //    public @Nonnull String BOOLEAN(boolean value) {
-//        return value ? "1" : "0";
+//        return Boolean.toString(value);
 //    }
 //    
 //    /* -------------------------------------------------- Index -------------------------------------------------- */
 //    
+//    /**
+//     * Returns the syntax for creating an index inside a table declaration.
+//     * 
+//     * @param columns the columns for which the index is to be created.
+//     * 
+//     * @return the syntax for creating an index inside a table declaration.
+//     * 
+//     * @require columns.length > 0 : "The columns are not empty.";
+//     */
 //    @Pure
-//    @Override
 //    public @Nonnull String INDEX(@Nonnull String... columns) {
 //        Require.that(columns.length > 0).orThrow("The columns are not empty.");
 //        
-//        return "";
-//    }
-//    
-//    @Pure
-//    @Locked
-//    @Override
-//    @SuppressWarnings("StringEquality")
-//    public void createIndex(@Nonnull Statement statement, @Nonnull String table, @Nonnull String... columns) throws FailedUpdateExecutionException {
-//        Require.that(columns.length > 0).orThrow("The columns are not empty.");
-//        
-//        final @Nonnull StringBuilder string = new StringBuilder("CREATE INDEX IF NOT EXISTS ").append(table).append("_index ON ").append(table).append(" (");
+//        final @Nonnull StringBuilder string = new StringBuilder(", INDEX(");
 //        for (final @Nonnull String column : columns) {
-//            if (column != columns[0]) { string.append(", "); }
+//            if (string.length() != 8) { string.append(", "); }
 //            string.append(column);
 //        }
-//        try { statement.executeUpdate(string.append(")").toString()); } catch (@Nonnull SQLException exception) { throw FailedUpdateExecutionException.get(exception); }
-//    }
-//    
-//    /* -------------------------------------------------- Insertions -------------------------------------------------- */
-//    
-//    @Locked
-//    @Override
-//    @NonCommitting
-//    protected long executeInsert(@Nonnull Statement statement, @Nonnull String SQL) throws FailedKeyGenerationException, FailedUpdateExecutionException {
-//        try {
-//            statement.executeUpdate(SQL);
-//        } catch (@Nonnull SQLException exception) {
-//            throw FailedUpdateExecutionException.get(exception);
-//        }
-//        
-//        try (@Nonnull ResultSet resultSet = statement.executeQuery("SELECT last_insert_rowid()")) {
-//            if (resultSet.next()) { return resultSet.getLong(1); }
-//            else { throw new SQLException("The given SQL statement did not generate any keys."); }
-//        } catch (@Nonnull SQLException exception) {
-//            throw FailedKeyGenerationException.get(exception);
-//        }
-//    }
-//    
-//    /* -------------------------------------------------- Locking -------------------------------------------------- */
-//    
-//    /**
-//     * Stores a reentrant lock to serialize database access.
-//     */
-//    private final @Nonnull ReentrantLock lock = new ReentrantLock(true);
-//    
-//    @Override
-//    protected void lock() {
-//        lock.lock();
-//    }
-//    
-//    @Override
-//    protected void unlock() {
-//        if (journalExists()) {
-//            Log.warning("A database journal exists! The connection might not have been committed properly.", new Exception());
-//        }
-//        lock.unlock();
-//    }
-//    
-//    @Pure
-//    @Override
-//    protected boolean isLocked() {
-//        return lock.isHeldByCurrentThread();
+//        return string.append(")").toString();
 //    }
 //    
 }
