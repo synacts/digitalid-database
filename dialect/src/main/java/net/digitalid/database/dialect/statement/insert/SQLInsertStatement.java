@@ -43,22 +43,21 @@ public interface SQLInsertStatement extends SQLTableStatement {
     @Pure
     public @Nonnull SQLValues getValues();
     
-    /* -------------------------------------------------- Replace -------------------------------------------------- */
+    /* -------------------------------------------------- Conflict -------------------------------------------------- */
     
     /**
-     * Returns whether an entry with the same primary key shall be replaced with the given values.
+     * Returns the conflict clause for handling constraint violations.
      */
     @Pure
-    @Default("false")
-    public boolean isReplacing();
+    @Default("SQLConflictClause.ABORT")
+    public @Nonnull SQLConflictClause getConflictClause();
     
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     
     @Pure
     @Override
     public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
-        string.append("INSERT");
-        if (isReplacing()) { string.append(" OR REPLACE"); }
+        dialect.unparse(getConflictClause(), unit, string);
         string.append(" INTO ");
         dialect.unparse(getTable(), unit, string);
         string.append(" (");

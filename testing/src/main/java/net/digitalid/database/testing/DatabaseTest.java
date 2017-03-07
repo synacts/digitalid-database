@@ -17,7 +17,6 @@ import net.digitalid.utility.validation.annotations.elements.NonNullableElements
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.annotations.transaction.Committing;
-import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
 import net.digitalid.database.interfaces.Database;
@@ -57,11 +56,11 @@ public class DatabaseTest extends UtilityTest {
      * Initializes the database.
      */
     @PureWithSideEffects
-    @Initialize(target = Database.class, dependencies = SQLDialect.class)
+    @Initialize(target = Database.class)
     public static void initializeDatabase() throws SQLException {
         if (!Database.instance.isSet()) {
             final boolean debugH2 = Boolean.parseBoolean(System.getProperty("debugH2"));
-            final @Nonnull String URL = "jdbc:h2:" + (debugH2 ? "tcp://localhost:9092/" : "") + "mem:test;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS " + Unit.DEFAULT.getName();
+            final @Nonnull String URL = "jdbc:h2:" + (debugH2 ? "tcp://localhost:9092/" : "") + "mem:test;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS " + Unit.DEFAULT.getName() + ";MODE=MySQL;";
             Database.instance.set(JDBCDatabaseBuilder.withDriver(new Driver()).withURL(URL).withUser("sa").withPassword("sa").build());
         }
     }
@@ -142,8 +141,8 @@ public class DatabaseTest extends UtilityTest {
         try {
             resultSet.next();
             Assert.assertSame("Table does not exist (" + query + ")", 1, resultSet.getInt(1));
-        } catch (SQLException e) {
-            throw DatabaseExceptionBuilder.withCause(e).build();
+        } catch (@Nonnull SQLException exception) {
+            throw DatabaseExceptionBuilder.withCause(exception).build();
         }
     }
     

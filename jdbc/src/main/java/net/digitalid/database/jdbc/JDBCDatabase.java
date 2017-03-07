@@ -13,6 +13,8 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.enumerations.Representation;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
@@ -45,6 +47,7 @@ import net.digitalid.database.unit.Unit;
 @Mutable
 @GenerateBuilder
 @GenerateSubclass
+@TODO(task = "Maybe we need to support (optional) locking (for SQLite).", date = "2017-03-07", author = Author.KASPAR_ETTER)
 public abstract class JDBCDatabase extends Database {
     
     /* -------------------------------------------------- Fields -------------------------------------------------- */

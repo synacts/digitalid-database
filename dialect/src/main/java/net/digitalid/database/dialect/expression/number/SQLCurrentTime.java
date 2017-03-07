@@ -5,37 +5,33 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
-import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
-import net.digitalid.database.dialect.expression.SQLLiteral;
 import net.digitalid.database.unit.Unit;
 
 /**
- * A number literal.
+ * The current time as milliseconds since 1970.
  */
 @Immutable
-@GenerateBuilder
 @GenerateSubclass
-public interface SQLNumberLiteral extends SQLNumberExpression, SQLLiteral {
+public interface SQLCurrentTime extends SQLNumberExpression {
     
-    /* -------------------------------------------------- Value -------------------------------------------------- */
+    /* -------------------------------------------------- Constants -------------------------------------------------- */
     
     /**
-     * Returns the value of this number literal.
+     * Stores an instance of the surrounding type.
      */
-    @Pure
-    public double getValue();
+    public final @Nonnull SQLCurrentTime INSTANCE = new SQLCurrentTimeSubclass();
     
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     
     @Pure
     @Override
     public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
-        string.append(String.valueOf(getValue()));
+        string.append("TIMESTAMP()");
     }
     
 }

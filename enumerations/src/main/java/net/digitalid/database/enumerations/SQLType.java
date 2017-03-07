@@ -62,7 +62,7 @@ public enum SQLType {
     /**
      * The SQL type for chars.
      */
-    STRING01(Types.CHAR, CustomType.STRING01),
+    STRING01(Types.CHAR, CustomType.STRING1),
     
     /**
      * The SQL type for varchars.

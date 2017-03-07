@@ -8,6 +8,7 @@ import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.circumfixes.Quotes;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
+import net.digitalid.utility.validation.annotations.substring.Regex;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.sql.SQLFraction;
@@ -32,7 +33,7 @@ public interface SQLIdentifier extends SQLNode {
      * Returns this identifier as a string.
      */
     @Pure
-    public @Nonnull @NonEmpty @MaxSize(63) String getString();
+    public @Nonnull @NonEmpty @MaxSize(63) @Regex("[a-zA-Z_][a-zA-Z0-9_]*") String getString();
     
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     

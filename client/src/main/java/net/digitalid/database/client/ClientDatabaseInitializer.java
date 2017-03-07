@@ -9,7 +9,6 @@ import net.digitalid.utility.file.Files;
 import net.digitalid.utility.initialization.annotations.Initialize;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
-import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.jdbc.JDBCDatabaseBuilder;
 
@@ -25,10 +24,9 @@ public abstract class ClientDatabaseInitializer {
      * Initializes the database.
      */
     @PureWithSideEffects
-    @Initialize(target = Database.class, dependencies = SQLDialect.class)
+    @Initialize(target = Database.class, dependencies = Files.class)
     public static void initializeDatabase() throws SQLException {
-        final @Nonnull String name = "Client";
-        final @Nonnull String URL = "jdbc:sqlite:" + Files.relativeToConfigurationDirectory("data/" + name + ".db");
+        final @Nonnull String URL = "jdbc:sqlite:" + Files.relativeToConfigurationDirectory("data.db");
         Database.instance.set(JDBCDatabaseBuilder.withDriver(new JDBC()).withURL(URL).build());
     }
     

@@ -8,13 +8,19 @@ import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
+import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.initialization.annotations.Initialize;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.SQLNode;
+import net.digitalid.database.dialect.expression.number.SQLCurrentTime;
+import net.digitalid.database.dialect.statement.insert.SQLConflictClause;
+import net.digitalid.database.dialect.statement.table.create.SQLType;
 import net.digitalid.database.unit.Unit;
 
 /**
@@ -23,6 +29,8 @@ import net.digitalid.database.unit.Unit;
 @Stateless
 @GenerateSubclass
 public abstract class MySQLDialect extends SQLDialect {
+    
+    /* -------------------------------------------------- Initialization -------------------------------------------------- */
     
     /**
      * Initializes the dialect.
@@ -33,138 +41,56 @@ public abstract class MySQLDialect extends SQLDialect {
         SQLDialect.instance.set(new MySQLDialectSubclass());
     }
     
+    /* -------------------------------------------------- Unparsing -------------------------------------------------- */
+    
     @Pure
-    @Override
-    @TODO(task = "Write the implementation.", date = "2017-03-05", author = Author.KASPAR_ETTER)
-    public void unparse(@Nonnull SQLNode node, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
-        
+    @TODO(task = "It might be necessary to use BINARY(17) instead of BINARY(16) for BINARY128 and BINARY(33) instead of BINARY(32) for BINARY256.", date = "2017-03-07", author = Author.KASPAR_ETTER)
+    protected void unparse(@Nonnull SQLType type, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        type.unparse(this, unit, string);
+        if (type.getType() == CustomType.STRING64 || type.getType() == CustomType.STRING128 || type.getType() == CustomType.STRING) {
+            string.append(" COLLATE utf16_bin");
+        }
     }
     
-//    /* -------------------------------------------------- Syntax -------------------------------------------------- */
-//    
-//    /**
-//     * The pattern that valid database identifiers have to match.
-//     * Identifiers may in principle begin with a digit but unless quoted may not consist solely of digits.
-//     */
-//    private static final @Nonnull Pattern PATTERN = Pattern.compile("[a-z_][a-z0-9_$]*");
-//    
-//    @Pure
-//    @Override
-//    public boolean isValidIdentifier(@Nonnull String identifier) {
-//        return identifier.length() <= 64 && PATTERN.matcher(identifier).matches();
-//    }
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull String PRIMARY_KEY() {
-//        return "BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY";
-//    }
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull String TINYINT() {
-//        return "TINYINT";
-//    }
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull String BINARY() {
-//        return "utf16_bin";
-//    }
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull String NOCASE() {
-//        return "utf16_general_ci";
-//    }
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull String CITEXT() {
-//        return "TEXT";
-//    }
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull String BLOB() {
-//        return "LONGBLOB";
-//    }
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull String HASH() {
-//        return "BINARY(33)";
-//    }
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull String VECTOR() {
-//        return "BINARY(17)";
-//    }
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull String FLOAT() {
-//        return "FLOAT";
-//    }
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull String DOUBLE() {
-//        return "DOUBLE";
-//    }
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull String REPLACE() {
-//        return "REPLACE";
-//    }
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull String IGNORE() {
-//        return " IGNORE";
-//    }
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull String GREATEST() {
-//        return "GREATEST";
-//    }
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull String CURRENT_TIME() {
-//        return "UNIX_TIMESTAMP(SYSDATE()) * 1000 + MICROSECOND(SYSDATE(3)) DIV 1000";
-//    }
-//    
-//    @Pure
-//    @Override
-//    public @Nonnull String BOOLEAN(boolean value) {
-//        return Boolean.toString(value);
-//    }
-//    
-//    /* -------------------------------------------------- Index -------------------------------------------------- */
-//    
-//    /**
-//     * Returns the syntax for creating an index inside a table declaration.
-//     * 
-//     * @param columns the columns for which the index is to be created.
-//     * 
-//     * @return the syntax for creating an index inside a table declaration.
-//     * 
-//     * @require columns.length > 0 : "The columns are not empty.";
-//     */
-//    @Pure
-//    public @Nonnull String INDEX(@Nonnull String... columns) {
-//        Require.that(columns.length > 0).orThrow("The columns are not empty.");
-//        
-//        final @Nonnull StringBuilder string = new StringBuilder(", INDEX(");
-//        for (final @Nonnull String column : columns) {
-//            if (string.length() != 8) { string.append(", "); }
-//            string.append(column);
-//        }
-//        return string.append(")").toString();
-//    }
-//    
+    @Pure
+    @TODO(task = "Should we throw an exception in the other cases?", date = "2017-03-07", author = Author.KASPAR_ETTER)
+    protected void unparse(@Nonnull SQLConflictClause conflictClause, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        if (conflictClause == SQLConflictClause.REPLACE) { string.append("REPLACE"); }
+        if (conflictClause == SQLConflictClause.IGNORE) { string.append("INSERT IGNORE"); }
+        else { string.append("INSERT"); }
+    }
+    
+    @Pure
+    @Override
+    public void unparse(@Nonnull SQLNode node, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        if (node instanceof SQLType) { unparse((SQLType) node, unit, string); }
+        else if (node instanceof SQLConflictClause) { unparse((SQLConflictClause) node, unit, string); }
+        else if (node instanceof SQLCurrentTime) { string.append("UNIX_TIMESTAMP(SYSDATE()) * 1000 + MICROSECOND(SYSDATE(3)) DIV 1000"); } // TODO: Is it important that it is the UNIX timestamp? Maybe we could just define another column type.
+        else { super.unparse(node, unit, string); }
+    }
+    
+    /* -------------------------------------------------- TODO -------------------------------------------------- */
+    
+    @Pure
+    @TODO(task = "How shall we model this?", date = "2017-03-07", author = Author.KASPAR_ETTER)
+    public @Nonnull String PRIMARY_KEY() {
+        return "BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY";
+    }
+    
+    /**
+     * Returns the syntax for creating an index inside a table declaration.
+     * 
+     * @param columns the columns for which the index is to be created.
+     */
+    @Pure
+    @TODO(task = "Do we still need this? If yes, create a corresponding table constraint.", date = "2017-03-07", author = Author.KASPAR_ETTER)
+    public @Nonnull String INDEX(@Nonnull @NonNullableElements @NonEmpty String... columns) {
+        final @Nonnull StringBuilder string = new StringBuilder(", INDEX(");
+        for (final @Nonnull String column : columns) {
+            if (string.length() != 8) { string.append(", "); }
+            string.append(column);
+        }
+        return string.append(")").toString();
+    }
+    
 }

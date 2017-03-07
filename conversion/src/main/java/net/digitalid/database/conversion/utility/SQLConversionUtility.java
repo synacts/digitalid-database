@@ -37,7 +37,7 @@ import net.digitalid.database.dialect.expression.bool.SQLBinaryBooleanOperator;
 import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
 import net.digitalid.database.dialect.expression.bool.SQLBooleanLiteral;
 import net.digitalid.database.dialect.expression.bool.SQLComparisonOperator;
-import net.digitalid.database.dialect.expression.bool.SQLNullLiteral;
+import net.digitalid.database.dialect.expression.SQLNullLiteral;
 import net.digitalid.database.dialect.expression.bool.SQLNumberComparisonBooleanExpression;
 import net.digitalid.database.dialect.expression.bool.SQLNumberComparisonBooleanExpressionBuilder;
 import net.digitalid.database.dialect.expression.number.SQLBinaryNumberExpressionBuilder;

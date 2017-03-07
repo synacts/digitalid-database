@@ -38,6 +38,7 @@ import net.digitalid.database.dialect.identifier.table.SQLTableName;
 import net.digitalid.database.dialect.identifier.table.SQLTableNameBuilder;
 import net.digitalid.database.dialect.statement.delete.SQLDeleteStatement;
 import net.digitalid.database.dialect.statement.delete.SQLDeleteStatementBuilder;
+import net.digitalid.database.dialect.statement.insert.SQLConflictClause;
 import net.digitalid.database.dialect.statement.insert.SQLExpressionsBuilder;
 import net.digitalid.database.dialect.statement.insert.SQLInsertStatement;
 import net.digitalid.database.dialect.statement.insert.SQLInsertStatementBuilder;
@@ -126,12 +127,12 @@ public abstract class SQL {
     }
     
     /**
-     * Inserts or updates the given object with the given converter into its table in the given unit.
+     * Inserts or replaces the given object with the given converter into its table in the given unit.
      */
     @TODO(task="Do we need to allow keys/where clauses that indicate which row should be updated if already inserted?", date="2017-02-05", author = Author.STEPHANIE_STROKA)
     @NonCommitting
     @PureWithSideEffects
-    public static <@Unspecifiable TYPE> void insertOrUpdate(@Nonnull Converter<TYPE, ?> converter, @Nonnull TYPE object, @Nonnull Unit unit) throws DatabaseException {
+    public static <@Unspecifiable TYPE> void insertOrReplace(@Nonnull Converter<TYPE, ?> converter, @Nonnull TYPE object, @Nonnull Unit unit) throws DatabaseException {
         final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columns = FreezableArrayList.withNoElements();
         SQLConversionUtility.fillColumnNames(converter, columns, "");
     
@@ -140,7 +141,7 @@ public abstract class SQL {
         final @Nonnull SQLTableName tableName = SQLTableNameBuilder.withString(converter.getTypeName()).build();
         final @Nonnull SQLSchemaName schema = SQLSchemaNameBuilder.withString(unit.getName()).build();
         final @Nonnull SQLQualifiedTable qualifiedTable = SQLExplicitlyQualifiedTableBuilder.withTable(tableName).withSchema(schema).build();
-        final @Nonnull SQLInsertStatement insertStatement = SQLInsertStatementBuilder.withTable(qualifiedTable).withColumns(ImmutableList.withElementsOf(columns)).withValues(rows).withReplacing(true).build();
+        final @Nonnull SQLInsertStatement insertStatement = SQLInsertStatementBuilder.withTable(qualifiedTable).withColumns(ImmutableList.withElementsOf(columns)).withValues(rows).withConflictClause(SQLConflictClause.REPLACE).build();
         
         final @Nonnull SQLActionEncoder actionEncoder = Database.instance.get().getEncoder(insertStatement, unit);
         actionEncoder.encodeObject(converter, object);

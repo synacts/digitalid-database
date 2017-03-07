@@ -25,12 +25,12 @@ public interface SQLBooleanLiteral extends SQLBooleanExpression, SQLLiteral {
     /**
      * Stores the SQL representation of 'true'.
      */
-    public final @Nonnull SQLBooleanLiteral TRUE = new SQLBooleanLiteralSubclass(Boolean.TRUE);
+    public final @Nonnull SQLBooleanLiteral TRUE = new SQLBooleanLiteralSubclass(true);
     
     /**
      * Stores the SQL representation of 'false'.
      */
-    public final @Nonnull SQLBooleanLiteral FALSE = new SQLBooleanLiteralSubclass(Boolean.FALSE);
+    public final @Nonnull SQLBooleanLiteral FALSE = new SQLBooleanLiteralSubclass(false);
     
     /* -------------------------------------------------- Value -------------------------------------------------- */
     

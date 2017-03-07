@@ -86,7 +86,7 @@ public abstract class SQLEncoderImplementation implements SQLEncoder {
             .with(CustomType.INTEGER, Types.BLOB)
             .with(CustomType.DECIMAL32, Types.FLOAT)
             .with(CustomType.DECIMAL64, Types.DOUBLE)
-            .with(CustomType.STRING01, Types.CHAR)
+            .with(CustomType.STRING1, Types.CHAR)
             .with(CustomType.STRING64, Types.VARCHAR)
             .with(CustomType.STRING, Types.VARCHAR)
             .with(CustomType.BINARY128, Types.BINARY)
