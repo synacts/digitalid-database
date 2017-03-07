@@ -19,6 +19,7 @@ import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.SQLNode;
 import net.digitalid.database.dialect.expression.number.SQLCurrentTime;
+import net.digitalid.database.dialect.identifier.SQLIdentifier;
 import net.digitalid.database.dialect.statement.insert.SQLConflictClause;
 import net.digitalid.database.dialect.statement.table.create.SQLType;
 import net.digitalid.database.unit.Unit;
@@ -53,6 +54,11 @@ public abstract class MySQLDialect extends SQLDialect {
     }
     
     @Pure
+    protected void unparse(@Nonnull SQLIdentifier identifier, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
+        string.append("`").append(identifier.getString()).append("`");
+    }
+    
+    @Pure
     @TODO(task = "Should we throw an exception in the other cases?", date = "2017-03-07", author = Author.KASPAR_ETTER)
     protected void unparse(@Nonnull SQLConflictClause conflictClause, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         if (conflictClause == SQLConflictClause.REPLACE) { string.append("REPLACE"); }
@@ -64,6 +70,7 @@ public abstract class MySQLDialect extends SQLDialect {
     @Override
     public void unparse(@Nonnull SQLNode node, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         if (node instanceof SQLType) { unparse((SQLType) node, unit, string); }
+        else if (node instanceof SQLIdentifier) { unparse((SQLIdentifier) node, unit, string); }
         else if (node instanceof SQLConflictClause) { unparse((SQLConflictClause) node, unit, string); }
         else if (node instanceof SQLCurrentTime) { string.append("UNIX_TIMESTAMP(SYSDATE()) * 1000 + MICROSECOND(SYSDATE(3)) DIV 1000"); } // TODO: Is it important that it is the UNIX timestamp? Maybe we could just define another column type.
         else { super.unparse(node, unit, string); }
