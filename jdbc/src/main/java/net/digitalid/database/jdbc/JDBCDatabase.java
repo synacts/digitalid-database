@@ -163,6 +163,7 @@ public abstract class JDBCDatabase extends Database {
             getConnection().commit();
             transaction.set(Boolean.FALSE);
             runRunnablesAfterCommit();
+            Log.debugging("Committed the current transaction.");
         } catch (@Nonnull SQLException exception) {
             runRunnablesAfterRollback();
             throw DatabaseExceptionBuilder.withCause(exception).build();
@@ -176,6 +177,7 @@ public abstract class JDBCDatabase extends Database {
         try {
             getConnection().rollback();
             transaction.set(Boolean.FALSE);
+            Log.debugging("Rolled back the current transaction.");
         } catch (@Nonnull SQLException | DatabaseException exception) {
             Log.error("Could not roll back the transaction.", exception);
         } finally {

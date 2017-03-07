@@ -9,6 +9,7 @@ import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.logging.logger.Logger;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.annotations.sql.SQLFraction;
@@ -26,7 +27,7 @@ public abstract class SQLDialect {
     /**
      * Stores the dialect configuration of the database.
      */
-    public static final @Nonnull Configuration<SQLDialect> instance = Configuration.with(new SQLDialectSubclass());
+    public static final @Nonnull Configuration<SQLDialect> instance = Configuration.<SQLDialect>with(new SQLDialectSubclass()).addDependency(Logger.logger);
     
     /* -------------------------------------------------- Unparse -------------------------------------------------- */
     

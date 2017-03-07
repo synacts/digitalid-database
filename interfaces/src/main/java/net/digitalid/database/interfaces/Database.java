@@ -14,6 +14,7 @@ import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.sql.SQLStatement;
 import net.digitalid.database.annotations.transaction.Committing;
+import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.statement.delete.SQLDeleteStatement;
 import net.digitalid.database.dialect.statement.insert.SQLInsertStatement;
 import net.digitalid.database.dialect.statement.select.SQLSelectStatement;
@@ -36,7 +37,7 @@ public abstract class Database implements AutoCloseable {
     /**
      * Stores the database instance which is configured to handle all SQL executions.
      */
-    public static final @Nonnull Configuration<Database> instance = Configuration.withUnknownProvider();
+    public static final @Nonnull Configuration<Database> instance = Configuration.<Database>withUnknownProvider().addDependency(SQLDialect.instance);
     
     /* -------------------------------------------------- Transactions -------------------------------------------------- */
     
