@@ -353,7 +353,7 @@ public abstract class SQLConversionUtility {
      * Returns an immutable list of column names for the given converter. A non-null prefix can be specified.
      */
     @Pure
-    public static @Nonnull ImmutableList<@Nonnull SQLColumnName> getColumnNames(@Nonnull Converter<?, ?> converter, @Nonnull String prefix) {
+    public static @Nonnull @NonNegative ImmutableList<@Nonnull SQLColumnName> getColumnNames(@Nonnull Converter<?, ?> converter, @Nonnull String prefix) {
         final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columnNames = FreezableArrayList.withNoElements();
         fillColumnNames(converter, columnNames, prefix);
         return ImmutableList.withElementsOf(columnNames);
@@ -363,7 +363,7 @@ public abstract class SQLConversionUtility {
      * Returns an immutable list of column names for the given converter.
      */
     @Pure
-    public static @Nonnull ImmutableList<@Nonnull SQLColumnName> getColumnNames(@Nonnull Converter<?, ?> converter) {
+    public static @Nonnull @NonNegative ImmutableList<@Nonnull SQLColumnName> getColumnNames(@Nonnull Converter<?, ?> converter) {
         return getColumnNames(converter, "");
     }
     
@@ -408,22 +408,24 @@ public abstract class SQLConversionUtility {
                 if (Subject.class.isAssignableFrom(referencedType)) {
                     final @Nonnull ImmutableList<@Nonnull SQLColumnName> referencedColumnNames = getColumnNames(referenceConverter);
                     final @Nonnull ImmutableList<@Nonnull SQLColumnName> columnNames = getColumnNames(referenceConverter, customField.getName().toLowerCase());
-                    final @Nonnull String unitName;
-                    if (referencedType.isAnnotationPresent(UnitName.class)) {
-                        unitName = referencedType.getAnnotation(UnitName.class).value();
-                    } else {
-                        unitName = unit.getName();
+                    if (columnNames.size() > 0) {
+                        final @Nonnull String unitName;
+                        if (referencedType.isAnnotationPresent(UnitName.class)) {
+                            unitName = referencedType.getAnnotation(UnitName.class).value();
+                        } else {
+                            unitName = unit.getName();
+                        }
+                        final @Nonnull SQLReference reference = SQLReferenceBuilder.withTable(getQualifiedTableName(referenceConverter, unitName)).withColumns(referencedColumnNames).build();
+                        final @Nonnull SQLForeignKeyConstraintBuilder.@Nonnull InnerSQLForeignKeyConstraintBuilder sqlForeignKeyConstraintBuilder = SQLForeignKeyConstraintBuilder.withColumns(columnNames).withReference(reference);
+                        if (referencedType.isAnnotationPresent(ForeignKey.class)) {
+                            final @Nonnull ForeignKey foreignKeyAnnotation = referencedType.getAnnotation(ForeignKey.class);
+                            sqlForeignKeyConstraintBuilder.withOnDeleteAction(foreignKeyAnnotation.onDelete()).withOnUpdateAction(foreignKeyAnnotation.onUpdate());
+                        } else {
+                            sqlForeignKeyConstraintBuilder.withOnDeleteAction(ForeignKeyAction.RESTRICT).withOnUpdateAction(ForeignKeyAction.RESTRICT);
+                        }
+                        final @Nonnull SQLForeignKeyConstraint foreignKeyConstraint = sqlForeignKeyConstraintBuilder.build();
+                        tableConstraints.add(foreignKeyConstraint);
                     }
-                    final @Nonnull SQLReference reference = SQLReferenceBuilder.withTable(getQualifiedTableName(referenceConverter, unitName)).withColumns(referencedColumnNames).build();
-                    final @Nonnull SQLForeignKeyConstraintBuilder.@Nonnull InnerSQLForeignKeyConstraintBuilder sqlForeignKeyConstraintBuilder = SQLForeignKeyConstraintBuilder.withColumns(columnNames).withReference(reference);
-                    if (referencedType.isAnnotationPresent(ForeignKey.class)) {
-                        final @Nonnull ForeignKey foreignKeyAnnotation = referencedType.getAnnotation(ForeignKey.class);
-                        sqlForeignKeyConstraintBuilder.withOnDeleteAction(foreignKeyAnnotation.onDelete()).withOnUpdateAction(foreignKeyAnnotation.onUpdate());
-                    } else {
-                        sqlForeignKeyConstraintBuilder.withOnDeleteAction(ForeignKeyAction.RESTRICT).withOnUpdateAction(ForeignKeyAction.RESTRICT);
-                    }
-                    final @Nonnull SQLForeignKeyConstraint foreignKeyConstraint = sqlForeignKeyConstraintBuilder.build();
-                    tableConstraints.add(foreignKeyConstraint);
                 }
             } 
             if (isPrimaryKey(customField)) {
