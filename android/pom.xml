@@ -30,7 +30,14 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/../../libraries/android.jar</systemPath>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.robolectric</groupId>
+            <artifactId>robolectric</artifactId>
+            <version>3.1.4</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
     
 </project>
