@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
@@ -23,14 +24,24 @@ import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.SQLNode;
+import net.digitalid.database.dialect.expression.SQLExpression;
+import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
 import net.digitalid.database.dialect.expression.bool.SQLBooleanLiteral;
 import net.digitalid.database.dialect.expression.number.SQLCurrentTime;
 import net.digitalid.database.dialect.expression.number.SQLVariadicNumberOperator;
+import net.digitalid.database.dialect.identifier.table.SQLQualifiedTable;
+import net.digitalid.database.dialect.statement.table.create.SQLColumnDeclaration;
+import net.digitalid.database.dialect.statement.table.create.SQLReference;
 import net.digitalid.database.dialect.statement.table.create.SQLType;
 import net.digitalid.database.unit.Unit;
 
 /**
  * This class implements the SQLite dialect.
+ * 
+ * SQLite can only be used on the client-side, due to the following restriction:
+ * SQLite dialects do not fully support schemas. While different databases can be loaded with different
+ * aliases, it is not possible to reference a column of a table with a certain schema. As a result, it
+ * is also impossible to load multiple tables with the same name from different databases.
  */
 @Stateless
 @GenerateSubclass
@@ -72,11 +83,46 @@ public abstract class SQLiteDialect extends SQLDialect {
     @Pure
     @Override
     public void unparse(@Nonnull SQLNode node, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
-        if (node instanceof SQLType) { unparse((SQLType) node, unit, string); }
-        else if (node instanceof SQLBooleanLiteral) { unparse((SQLBooleanLiteral) node, unit, string); }
-        else if (node instanceof SQLVariadicNumberOperator) { unparse((SQLVariadicNumberOperator) node, unit, string); }
-        else if (node instanceof SQLCurrentTime) { string.append("CAST((JULIANDAY('NOW') - 2440587.5)*86400000 AS INTEGER)"); } // TODO: Is it important that it is the UNIX timestamp? Maybe we could just define another column type.
-        else { super.unparse(node, unit, string); }
+        if (node instanceof SQLColumnDeclaration) {
+            final @Nonnull SQLColumnDeclaration columnDeclaration = (SQLColumnDeclaration) node;
+            unparse(columnDeclaration.getName(), unit, string);
+            string.append(" ");
+            unparse(columnDeclaration.getType(), unit, string);
+    
+            if (columnDeclaration.isNotNull()) { string.append(" NOT NULL"); }
+            if (columnDeclaration.isPrimaryKey()) { string.append(" PRIMARY KEY"); }
+            if (columnDeclaration.isAutoIncrement()) { string.append(" AUTOINCREMENT"); }
+            if (columnDeclaration.isUnique()) { string.append(" UNIQUE"); }
+    
+            final @Nullable SQLBooleanExpression check = columnDeclaration.getCheck();
+            if (check != null) {
+                string.append(" CHECK (");
+                unparse(check, unit, string);
+                string.append(")");
+            }
+    
+            final @Nullable SQLExpression defaultValue = columnDeclaration.getDefaultValue();
+            if (defaultValue != null) {
+                string.append(" DEFAULT ");
+                unparse(defaultValue, unit, string);
+            }
+    
+            final @Nullable SQLReference reference = columnDeclaration.getReference();
+            if (reference != null) { unparse(reference, unit, string); }
+        } else if (node instanceof SQLType) {
+            unparse((SQLType) node, unit, string);
+        } else if (node instanceof SQLBooleanLiteral) {
+            unparse((SQLBooleanLiteral) node, unit, string);
+        } else if (node instanceof SQLQualifiedTable) {
+            unparse(((SQLQualifiedTable) node).getTable(), unit, string);
+        } else if (node instanceof SQLVariadicNumberOperator) {
+            unparse((SQLVariadicNumberOperator) node, unit, string);
+        } else if (node instanceof SQLCurrentTime) {
+            string.append("CAST((JULIANDAY('NOW') - 2440587.5)*86400000 AS INTEGER)");
+            // TODO: Is it important that it is the UNIX timestamp? Maybe we could just define another column type.
+        } else {
+            super.unparse(node, unit, string);
+        }
     }
     
     /* -------------------------------------------------- TODO -------------------------------------------------- */
