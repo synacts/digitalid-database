@@ -8,7 +8,6 @@ import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.logging.Log;
 
 import net.digitalid.database.annotations.sql.SQLFraction;
-import net.digitalid.database.dialect.expression.string.SQLStringLiteral;
 import net.digitalid.database.dialect.expression.string.SQLStringLiteralBuilder;
 import net.digitalid.database.dialect.identifier.column.SQLColumnName;
 import net.digitalid.database.dialect.identifier.column.SQLColumnNameBuilder;

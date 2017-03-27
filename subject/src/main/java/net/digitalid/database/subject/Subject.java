@@ -27,7 +27,7 @@ public interface Subject<@Unspecifiable UNIT extends Unit> extends RootInterface
      */
     @Pure
     @Provided
-    @Default("Unit.DEFAULT")
+    @Default("net.digitalid.database.unit.Unit.DEFAULT")
     public @Nonnull UNIT getUnit();
     
     /* -------------------------------------------------- Module -------------------------------------------------- */

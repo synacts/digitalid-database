@@ -57,7 +57,7 @@ public @interface GenerateSubjectModule {
         public void generateFieldsRequiredByMethod(@Nonnull JavaFileGenerator javaFileGenerator, @Nonnull MethodInformation method, @Nonnull TypeInformation typeInformation) {
             final @Nonnull String subjectConverter;
             if (ProcessingUtility.isRawSubtype(typeInformation.getType(), Unit.class)) {
-                subjectConverter = javaFileGenerator.importIfPossible("net.digitalid.core.entity.CoreUnitConverterBuilder") + ".withType" + Brackets.inRound(typeInformation.getName() + ".class") + ".build()";
+                subjectConverter = javaFileGenerator.importIfPossible("net.digitalid.core.unit.CoreUnitConverterBuilder") + ".withType" + Brackets.inRound(typeInformation.getName() + ".class") + ".build()";
             } else {
                 subjectConverter = typeInformation.getSimpleNameOfGeneratedConverter() + ".INSTANCE";
             }

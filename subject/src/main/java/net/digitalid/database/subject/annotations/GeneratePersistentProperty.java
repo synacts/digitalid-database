@@ -101,7 +101,6 @@ public @interface GeneratePersistentProperty {
 //            final @Nonnull String validationContent = contracts.map(contract -> javaFileGenerator.importIfPossible(Require.class) + ".that" + Brackets.inRound(contract.getCondition()) + ".orThrow" + Brackets.inRound(contract.getMessage() + ", " + contract.getArguments().join()) + ";").join("\n");
 //            
 //            javaFileGenerator.addField("private static final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(FailableConsumer.class) + Brackets.inPointy(javaFileGenerator.importIfPossible(String.class) + ", " + javaFileGenerator.importIfPossible(PreconditionViolationException.class)) + method.getName().toUpperCase() + "_VALIDATOR = new " + javaFileGenerator.importIfPossible(FailableConsumer.class) + Brackets.inPointy(javaFileGenerator.importIfPossible(String.class) + ", " + javaFileGenerator.importIfPossible(PreconditionViolationException.class)) + "() {\n\n " +
-//                    
 //                    "@" + javaFileGenerator.importIfPossible(Impure.class) + "\n" +
 //                    "@" + javaFileGenerator.importIfPossible(Override.class) + "\n" +
 //                    "public void consume(@" + javaFileGenerator.importIfPossible(Captured.class) + javaFileGenerator.importIfPossible(String.class) + " password) throws " + javaFileGenerator.importIfPossible(PreconditionViolationException.class) + " {\n" + validationContent + "\n}" +
@@ -113,9 +112,8 @@ public @interface GeneratePersistentProperty {
             final @Nonnull String propertyPackage = ProcessingUtility.getQualifiedPackageName(((DeclaredType) method.getReturnType()).asElement());
             final @Nonnull String propertyType = "Persistent" + Strings.substringFromLast(ProcessingUtility.getSimpleName(method.getReturnType()), "Persistent");
             
-            final @Nonnull String surroundingType = typeInformation.getName();
             final @Nonnull List<@Nonnull ? extends TypeMirror> typeArguments = ((DeclaredType) method.getReturnType()).getTypeArguments();
-            
+            final @Nonnull String surroundingType = javaFileGenerator.importIfPossible(typeArguments.get(0)); // was before: typeInformation.getName();
             
             final @Nonnull String unitType = javaFileGenerator.importIfPossible(ProcessingUtility.getSupertype(typeInformation.getType(), Subject.class).getTypeArguments().get(0));
             
@@ -131,13 +129,13 @@ public @interface GeneratePersistentProperty {
                 
                 final @Nonnull String keyType = javaFileGenerator.importIfPossible(typeArguments.get(1));
                 final @Nonnull String valueType = javaFileGenerator.importIfPossible(typeArguments.get(2));
-    
+                
                 final @Nonnull String externallyProvidedTypeForKey = getExternallyProvidedType(javaFileGenerator, keyType, keyConverterType);
                 final @Nonnull String externallyProvidedTypeForValue = getExternallyProvidedType(javaFileGenerator, valueType, valueConverterType);
-    
+                
                 final @Nonnull String keyConverter = CustomType.importConverterType(typeArguments.get(1), FiniteIterable.of(), javaFileGenerator);
                 final @Nonnull String valueConverter = CustomType.importConverterType(typeArguments.get(2), FiniteIterable.of(), javaFileGenerator);
-    
+                
                 withConverters = ".withKeyConverter" + Brackets.inRound(keyConverter) + ".withValueConverter" + Brackets.inRound(valueConverter);
                 genericTypesTable = Brackets.inPointy(unitType + ", " + surroundingType + ", " + keyType + ", " + valueType + ", " + externallyProvidedTypeForKey + ", " + externallyProvidedTypeForValue);
                 
@@ -149,7 +147,7 @@ public @interface GeneratePersistentProperty {
                 final @Nonnull String valueType = javaFileGenerator.importIfPossible(typeArguments.get(1));
                 
                 final @Nonnull String externallyProvidedType = getExternallyProvidedType(javaFileGenerator, valueType, valueConverterType);
-    
+                
                 final @Nonnull String valueConverter = CustomType.importConverterType(typeArguments.get(1), FiniteIterable.of(), javaFileGenerator);
                 
                 withConverters = ".withValueConverter" + Brackets.inRound(valueConverter);

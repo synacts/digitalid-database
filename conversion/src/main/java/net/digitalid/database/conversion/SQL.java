@@ -12,6 +12,7 @@ import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.FreezableList;
+import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.exceptions.RecoveryExceptionBuilder;
 import net.digitalid.utility.conversion.interfaces.Converter;
@@ -69,6 +70,13 @@ import net.digitalid.database.unit.Unit;
  */
 @Utility
 public abstract class SQL {
+    
+    /* -------------------------------------------------- Configuration -------------------------------------------------- */
+    
+    /**
+     * Stores a dummy configuration in order to have an initialization target for table creation.
+     */
+    public static final @Nonnull Configuration<Boolean> configuration = Configuration.with(Boolean.TRUE).addDependency(Database.instance);
     
     /* -------------------------------------------------- Create Table -------------------------------------------------- */
     

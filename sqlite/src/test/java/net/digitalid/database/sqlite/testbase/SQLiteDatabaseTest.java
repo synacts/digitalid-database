@@ -11,35 +11,15 @@ import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
-import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.contracts.Ensure;
 import net.digitalid.utility.contracts.Require;
-import net.digitalid.utility.conversion.model.CustomType;
-import net.digitalid.utility.immutable.ImmutableList;
-import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.testing.UtilityTest;
 
-import net.digitalid.database.annotations.sql.SQLFraction;
-import net.digitalid.database.dialect.identifier.column.SQLColumnNameBuilder;
-import net.digitalid.database.dialect.identifier.schema.SQLSchemaName;
-import net.digitalid.database.dialect.identifier.schema.SQLSchemaNameBuilder;
-import net.digitalid.database.dialect.identifier.table.SQLExplicitlyQualifiedTableBuilder;
-import net.digitalid.database.dialect.identifier.table.SQLQualifiedTable;
-import net.digitalid.database.dialect.identifier.table.SQLTableName;
-import net.digitalid.database.dialect.identifier.table.SQLTableNameBuilder;
-import net.digitalid.database.dialect.statement.table.create.SQLColumnDeclaration;
-import net.digitalid.database.dialect.statement.table.create.SQLColumnDeclarationBuilder;
-import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatement;
-import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatementBuilder;
-import net.digitalid.database.dialect.statement.table.create.SQLTypeBuilder;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
-import net.digitalid.database.sqlite.SQLiteDialect;
-import net.digitalid.database.unit.Unit;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  *
