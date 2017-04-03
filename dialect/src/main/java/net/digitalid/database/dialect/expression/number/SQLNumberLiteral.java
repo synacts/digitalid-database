@@ -1,5 +1,7 @@
 package net.digitalid.database.dialect.expression.number;
 
+import java.math.BigDecimal;
+
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
@@ -35,7 +37,7 @@ public interface SQLNumberLiteral extends SQLNumberExpression, SQLLiteral {
     @Pure
     @Override
     public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
-        string.append(String.valueOf(getValue()));
+        string.append(new BigDecimal(getValue()).toPlainString());
     }
     
 }

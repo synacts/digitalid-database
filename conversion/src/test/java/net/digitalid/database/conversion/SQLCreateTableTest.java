@@ -44,9 +44,9 @@ public class SQLCreateTableTest extends DatabaseTest {
     @Test
     public void shouldCreateTableWithMultipleBooleanColumns() throws Exception {
         SQL.createTable(MultiBooleanColumnTableConverter.INSTANCE, unit);
-
+        
         assertTableExists(MultiBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName());
-    
+        
         final @Nonnull ExpectedColumnDeclarations expectedColumnDeclarations = ExpectedColumnDeclarationsBuilder.build();
         expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("firstvalue").withDBType("boolean(1)").withNullAllowed(false).withKey("PRI").build());
         expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("secondvalue").withDBType("boolean(1)").withNullAllowed(false).withKey("PRI").build());
@@ -56,7 +56,7 @@ public class SQLCreateTableTest extends DatabaseTest {
     @Test
     public void shouldCreateTableWithBooleanColumnWithDefaultValue() throws Exception {
         SQL.createTable(BooleanColumnDefaultTrueTableConverter.INSTANCE, unit);
-
+        
         assertTableExists(BooleanColumnDefaultTrueTableConverter.INSTANCE.getTypeName(), unit.getName());
         final @Nonnull ExpectedColumnDeclarations expectedColumnDeclarations = ExpectedColumnDeclarationsBuilder.build();
         expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("value").withDBType("boolean(1)").withNullAllowed(false).withDefaultValue("TRUE").withKey("PRI").build());
@@ -66,24 +66,24 @@ public class SQLCreateTableTest extends DatabaseTest {
     @Test
     public void shouldCreateTableWithConstrainedInteger() throws Exception {
         SQL.createTable(ConstraintIntegerColumnTableConverter.INSTANCE, unit);
-
+        
         assertTableExists(ConstraintIntegerColumnTableConverter.INSTANCE.getTypeName(), unit.getName());
         final @Nonnull ExpectedColumnDeclarations expectedColumnDeclarations = ExpectedColumnDeclarationsBuilder.build();
-        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("value").withDBType("integer(10)").withNullAllowed(false).withColumnConstraint("((VALUE % 7.0) = 0.0)").withKey("PRI").build());
+        expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("value").withDBType("integer(10)").withNullAllowed(false).withColumnConstraint("((VALUE % 7) = 0)").withKey("PRI").build());
         assertTableHasExpectedColumnsDeclaration(ConstraintIntegerColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), expectedColumnDeclarations);
     }
-
+    
     @Test
     public void shouldCreateTableWithInheritance() throws Exception {
         SQL.createTable(SubClassConverter.INSTANCE, unit);
-
+        
         assertTableExists(SubClassConverter.INSTANCE.getTypeName(), unit.getName());
         final @Nonnull ExpectedColumnDeclarations expectedColumnDeclarations = ExpectedColumnDeclarationsBuilder.build();
         expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("flag").withDBType("boolean(1)").withNullAllowed(false).withKey("PRI").build());
         expectedColumnDeclarations.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("number").withDBType("integer(10)").withNullAllowed(false).withKey("PRI").build());
         assertTableHasExpectedColumnsDeclaration(SubClassConverter.INSTANCE.getTypeName(), unit.getName(), expectedColumnDeclarations);
     }
-
+    
     // TODO: fix or move to property module
 //    @Test
 //    public void shouldCreateTableWithProperty() throws Exception {
@@ -100,7 +100,7 @@ public class SQLCreateTableTest extends DatabaseTest {
     public void shouldCreateTableWithReference() throws Exception {
         SQL.createTable(ReferencedEntityConverter.INSTANCE, unit);
         SQL.createTable(EntityConverter.INSTANCE, unit);
-
+        
         final @Nonnull ExpectedColumnDeclarations expectedColumnDeclarationsForEntityTable = ExpectedColumnDeclarationsBuilder.build();
         expectedColumnDeclarationsForEntityTable.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("referencedentity_id").withDBType("integer(10)").withNullAllowed(false).withKey("PRI").build());
         expectedColumnDeclarationsForEntityTable.addExpectedResult(ExpectedColumnDeclarationBuilder.withColumnName("referencedentity_othervalue").withDBType("integer(10)").withNullAllowed(false).withKey("PRI").build());
@@ -121,5 +121,5 @@ public class SQLCreateTableTest extends DatabaseTest {
         expectedTableConstraints.addExpectedResult(expectedTableConstraint);
         assertTableReferences(expectedTableConstraints);
     }
-
+    
 }

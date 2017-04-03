@@ -249,10 +249,10 @@ public abstract class SQL {
     
     @NonCommitting
     @PureWithSideEffects
-    private static @Capturable <@Unspecifiable SELECT_TYPE, @Unspecifiable WHERE_TYPE> SQLDecoder getDecoder(@Nonnull Converter<SELECT_TYPE, ?> selectConverter, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException {
+    private static @Capturable <@Unspecifiable WHERE_TYPE> SQLDecoder getDecoder(@Nonnull Converter<?, ?> selectConverter, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException {
         final @Nonnull SQLTableName tableName = SQLTableNameBuilder.withString(selectConverter.getTypeName()).build();
-        final @Nonnull SQLSchemaName schema = SQLSchemaNameBuilder.withString(unit.getName()).build();
-        final @Nonnull SQLQualifiedTable qualifiedTable = SQLExplicitlyQualifiedTableBuilder.withTable(tableName).withSchema(schema).build();
+        final @Nonnull SQLSchemaName schemaName = SQLSchemaNameBuilder.withString(unit.getName()).build();
+        final @Nonnull SQLQualifiedTable qualifiedTable = SQLExplicitlyQualifiedTableBuilder.withTable(tableName).withSchema(schemaName).build();
         final @Nonnull SQLSimpleSelectStatementBuilder.@Nonnull InnerSQLSimpleSelectStatementBuilder simpleSelectStatementBuilder = SQLSimpleSelectStatementBuilder.withColumns(ImmutableList.withElements(SQLAllColumnsBuilder.buildWithTable(qualifiedTable))).withSources(ImmutableList.withElements(SQLTableSourceBuilder.withSource(qualifiedTable).build()));
         
         if (whereConverter != null) {
