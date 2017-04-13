@@ -17,6 +17,7 @@ import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.statement.delete.SQLDeleteStatement;
 import net.digitalid.database.dialect.statement.insert.SQLInsertStatement;
+import net.digitalid.database.dialect.statement.schema.SQLCreateSchemaStatement;
 import net.digitalid.database.dialect.statement.select.SQLSelectStatement;
 import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatement;
 import net.digitalid.database.dialect.statement.table.drop.SQLDropTableStatement;
@@ -56,6 +57,14 @@ public abstract class Database implements AutoCloseable {
     @Impure
     @Committing
     public abstract void rollback();
+    
+    /* -------------------------------------------------- Create Schema -------------------------------------------------- */
+    
+    /**
+     * Executes the given SQL create schema statement for the given unit.
+     */
+    @Impure
+    public abstract void execute(@Nonnull SQLCreateSchemaStatement createSchemaStatement, @Nonnull Unit unit) throws DatabaseException;
     
     /* -------------------------------------------------- Create Table -------------------------------------------------- */
     

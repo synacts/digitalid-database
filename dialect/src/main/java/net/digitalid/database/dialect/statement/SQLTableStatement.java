@@ -20,7 +20,7 @@ import net.digitalid.database.dialect.statement.table.drop.SQLDropTableStatement
  * @see SQLDropTableStatement
  */
 @Immutable
-public interface SQLTableStatement extends SQLStatement {
+public interface SQLTableStatement extends SQLStatementNode {
     
     /* -------------------------------------------------- Table -------------------------------------------------- */
     

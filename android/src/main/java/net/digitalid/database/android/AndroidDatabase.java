@@ -29,6 +29,7 @@ import net.digitalid.database.dialect.identifier.SQLIdentifier;
 import net.digitalid.database.dialect.statement.SQLTableStatement;
 import net.digitalid.database.dialect.statement.delete.SQLDeleteStatement;
 import net.digitalid.database.dialect.statement.insert.SQLInsertStatement;
+import net.digitalid.database.dialect.statement.schema.SQLCreateSchemaStatement;
 import net.digitalid.database.dialect.statement.select.SQLSelectStatement;
 import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatement;
 import net.digitalid.database.dialect.statement.table.drop.SQLDropTableStatement;
@@ -117,6 +118,12 @@ public class AndroidDatabase extends Database {
         final @Nonnull StringBuilder stringBuilder = new StringBuilder();
         tableStatement.unparse(SQLDialect.instance.get(), unit, stringBuilder);
         helper.getWritableDatabase().execSQL(stringBuilder.toString());
+    }
+    
+    @Impure
+    @Override
+    public void execute(@Nonnull SQLCreateSchemaStatement createSchemaStatement, @Nonnull Unit unit) throws DatabaseException {
+        throw new UnsupportedOperationException("Creating a new schema is not supported on Android.");
     }
     
     @Impure

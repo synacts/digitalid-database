@@ -10,7 +10,7 @@ import net.digitalid.database.dialect.expression.bool.SQLSelectionExistsBooleanE
 import net.digitalid.database.dialect.expression.bool.SQLSelectionExistsBooleanExpressionBuilder;
 import net.digitalid.database.dialect.expression.number.SQLNumberExpression;
 import net.digitalid.database.dialect.expression.string.SQLStringExpression;
-import net.digitalid.database.dialect.statement.SQLStatement;
+import net.digitalid.database.dialect.statement.SQLStatementNode;
 import net.digitalid.database.dialect.statement.select.ordered.SQLOrderedSelectStatement;
 import net.digitalid.database.dialect.statement.select.unordered.SQLUnorderedSelectStatement;
 
@@ -21,7 +21,7 @@ import net.digitalid.database.dialect.statement.select.unordered.SQLUnorderedSel
  * @see SQLUnorderedSelectStatement
  */
 @Immutable
-public interface SQLSelectStatement extends SQLStatement, SQLBooleanExpression, SQLNumberExpression, SQLStringExpression {
+public interface SQLSelectStatement extends SQLStatementNode, SQLBooleanExpression, SQLNumberExpression, SQLStringExpression {
     
     /* -------------------------------------------------- Exists -------------------------------------------------- */
     

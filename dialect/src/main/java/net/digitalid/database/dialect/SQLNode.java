@@ -13,7 +13,7 @@ import net.digitalid.database.dialect.expression.SQLExpression;
 import net.digitalid.database.dialect.expression.SQLOperator;
 import net.digitalid.database.dialect.identifier.SQLIdentifier;
 import net.digitalid.database.dialect.identifier.table.SQLTable;
-import net.digitalid.database.dialect.statement.SQLStatement;
+import net.digitalid.database.dialect.statement.SQLStatementNode;
 import net.digitalid.database.dialect.statement.insert.SQLExpressions;
 import net.digitalid.database.dialect.statement.insert.SQLValues;
 import net.digitalid.database.dialect.statement.select.unordered.simple.columns.SQLResultColumnOrAllColumns;
@@ -26,7 +26,7 @@ import net.digitalid.database.unit.Unit;
  * @see SQLOperator
  * @see SQLIdentifier
  * @see SQLTable
- * @see SQLStatement
+ * @see SQLStatementNode
  * @see SQLExpressions
  * @see SQLValues
  * @see SQLResultColumnOrAllColumns

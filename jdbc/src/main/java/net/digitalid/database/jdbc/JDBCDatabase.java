@@ -25,9 +25,11 @@ import net.digitalid.database.annotations.sql.SQLStatement;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.dialect.SQLDialect;
+import net.digitalid.database.dialect.statement.SQLStatementNode;
 import net.digitalid.database.dialect.statement.SQLTableStatement;
 import net.digitalid.database.dialect.statement.delete.SQLDeleteStatement;
 import net.digitalid.database.dialect.statement.insert.SQLInsertStatement;
+import net.digitalid.database.dialect.statement.schema.SQLCreateSchemaStatement;
 import net.digitalid.database.dialect.statement.select.SQLSelectStatement;
 import net.digitalid.database.dialect.statement.table.create.SQLCreateTableStatement;
 import net.digitalid.database.dialect.statement.table.drop.SQLDropTableStatement;
@@ -185,21 +187,6 @@ public abstract class JDBCDatabase extends Database {
         }
     }
     
-    /* -------------------------------------------------- Executions -------------------------------------------------- */
-    
-    /**
-     * Prepares the given statement at the given site.
-     */
-    @Pure
-    protected @Nonnull PreparedStatement prepare(@Nonnull String statement) throws DatabaseException {
-        try {
-            final @Nonnull PreparedStatement preparedStatement = getConnection().prepareStatement(statement, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            return preparedStatement;
-        } catch (@Nonnull SQLException exception) {
-            throw DatabaseExceptionBuilder.withCause(exception).build();
-        }
-    }
-    
     @Override
     @PureWithSideEffects
     public void close() throws Exception {
@@ -209,35 +196,48 @@ public abstract class JDBCDatabase extends Database {
     /* -------------------------------------------------- Execution -------------------------------------------------- */
     
     @PureWithSideEffects
-    private void executeStatement(@Nonnull Unit unit, @Nonnull SQLTableStatement tableStatement) throws DatabaseException {
-        final @Nonnull String statementAsString = SQLDialect.unparse(tableStatement, unit);
+    private void executeStatement(@Nonnull SQLStatementNode statement, @Nonnull Unit unit) throws DatabaseException {
+        final @Nonnull String statementAsString = SQLDialect.unparse(statement, unit);
         Log.debugging("Executing $", statementAsString);
         try {
             // TODO: do we really need to set the result set type and result set concurrency?
             getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).execute(statementAsString);
-        } catch (SQLException exception) {
+        } catch (@Nonnull SQLException exception) {
             throw DatabaseExceptionBuilder.withCause(exception).build();
         }
     }
     
+    @Override
     @PureWithSideEffects
-    protected void execute(@Nonnull SQLTableStatement tableStatement, @Nonnull Unit unit) throws DatabaseException {
-        executeStatement(unit, tableStatement);
+    public void execute(@Nonnull SQLCreateSchemaStatement createSchemaStatement, @Nonnull Unit unit) throws DatabaseException {
+        executeStatement(createSchemaStatement, unit);
     }
     
     @Override
     @PureWithSideEffects
     public void execute(@Nonnull SQLCreateTableStatement createTableStatement, @Nonnull Unit unit) throws DatabaseException {
-        executeStatement(unit, createTableStatement);
+        executeStatement(createTableStatement, unit);
     }
     
     @Override
     @PureWithSideEffects
     public void execute(@Nonnull SQLDropTableStatement dropTableStatement, @Nonnull Unit unit) throws DatabaseException {
-        executeStatement(unit, dropTableStatement);
+        executeStatement(dropTableStatement, unit);
     }
     
     /* -------------------------------------------------- Encoder -------------------------------------------------- */
+    
+    /**
+     * Prepares the given statement at the given site.
+     */
+    @Pure
+    protected @Nonnull PreparedStatement prepare(@Nonnull String statement) throws DatabaseException {
+        try {
+            return getConnection().prepareStatement(statement, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        } catch (@Nonnull SQLException exception) {
+            throw DatabaseExceptionBuilder.withCause(exception).build();
+        }
+    }
     
     @PureWithSideEffects
     private @Nonnull SQLActionEncoder getEncoderForStatement(@Nonnull SQLTableStatement tableStatement, @Nonnull Unit unit) throws DatabaseException {
