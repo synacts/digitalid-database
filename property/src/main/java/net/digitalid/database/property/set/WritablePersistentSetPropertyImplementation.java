@@ -111,7 +111,7 @@ public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable
                 return false;
             } else {
                 final @Nonnull PersistentSetPropertyEntry<SUBJECT, VALUE> entry = new PersistentSetPropertyEntrySubclass<>(getSubject(), value);
-                SQL.insert(getTable().getEntryConverter(), entry, getSubject().getUnit());
+                SQL.insertOrAbort(getTable().getEntryConverter(), entry, getSubject().getUnit());
                 getSet().add(value);
                 notifyObservers(value, true);
                 return true;

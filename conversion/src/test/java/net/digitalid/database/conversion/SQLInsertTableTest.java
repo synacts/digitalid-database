@@ -39,7 +39,7 @@ public class SQLInsertTableTest extends DatabaseTest {
         SQL.createTable(SingleBooleanColumnTableConverter.INSTANCE, unit);
         try {
             final @Nonnull SingleBooleanColumnTable convertibleObject = SingleBooleanColumnTable.get(true);
-            SQL.insert(SingleBooleanColumnTableConverter.INSTANCE, convertibleObject, unit);
+            SQL.insertOrAbort(SingleBooleanColumnTableConverter.INSTANCE, convertibleObject, unit);
     
             assertRowCount(SingleBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), 1);
             assertTableContains(SingleBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), Expected.column("value").value("TRUE"));
@@ -53,7 +53,7 @@ public class SQLInsertTableTest extends DatabaseTest {
         SQL.createTable(MultiBooleanColumnTableConverter.INSTANCE, unit);
         try {
             final @Nonnull MultiBooleanColumnTable convertibleObject = MultiBooleanColumnTable.get(true, false);
-            SQL.insert(MultiBooleanColumnTableConverter.INSTANCE, convertibleObject, unit);
+            SQL.insertOrAbort(MultiBooleanColumnTableConverter.INSTANCE, convertibleObject, unit);
 
             assertRowCount(MultiBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), 1);
             assertTableContains(MultiBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), Expected.column("firstvalue").value("TRUE"), Expected.column("secondValue").value("FALSE"));
@@ -67,7 +67,7 @@ public class SQLInsertTableTest extends DatabaseTest {
         SQL.createTable(ConstraintIntegerColumnTableConverter.INSTANCE, unit);
         try {
             final @Nonnull ConstraintIntegerColumnTable convertibleObject = ConstraintIntegerColumnTable.get(14);
-            SQL.insert(ConstraintIntegerColumnTableConverter.INSTANCE, convertibleObject, unit);
+            SQL.insertOrAbort(ConstraintIntegerColumnTableConverter.INSTANCE, convertibleObject, unit);
     
             assertRowCount(ConstraintIntegerColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), 1);
             assertTableContains(ConstraintIntegerColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), Expected.column("value").value("14"));
@@ -101,7 +101,7 @@ public class SQLInsertTableTest extends DatabaseTest {
             });
 
             final @Nonnull ConstraintIntegerColumnTable convertibleObject = ConstraintIntegerColumnTable.get(2);
-            SQL.insert(ConstraintIntegerColumnTableConverter.INSTANCE, convertibleObject, unit);
+            SQL.insertOrAbort(ConstraintIntegerColumnTableConverter.INSTANCE, convertibleObject, unit);
         } finally {
             SQL.dropTable(ConstraintIntegerColumnTableConverter.INSTANCE, unit);
         }
@@ -125,7 +125,7 @@ public class SQLInsertTableTest extends DatabaseTest {
             final @Nonnull Convertible1 convertible1 = Convertible1Builder.withValue(2).build();
             final @Nonnull Convertible2 convertible2 = Convertible2Builder.withValue(3).build();
             final @Nonnull EmbeddedConvertibles embeddedConvertibles = EmbeddedConvertiblesBuilder.withConvertible1(convertible1).withConvertible2(convertible2).build();
-            SQL.insert(EmbeddedConvertiblesConverter.INSTANCE, embeddedConvertibles, unit);
+            SQL.insertOrAbort(EmbeddedConvertiblesConverter.INSTANCE, embeddedConvertibles, unit);
 
             assertRowCount(EmbeddedConvertiblesConverter.INSTANCE.getTypeName(), unit.getName(), 1);
             assertTableContains(EmbeddedConvertiblesConverter.INSTANCE.getTypeName(), unit.getName(), Expected.column("convertible1_value").value("2"), Expected.column("convertible2_value").value("3"));

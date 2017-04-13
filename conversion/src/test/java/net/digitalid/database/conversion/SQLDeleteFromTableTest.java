@@ -32,7 +32,7 @@ public class SQLDeleteFromTableTest extends DatabaseTest {
         SQL.createTable(SingleBooleanColumnTableConverter.INSTANCE, unit);
         try {
             final @Nonnull SingleBooleanColumnTable convertibleObject = SingleBooleanColumnTable.get(true);
-            SQL.insert(SingleBooleanColumnTableConverter.INSTANCE, convertibleObject, unit);
+            SQL.insertOrAbort(SingleBooleanColumnTableConverter.INSTANCE, convertibleObject, unit);
     
             assertRowCount(SingleBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), 1);
             assertTableContains(SingleBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), Expected.column("value").value("TRUE"));
@@ -55,7 +55,7 @@ public class SQLDeleteFromTableTest extends DatabaseTest {
             final @Nonnull Convertible1 convertible1 = Convertible1Builder.withValue(2).build();
             final @Nonnull Convertible2 convertible2 = Convertible2Builder.withValue(3).build();
             final @Nonnull EmbeddedConvertibles embeddedConvertibles = EmbeddedConvertiblesBuilder.withConvertible1(convertible1).withConvertible2(convertible2).build();
-            SQL.insert(EmbeddedConvertiblesConverter.INSTANCE, embeddedConvertibles, unit);
+            SQL.insertOrAbort(EmbeddedConvertiblesConverter.INSTANCE, embeddedConvertibles, unit);
     
             assertRowCount(EmbeddedConvertiblesConverter.INSTANCE.getTypeName(), unit.getName(), 1);
             assertTableContains(EmbeddedConvertiblesConverter.INSTANCE.getTypeName(), unit.getName(), Expected.column("convertible1_value").value("2"), Expected.column("convertible2_value").value("3"));

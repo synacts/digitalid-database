@@ -8,8 +8,6 @@ import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.Shared;
-import net.digitalid.utility.collaboration.annotations.TODO;
-import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.collections.list.FreezableList;
 import net.digitalid.utility.configuration.Configuration;
@@ -34,6 +32,7 @@ import net.digitalid.database.dialect.identifier.column.SQLColumnName;
 import net.digitalid.database.dialect.identifier.schema.SQLSchemaName;
 import net.digitalid.database.dialect.identifier.schema.SQLSchemaNameBuilder;
 import net.digitalid.database.dialect.identifier.table.SQLExplicitlyQualifiedTableBuilder;
+import net.digitalid.database.dialect.identifier.table.SQLImplicitlyQualifiedTableBuilder;
 import net.digitalid.database.dialect.identifier.table.SQLQualifiedTable;
 import net.digitalid.database.dialect.identifier.table.SQLTableName;
 import net.digitalid.database.dialect.identifier.table.SQLTableNameBuilder;
@@ -119,41 +118,48 @@ public abstract class SQL {
      */
     @NonCommitting
     @PureWithSideEffects
-    public static <@Unspecifiable TYPE> void insert(@Nonnull Converter<TYPE, ?> converter, @Nonnull TYPE object, @Nonnull Unit unit) throws DatabaseException {
+    public static <@Unspecifiable TYPE> void insert(@Nonnull Converter<TYPE, ?> converter, @Nonnull TYPE object, @Nonnull Unit unit, @Nonnull SQLConflictClause conflictClause) throws DatabaseException {
         final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columns = FreezableArrayList.withNoElements();
         SQLConversionUtility.fillColumnNames(converter, columns, "");
+        
         final @Nonnull ImmutableList<@Nonnull SQLParameter> row = ImmutableList.withElementsOf(InfiniteIterable.repeat(SQLParameter.INSTANCE).limit(columns.size()));
         final @Nonnull SQLRows rows = SQLRowsBuilder.withRows(ImmutableList.withElements(SQLExpressionsBuilder.withExpressions(row).build())).build();
+        
         final @Nonnull SQLTableName tableName = SQLTableNameBuilder.withString(converter.getTypeName()).build();
-        final @Nonnull SQLSchemaName schema = SQLSchemaNameBuilder.withString(unit.getName()).build();
-        final @Nonnull SQLQualifiedTable qualifiedTable = SQLExplicitlyQualifiedTableBuilder.withTable(tableName).withSchema(schema).build();
-        final SQLInsertStatement sqlInsertStatement = SQLInsertStatementBuilder.withTable(qualifiedTable).withColumns(ImmutableList.withElementsOf(columns)).withValues(rows).build();
+        final @Nonnull SQLQualifiedTable qualifiedTable = SQLImplicitlyQualifiedTableBuilder.withTable(tableName).build();
+        
+        final SQLInsertStatement insertStatement = SQLInsertStatementBuilder.withTable(qualifiedTable).withColumns(ImmutableList.withElementsOf(columns)).withValues(rows).withConflictClause(conflictClause).build();
     
-        final @Nonnull SQLActionEncoder actionEncoder = Database.instance.get().getEncoder(sqlInsertStatement, unit);
+        final @Nonnull SQLActionEncoder actionEncoder = Database.instance.get().getEncoder(insertStatement, unit);
         actionEncoder.encodeObject(converter, object);
         actionEncoder.execute();
     }
     
     /**
+     * Inserts or aborts the given object with the given converter into its table in the given unit.
+     */
+    @NonCommitting
+    @PureWithSideEffects
+    public static <@Unspecifiable TYPE> void insertOrAbort(@Nonnull Converter<TYPE, ?> converter, @Nonnull TYPE object, @Nonnull Unit unit) throws DatabaseException {
+        insert(converter, object, unit, SQLConflictClause.ABORT);
+    }
+    
+    /**
+     * Inserts or ignores the given object with the given converter into its table in the given unit.
+     */
+    @NonCommitting
+    @PureWithSideEffects
+    public static <@Unspecifiable TYPE> void insertOrIgnore(@Nonnull Converter<TYPE, ?> converter, @Nonnull TYPE object, @Nonnull Unit unit) throws DatabaseException {
+        insert(converter, object, unit, SQLConflictClause.IGNORE);
+    }
+    
+    /**
      * Inserts or replaces the given object with the given converter into its table in the given unit.
      */
-    @TODO(task="Do we need to allow keys/where clauses that indicate which row should be updated if already inserted?", date="2017-02-05", author = Author.STEPHANIE_STROKA)
     @NonCommitting
     @PureWithSideEffects
     public static <@Unspecifiable TYPE> void insertOrReplace(@Nonnull Converter<TYPE, ?> converter, @Nonnull TYPE object, @Nonnull Unit unit) throws DatabaseException {
-        final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columns = FreezableArrayList.withNoElements();
-        SQLConversionUtility.fillColumnNames(converter, columns, "");
-    
-        final @Nonnull ImmutableList<@Nonnull SQLParameter> row = ImmutableList.withElementsOf(InfiniteIterable.repeat(SQLParameter.INSTANCE).limit(columns.size()));
-        final @Nonnull SQLRows rows = SQLRowsBuilder.withRows(ImmutableList.withElements(SQLExpressionsBuilder.withExpressions(row).build())).build();
-        final @Nonnull SQLTableName tableName = SQLTableNameBuilder.withString(converter.getTypeName()).build();
-        final @Nonnull SQLSchemaName schema = SQLSchemaNameBuilder.withString(unit.getName()).build();
-        final @Nonnull SQLQualifiedTable qualifiedTable = SQLExplicitlyQualifiedTableBuilder.withTable(tableName).withSchema(schema).build();
-        final @Nonnull SQLInsertStatement insertStatement = SQLInsertStatementBuilder.withTable(qualifiedTable).withColumns(ImmutableList.withElementsOf(columns)).withValues(rows).withConflictClause(SQLConflictClause.REPLACE).build();
-        
-        final @Nonnull SQLActionEncoder actionEncoder = Database.instance.get().getEncoder(insertStatement, unit);
-        actionEncoder.encodeObject(converter, object);
-        actionEncoder.execute();
+        insert(converter, object, unit, SQLConflictClause.REPLACE);
     }
     
     /* -------------------------------------------------- Update -------------------------------------------------- */

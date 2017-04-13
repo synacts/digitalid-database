@@ -86,8 +86,8 @@ public class ValuePropertyTest extends DatabaseTest {
         SQL.createTable(StudentSubclass.AGE_TABLE.getEntryConverter(), Unit.DEFAULT);
         SQL.createTable(StudentSubclass.FRIENDS_TABLE.getEntryConverter(), Unit.DEFAULT);
         SQL.createTable(StudentSubclass.GRADES_TABLE.getEntryConverter(), Unit.DEFAULT);
-        SQL.insert(StudentConverter.INSTANCE, object, Unit.DEFAULT);
-        SQL.insert(StudentConverter.INSTANCE, friend, Unit.DEFAULT);
+        SQL.insertOrAbort(StudentConverter.INSTANCE, object, Unit.DEFAULT);
+        SQL.insertOrAbort(StudentConverter.INSTANCE, friend, Unit.DEFAULT);
         Database.instance.get().commit();
     }
     
