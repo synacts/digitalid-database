@@ -30,12 +30,7 @@
     </repositories>
    
     <modules>
-        <module>enumerations</module>
         <module>annotations</module>
-        <module>exceptions</module>
-        <module>storage</module>
-        <module>unit</module>
-        <module>subject</module>
         <module>dialect</module>
         
         <module>h2</module>
@@ -43,8 +38,10 @@
         <module>sqlite</module>
         <module>postgres</module>
         
+        <module>exceptions</module>
         <module>access</module>
         <module>interfaces</module>
+        
         <module>android</module>
         <module>jdbc</module>
         
@@ -52,6 +49,7 @@
         <module>server</module>
         <module>testing</module>
         
+        <module>subject</module>
         <module>conversion</module>
         <module>property</module>
     </modules>

@@ -20,6 +20,7 @@ import net.digitalid.utility.functional.interfaces.Predicate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.property.set.WritableSetPropertyImplementation;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.lock.LockNotHeldByCurrentThread;
 import net.digitalid.utility.validation.annotations.value.Valid;
@@ -29,7 +30,6 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.subject.Subject;
-import net.digitalid.database.unit.Unit;
 
 /**
  * This class implements the {@link WritablePersistentSetProperty}.

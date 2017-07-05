@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 import javax.annotation.Nonnull;
 
-import net.digitalid.database.enumerations.ForeignKeyAction;
+import net.digitalid.utility.storage.enumerations.ForeignKeyAction;
 
 /**
  *

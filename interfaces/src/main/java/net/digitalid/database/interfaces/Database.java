@@ -10,6 +10,7 @@ import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.concurrency.local.ThreadLocalIterable;
 import net.digitalid.utility.concurrency.local.ThreadLocalIterableBuilder;
 import net.digitalid.utility.configuration.Configuration;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.annotations.sql.SQLStatement;
@@ -25,7 +26,6 @@ import net.digitalid.database.dialect.statement.update.SQLUpdateStatement;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.encoder.SQLActionEncoder;
 import net.digitalid.database.interfaces.encoder.SQLQueryEncoder;
-import net.digitalid.database.unit.Unit;
 
 /**
  * This class allows to execute SQL statements.

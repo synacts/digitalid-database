@@ -10,11 +10,11 @@ import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.subject.Subject;
-import net.digitalid.database.unit.Unit;
 
 /**
  * This class implements the {@link WritablePersistentSimpleSetProperty}.

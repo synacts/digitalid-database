@@ -9,20 +9,4 @@
     
     <artifactId>database-subject</artifactId>
     
-    <dependencies>
-        
-        <dependency>
-            <groupId>net.digitalid.database</groupId>
-            <artifactId>database-storage</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>net.digitalid.database</groupId>
-            <artifactId>database-unit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-    </dependencies>
-    
 </project>

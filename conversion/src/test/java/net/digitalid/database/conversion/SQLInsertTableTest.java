@@ -2,6 +2,8 @@ package net.digitalid.database.conversion;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.storage.interfaces.Unit;
+
 import net.digitalid.database.conversion.testenvironment.columnconstraints.ConstraintIntegerColumnTable;
 import net.digitalid.database.conversion.testenvironment.columnconstraints.ConstraintIntegerColumnTableConverter;
 import net.digitalid.database.conversion.testenvironment.embedded.Convertible1;
@@ -17,7 +19,6 @@ import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanCol
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.testing.DatabaseTest;
-import net.digitalid.database.unit.Unit;
 
 import org.h2.jdbc.JdbcBatchUpdateException;
 import org.h2.jdbc.JdbcSQLException;

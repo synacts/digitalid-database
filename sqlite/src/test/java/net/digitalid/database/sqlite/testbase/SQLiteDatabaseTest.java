@@ -15,9 +15,6 @@ import net.digitalid.utility.contracts.Ensure;
 import net.digitalid.utility.contracts.Require;
 import net.digitalid.utility.testing.UtilityTest;
 
-import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -39,17 +36,15 @@ public class SQLiteDatabaseTest extends UtilityTest {
     private static @Nullable Connection connection;
     
     @Pure
-    protected @Nonnull Connection createConnection() throws DatabaseException, SQLException {
+    protected @Nonnull Connection createConnection() throws SQLException {
         final @Nonnull Connection connection;
         Require.that(databaseFile != null).orThrow("The database file was never created.");
-        try {
-            connection = DriverManager.getConnection(DB_CONNECTION_URL_PREFIX + databaseFile.getAbsolutePath());
-            // SQLite only supports SERIALIZABLE and READ_UNCOMMITTED. For testing purposes, it does not really matter which isolation level we are using. In production, the isolation level should probably be set to SERIALIZABLE to ensure that multiple threads with transactions to the database can never read uncommitted changes.
-            connection.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
-            connection.setAutoCommit(true);
-        } catch (@Nonnull SQLException exception) {
-            throw DatabaseExceptionBuilder.withCause(exception).build();
-        }
+        
+        connection = DriverManager.getConnection(DB_CONNECTION_URL_PREFIX + databaseFile.getAbsolutePath());
+        // SQLite only supports SERIALIZABLE and READ_UNCOMMITTED. For testing purposes, it does not really matter which isolation level we are using. In production, the isolation level should probably be set to SERIALIZABLE to ensure that multiple threads with transactions to the database can never read uncommitted changes.
+        connection.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
+        connection.setAutoCommit(true);
+        
         Ensure.that(!connection.isClosed()).orThrow("The database connection should be open.");
         Ensure.that(!connection.isReadOnly()).orThrow("The database connection should be writable.");
         
@@ -60,7 +55,7 @@ public class SQLiteDatabaseTest extends UtilityTest {
     }
     
     @Impure
-    protected @Nonnull Connection getConnection() throws DatabaseException, SQLException {
+    protected @Nonnull Connection getConnection() throws SQLException {
         if (connection == null) {
             connection = createConnection();
         }
@@ -69,7 +64,7 @@ public class SQLiteDatabaseTest extends UtilityTest {
     }
     
     @BeforeClass
-    public static void setUp() throws DatabaseException, SQLException {
+    public static void setUp() throws SQLException {
         final @Nullable String sqliteTestDirectoryProperty = System.getProperty("sqliteTestDirectory");
         Require.that(sqliteTestDirectoryProperty != null).orThrow("Failed to retrieve test directory for SQLite. Please specify it using the Java system property -DsqliteTestDirectory=...");
         
@@ -94,7 +89,7 @@ public class SQLiteDatabaseTest extends UtilityTest {
     }
     
     @Impure
-    protected void assertTableExists(@Nonnull String table) throws SQLException, DatabaseException {
+    protected void assertTableExists(@Nonnull String table) throws SQLException {
         try (@Nonnull ResultSet resultSet = getConnection().createStatement().executeQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='" + table + "'")) {
             if (resultSet.next()) {
                 assertThat(resultSet.getString(1)).isEqualToIgnoringCase(table);

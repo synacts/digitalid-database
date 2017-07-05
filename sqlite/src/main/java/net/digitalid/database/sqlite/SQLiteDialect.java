@@ -16,6 +16,7 @@ import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.initialization.annotations.Initialize;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Stateless;
@@ -33,7 +34,6 @@ import net.digitalid.database.dialect.identifier.table.SQLQualifiedTable;
 import net.digitalid.database.dialect.statement.table.create.SQLColumnDeclaration;
 import net.digitalid.database.dialect.statement.table.create.SQLReference;
 import net.digitalid.database.dialect.statement.table.create.SQLType;
-import net.digitalid.database.unit.Unit;
 
 /**
  * This class implements the SQLite dialect.

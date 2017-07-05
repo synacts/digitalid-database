@@ -9,14 +9,4 @@
     
     <artifactId>database-annotations</artifactId>
     
-    <dependencies>
-        
-        <dependency>
-            <groupId>net.digitalid.database</groupId>
-            <artifactId>database-enumerations</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-    </dependencies>
-    
 </project>

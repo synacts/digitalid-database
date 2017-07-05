@@ -21,12 +21,12 @@ import net.digitalid.utility.generator.information.type.TypeInformation;
 import net.digitalid.utility.generator.interceptor.MethodInterceptor;
 import net.digitalid.utility.processing.utility.ProcessingUtility;
 import net.digitalid.utility.processor.generator.JavaFileGenerator;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.subject.SubjectModule;
 import net.digitalid.database.subject.SubjectModuleBuilder;
-import net.digitalid.database.unit.Unit;
 
 /**
  * This method interceptor generates a subject module with the name of the surrounding class and its converter.

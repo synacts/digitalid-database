@@ -19,6 +19,7 @@ import net.digitalid.utility.functional.interfaces.Predicate;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.property.value.WritableValuePropertyImplementation;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeBuilder;
 import net.digitalid.utility.tuples.Pair;
@@ -30,7 +31,6 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.subject.Subject;
-import net.digitalid.database.unit.Unit;
 
 /**
  * This class implements the {@link WritablePersistentValueProperty}.

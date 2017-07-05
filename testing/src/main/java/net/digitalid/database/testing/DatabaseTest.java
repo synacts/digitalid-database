@@ -12,6 +12,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.conversion.interfaces.Converter;
 import net.digitalid.utility.initialization.annotations.Initialize;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.testing.UtilityTest;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Stateless;
@@ -23,7 +24,6 @@ import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.jdbc.JDBCDatabaseBuilder;
 import net.digitalid.database.testing.assertion.ExpectedColumnDeclarations;
 import net.digitalid.database.testing.assertion.ExpectedTableConstraints;
-import net.digitalid.database.unit.Unit;
 
 import org.assertj.db.api.Assertions;
 import org.assertj.db.api.ChangesAssert;

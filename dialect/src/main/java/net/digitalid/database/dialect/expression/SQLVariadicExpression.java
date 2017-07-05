@@ -7,6 +7,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
@@ -14,7 +15,6 @@ import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.expression.number.SQLVariadicNumberExpression;
 import net.digitalid.database.dialect.expression.string.SQLVariadicStringExpression;
-import net.digitalid.database.unit.Unit;
 
 /**
  * All variadic expressions implement this interface.

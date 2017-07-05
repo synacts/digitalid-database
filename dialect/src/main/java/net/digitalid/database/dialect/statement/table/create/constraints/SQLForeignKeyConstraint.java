@@ -6,15 +6,17 @@ import javax.annotation.Nullable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
+import net.digitalid.utility.collaboration.annotations.TODO;
+import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.storage.enumerations.ForeignKeyAction;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.statement.table.create.SQLReference;
-import net.digitalid.database.enumerations.ForeignKeyAction;
-import net.digitalid.database.unit.Unit;
 
 /**
  * A foreign key constraint in a create table statement.
@@ -22,6 +24,7 @@ import net.digitalid.database.unit.Unit;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
+@TODO(task = "The delete and update actions already exist in SQLReference!", date = "2017-04-16", author = Author.KASPAR_ETTER)
 public interface SQLForeignKeyConstraint extends SQLColumnsConstraint {
     
     /* -------------------------------------------------- Reference -------------------------------------------------- */

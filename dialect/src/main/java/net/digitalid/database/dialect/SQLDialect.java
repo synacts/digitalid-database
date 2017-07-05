@@ -10,10 +10,10 @@ import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.configuration.Configuration;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.logging.logger.Logger;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.annotations.sql.SQLFraction;
-import net.digitalid.database.unit.Unit;
 
 /**
  * A dialect implements a particular version of the structured query language (SQL).

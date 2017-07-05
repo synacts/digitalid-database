@@ -15,6 +15,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.rootclass.RootClass;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
@@ -29,7 +30,6 @@ import net.digitalid.database.property.value.WritablePersistentValueProperty;
 import net.digitalid.database.subject.Subject;
 import net.digitalid.database.subject.annotations.GeneratePersistentProperty;
 import net.digitalid.database.testing.DatabaseTest;
-import net.digitalid.database.unit.Unit;
 
 import org.junit.BeforeClass;
 import org.junit.Test;

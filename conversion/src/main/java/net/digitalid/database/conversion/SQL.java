@@ -18,6 +18,7 @@ import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.functional.iterables.InfiniteIterable;
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Utility;
 
@@ -62,7 +63,6 @@ import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.interfaces.SQLDecoder;
 import net.digitalid.database.interfaces.encoder.SQLActionEncoder;
 import net.digitalid.database.interfaces.encoder.SQLQueryEncoder;
-import net.digitalid.database.unit.Unit;
 
 /**
  * This class simplifies the execution of SQL statements.

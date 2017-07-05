@@ -9,12 +9,12 @@ import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.exceptions.CaseExceptionBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.SQLNode;
-import net.digitalid.database.unit.Unit;
 
 import static net.digitalid.utility.conversion.model.CustomType.*;
 

@@ -2,10 +2,11 @@ package net.digitalid.database.conversion;
 
 import javax.annotation.Nonnull;
 
+import net.digitalid.utility.storage.interfaces.Unit;
+
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTable;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
 import net.digitalid.database.testing.DatabaseTest;
-import net.digitalid.database.unit.Unit;
 
 import org.junit.Test;
 

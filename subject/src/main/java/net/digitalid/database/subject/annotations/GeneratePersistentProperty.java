@@ -29,12 +29,12 @@ import net.digitalid.utility.processing.logging.ProcessingLog;
 import net.digitalid.utility.processing.utility.ProcessingUtility;
 import net.digitalid.utility.processing.utility.StaticProcessingEnvironment;
 import net.digitalid.utility.processor.generator.JavaFileGenerator;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
 import net.digitalid.database.subject.Subject;
-import net.digitalid.database.unit.Unit;
 
 /**
  * This method interceptor generates a persistent property with the corresponding property table.

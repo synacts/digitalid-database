@@ -8,6 +8,7 @@ import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.sql.SQLFraction;
@@ -15,7 +16,6 @@ import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.SQLNode;
 import net.digitalid.database.dialect.statement.select.unordered.simple.join.constraints.SQLJoinConstraint;
 import net.digitalid.database.dialect.statement.select.unordered.simple.sources.SQLSource;
-import net.digitalid.database.unit.Unit;
 
 /**
  * This SQL node represents a join clause of an SQL select statement.

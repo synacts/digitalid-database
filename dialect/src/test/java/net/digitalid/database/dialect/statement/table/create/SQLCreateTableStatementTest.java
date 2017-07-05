@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 
@@ -16,7 +17,6 @@ import net.digitalid.database.dialect.identifier.constraint.SQLConstraintNameBui
 import net.digitalid.database.dialect.statement.SQLStatementTest;
 import net.digitalid.database.dialect.statement.table.create.constraints.SQLForeignKeyConstraint;
 import net.digitalid.database.dialect.statement.table.create.constraints.SQLForeignKeyConstraintBuilder;
-import net.digitalid.database.unit.Unit;
 
 import org.junit.Test;
 

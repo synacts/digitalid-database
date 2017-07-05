@@ -9,6 +9,7 @@ import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -18,7 +19,6 @@ import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.SQLNode;
 import net.digitalid.database.dialect.identifier.column.SQLColumnName;
 import net.digitalid.database.dialect.identifier.table.SQLQualifiedTable;
-import net.digitalid.database.unit.Unit;
 
 /**
  * This type models a foreign key reference.

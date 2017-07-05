@@ -9,6 +9,7 @@ import net.digitalid.utility.annotations.parameter.Modified;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
@@ -20,7 +21,6 @@ import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
 import net.digitalid.database.dialect.statement.select.unordered.SQLUnorderedSelectStatement;
 import net.digitalid.database.dialect.statement.select.unordered.simple.columns.SQLResultColumnOrAllColumns;
 import net.digitalid.database.dialect.statement.select.unordered.simple.sources.SQLSource;
-import net.digitalid.database.unit.Unit;
 
 /**
  * A simple select statement without an order or limit clause.

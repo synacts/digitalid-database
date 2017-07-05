@@ -10,6 +10,7 @@ import net.digitalid.utility.functional.interfaces.BinaryFunction;
 import net.digitalid.utility.functional.interfaces.UnaryFunction;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.generation.Derive;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -17,7 +18,6 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.property.PersistentPropertyTable;
 import net.digitalid.database.subject.Subject;
-import net.digitalid.database.unit.Unit;
 
 /**
  * The map property table stores the {@link PersistentMapPropertyEntry map property entries}.

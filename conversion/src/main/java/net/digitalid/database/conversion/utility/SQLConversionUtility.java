@@ -18,6 +18,8 @@ import net.digitalid.utility.conversion.model.CustomField;
 import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.logging.Log;
+import net.digitalid.utility.storage.enumerations.ForeignKeyAction;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.math.Negative;
 import net.digitalid.utility.validation.annotations.math.NonNegative;
@@ -60,10 +62,8 @@ import net.digitalid.database.dialect.statement.table.create.constraints.SQLFore
 import net.digitalid.database.dialect.statement.table.create.constraints.SQLPrimaryKeyConstraint;
 import net.digitalid.database.dialect.statement.table.create.constraints.SQLPrimaryKeyConstraintBuilder;
 import net.digitalid.database.dialect.statement.table.create.constraints.SQLTableConstraint;
-import net.digitalid.database.enumerations.ForeignKeyAction;
 import net.digitalid.database.interfaces.encoder.SQLEncoder;
 import net.digitalid.database.subject.Subject;
-import net.digitalid.database.unit.Unit;
 
 /**
  *
@@ -405,7 +405,7 @@ public abstract class SQLConversionUtility {
                 final @Nonnull CustomType.CustomConverterType customConverterType = (CustomType.CustomConverterType) fieldType;
                 final @Nonnull Converter<?, ?> referenceConverter = customConverterType.getConverter();
                 final @Nonnull Class<?> referencedType = referenceConverter.getType();
-                if (Subject.class.isAssignableFrom(referencedType)) {
+                if (Subject.class.isAssignableFrom(referencedType)) { // TODO: Subject should not be referenced from this artifact.
                     final @Nonnull ImmutableList<@Nonnull SQLColumnName> referencedColumnNames = getColumnNames(referenceConverter);
                     final @Nonnull ImmutableList<@Nonnull SQLColumnName> columnNames = getColumnNames(referenceConverter, customField.getName().toLowerCase());
                     if (columnNames.size() > 0) {

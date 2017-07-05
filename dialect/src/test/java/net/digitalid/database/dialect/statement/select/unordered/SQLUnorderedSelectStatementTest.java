@@ -3,6 +3,7 @@ package net.digitalid.database.dialect.statement.select.unordered;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.storage.interfaces.Unit;
 
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.expression.bool.SQLNumberComparisonBooleanExpression;
@@ -24,7 +25,6 @@ import net.digitalid.database.dialect.statement.select.unordered.simple.sources.
 import net.digitalid.database.dialect.statement.select.unordered.simple.sources.SQLJoinSourceBuilder;
 import net.digitalid.database.dialect.statement.select.unordered.simple.sources.SQLTableSource;
 import net.digitalid.database.dialect.statement.select.unordered.simple.sources.SQLTableSourceBuilder;
-import net.digitalid.database.unit.Unit;
 
 import org.junit.Test;
 

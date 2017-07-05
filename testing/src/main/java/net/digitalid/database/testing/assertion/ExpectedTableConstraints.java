@@ -15,8 +15,8 @@ import net.digitalid.utility.collections.map.FreezableHashMap;
 import net.digitalid.utility.collections.map.FreezableHashMapBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.storage.enumerations.ForeignKeyAction;
 
-import net.digitalid.database.enumerations.ForeignKeyAction;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
 import net.digitalid.database.interfaces.Database;

@@ -6,6 +6,7 @@ import net.digitalid.utility.collections.list.FreezableArrayList;
 import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.immutable.ImmutableList;
 import net.digitalid.utility.logging.Log;
+import net.digitalid.utility.storage.interfaces.Unit;
 
 import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.expression.string.SQLStringLiteralBuilder;
@@ -28,7 +29,6 @@ import net.digitalid.database.dialect.statement.table.create.constraints.SQLPrim
 import net.digitalid.database.dialect.statement.table.create.constraints.SQLTableConstraint;
 import net.digitalid.database.sqlite.SQLiteDialect;
 import net.digitalid.database.sqlite.testbase.SQLiteDatabaseTest;
-import net.digitalid.database.unit.Unit;
 
 import org.junit.Test;
 

@@ -5,6 +5,8 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.collections.set.FreezableHashSet;
+import net.digitalid.utility.storage.enumerations.ForeignKeyAction;
+import net.digitalid.utility.storage.interfaces.Unit;
 
 import net.digitalid.database.conversion.testenvironment.columnconstraints.BooleanColumnDefaultTrueTableConverter;
 import net.digitalid.database.conversion.testenvironment.columnconstraints.ConstraintIntegerColumnTableConverter;
@@ -13,7 +15,6 @@ import net.digitalid.database.conversion.testenvironment.referenced.EntityConver
 import net.digitalid.database.conversion.testenvironment.referenced.ReferencedEntityConverter;
 import net.digitalid.database.conversion.testenvironment.simple.MultiBooleanColumnTableConverter;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
-import net.digitalid.database.enumerations.ForeignKeyAction;
 import net.digitalid.database.testing.DatabaseTest;
 import net.digitalid.database.testing.assertion.ExpectedColumnDeclarationBuilder;
 import net.digitalid.database.testing.assertion.ExpectedColumnDeclarations;
@@ -24,7 +25,6 @@ import net.digitalid.database.testing.assertion.ExpectedTableConstraint;
 import net.digitalid.database.testing.assertion.ExpectedTableConstraintBuilder;
 import net.digitalid.database.testing.assertion.ExpectedTableConstraints;
 import net.digitalid.database.testing.assertion.ExpectedTableConstraintsBuilder;
-import net.digitalid.database.unit.Unit;
 
 import org.junit.Test;
 

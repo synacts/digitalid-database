@@ -3,12 +3,12 @@ package net.digitalid.database.dialect.statement.update;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.storage.interfaces.Unit;
 
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.expression.SQLParameter;
 import net.digitalid.database.dialect.expression.number.SQLNumberLiteralBuilder;
 import net.digitalid.database.dialect.statement.SQLStatementTest;
-import net.digitalid.database.unit.Unit;
 
 import org.junit.Test;
 

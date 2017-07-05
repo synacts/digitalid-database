@@ -6,13 +6,13 @@ import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.NonCaptured;
 import net.digitalid.utility.annotations.parameter.Modified;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.sql.SQLFraction;
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.expression.bool.SQLUnaryBooleanExpression;
 import net.digitalid.database.dialect.expression.number.SQLUnaryNumberExpression;
-import net.digitalid.database.unit.Unit;
 
 /**
  * All unary SQL expressions implement this interface.

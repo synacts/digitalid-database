@@ -10,6 +10,7 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
@@ -38,7 +39,6 @@ import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.interfaces.encoder.SQLActionEncoder;
 import net.digitalid.database.interfaces.encoder.SQLQueryEncoder;
-import net.digitalid.database.unit.Unit;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
