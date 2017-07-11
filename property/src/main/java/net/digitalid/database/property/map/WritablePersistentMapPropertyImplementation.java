@@ -85,7 +85,7 @@ public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable
         try {
             getMap().clear();
             final @Nonnull String prefix = getTable().getParentModule().getSubjectConverter().getTypeName().toLowerCase();
-            final @Nonnull @NonNullableElements FreezableList<PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>> entries = SQL.selectAll(getTable().getEntryConverter(), getSubject().getUnit(), getTable().getParentModule().getSubjectConverter(), getSubject(), prefix, getSubject().getUnit());
+            final @Nonnull @NonNullableElements FreezableList<PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>> entries = SQL.selectAll(getTable(), getSubject().getUnit(), getTable().getParentModule().getSubjectConverter(), getSubject(), prefix, getSubject().getUnit());
             for (@Nonnull PersistentMapPropertyEntry<SUBJECT, KEY, VALUE> entry : entries) {
                 getMap().put(entry.getKey(), entry.getValue());
             }
@@ -128,7 +128,7 @@ public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable
                 return false;
             } else {
                 final @Nonnull PersistentMapPropertyEntry<SUBJECT, KEY, VALUE> entry = new PersistentMapPropertyEntrySubclass<>(getSubject(), key, value);
-                SQL.insertOrAbort(getTable().getEntryConverter(), entry, getSubject().getUnit());
+                SQL.insertOrAbort(getTable(), entry, getSubject().getUnit());
                 getMap().put(key, value);
                 notifyObservers(key, value, true);
                 return true;
@@ -149,7 +149,7 @@ public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable
             final @Nullable VALUE value = getMap().get(key);
             if (value != null) {
                 final @Nonnull PersistentMapPropertyEntry<SUBJECT, KEY, VALUE> entry = new PersistentMapPropertyEntrySubclass<>(getSubject(), key, value); // TODO: The value should actually not be necessary.
-                SQL.delete(getTable().getEntryConverter(), getTable().getEntryConverter(), entry, getSubject().getUnit());
+                SQL.delete(getTable(), getTable(), entry, getSubject().getUnit());
                 getMap().remove(key);
                 notifyObservers(key, value, false);
                 return value;

@@ -76,7 +76,7 @@ public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable
         try {
             getSet().clear();
             final @Nonnull String prefix = getTable().getParentModule().getSubjectConverter().getTypeName().toLowerCase();
-            final @Nonnull @NonNullableElements FreezableList<PersistentSetPropertyEntry<SUBJECT, VALUE>> entries = SQL.selectAll(getTable().getEntryConverter(), getSubject().getUnit(), getTable().getParentModule().getSubjectConverter(), getSubject(), prefix, getSubject().getUnit());
+            final @Nonnull @NonNullableElements FreezableList<PersistentSetPropertyEntry<SUBJECT, VALUE>> entries = SQL.selectAll(getTable(), getSubject().getUnit(), getTable().getParentModule().getSubjectConverter(), getSubject(), prefix, getSubject().getUnit());
             for (@Nonnull PersistentSetPropertyEntry<SUBJECT, VALUE> entry : entries) {
                 getSet().add(entry.getValue());
             }
@@ -111,7 +111,7 @@ public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable
                 return false;
             } else {
                 final @Nonnull PersistentSetPropertyEntry<SUBJECT, VALUE> entry = new PersistentSetPropertyEntrySubclass<>(getSubject(), value);
-                SQL.insertOrAbort(getTable().getEntryConverter(), entry, getSubject().getUnit());
+                SQL.insertOrAbort(getTable(), entry, getSubject().getUnit());
                 getSet().add(value);
                 notifyObservers(value, true);
                 return true;
@@ -131,7 +131,7 @@ public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable
             if (!loaded) { load(false); }
             if (getSet().contains(value)) {
                 final @Nonnull PersistentSetPropertyEntry<SUBJECT, VALUE> entry = new PersistentSetPropertyEntrySubclass<>(getSubject(), value);
-                SQL.delete(getTable().getEntryConverter(), getTable().getEntryConverter(), entry, getSubject().getUnit());
+                SQL.delete(getTable(), getTable(), entry, getSubject().getUnit());
                 getSet().remove(value);
                 notifyObservers(value, false);
                 return true;

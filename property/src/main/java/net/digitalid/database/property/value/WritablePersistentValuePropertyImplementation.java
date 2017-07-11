@@ -69,7 +69,7 @@ public abstract class WritablePersistentValuePropertyImplementation<@Unspecifiab
         if (locking) { lock.lock(); }
         try {
             final @Nonnull Converter<SUBJECT, ?> subjectConverter = getTable().getParentModule().getSubjectConverter();
-            final @Nullable PersistentValuePropertyEntry<SUBJECT, VALUE> entry = SQL.selectFirst(getTable().getEntryConverter(), getSubject().getUnit(), subjectConverter, getSubject(), subjectConverter.getTypeName().toLowerCase(), getSubject().getUnit());
+            final @Nullable PersistentValuePropertyEntry<SUBJECT, VALUE> entry = SQL.selectFirst(getTable(), getSubject().getUnit(), subjectConverter, getSubject(), subjectConverter.getTypeName().toLowerCase(), getSubject().getUnit());
             if (entry != null) {
                 this.time = entry.getTime();
                 this.value = entry.getValue();
@@ -119,7 +119,7 @@ public abstract class WritablePersistentValuePropertyImplementation<@Unspecifiab
             if (!Objects.equals(newValue, oldValue)) {
                 final @Nonnull Time newTime = TimeBuilder.build();
                 final @Nonnull PersistentValuePropertyEntry<SUBJECT, VALUE> entry = new PersistentValuePropertyEntrySubclass<>(getSubject(), newTime, newValue);
-                SQL.insertOrReplace(getTable().getEntryConverter(), entry, getSubject().getUnit());
+                SQL.insertOrReplace(getTable(), entry, getSubject().getUnit());
                 this.time = newTime;
                 this.value = newValue;
                 notifyObservers(oldValue, newValue);

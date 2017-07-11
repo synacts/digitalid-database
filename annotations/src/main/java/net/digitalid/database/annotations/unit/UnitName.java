@@ -7,9 +7,7 @@ import java.lang.annotation.Target;
 
 import javax.annotation.Nonnull;
 
-/**
- *
- */
+@Deprecated // TODO: There is now a @GenerateTableConverter annotation that covers this functionality.
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface UnitName {

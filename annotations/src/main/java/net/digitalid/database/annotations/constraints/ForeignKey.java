@@ -9,9 +9,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.storage.enumerations.ForeignKeyAction;
 
-/**
- *
- */
+@Deprecated // TODO: It should be left to the table and not the references to define this.
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ForeignKey {

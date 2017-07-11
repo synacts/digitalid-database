@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.conversion.model.CustomType;
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.storage.enumerations.ForeignKeyAction;
 import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
@@ -29,7 +30,7 @@ public class SQLCreateTableStatementTest extends SQLStatementTest {
         final @Nonnull SQLColumnDeclaration thirdColumnDeclaration = SQLColumnDeclarationBuilder.withName(thirdColumn).withType(SQLTypeBuilder.withType(CustomType.STRING64).build()).withNotNull(true).withCheck(thirdColumn.between(SQLStringLiteralBuilder.withString("hello").build(), SQLStringLiteralBuilder.withString("world").build())).build();
         
         final @Nonnull @NonNullableElements @NonEmpty ImmutableList<? extends SQLColumnName> columns = ImmutableList.withElements(firstColumn);
-        final @Nonnull SQLReference reference = SQLReferenceBuilder.withTable(qualifiedTable).withColumns(columns).withUpdateOption(SQLReferenceOption.CASCADE).withDeleteOption(SQLReferenceOption.RESTRICT).build();
+        final @Nonnull SQLReference reference = SQLReferenceBuilder.withTable(qualifiedTable).withColumns(columns).withUpdateOption(SQLReferenceOptionBuilder.withAction(ForeignKeyAction.CASCADE).build()).withDeleteOption(SQLReferenceOptionBuilder.withAction(ForeignKeyAction.RESTRICT).build()).build();
         final @Nonnull SQLConstraintName constraintName = SQLConstraintNameBuilder.withString("self_reference").build();
         final @Nonnull SQLForeignKeyConstraint foreignKeyConstraint = SQLForeignKeyConstraintBuilder.withColumns(columns).withReference(reference).withName(constraintName).build();
         
