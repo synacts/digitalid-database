@@ -23,6 +23,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.generator.annotations.interceptors.Cached;
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.storage.TableImplementation;
 import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.time.Time;
 import net.digitalid.utility.time.TimeConverter;
@@ -43,7 +44,7 @@ import net.digitalid.database.subject.Subject;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class PersistentValuePropertyTable<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>, @Specifiable VALUE, @Specifiable PROVIDED_FOR_VALUE> extends PersistentPropertyTable<UNIT, SUBJECT, PersistentValuePropertyEntry<SUBJECT, VALUE>> implements Valid.Value<VALUE> {
+public abstract class PersistentValuePropertyTable<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>, @Specifiable VALUE, @Specifiable PROVIDED_FOR_VALUE> extends TableImplementation<PersistentValuePropertyEntry<SUBJECT, VALUE>, UNIT> implements PersistentPropertyTable<UNIT, SUBJECT, PersistentValuePropertyEntry<SUBJECT, VALUE>>, Valid.Value<VALUE> {
     
     /* -------------------------------------------------- Provided Object Extractor -------------------------------------------------- */
     

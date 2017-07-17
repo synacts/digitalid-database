@@ -24,6 +24,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.generator.annotations.interceptors.Cached;
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.storage.TableImplementation;
 import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
@@ -42,7 +43,7 @@ import net.digitalid.database.subject.Subject;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-public abstract class PersistentMapPropertyTable<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>, @Unspecifiable KEY, @Unspecifiable VALUE, @Specifiable PROVIDED_FOR_KEY, @Specifiable PROVIDED_FOR_VALUE> extends PersistentPropertyTable<UNIT, SUBJECT, PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>> implements Valid.Key<KEY>, Valid.Value<VALUE> {
+public abstract class PersistentMapPropertyTable<@Unspecifiable UNIT extends Unit, @Unspecifiable SUBJECT extends Subject<UNIT>, @Unspecifiable KEY, @Unspecifiable VALUE, @Specifiable PROVIDED_FOR_KEY, @Specifiable PROVIDED_FOR_VALUE> extends TableImplementation<PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>, UNIT> implements PersistentPropertyTable<UNIT, SUBJECT, PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>>, Valid.Key<KEY>, Valid.Value<VALUE> {
     
     /* -------------------------------------------------- Extractors -------------------------------------------------- */
     
