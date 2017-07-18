@@ -406,9 +406,11 @@ public abstract class SQLConversionUtility {
                     final @Nonnull Table<?, ?> table = (Table<?, ?>) referenceConverter;
                     final @Nonnull SQLExplicitlyQualifiedTable qualifiedTable = SQLExplicitlyQualifiedTableBuilder.withTable(SQLTableNameBuilder.withString(table.getTableName(unit)).build()).withSchema(SQLSchemaNameBuilder.withString(table.getSchemaName(unit)).build()).build();
                     final @Nonnull @NonNullableElements ImmutableList<SQLColumnName> columnNames = ImmutableList.withElementsOf(table.getColumnNames(unit).map(columnName -> SQLColumnNameBuilder.withString(columnName).build()));
-                    final @Nonnull SQLReference reference = SQLReferenceBuilder.withTable(qualifiedTable).withColumns(columnNames).withDeleteOption(SQLReferenceOptionBuilder.withAction(table.getOnDeleteAction()).build()).withUpdateOption(SQLReferenceOptionBuilder.withAction(table.getOnUpdateAction()).build()).build();
-                    final @Nonnull SQLForeignKeyConstraint foreignKeyConstraint = SQLForeignKeyConstraintBuilder.withColumns(getColumnNames(referenceConverter, customField.getName().toLowerCase())).withReference(reference).build();
-                    tableConstraints.add(foreignKeyConstraint);
+                    if (!columnNames.isEmpty()) {
+                        final @Nonnull SQLReference reference = SQLReferenceBuilder.withTable(qualifiedTable).withColumns(columnNames).withDeleteOption(SQLReferenceOptionBuilder.withAction(table.getOnDeleteAction()).build()).withUpdateOption(SQLReferenceOptionBuilder.withAction(table.getOnUpdateAction()).build()).build();
+                        final @Nonnull SQLForeignKeyConstraint foreignKeyConstraint = SQLForeignKeyConstraintBuilder.withColumns(getColumnNames(referenceConverter, customField.getName().toLowerCase())).withReference(reference).build();
+                        tableConstraints.add(foreignKeyConstraint);
+                    }
                 }
                 // TODO: Remove the old implementation as soon as it is no longer needed.
 //                final @Nonnull Class<?> referencedType = referenceConverter.getType();
