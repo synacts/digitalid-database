@@ -84,8 +84,8 @@ public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable
         if (locking) { lock.lock(); }
         try {
             getMap().clear();
-            final @Nonnull String prefix = getTable().getParentModule().getSubjectConverter().getTypeName().toLowerCase();
-            final @Nonnull @NonNullableElements FreezableList<PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>> entries = SQL.selectAll(getTable(), getSubject().getUnit(), getTable().getParentModule().getSubjectConverter(), getSubject(), prefix, getSubject().getUnit());
+            final @Nonnull String prefix = getTable().getParentModule().getSubjectTable().getTypeName().toLowerCase();
+            final @Nonnull @NonNullableElements FreezableList<PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>> entries = SQL.selectAll(getTable(), getSubject().getUnit(), getTable().getParentModule().getSubjectTable(), getSubject(), prefix, getSubject().getUnit());
             for (@Nonnull PersistentMapPropertyEntry<SUBJECT, KEY, VALUE> entry : entries) {
                 getMap().put(entry.getKey(), entry.getValue());
             }

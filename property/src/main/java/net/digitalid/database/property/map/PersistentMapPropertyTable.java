@@ -106,7 +106,7 @@ public abstract class PersistentMapPropertyTable<@Unspecifiable UNIT extends Uni
     @Override
     public @Nonnull ImmutableList<@Nonnull CustomField> getFields(@Nonnull Representation representation) {
         return ImmutableList.withElements(
-                CustomField.with(CustomType.TUPLE.of(getParentModule().getSubjectConverter()), getParentModule().getSubjectConverter().getTypeName(), ImmutableList.withElements(CustomAnnotation.with(PrimaryKey.class), CustomAnnotation.with(Nonnull.class))),
+                CustomField.with(CustomType.TUPLE.of(getParentModule().getSubjectTable()), getParentModule().getSubjectTable().getTypeName(), ImmutableList.withElements(CustomAnnotation.with(PrimaryKey.class), CustomAnnotation.with(Nonnull.class))),
                 CustomField.with(CustomType.TUPLE.of(getKeyConverter()), "key", ImmutableList.withElements(CustomAnnotation.with(PrimaryKey.class), CustomAnnotation.with(Nonnull.class)/* TODO: Pass them? Probably pass the whole custom field instead. */)),
                 CustomField.with(CustomType.TUPLE.of(getValueConverter()), "value", ImmutableList.withElements(CustomAnnotation.with(Nonnull.class)/* TODO: Pass them? Probably pass the whole custom field instead. */))
         );
@@ -117,7 +117,7 @@ public abstract class PersistentMapPropertyTable<@Unspecifiable UNIT extends Uni
     @Pure
     @Override
     public <@Unspecifiable EXCEPTION extends ConnectionException> void convert(@Nonnull @NonCaptured @Unmodified PersistentMapPropertyEntry<SUBJECT, KEY, VALUE> entry, @Nonnull @NonCaptured @Modified Encoder<EXCEPTION> encoder) throws EXCEPTION {
-        getParentModule().getSubjectConverter().convert(entry.getSubject(), encoder);
+        getParentModule().getSubjectTable().convert(entry.getSubject(), encoder);
         getKeyConverter().convert(entry.getKey(), encoder);
         getValueConverter().convert(entry.getValue(), encoder);
     }
@@ -127,7 +127,7 @@ public abstract class PersistentMapPropertyTable<@Unspecifiable UNIT extends Uni
     @Pure
     @Override
     public @Capturable <@Unspecifiable EXCEPTION extends ConnectionException> @Nonnull PersistentMapPropertyEntry<SUBJECT, KEY, VALUE> recover(@Nonnull @NonCaptured @Modified Decoder<EXCEPTION> decoder, @Nonnull UNIT unit) throws EXCEPTION, RecoveryException {
-        final @Nonnull SUBJECT subject = getParentModule().getSubjectConverter().recover(decoder, unit);
+        final @Nonnull SUBJECT subject = getParentModule().getSubjectTable().recover(decoder, unit);
         final @Nonnull KEY key = getKeyConverter().recover(decoder, getProvidedObjectForKeyExtractor().evaluate(subject));
         final @Nonnull VALUE value = getValueConverter().recover(decoder, getProvidedObjectForValueExtractor().evaluate(subject, key));
         return new PersistentMapPropertyEntrySubclass<>(subject, key, value);

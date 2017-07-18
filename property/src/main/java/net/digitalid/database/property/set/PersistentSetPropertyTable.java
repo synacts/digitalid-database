@@ -92,7 +92,7 @@ public abstract class PersistentSetPropertyTable<@Unspecifiable UNIT extends Uni
     @Override
     public @Nonnull ImmutableList<@Nonnull CustomField> getFields(@Nonnull Representation representation) {
         return ImmutableList.withElements(
-                CustomField.with(CustomType.TUPLE.of(getParentModule().getSubjectConverter()), getParentModule().getSubjectConverter().getTypeName(), ImmutableList.withElements(CustomAnnotation.with(PrimaryKey.class), CustomAnnotation.with(Nonnull.class))),
+                CustomField.with(CustomType.TUPLE.of(getParentModule().getSubjectTable()), getParentModule().getSubjectTable().getTypeName(), ImmutableList.withElements(CustomAnnotation.with(PrimaryKey.class), CustomAnnotation.with(Nonnull.class))),
                 CustomField.with(CustomType.TUPLE.of(getValueConverter()), "value", ImmutableList.withElements(CustomAnnotation.with(PrimaryKey.class), CustomAnnotation.with(Nonnull.class)/* TODO: Pass them? Probably pass the whole custom field instead. */))
         );
     }
@@ -102,7 +102,7 @@ public abstract class PersistentSetPropertyTable<@Unspecifiable UNIT extends Uni
     @Pure
     @Override
     public <@Unspecifiable EXCEPTION extends ConnectionException> void convert(@Nonnull @NonCaptured @Unmodified PersistentSetPropertyEntry<SUBJECT, VALUE> entry, @Nonnull @NonCaptured @Modified Encoder<EXCEPTION> encoder) throws EXCEPTION {
-        getParentModule().getSubjectConverter().convert(entry.getSubject(), encoder);
+        getParentModule().getSubjectTable().convert(entry.getSubject(), encoder);
         getValueConverter().convert(entry.getValue(), encoder);
     }
     
@@ -111,7 +111,7 @@ public abstract class PersistentSetPropertyTable<@Unspecifiable UNIT extends Uni
     @Pure
     @Override
     public @Capturable <@Unspecifiable EXCEPTION extends ConnectionException> @Nonnull PersistentSetPropertyEntry<SUBJECT, VALUE> recover(@Nonnull @NonCaptured @Modified Decoder<EXCEPTION> decoder, @Nonnull UNIT unit) throws EXCEPTION, RecoveryException {
-        final @Nonnull SUBJECT subject = getParentModule().getSubjectConverter().recover(decoder, unit);
+        final @Nonnull SUBJECT subject = getParentModule().getSubjectTable().recover(decoder, unit);
         final @Nonnull VALUE value = getValueConverter().recover(decoder, getProvidedObjectExtractor().evaluate(subject));
         return new PersistentSetPropertyEntrySubclass<>(subject, value);
     }

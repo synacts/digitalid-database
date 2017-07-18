@@ -63,7 +63,7 @@ public @interface GenerateSubjectModule {
             }
             
             final @Nonnull TypeMirror unitType = ((DeclaredType) method.getReturnType()).getTypeArguments().get(0);
-            javaFileGenerator.addField("static final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(SubjectModule.class) + Brackets.inPointy(javaFileGenerator.importIfPossible(unitType) + ", " + javaFileGenerator.importIfPossible(typeInformation.getType())) + " MODULE = " + javaFileGenerator.importIfPossible(SubjectModuleBuilder.class) + ".withSubjectConverter" + Brackets.inRound(subjectConverter) + ".build()");
+            javaFileGenerator.addField("static final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(SubjectModule.class) + Brackets.inPointy(javaFileGenerator.importIfPossible(unitType) + ", " + javaFileGenerator.importIfPossible(typeInformation.getType())) + " MODULE = " + javaFileGenerator.importIfPossible(SubjectModuleBuilder.class) + ".withSubjectTable" + Brackets.inRound(subjectConverter) + ".build()");
         }
         
         @Pure
