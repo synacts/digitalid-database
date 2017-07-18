@@ -17,7 +17,7 @@ import net.digitalid.database.subject.Subject;
 import net.digitalid.database.subject.SubjectModule;
 
 /**
- * A property table belongs to a {@link SubjectModule subject module} and stores the {@link PersistentPropertyEntry property entries}.
+ * A persistent property table belongs to a {@link SubjectModule subject module} and stores the {@link PersistentPropertyEntry property entries}.
  * 
  * @see PersistentMapPropertyTable
  * @see PersistentSetPropertyTable

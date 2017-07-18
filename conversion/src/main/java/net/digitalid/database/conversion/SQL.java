@@ -18,6 +18,7 @@ import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.functional.iterables.FiniteIterable;
 import net.digitalid.utility.functional.iterables.InfiniteIterable;
 import net.digitalid.utility.immutable.ImmutableList;
+import net.digitalid.utility.storage.Table;
 import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.Utility;
@@ -30,13 +31,7 @@ import net.digitalid.database.dialect.expression.bool.SQLBinaryBooleanExpression
 import net.digitalid.database.dialect.expression.bool.SQLBinaryBooleanOperator;
 import net.digitalid.database.dialect.expression.bool.SQLBooleanExpression;
 import net.digitalid.database.dialect.identifier.column.SQLColumnName;
-import net.digitalid.database.dialect.identifier.schema.SQLSchemaName;
-import net.digitalid.database.dialect.identifier.schema.SQLSchemaNameBuilder;
-import net.digitalid.database.dialect.identifier.table.SQLExplicitlyQualifiedTableBuilder;
-import net.digitalid.database.dialect.identifier.table.SQLImplicitlyQualifiedTableBuilder;
 import net.digitalid.database.dialect.identifier.table.SQLQualifiedTable;
-import net.digitalid.database.dialect.identifier.table.SQLTableName;
-import net.digitalid.database.dialect.identifier.table.SQLTableNameBuilder;
 import net.digitalid.database.dialect.statement.delete.SQLDeleteStatement;
 import net.digitalid.database.dialect.statement.delete.SQLDeleteStatementBuilder;
 import net.digitalid.database.dialect.statement.insert.SQLConflictClause;
@@ -84,11 +79,11 @@ public abstract class SQL {
      */
     @Committing
     @PureWithSideEffects
-    public static void createTable(@Nonnull Converter<?, ?> converter, @Nonnull Unit unit) throws DatabaseException {
-        final @Nonnull SQLQualifiedTable tableName = SQLConversionUtility.getQualifiedTableName(converter, unit);
-        @Nonnull SQLCreateTableStatementBuilder.@Nonnull InnerSQLCreateTableStatementBuilder sqlCreateTableStatementBuilder = SQLCreateTableStatementBuilder.withTable(tableName).withColumnDeclarations(SQLConversionUtility.getColumnDeclarations(converter));
+    public static void createTable(@Nonnull Table<?, ?> table, @Nonnull Unit unit) throws DatabaseException {
+        final @Nonnull SQLQualifiedTable qualifiedTable = SQLConversionUtility.getQualifiedTableName(table, unit);
+        @Nonnull SQLCreateTableStatementBuilder.@Nonnull InnerSQLCreateTableStatementBuilder sqlCreateTableStatementBuilder = SQLCreateTableStatementBuilder.withTable(qualifiedTable).withColumnDeclarations(SQLConversionUtility.getColumnDeclarations(table));
         // TODO: what if the referenced table is in another unit?
-        final @Nonnull ImmutableList<SQLTableConstraint> tableConstraints = SQLConversionUtility.getTableConstraints(converter, unit);
+        final @Nonnull ImmutableList<SQLTableConstraint> tableConstraints = SQLConversionUtility.getTableConstraints(table, unit);
         if (!tableConstraints.isEmpty()) {
             sqlCreateTableStatementBuilder.withTableConstraints(tableConstraints);
         }
@@ -104,8 +99,8 @@ public abstract class SQL {
      */
     @Committing
     @PureWithSideEffects
-    public static void dropTable(@Nonnull Converter<?, ?> converter, @Nonnull Unit unit) throws DatabaseException {
-        final @Nonnull SQLQualifiedTable tableName = SQLConversionUtility.getQualifiedTableName(converter, unit);
+    public static void dropTable(@Nonnull Table<?, ?> table, @Nonnull Unit unit) throws DatabaseException {
+        final @Nonnull SQLQualifiedTable tableName = SQLConversionUtility.getQualifiedTableName(table, unit);
         final @Nonnull SQLDropTableStatement dropTableStatement = SQLDropTableStatementBuilder.withTable(tableName).build();
         Database.instance.get().execute(dropTableStatement, unit);
         Database.instance.get().commit();
@@ -118,20 +113,18 @@ public abstract class SQL {
      */
     @NonCommitting
     @PureWithSideEffects
-    public static <@Unspecifiable TYPE> void insert(@Nonnull Converter<TYPE, ?> converter, @Nonnull TYPE object, @Nonnull Unit unit, @Nonnull SQLConflictClause conflictClause) throws DatabaseException {
+    public static <@Unspecifiable TYPE> void insert(@Nonnull Table<TYPE, ?> table, @Nonnull TYPE object, @Nonnull Unit unit, @Nonnull SQLConflictClause conflictClause) throws DatabaseException {
         final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columns = FreezableArrayList.withNoElements();
-        SQLConversionUtility.fillColumnNames(converter, columns, "");
+        SQLConversionUtility.fillColumnNames(table, columns, "");
         
         final @Nonnull ImmutableList<@Nonnull SQLParameter> row = ImmutableList.withElementsOf(InfiniteIterable.repeat(SQLParameter.INSTANCE).limit(columns.size()));
         final @Nonnull SQLRows rows = SQLRowsBuilder.withRows(ImmutableList.withElements(SQLExpressionsBuilder.withExpressions(row).build())).build();
         
-        final @Nonnull SQLTableName tableName = SQLTableNameBuilder.withString(converter.getTypeName()).build();
-        final @Nonnull SQLQualifiedTable qualifiedTable = SQLImplicitlyQualifiedTableBuilder.withTable(tableName).build();
-        
+        final @Nonnull SQLQualifiedTable qualifiedTable = SQLConversionUtility.getQualifiedTableName(table, unit);
         final SQLInsertStatement insertStatement = SQLInsertStatementBuilder.withTable(qualifiedTable).withColumns(ImmutableList.withElementsOf(columns)).withValues(rows).withConflictClause(conflictClause).build();
-    
+        
         final @Nonnull SQLActionEncoder actionEncoder = Database.instance.get().getEncoder(insertStatement, unit);
-        actionEncoder.encodeObject(converter, object);
+        actionEncoder.encodeObject(table, object);
         actionEncoder.execute();
     }
     
@@ -140,8 +133,8 @@ public abstract class SQL {
      */
     @NonCommitting
     @PureWithSideEffects
-    public static <@Unspecifiable TYPE> void insertOrAbort(@Nonnull Converter<TYPE, ?> converter, @Nonnull TYPE object, @Nonnull Unit unit) throws DatabaseException {
-        insert(converter, object, unit, SQLConflictClause.ABORT);
+    public static <@Unspecifiable TYPE> void insertOrAbort(@Nonnull Table<TYPE, ?> table, @Nonnull TYPE object, @Nonnull Unit unit) throws DatabaseException {
+        insert(table, object, unit, SQLConflictClause.ABORT);
     }
     
     /**
@@ -149,8 +142,8 @@ public abstract class SQL {
      */
     @NonCommitting
     @PureWithSideEffects
-    public static <@Unspecifiable TYPE> void insertOrIgnore(@Nonnull Converter<TYPE, ?> converter, @Nonnull TYPE object, @Nonnull Unit unit) throws DatabaseException {
-        insert(converter, object, unit, SQLConflictClause.IGNORE);
+    public static <@Unspecifiable TYPE> void insertOrIgnore(@Nonnull Table<TYPE, ?> table, @Nonnull TYPE object, @Nonnull Unit unit) throws DatabaseException {
+        insert(table, object, unit, SQLConflictClause.IGNORE);
     }
     
     /**
@@ -158,8 +151,8 @@ public abstract class SQL {
      */
     @NonCommitting
     @PureWithSideEffects
-    public static <@Unspecifiable TYPE> void insertOrReplace(@Nonnull Converter<TYPE, ?> converter, @Nonnull TYPE object, @Nonnull Unit unit) throws DatabaseException {
-        insert(converter, object, unit, SQLConflictClause.REPLACE);
+    public static <@Unspecifiable TYPE> void insertOrReplace(@Nonnull Table<TYPE, ?> table, @Nonnull TYPE object, @Nonnull Unit unit) throws DatabaseException {
+        insert(table, object, unit, SQLConflictClause.REPLACE);
     }
     
     /* -------------------------------------------------- Update -------------------------------------------------- */
@@ -170,15 +163,13 @@ public abstract class SQL {
      */
     @NonCommitting
     @PureWithSideEffects
-    public static <@Unspecifiable UPDATE_TYPE, @Unspecifiable WHERE_TYPE> void update(@Nonnull Converter<UPDATE_TYPE, ?> updateConverter, @Nonnull UPDATE_TYPE updateObject, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException {
+    public static <@Unspecifiable UPDATE_TYPE, @Unspecifiable WHERE_TYPE> void update(@Nonnull Table<UPDATE_TYPE, ?> updateTable, @Nonnull UPDATE_TYPE updateObject, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException {
         final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columns = FreezableArrayList.withNoElements();
-        SQLConversionUtility.fillColumnNames(updateConverter, columns, "");
+        SQLConversionUtility.fillColumnNames(updateTable, columns, "");
     
         final @Nonnull FiniteIterable<SQLAssignment> assignments = columns.map(column -> SQLAssignmentBuilder.withColumn(column).withExpression(SQLParameter.INSTANCE).build());
     
-        final @Nonnull SQLTableName tableName = SQLTableNameBuilder.withString(updateConverter.getTypeName()).build();
-        final @Nonnull SQLSchemaName schema = SQLSchemaNameBuilder.withString(unit.getName()).build();
-        final @Nonnull SQLQualifiedTable qualifiedTable = SQLExplicitlyQualifiedTableBuilder.withTable(tableName).withSchema(schema).build();
+        final @Nonnull SQLQualifiedTable qualifiedTable = SQLConversionUtility.getQualifiedTableName(updateTable, unit);
         final @Nonnull SQLUpdateStatementBuilder.@Nonnull InnerSQLUpdateStatementBuilder updateStatementBuilder = SQLUpdateStatementBuilder.withTable(qualifiedTable).withAssignments(ImmutableList.withElementsOf(assignments));
         if (whereConverter != null) {
             final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> whereColumns = FreezableArrayList.withNoElements();
@@ -191,7 +182,7 @@ public abstract class SQL {
         final SQLUpdateStatement updateStatement = updateStatementBuilder.build();
     
         final @Nonnull SQLActionEncoder actionEncoder = Database.instance.get().getEncoder(updateStatement, unit);
-        actionEncoder.encodeObject(updateConverter, updateObject);
+        actionEncoder.encodeObject(updateTable, updateObject);
         if (whereConverter != null) {
             actionEncoder.encodeNullableObject(whereConverter, whereObject);
         }
@@ -203,8 +194,8 @@ public abstract class SQL {
      */
     @NonCommitting
     @PureWithSideEffects
-    public static <@Unspecifiable UPDATE_TYPE, @Unspecifiable WHERE_TYPE> void update(@Nonnull Converter<UPDATE_TYPE, ?> updateConverter, @Nonnull UPDATE_TYPE updateObject, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull Unit unit) throws DatabaseException {
-        update(updateConverter, updateObject, whereConverter, whereObject, "", unit);
+    public static <@Unspecifiable UPDATE_TYPE, @Unspecifiable WHERE_TYPE> void update(@Nonnull Table<UPDATE_TYPE, ?> updateTable, @Nonnull UPDATE_TYPE updateObject, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull Unit unit) throws DatabaseException {
+        update(updateTable, updateObject, whereConverter, whereObject, "", unit);
     }
     
     /* -------------------------------------------------- Delete -------------------------------------------------- */
@@ -215,13 +206,11 @@ public abstract class SQL {
      */
     @NonCommitting
     @PureWithSideEffects
-    public static <@Unspecifiable WHERE_TYPE> void delete(@Nonnull Converter<?, ?> deleteConverter, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException {
+    public static <@Unspecifiable WHERE_TYPE> void delete(@Nonnull Table<?, ?> deleteTable, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException {
         final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> columns = FreezableArrayList.withNoElements();
-        SQLConversionUtility.fillColumnNames(deleteConverter, columns, "");
+        SQLConversionUtility.fillColumnNames(deleteTable, columns, "");
     
-        final @Nonnull SQLTableName tableName = SQLTableNameBuilder.withString(deleteConverter.getTypeName()).build();
-        final @Nonnull SQLSchemaName schema = SQLSchemaNameBuilder.withString(unit.getName()).build();
-        final @Nonnull SQLQualifiedTable qualifiedTable = SQLExplicitlyQualifiedTableBuilder.withTable(tableName).withSchema(schema).build();
+        final @Nonnull SQLQualifiedTable qualifiedTable = SQLConversionUtility.getQualifiedTableName(deleteTable, unit);
         final @Nonnull SQLDeleteStatementBuilder.@Nonnull InnerSQLDeleteStatementBuilder deleteStatementBuilder = SQLDeleteStatementBuilder.withTable(qualifiedTable);
         
         if (whereConverter != null) {
@@ -247,18 +236,16 @@ public abstract class SQL {
      */
     @NonCommitting
     @PureWithSideEffects
-    public static <@Unspecifiable WHERE_TYPE> void delete(@Nonnull Converter<?, ?> deleteConverter, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull Unit unit) throws DatabaseException {
-        delete(deleteConverter, whereConverter, whereObject, "", unit);
+    public static <@Unspecifiable WHERE_TYPE> void delete(@Nonnull Table<?, ?> deleteTable, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull Unit unit) throws DatabaseException {
+        delete(deleteTable, whereConverter, whereObject, "", unit);
     }
     
     /* -------------------------------------------------- Select -------------------------------------------------- */
     
     @NonCommitting
     @PureWithSideEffects
-    private static @Capturable <@Unspecifiable WHERE_TYPE> SQLDecoder getDecoder(@Nonnull Converter<?, ?> selectConverter, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException {
-        final @Nonnull SQLTableName tableName = SQLTableNameBuilder.withString(selectConverter.getTypeName()).build();
-        final @Nonnull SQLSchemaName schemaName = SQLSchemaNameBuilder.withString(unit.getName()).build();
-        final @Nonnull SQLQualifiedTable qualifiedTable = SQLExplicitlyQualifiedTableBuilder.withTable(tableName).withSchema(schemaName).build();
+    private static @Capturable <@Unspecifiable WHERE_TYPE> SQLDecoder getDecoder(@Nonnull Table<?, ?> selectTable, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException {
+        final @Nonnull SQLQualifiedTable qualifiedTable = SQLConversionUtility.getQualifiedTableName(selectTable, unit);
         final @Nonnull SQLSimpleSelectStatementBuilder.@Nonnull InnerSQLSimpleSelectStatementBuilder simpleSelectStatementBuilder = SQLSimpleSelectStatementBuilder.withColumns(ImmutableList.withElements(SQLAllColumnsBuilder.buildWithTable(qualifiedTable))).withSources(ImmutableList.withElements(SQLTableSourceBuilder.withSource(qualifiedTable).build()));
         
         if (whereConverter != null) {
@@ -287,12 +274,12 @@ public abstract class SQL {
      */
     @NonCommitting
     @PureWithSideEffects
-    public static @Capturable <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Nonnull @NonNullableElements @NonFrozen FreezableList<SELECT_TYPE> selectAll(@Nonnull Converter<SELECT_TYPE, PROVIDED> selectConverter, @Shared PROVIDED provided, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
-        final @Nonnull SQLDecoder decoder = getDecoder(selectConverter, whereConverter, whereObject, wherePrefix, unit);
+    public static @Capturable <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Nonnull @NonNullableElements @NonFrozen FreezableList<SELECT_TYPE> selectAll(@Nonnull Table<SELECT_TYPE, PROVIDED> selectTable, @Shared PROVIDED provided, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
+        final @Nonnull SQLDecoder decoder = getDecoder(selectTable, whereConverter, whereObject, wherePrefix, unit);
         final @Nonnull FreezableArrayList<SELECT_TYPE> results = FreezableArrayList.withNoElements();
         if (decoder.moveToFirstRow()) {
             do {
-                results.add(selectConverter.recover(decoder, provided));
+                results.add(selectTable.recover(decoder, provided));
             } while (decoder.moveToNextRow());
         }
         return results;
@@ -303,8 +290,8 @@ public abstract class SQL {
      */
     @NonCommitting
     @PureWithSideEffects
-    public static @Capturable <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Nonnull @NonNullableElements @NonFrozen FreezableList<SELECT_TYPE> selectAll(@Nonnull Converter<SELECT_TYPE, PROVIDED> selectConverter, @Shared PROVIDED provided, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
-        return selectAll(selectConverter, provided, whereConverter, whereObject, "", unit);
+    public static @Capturable <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Nonnull @NonNullableElements @NonFrozen FreezableList<SELECT_TYPE> selectAll(@Nonnull Table<SELECT_TYPE, PROVIDED> selectTable, @Shared PROVIDED provided, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
+        return selectAll(selectTable, provided, whereConverter, whereObject, "", unit);
     }
     
     /**
@@ -314,8 +301,8 @@ public abstract class SQL {
      */
     @NonCommitting
     @PureWithSideEffects
-    public static <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Nullable SELECT_TYPE selectFirst(@Nonnull Converter<SELECT_TYPE, PROVIDED> selectConverter, @Shared PROVIDED provided, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
-        final @Nonnull FreezableList<SELECT_TYPE> results = selectAll(selectConverter, provided, whereConverter, whereObject, wherePrefix, unit);
+    public static <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Nullable SELECT_TYPE selectFirst(@Nonnull Table<SELECT_TYPE, PROVIDED> selectTable, @Shared PROVIDED provided, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
+        final @Nonnull FreezableList<SELECT_TYPE> results = selectAll(selectTable, provided, whereConverter, whereObject, wherePrefix, unit);
         if (results.isEmpty()) { return null; } else { return results.getFirst(); }
     }
     
@@ -324,8 +311,8 @@ public abstract class SQL {
      */
     @NonCommitting
     @PureWithSideEffects
-    public static <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Nullable SELECT_TYPE selectFirst(@Nonnull Converter<SELECT_TYPE, PROVIDED> selectConverter, @Shared PROVIDED provided, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
-        return selectFirst(selectConverter, provided, whereConverter, whereObject, "", unit);
+    public static <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Nullable SELECT_TYPE selectFirst(@Nonnull Table<SELECT_TYPE, PROVIDED> selectTable, @Shared PROVIDED provided, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
+        return selectFirst(selectTable, provided, whereConverter, whereObject, "", unit);
     }
     
     /**
@@ -335,9 +322,9 @@ public abstract class SQL {
      */
     @NonCommitting
     @PureWithSideEffects
-    public static <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Nonnull SELECT_TYPE selectOne(@Nonnull Converter<SELECT_TYPE, PROVIDED> selectConverter, @Shared PROVIDED provided, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
-        final @Nullable SELECT_TYPE entry = selectFirst(selectConverter, provided, whereConverter, whereObject, wherePrefix, unit);
-        if (entry == null) { throw RecoveryExceptionBuilder.withMessage("There exists no entry in '" + selectConverter.getTypeName() + "' of the unit '" + unit.getName() + "'" + (whereConverter != null ? " where '" + whereConverter.getTypeName() + "'" + (wherePrefix.isEmpty() ? "" : " of '" + wherePrefix + "'") + " is '" + whereObject + "'" : "") + ".").build(); }
+    public static <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Nonnull SELECT_TYPE selectOne(@Nonnull Table<SELECT_TYPE, PROVIDED> selectTable, @Shared PROVIDED provided, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
+        final @Nullable SELECT_TYPE entry = selectFirst(selectTable, provided, whereConverter, whereObject, wherePrefix, unit);
+        if (entry == null) { throw RecoveryExceptionBuilder.withMessage("There exists no entry in '" + selectTable.getTypeName() + "' of the unit '" + unit.getName() + "'" + (whereConverter != null ? " where '" + whereConverter.getTypeName() + "'" + (wherePrefix.isEmpty() ? "" : " of '" + wherePrefix + "'") + " is '" + whereObject + "'" : "") + ".").build(); }
         else { return entry; }
     }
     
@@ -346,8 +333,8 @@ public abstract class SQL {
      */
     @NonCommitting
     @PureWithSideEffects
-    public static <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Nonnull SELECT_TYPE selectOne(@Nonnull Converter<SELECT_TYPE, PROVIDED> selectConverter, @Shared PROVIDED provided, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
-        return selectOne(selectConverter, provided, whereConverter, whereObject, "", unit);
+    public static <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Nonnull SELECT_TYPE selectOne(@Nonnull Table<SELECT_TYPE, PROVIDED> selectTable, @Shared PROVIDED provided, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
+        return selectOne(selectTable, provided, whereConverter, whereObject, "", unit);
     }
     
 }

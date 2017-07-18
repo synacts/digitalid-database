@@ -12,8 +12,8 @@ import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.generation.Default;
@@ -37,7 +37,7 @@ import org.junit.Test;
 @Immutable
 @GenerateBuilder
 @GenerateSubclass
-@GenerateConverter
+@GenerateTableConverter
 abstract class Student extends RootClass implements Subject<Unit> {
     
     /* -------------------------------------------------- Key -------------------------------------------------- */

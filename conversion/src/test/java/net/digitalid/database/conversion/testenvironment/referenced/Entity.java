@@ -3,13 +3,10 @@ package net.digitalid.database.conversion.testenvironment.referenced;
 import javax.annotation.Nonnull;
 
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 
-/**
- *
- */
 @GenerateBuilder
-@GenerateConverter
+@GenerateTableConverter
 public class Entity  {
     
     public final @Nonnull ReferencedEntity referencedEntity;

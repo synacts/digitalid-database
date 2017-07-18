@@ -4,15 +4,12 @@ import javax.annotation.Nonnull;
 
 import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 import net.digitalid.utility.validation.annotations.generation.Recover;
 import net.digitalid.utility.validation.annotations.math.modulo.MultipleOf;
 
-/**
- *
- */
 @GenerateBuilder
-@GenerateConverter
+@GenerateTableConverter
 public class ConstraintIntegerColumnTable  {
     
     @MultipleOf(7)

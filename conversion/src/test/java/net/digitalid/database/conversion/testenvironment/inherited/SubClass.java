@@ -1,13 +1,10 @@
 package net.digitalid.database.conversion.testenvironment.inherited;
 
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
-import net.digitalid.utility.generator.annotations.generators.GenerateConverter;
+import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
 
-/**
- *
- */
 @GenerateBuilder
-@GenerateConverter
+@GenerateTableConverter
 public class SubClass extends SuperClass {
     
     public final int number;

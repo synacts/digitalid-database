@@ -49,10 +49,12 @@ import net.digitalid.database.dialect.expression.number.SQLNumberLiteralBuilder;
 import net.digitalid.database.dialect.expression.string.SQLStringLiteralBuilder;
 import net.digitalid.database.dialect.identifier.column.SQLColumnName;
 import net.digitalid.database.dialect.identifier.column.SQLColumnNameBuilder;
+import net.digitalid.database.dialect.identifier.schema.SQLSchemaName;
 import net.digitalid.database.dialect.identifier.schema.SQLSchemaNameBuilder;
 import net.digitalid.database.dialect.identifier.table.SQLExplicitlyQualifiedTable;
 import net.digitalid.database.dialect.identifier.table.SQLExplicitlyQualifiedTableBuilder;
 import net.digitalid.database.dialect.identifier.table.SQLQualifiedTable;
+import net.digitalid.database.dialect.identifier.table.SQLTableName;
 import net.digitalid.database.dialect.identifier.table.SQLTableNameBuilder;
 import net.digitalid.database.dialect.statement.table.create.SQLColumnDeclaration;
 import net.digitalid.database.dialect.statement.table.create.SQLColumnDeclarationBuilder;
@@ -68,7 +70,7 @@ import net.digitalid.database.dialect.statement.table.create.constraints.SQLTabl
 import net.digitalid.database.interfaces.encoder.SQLEncoder;
 
 /**
- *
+ * This class helps to convert objects to SQL.
  */
 @Utility
 public abstract class SQLConversionUtility {
@@ -372,19 +374,13 @@ public abstract class SQLConversionUtility {
     /* -------------------------------------------------- Qualified Table Name -------------------------------------------------- */
     
     /**
-     * Returns the qualified table name for a given converter in a given unit.
+     * Returns the qualified table name for a given table on a given unit.
      */
     @Pure
-    public static @Nonnull SQLQualifiedTable getQualifiedTableName(@Nonnull Converter<?,?> converter, @Nonnull String unitName) {
-        return SQLExplicitlyQualifiedTableBuilder.withTable(SQLTableNameBuilder.withString(converter.getTypeName()).build()).withSchema(SQLSchemaNameBuilder.withString(unitName).build()).build();
-    }
-    
-    /**
-     * Returns the qualified table name for a given converter in a given unit.
-     */
-    @Pure
-    public static @Nonnull SQLQualifiedTable getQualifiedTableName(@Nonnull Converter<?,?> converter, @Nonnull Unit unit) {
-        return getQualifiedTableName(converter, unit.getName());
+    public static @Nonnull SQLQualifiedTable getQualifiedTableName(@Nonnull Table<?, ?> table, @Nonnull Unit unit) {
+        final @Nonnull SQLTableName tableName = SQLTableNameBuilder.withString(table.getTableName(unit)).build();
+        final @Nonnull SQLSchemaName schemaName = SQLSchemaNameBuilder.withString(table.getSchemaName(unit)).build();
+        return SQLExplicitlyQualifiedTableBuilder.withTable(tableName).withSchema(schemaName).build();
     }
     
     /* -------------------------------------------------- Table Constraints -------------------------------------------------- */
