@@ -81,8 +81,7 @@ public abstract class SQL {
     @PureWithSideEffects
     public static void createTable(@Nonnull Table<?, ?> table, @Nonnull Unit unit) throws DatabaseException {
         final @Nonnull SQLQualifiedTable qualifiedTable = SQLConversionUtility.getQualifiedTableName(table, unit);
-        @Nonnull SQLCreateTableStatementBuilder.@Nonnull InnerSQLCreateTableStatementBuilder sqlCreateTableStatementBuilder = SQLCreateTableStatementBuilder.withTable(qualifiedTable).withColumnDeclarations(SQLConversionUtility.getColumnDeclarations(table));
-        // TODO: what if the referenced table is in another unit?
+        final SQLCreateTableStatementBuilder.@Nonnull InnerSQLCreateTableStatementBuilder sqlCreateTableStatementBuilder = SQLCreateTableStatementBuilder.withTable(qualifiedTable).withColumnDeclarations(SQLConversionUtility.getColumnDeclarations(table));
         final @Nonnull ImmutableList<SQLTableConstraint> tableConstraints = SQLConversionUtility.getTableConstraints(table, unit);
         if (!tableConstraints.isEmpty()) {
             sqlCreateTableStatementBuilder.withTableConstraints(tableConstraints);
