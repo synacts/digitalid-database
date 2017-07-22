@@ -52,7 +52,7 @@ public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable
     /* -------------------------------------------------- Set -------------------------------------------------- */
     
     @Pure
-    protected abstract @Nonnull @NonFrozen FREEZABLE_SET getSet();
+    protected abstract @Nonnull @NonFrozen @NonNullableElements FREEZABLE_SET getSet();
     
     /* -------------------------------------------------- Table -------------------------------------------------- */
     
@@ -94,7 +94,7 @@ public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable
     @Override
     @NonCommitting
     @SuppressWarnings("unchecked")
-    public @Nonnull @NonFrozen READONLY_SET get() throws DatabaseException, RecoveryException {
+    public @Nonnull @NonFrozen @NonNullableElements READONLY_SET get() throws DatabaseException, RecoveryException {
         if (!loaded) { load(true); } // This should never trigger a reentrance exception as add(value), remove(value) and reset() that call external code ensure that the set is loaded.
         return (READONLY_SET) getSet();
     }

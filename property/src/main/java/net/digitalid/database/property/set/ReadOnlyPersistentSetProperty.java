@@ -9,6 +9,7 @@ import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.property.set.ReadOnlySetProperty;
+import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
 import net.digitalid.utility.validation.annotations.type.ReadOnly;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
@@ -32,6 +33,6 @@ public interface ReadOnlyPersistentSetProperty<@Unspecifiable SUBJECT extends Su
     @Pure
     @Override
     @NonCommitting
-    public @Nonnull @NonFrozen READONLY_SET get() throws DatabaseException, RecoveryException;
+    public @Nonnull @NonFrozen @NonNullableElements READONLY_SET get() throws DatabaseException, RecoveryException;
     
 }
