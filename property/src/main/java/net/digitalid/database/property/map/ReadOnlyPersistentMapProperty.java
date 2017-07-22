@@ -29,7 +29,7 @@ import net.digitalid.database.subject.Subject;
  */
 @ThreadSafe
 @ReadOnly(WritablePersistentMapProperty.class)
-public interface ReadOnlyPersistentMapProperty<@Unspecifiable SUBJECT extends Subject<?>, @Unspecifiable KEY, @Unspecifiable VALUE, @Unspecifiable READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>> extends ReadOnlyMapProperty<KEY, VALUE, READONLY_MAP, DatabaseException, RecoveryException, PersistentMapObserver<SUBJECT, KEY, VALUE, READONLY_MAP>, ReadOnlyPersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP>>, PersistentProperty<SUBJECT, PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>, PersistentMapObserver<SUBJECT, KEY, VALUE, READONLY_MAP>> {
+public interface ReadOnlyPersistentMapProperty<@Unspecifiable SUBJECT extends Subject<?>, @Unspecifiable KEY, @Unspecifiable VALUE, @Unspecifiable READONLY_MAP extends ReadOnlyMap<@Nonnull @Valid("key") KEY, @Nonnull @Valid VALUE>> extends ReadOnlyMapProperty<KEY, VALUE, READONLY_MAP, DatabaseException, RecoveryException, PersistentMapObserver<SUBJECT, KEY, VALUE, READONLY_MAP>, ReadOnlyPersistentMapProperty<SUBJECT, KEY, VALUE, READONLY_MAP>>, PersistentProperty<SUBJECT, PersistentMapObserver<SUBJECT, KEY, VALUE, READONLY_MAP>> {
     
     /* -------------------------------------------------- Getters -------------------------------------------------- */
     
@@ -42,11 +42,5 @@ public interface ReadOnlyPersistentMapProperty<@Unspecifiable SUBJECT extends Su
     @Override
     @NonCommitting
     public @NonCapturable @Nullable @Valid VALUE get(@NonCaptured @Unmodified @Nonnull @Valid("key") KEY key) throws DatabaseException, RecoveryException;
-    
-    /* -------------------------------------------------- Table -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public @Nonnull PersistentMapPropertyTable<?, SUBJECT, KEY, VALUE, ?, ?> getTable();
     
 }

@@ -28,7 +28,7 @@ import net.digitalid.database.subject.Subject;
  */
 @ThreadSafe
 @ReadOnly(WritablePersistentValueProperty.class)
-public interface ReadOnlyPersistentValueProperty<@Unspecifiable SUBJECT extends Subject<?>, @Specifiable VALUE> extends ReadOnlyValueProperty<VALUE, DatabaseException, RecoveryException, PersistentValueObserver<SUBJECT, VALUE>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE>>, PersistentProperty<SUBJECT, PersistentValuePropertyEntry<SUBJECT, VALUE>, PersistentValueObserver<SUBJECT, VALUE>> {
+public interface ReadOnlyPersistentValueProperty<@Unspecifiable SUBJECT extends Subject<?>, @Specifiable VALUE> extends ReadOnlyValueProperty<VALUE, DatabaseException, RecoveryException, PersistentValueObserver<SUBJECT, VALUE>, ReadOnlyPersistentValueProperty<SUBJECT, VALUE>>, PersistentProperty<SUBJECT, PersistentValueObserver<SUBJECT, VALUE>> {
     
     /* -------------------------------------------------- Getter -------------------------------------------------- */
     
@@ -36,12 +36,6 @@ public interface ReadOnlyPersistentValueProperty<@Unspecifiable SUBJECT extends 
     @Override
     @NonCommitting
     public @NonCapturable @Valid VALUE get() throws DatabaseException, RecoveryException;
-    
-    /* -------------------------------------------------- Table -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public @Nonnull PersistentValuePropertyTable<?, SUBJECT, VALUE, ?> getTable();
     
     /* -------------------------------------------------- Time -------------------------------------------------- */
     

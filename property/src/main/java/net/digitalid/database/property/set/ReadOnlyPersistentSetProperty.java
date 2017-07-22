@@ -25,7 +25,7 @@ import net.digitalid.database.subject.Subject;
  */
 @ThreadSafe
 @ReadOnly(WritablePersistentSetProperty.class)
-public interface ReadOnlyPersistentSetProperty<@Unspecifiable SUBJECT extends Subject<?>, @Unspecifiable VALUE, @Unspecifiable READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>> extends ReadOnlySetProperty<VALUE, READONLY_SET, DatabaseException, RecoveryException, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>, ReadOnlyPersistentSetProperty<SUBJECT, VALUE, READONLY_SET>>, PersistentProperty<SUBJECT, PersistentSetPropertyEntry<SUBJECT, VALUE>, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>> {
+public interface ReadOnlyPersistentSetProperty<@Unspecifiable SUBJECT extends Subject<?>, @Unspecifiable VALUE, @Unspecifiable READONLY_SET extends ReadOnlySet<@Nonnull @Valid VALUE>> extends ReadOnlySetProperty<VALUE, READONLY_SET, DatabaseException, RecoveryException, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>, ReadOnlyPersistentSetProperty<SUBJECT, VALUE, READONLY_SET>>, PersistentProperty<SUBJECT, PersistentSetObserver<SUBJECT, VALUE, READONLY_SET>> {
     
     /* -------------------------------------------------- Getter -------------------------------------------------- */
     
@@ -33,11 +33,5 @@ public interface ReadOnlyPersistentSetProperty<@Unspecifiable SUBJECT extends Su
     @Override
     @NonCommitting
     public @Nonnull @NonFrozen READONLY_SET get() throws DatabaseException, RecoveryException;
-    
-    /* -------------------------------------------------- Table -------------------------------------------------- */
-    
-    @Pure
-    @Override
-    public @Nonnull PersistentSetPropertyTable<?, SUBJECT, VALUE, ?> getTable();
     
 }

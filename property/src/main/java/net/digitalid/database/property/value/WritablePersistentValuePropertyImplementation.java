@@ -50,9 +50,11 @@ public abstract class WritablePersistentValuePropertyImplementation<@Unspecifiab
     
     /* -------------------------------------------------- Table -------------------------------------------------- */
     
+    /**
+     * Returns the property table that contains the property name, subject module and entry converter.
+     */
     @Pure
-    @Override
-    public abstract @Nonnull PersistentValuePropertyTable<UNIT, SUBJECT, VALUE, ?> getTable();
+    protected abstract @Nonnull PersistentValuePropertyTable<UNIT, SUBJECT, VALUE, ?> getTable();
     
     /* -------------------------------------------------- Loading -------------------------------------------------- */
     

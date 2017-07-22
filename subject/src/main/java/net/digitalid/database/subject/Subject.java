@@ -1,6 +1,7 @@
 package net.digitalid.database.subject;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.Pure;
@@ -39,6 +40,6 @@ public interface Subject<@Unspecifiable UNIT extends Unit> extends RootInterface
     @Pure
     @GenerateSubjectModule
     @TODO(task = "Make it possible that this method can be called getModule() without generating a corresponding field.", date = "2016-12-11", author = Author.KASPAR_ETTER)
-    public @Nonnull SubjectModule<UNIT, ?> module();
+    public @Nullable SubjectModule<UNIT, ?> module();
     
 }

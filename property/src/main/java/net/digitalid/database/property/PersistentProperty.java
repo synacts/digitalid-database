@@ -27,7 +27,7 @@ import net.digitalid.database.subject.Subject;
  */
 @Mutable
 @ThreadSafe
-public interface PersistentProperty<@Unspecifiable SUBJECT extends Subject<?>, @Unspecifiable ENTRY extends PersistentPropertyEntry<SUBJECT>, @Unspecifiable OBSERVER extends Observer> extends Property<OBSERVER> {
+public interface PersistentProperty<@Unspecifiable SUBJECT extends Subject<?>, @Unspecifiable OBSERVER extends Observer> extends Property<OBSERVER> {
     
     /* -------------------------------------------------- Subject -------------------------------------------------- */
     
@@ -36,14 +36,6 @@ public interface PersistentProperty<@Unspecifiable SUBJECT extends Subject<?>, @
      */
     @Pure
     public @Nonnull SUBJECT getSubject();
-    
-    /* -------------------------------------------------- Table -------------------------------------------------- */
-    
-    /**
-     * Returns the property table that contains the property name, subject module and entry converter.
-     */
-    @Pure
-    public @Nonnull PersistentPropertyTable<?, SUBJECT, ENTRY> getTable();
     
     /* -------------------------------------------------- Reset -------------------------------------------------- */
     

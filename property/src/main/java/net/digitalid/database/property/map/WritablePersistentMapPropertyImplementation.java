@@ -65,9 +65,11 @@ public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable
     
     /* -------------------------------------------------- Table -------------------------------------------------- */
     
+    /**
+     * Returns the property table that contains the property name, subject module and entry converter.
+     */
     @Pure
-    @Override
-    public abstract @Nonnull PersistentMapPropertyTable<UNIT, SUBJECT, KEY, VALUE, ?, ?> getTable();
+    protected abstract @Nonnull PersistentMapPropertyTable<UNIT, SUBJECT, KEY, VALUE, ?, ?> getTable();
     
     /* -------------------------------------------------- Loading -------------------------------------------------- */
     
