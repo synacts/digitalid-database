@@ -36,7 +36,7 @@ public interface SQLForeignKeyConstraint extends SQLColumnsConstraint {
     @Override
     public default void unparse(@Nonnull SQLDialect dialect, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         SQLColumnsConstraint.super.unparse(dialect, unit, string);
-        string.append(" FOREIGN KEY (");
+        string.append("FOREIGN KEY (");
         dialect.unparse(getColumns(), unit, string);
         string.append(")");
         dialect.unparse(getReference(), unit, string);

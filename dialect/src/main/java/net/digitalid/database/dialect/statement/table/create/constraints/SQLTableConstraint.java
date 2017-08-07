@@ -40,6 +40,7 @@ public interface SQLTableConstraint extends SQLNode {
         if (name != null) {
             string.append("CONSTRAINT ");
             dialect.unparse(name, unit, string);
+            string.append(" ");
         }
     }
     

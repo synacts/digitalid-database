@@ -392,24 +392,26 @@ public abstract class SQLConversionUtility {
      * from the type annotation. In other cases, the name of the unit is taken from the given unit object.
      */
     @Pure
-    public static @Nonnull ImmutableList<SQLTableConstraint> getTableConstraints(@Nonnull Converter<?, ?> converter, @Nonnull Unit unit) {
+    public static @Nonnull ImmutableList<SQLTableConstraint> getTableConstraints(@Nonnull Table<?, ?> tableConverter, @Nonnull Unit unit) {
         final @Nonnull FreezableList<@Nonnull SQLTableConstraint> tableConstraints = FreezableLinkedList.withNoElements();
         boolean primaryKeySpecified = false;
-        final boolean multiplePrimaryKeys = hasMultiplePrimaryKeys(converter);
+        final boolean multiplePrimaryKeys = hasMultiplePrimaryKeys(tableConverter);
         final @Nonnull FreezableList<@Nonnull SQLColumnName> primaryKeyColumns = FreezableLinkedList.withNoElements();
-        for (@Nonnull CustomField customField : converter.getFields(Representation.INTERNAL)) {
+        for (@Nonnull CustomField customField : tableConverter.getFields(Representation.INTERNAL)) {
             final @Nonnull CustomType fieldType = customField.getCustomType();
             if (fieldType.isObjectType()) {
                 final @Nonnull CustomType.CustomConverterType customConverterType = (CustomType.CustomConverterType) fieldType;
                 final @Nonnull Converter<?, ?> referenceConverter = customConverterType.getConverter();
                 if (referenceConverter instanceof Table<?, ?>) {
                     final @Nonnull Table<?, ?> table = (Table<?, ?>) referenceConverter;
-                    final @Nonnull SQLExplicitlyQualifiedTable qualifiedTable = SQLExplicitlyQualifiedTableBuilder.withTable(SQLTableNameBuilder.withString(table.getTableName(unit)).build()).withSchema(SQLSchemaNameBuilder.withString(table.getSchemaName(unit)).build()).build();
-                    final @Nonnull @NonNullableElements ImmutableList<SQLColumnName> columnNames = ImmutableList.withElementsOf(table.getColumnNames(unit).map(columnName -> SQLColumnNameBuilder.withString(columnName).build()));
-                    if (!columnNames.isEmpty()) {
-                        final @Nonnull SQLReference reference = SQLReferenceBuilder.withTable(qualifiedTable).withColumns(columnNames).withDeleteOption(SQLReferenceOptionBuilder.withAction(table.getOnDeleteAction()).build()).withUpdateOption(SQLReferenceOptionBuilder.withAction(table.getOnUpdateAction()).build()).build();
-                        final @Nonnull SQLForeignKeyConstraint foreignKeyConstraint = SQLForeignKeyConstraintBuilder.withColumns(getColumnNames(referenceConverter, customField.getName().toLowerCase())).withReference(reference).build();
-                        tableConstraints.add(foreignKeyConstraint);
+                    if (!table.getTableName(unit).equals(tableConverter.getTableName(unit))) { // TODO: Is this the best way to avoid self-references in core subject tables?
+                        final @Nonnull @NonNullableElements ImmutableList<SQLColumnName> columnNames = ImmutableList.withElementsOf(table.getColumnNames(unit).map(columnName -> SQLColumnNameBuilder.withString(columnName).build()));
+                        if (!columnNames.isEmpty()) {
+                            final @Nonnull SQLExplicitlyQualifiedTable qualifiedTable = SQLExplicitlyQualifiedTableBuilder.withTable(SQLTableNameBuilder.withString(table.getTableName(unit)).build()).withSchema(SQLSchemaNameBuilder.withString(table.getSchemaName(unit)).build()).build();
+                            final @Nonnull SQLReference reference = SQLReferenceBuilder.withTable(qualifiedTable).withColumns(columnNames).withDeleteOption(SQLReferenceOptionBuilder.withAction(table.getOnDeleteAction()).build()).withUpdateOption(SQLReferenceOptionBuilder.withAction(table.getOnUpdateAction()).build()).build();
+                            final @Nonnull SQLForeignKeyConstraint foreignKeyConstraint = SQLForeignKeyConstraintBuilder.withColumns(getColumnNames(referenceConverter, customField.getName().toLowerCase())).withReference(reference).build();
+                            tableConstraints.add(foreignKeyConstraint);
+                        }
                     }
                 }
                 // TODO: Remove the old implementation as soon as it is no longer needed.
@@ -459,7 +461,7 @@ public abstract class SQLConversionUtility {
             tableConstraints.add(primaryKeyConstraint);
         }
         if (!primaryKeySpecified) {
-            final @Nonnull ImmutableList<@Nonnull SQLColumnName> columnNames = getColumnNames(converter);
+            final @Nonnull ImmutableList<@Nonnull SQLColumnName> columnNames = getColumnNames(tableConverter);
             final @Nonnull SQLPrimaryKeyConstraint primaryKeyConstraint = SQLPrimaryKeyConstraintBuilder.withColumns(columnNames).build();
             tableConstraints.add(primaryKeyConstraint);
         }
