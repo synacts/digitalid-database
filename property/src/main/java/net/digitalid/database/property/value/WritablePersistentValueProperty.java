@@ -8,7 +8,7 @@ import net.digitalid.utility.property.value.WritableValueProperty;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.subject.Subject;
+import net.digitalid.database.property.subject.Subject;
 
 /**
  * This writable property stores a value in the persistent database.

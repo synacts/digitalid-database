@@ -1,4 +1,4 @@
-package net.digitalid.database.subject.annotations;
+package net.digitalid.database.property.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -32,9 +32,10 @@ import net.digitalid.utility.processor.generator.JavaFileGenerator;
 import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.string.Strings;
 import net.digitalid.utility.validation.annotations.generation.Default;
+import net.digitalid.utility.validation.annotations.generation.Provide;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
-import net.digitalid.database.subject.Subject;
+import net.digitalid.database.property.subject.Subject;
 
 /**
  * This method interceptor generates a persistent property with the corresponding property table.
@@ -156,7 +157,10 @@ public @interface GeneratePersistentProperty {
                 genericTypesPropertyTable = Brackets.inPointy(unitType + ", " + surroundingType + ", " + valueType);
             }
             
-            javaFileGenerator.addField("/* TODO: private */ static final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(propertyPackage + "." + propertyType.replace("Simple", "") + "Table") + genericTypesTable + " " + upperCasePropertyName + "_TABLE = " + javaFileGenerator.importIfPossible(propertyPackage + "." + propertyType.replace("Simple", "") + "TableBuilder") + "." + genericTypesTable + "withName" + Brackets.inRound(Quotes.inDouble(method.getName())) + ".withParentModule(MODULE)" + withConverters + (propertyType.contains("Value") ? ".withDefaultValue" + Brackets.inRound(method.hasAnnotation(Default.class) ? method.getAnnotation(Default.class).value() : "null") : "") + ".build()");
+            final @Nonnull String defaultValue = ".withDefaultValue" + Brackets.inRound(method.hasAnnotation(Default.class) ? method.getAnnotation(Default.class).value() : "null");
+            final @Nonnull String providedObject = method.hasAnnotation(Provide.class) ? ".withProvidedObjectExtractor" + Brackets.inRound(method.getAnnotation(Provide.class).value()) : "";
+            
+            javaFileGenerator.addField("/* TODO: private */ static final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(propertyPackage + "." + propertyType.replace("Simple", "") + "Table") + genericTypesTable + " " + upperCasePropertyName + "_TABLE = " + javaFileGenerator.importIfPossible(propertyPackage + "." + propertyType.replace("Simple", "") + "TableBuilder") + "." + genericTypesTable + "withName" + Brackets.inRound(Quotes.inDouble(method.getName())) + ".withParentModule(MODULE)" + withConverters + (propertyType.contains("Value") ? defaultValue : "") + providedObject + ".build()");
             
             javaFileGenerator.addField("private final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(propertyPackage + ".Writable" + propertyType) + genericTypesProperty + " " + method.getName() + " = " + javaFileGenerator.importIfPossible(propertyPackage + ".Writable" + propertyType + "ImplementationBuilder") + "." + genericTypesPropertyTable + "withSubject(this).withTable" + Brackets.inRound(upperCasePropertyName + "_TABLE") + ".build()");
         }

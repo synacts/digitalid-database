@@ -34,7 +34,7 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.annotations.constraints.PrimaryKey;
 import net.digitalid.database.property.PersistentPropertyTable;
-import net.digitalid.database.subject.Subject;
+import net.digitalid.database.property.subject.Subject;
 
 /**
  * The set property table stores the {@link PersistentSetPropertyEntry set property entries}.

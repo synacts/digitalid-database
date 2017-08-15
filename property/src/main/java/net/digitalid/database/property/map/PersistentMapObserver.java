@@ -12,7 +12,7 @@ import net.digitalid.utility.validation.annotations.type.Mutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.subject.Subject;
+import net.digitalid.database.property.subject.Subject;
 
 /**
  * Objects that implement this interface can be used to {@link Property#register(net.digitalid.utility.property.Observer) observe} {@link ReadOnlyPersistentMapProperty persistent map properties}.

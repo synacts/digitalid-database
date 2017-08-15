@@ -12,7 +12,7 @@ import net.digitalid.utility.validation.annotations.type.Mutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.subject.Subject;
+import net.digitalid.database.property.subject.Subject;
 
 /**
  * This writable property stores a map of key-value pairs in the persistent database.

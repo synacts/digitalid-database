@@ -8,7 +8,7 @@ import net.digitalid.utility.collections.map.ReadOnlyMap;
 import net.digitalid.utility.validation.annotations.type.ReadOnly;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
-import net.digitalid.database.subject.Subject;
+import net.digitalid.database.property.subject.Subject;
 
 /**
  * This interface simplifies the declaration of {@link ReadOnlyPersistentMapProperty}.

@@ -12,9 +12,9 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.property.map.PersistentMapPropertyTable;
 import net.digitalid.database.property.set.PersistentSetPropertyTable;
+import net.digitalid.database.property.subject.Subject;
+import net.digitalid.database.property.subject.SubjectModule;
 import net.digitalid.database.property.value.PersistentValuePropertyTable;
-import net.digitalid.database.subject.Subject;
-import net.digitalid.database.subject.SubjectModule;
 
 /**
  * A persistent property table belongs to a {@link SubjectModule subject module} and stores the {@link PersistentPropertyEntry property entries}.

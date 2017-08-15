@@ -8,7 +8,7 @@ import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.annotations.constraints.PrimaryKey;
 import net.digitalid.database.property.PersistentPropertyEntry;
-import net.digitalid.database.subject.Subject;
+import net.digitalid.database.property.subject.Subject;
 
 /**
  * This class models an entry in the {@link PersistentMapPropertyTable persistent map property table}.

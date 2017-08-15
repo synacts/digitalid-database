@@ -9,7 +9,7 @@ import net.digitalid.utility.collections.set.ReadOnlySet;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
-import net.digitalid.database.subject.Subject;
+import net.digitalid.database.property.subject.Subject;
 
 /**
  * This type simplifies the creation and declaration of {@link WritablePersistentSetProperty}.

@@ -1,4 +1,4 @@
-package net.digitalid.database.property;
+package net.digitalid.database.property.value;
 
 import java.util.Map;
 
@@ -14,7 +14,6 @@ import net.digitalid.utility.freezable.annotations.NonFrozen;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.generator.annotations.generators.GenerateTableConverter;
-import net.digitalid.utility.rootclass.RootClass;
 import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.generation.Default;
 import net.digitalid.utility.validation.annotations.type.Immutable;
@@ -24,11 +23,10 @@ import net.digitalid.database.annotations.constraints.PrimaryKey;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
+import net.digitalid.database.property.annotations.GeneratePersistentProperty;
 import net.digitalid.database.property.map.WritablePersistentSimpleMapProperty;
 import net.digitalid.database.property.set.WritablePersistentSimpleSetProperty;
-import net.digitalid.database.property.value.WritablePersistentValueProperty;
-import net.digitalid.database.subject.Subject;
-import net.digitalid.database.subject.annotations.GeneratePersistentProperty;
+import net.digitalid.database.property.subject.Subject;
 import net.digitalid.database.testing.DatabaseTest;
 
 import org.junit.BeforeClass;
@@ -38,7 +36,7 @@ import org.junit.Test;
 @GenerateBuilder
 @GenerateSubclass
 @GenerateTableConverter
-abstract class Student extends RootClass implements Subject<Unit> {
+abstract class Student extends Subject<Unit> {
     
     /* -------------------------------------------------- Key -------------------------------------------------- */
     

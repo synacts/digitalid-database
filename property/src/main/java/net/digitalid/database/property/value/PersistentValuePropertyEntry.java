@@ -11,7 +11,7 @@ import net.digitalid.utility.time.Time;
 import net.digitalid.utility.validation.annotations.type.Immutable;
 
 import net.digitalid.database.property.PersistentPropertyEntry;
-import net.digitalid.database.subject.Subject;
+import net.digitalid.database.property.subject.Subject;
 
 /**
  * This class models an entry in the {@link PersistentValuePropertyTable persistent value property table}.

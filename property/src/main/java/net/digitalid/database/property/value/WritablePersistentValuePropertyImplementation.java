@@ -10,6 +10,7 @@ import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.Captured;
 import net.digitalid.utility.annotations.type.ThreadSafe;
@@ -30,7 +31,8 @@ import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.subject.Subject;
+import net.digitalid.database.property.subject.Subject;
+import net.digitalid.database.property.subject.SubjectUtility;
 
 /**
  * This class implements the {@link WritablePersistentValueProperty}.
@@ -50,11 +52,9 @@ public abstract class WritablePersistentValuePropertyImplementation<@Unspecifiab
     
     /* -------------------------------------------------- Table -------------------------------------------------- */
     
-    /**
-     * Returns the property table that contains the property name, subject module and entry converter.
-     */
     @Pure
-    protected abstract @Nonnull PersistentValuePropertyTable<UNIT, SUBJECT, VALUE, ?> getTable();
+    @Override
+    public abstract @Nonnull PersistentValuePropertyTable<UNIT, SUBJECT, VALUE, ?> getTable();
     
     /* -------------------------------------------------- Loading -------------------------------------------------- */
     
@@ -176,12 +176,14 @@ public abstract class WritablePersistentValuePropertyImplementation<@Unspecifiab
     
     /* -------------------------------------------------- Initialization -------------------------------------------------- */
     
-    @Pure
     @Override
     @CallSuper
+    @PureWithSideEffects
     protected void initialize() {
-        this.value = getTable().getDefaultValue();
         super.initialize();
+        
+        SubjectUtility.add(getSubject(), this);
+        this.value = getTable().getDefaultValue();
     }
     
 }

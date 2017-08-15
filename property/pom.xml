@@ -19,12 +19,6 @@
         
         <dependency>
             <groupId>net.digitalid.database</groupId>
-            <artifactId>database-subject</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>net.digitalid.database</groupId>
             <artifactId>database-testing</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

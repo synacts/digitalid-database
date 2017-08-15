@@ -9,6 +9,7 @@ import net.digitalid.utility.annotations.generics.Unspecifiable;
 import net.digitalid.utility.annotations.method.CallSuper;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.annotations.method.Pure;
+import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.annotations.ownership.Capturable;
 import net.digitalid.utility.annotations.ownership.Captured;
 import net.digitalid.utility.annotations.ownership.NonCapturable;
@@ -34,7 +35,8 @@ import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
-import net.digitalid.database.subject.Subject;
+import net.digitalid.database.property.subject.Subject;
+import net.digitalid.database.property.subject.SubjectUtility;
 
 /**
  * This class implements the {@link WritablePersistentMapProperty}.
@@ -65,11 +67,9 @@ public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable
     
     /* -------------------------------------------------- Table -------------------------------------------------- */
     
-    /**
-     * Returns the property table that contains the property name, subject module and entry converter.
-     */
     @Pure
-    protected abstract @Nonnull PersistentMapPropertyTable<UNIT, SUBJECT, KEY, VALUE, ?, ?> getTable();
+    @Override
+    public abstract @Nonnull PersistentMapPropertyTable<UNIT, SUBJECT, KEY, VALUE, ?, ?> getTable();
     
     /* -------------------------------------------------- Loading -------------------------------------------------- */
     
@@ -199,10 +199,22 @@ public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable
     @CallSuper
     public void validate() {
         super.validate();
+        
         Validate.that(!getMap().keySet().containsNull()).orThrow("None of the keys may be null.");
         Validate.that(!getMap().values().containsNull()).orThrow("None of the values may be null.");
         Validate.that(getMap().keySet().matchAll(getKeyValidator())).orThrow("Each key has to be valid.");
         Validate.that(getMap().values().matchAll(getValueValidator())).orThrow("Each value has to be valid.");
+    }
+    
+    /* -------------------------------------------------- Initialization -------------------------------------------------- */
+    
+    @Override
+    @CallSuper
+    @PureWithSideEffects
+    protected void initialize() {
+        super.initialize();
+        
+        SubjectUtility.add(getSubject(), this);
     }
     
 }

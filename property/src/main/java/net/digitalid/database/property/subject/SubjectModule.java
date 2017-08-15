@@ -1,4 +1,4 @@
-package net.digitalid.database.subject;
+package net.digitalid.database.property.subject;
 
 import javax.annotation.Nonnull;
 

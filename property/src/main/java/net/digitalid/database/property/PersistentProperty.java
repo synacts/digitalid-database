@@ -15,8 +15,8 @@ import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.property.map.ReadOnlyPersistentMapProperty;
 import net.digitalid.database.property.set.ReadOnlyPersistentSetProperty;
+import net.digitalid.database.property.subject.Subject;
 import net.digitalid.database.property.value.ReadOnlyPersistentValueProperty;
-import net.digitalid.database.subject.Subject;
 
 /**
  * A persistent property belongs to a {@link Subject subject} and stores its values in the database with the subject used as the key.
@@ -36,6 +36,14 @@ public interface PersistentProperty<@Unspecifiable SUBJECT extends Subject<?>, @
      */
     @Pure
     public @Nonnull SUBJECT getSubject();
+    
+    /* -------------------------------------------------- Table -------------------------------------------------- */
+    
+    /**
+     * Returns the property table that contains the property name, subject module and entry converter.
+     */
+    @Pure
+    public @Nonnull PersistentPropertyTable<?, SUBJECT, ?> getTable();
     
     /* -------------------------------------------------- Reset -------------------------------------------------- */
     

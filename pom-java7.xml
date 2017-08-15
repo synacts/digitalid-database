@@ -49,7 +49,6 @@
         <module>server-java7</module>
         <module>testing-java7</module>
         
-        <module>subject-java7</module>
         <module>conversion-java7</module>
         <module>property-java7</module>
     </modules>

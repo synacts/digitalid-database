@@ -9,7 +9,7 @@ import net.digitalid.utility.collections.map.ReadOnlyMap;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 import net.digitalid.utility.validation.annotations.value.Valid;
 
-import net.digitalid.database.subject.Subject;
+import net.digitalid.database.property.subject.Subject;
 
 /**
  * This class simplifies the creation and declaration of {@link WritablePersistentMapProperty}.

@@ -1,4 +1,4 @@
-package net.digitalid.database.subject.annotations;
+package net.digitalid.database.property.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -25,8 +25,8 @@ import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Stateless;
 
-import net.digitalid.database.subject.SubjectModule;
-import net.digitalid.database.subject.SubjectModuleBuilder;
+import net.digitalid.database.property.subject.SubjectModule;
+import net.digitalid.database.property.subject.SubjectModuleBuilder;
 
 /**
  * This method interceptor generates a subject module with the name of the surrounding class and its converter.

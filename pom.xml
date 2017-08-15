@@ -49,7 +49,6 @@
         <module>server</module>
         <module>testing</module>
         
-        <module>subject</module>
         <module>conversion</module>
         <module>property</module>
     </modules>
