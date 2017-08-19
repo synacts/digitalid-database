@@ -2,6 +2,7 @@ package net.digitalid.database.interfaces;
 
 
 import java.security.MessageDigest;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.zip.Inflater;
 
@@ -14,7 +15,6 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.ownership.Shared;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
-import net.digitalid.utility.contracts.Ensure;
 import net.digitalid.utility.conversion.enumerations.Representation;
 import net.digitalid.utility.conversion.exceptions.RecoveryException;
 import net.digitalid.utility.conversion.interfaces.Converter;
@@ -24,6 +24,7 @@ import net.digitalid.utility.functional.interfaces.UnaryFunction;
 import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
 import net.digitalid.database.interfaces.encoder.SQLEncoder;
 
 /**
@@ -70,17 +71,27 @@ public abstract class SQLDecoder implements Decoder<DatabaseException> {
     
     @Pure
     @Override
-    @TODO(task = "This is wrong. The converter expects non-null values. This method returns null when all columns are null and calls the decodeObject method otherwise.", date = "2017-01-25", author = Author.KASPAR_ETTER)
-    public <TYPE, PROVIDED> @Nullable TYPE decodeNullableObject(@Nonnull Converter<TYPE, PROVIDED> converter, @Shared PROVIDED provided) throws DatabaseException, RecoveryException {
+    public <TYPE, PROVIDED> @Nonnull TYPE decodeObject(@Nonnull Converter<TYPE, PROVIDED> converter, @Shared PROVIDED provided) throws DatabaseException, RecoveryException {
         return converter.recover(this, provided);
     }
     
     @Pure
     @Override
-    public <TYPE, PROVIDED> @Nonnull TYPE decodeObject(@Nonnull Converter<TYPE, PROVIDED> converter, @Shared PROVIDED provided) throws DatabaseException, RecoveryException {
-        final @Nullable TYPE object = decodeNullableObject(converter, provided);
-        Ensure.that(object != null).orThrow("The object may not be null");
-        return object;
+    @TODO(task = "This is wrong. The converter expects non-null values. This method returns null when all columns are null and calls the decodeObject method otherwise.", date = "2017-01-25", author = Author.KASPAR_ETTER)
+    public <TYPE, PROVIDED> @Nullable TYPE decodeNullableObject(@Nonnull Converter<TYPE, PROVIDED> converter, @Shared PROVIDED provided) throws DatabaseException, RecoveryException {
+        try {
+            return decodeObject(converter, provided);
+        } catch (@Nonnull DatabaseException | RecoveryException exception) {
+            if (wasNull()) { return null; } // TODO: This try catch code was written on 2017-08-19. Is this the best we can do?
+            else { throw exception; }
+        }
+    }
+    
+    /* -------------------------------------------------- Decoding -------------------------------------------------- */
+    
+    @Pure
+    protected void throwNullException() throws DatabaseException {
+        throw DatabaseExceptionBuilder.withCause(new SQLException("Read null instead of a value.")).build();
     }
     
     /* -------------------------------------------------- Iterables -------------------------------------------------- */

@@ -64,7 +64,7 @@ public abstract class AndroidDecoder extends SQLDecoder {
     @Impure
     @Override
     public boolean wasNull() throws DatabaseException {
-        return cursor.isNull(columnIndex++);
+        return cursor.isNull(columnIndex - 1);
     }
     
     /* -------------------------------------------------- Decoding -------------------------------------------------- */
@@ -72,13 +72,16 @@ public abstract class AndroidDecoder extends SQLDecoder {
     @Impure
     @Override
     public boolean decodeBoolean() throws DatabaseException {
-        return cursor.getShort(columnIndex++) != 0;
+        final boolean value = cursor.getShort(columnIndex++) != 0;
+        if (wasNull()) { throwNullException(); }
+        return value;
     }
     
     @Impure
     @Override
     public byte decodeInteger08() throws DatabaseException {
         final short number = cursor.getShort(columnIndex++);
+        if (wasNull()) { throwNullException(); }
         Ensure.that(number <= Math.pow(2, 8)).orThrow("The number is not byte");
         return (byte) number;
     }
@@ -86,44 +89,56 @@ public abstract class AndroidDecoder extends SQLDecoder {
     @Impure
     @Override
     public short decodeInteger16() throws DatabaseException {
-        return cursor.getShort(columnIndex++);
+        final short value = cursor.getShort(columnIndex++);
+        if (wasNull()) { throwNullException(); }
+        return value;
     }
     
     @Impure
     @Override
     public int decodeInteger32() throws DatabaseException {
-        return cursor.getInt(columnIndex++);
+        final int value = cursor.getInt(columnIndex++);
+        if (wasNull()) { throwNullException(); }
+        return value;
     }
     
     @Impure
     @Override
     public long decodeInteger64() throws DatabaseException {
-        return cursor.getLong(columnIndex++);
+        final long value = cursor.getLong(columnIndex++);
+        if (wasNull()) { throwNullException(); }
+        return value;
     }
     
     @Impure
     @Override
     public @Nonnull BigInteger decodeInteger() throws DatabaseException {
-        final byte[] bytes = cursor.getBlob(columnIndex++);
+        final @Nonnull byte[] bytes = cursor.getBlob(columnIndex++);
+        if (wasNull()) { throwNullException(); }
         return new BigInteger(bytes);
     }
     
     @Impure
     @Override
     public float decodeDecimal32() throws DatabaseException {
-        return cursor.getFloat(columnIndex++);
+        final float value = cursor.getFloat(columnIndex++);
+        if (wasNull()) { throwNullException(); }
+        return value;
     }
     
     @Impure
     @Override
     public double decodeDecimal64() throws DatabaseException {
-        return cursor.getDouble(columnIndex++);
+        final double value = cursor.getDouble(columnIndex++);
+        if (wasNull()) { throwNullException(); }
+        return value;
     }
     
     @Impure
     @Override
     public char decodeString01() throws DatabaseException {
         final @Nonnull String character = cursor.getString(columnIndex++);
+        if (wasNull()) { throwNullException(); }
         Ensure.that(character.length() == 1).orThrow("The value is not a character.");
         return character.charAt(0);
     }
@@ -132,6 +147,7 @@ public abstract class AndroidDecoder extends SQLDecoder {
     @Override
     public @Nonnull String decodeString64() throws DatabaseException {
         final @Nonnull String string = cursor.getString(columnIndex++);
+        if (wasNull()) { throwNullException(); }
         Ensure.that(string.length() <= 64).orThrow("The value is not a string of length <= 64.");
         return string;
     }
@@ -139,13 +155,16 @@ public abstract class AndroidDecoder extends SQLDecoder {
     @Impure
     @Override
     public @Nonnull String decodeString() throws DatabaseException {
-        return cursor.getString(columnIndex++);
+        final @Nonnull String value = cursor.getString(columnIndex++);
+        if (wasNull()) { throwNullException(); }
+        return value;
     }
     
     @Impure
     @Override
     public @Nonnull @Size(16) byte[] decodeBinary128() throws DatabaseException {
         final @Nonnull byte[] bytes = cursor.getBlob(columnIndex++);
+        if (wasNull()) { throwNullException(); }
         Ensure.that(bytes.length <= 16).orThrow("The value is not a byte array of length <= 16.");
         return bytes;
     }
@@ -154,6 +173,7 @@ public abstract class AndroidDecoder extends SQLDecoder {
     @Override
     public @Nonnull @Size(32) byte[] decodeBinary256() throws DatabaseException {
         final @Nonnull byte[] bytes = cursor.getBlob(columnIndex++);
+        if (wasNull()) { throwNullException(); }
         Ensure.that(bytes.length <= 32).orThrow("The value is not a byte array of length <= 32.");
         return bytes;
     }
@@ -161,13 +181,16 @@ public abstract class AndroidDecoder extends SQLDecoder {
     @Impure
     @Override
     public @Nonnull byte[] decodeBinary() throws DatabaseException {
-        return cursor.getBlob(columnIndex++);
+        final @Nonnull byte[] value = cursor.getBlob(columnIndex++);
+        if (wasNull()) { throwNullException(); }
+        return value;
     }
     
     @Impure
     @Override
     public @Nonnull InputStream decodeBinaryStream() throws DatabaseException {
         final @Nonnull byte[] bytes = cursor.getBlob(columnIndex++);
+        if (wasNull()) { throwNullException(); }
         final @Nonnull ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
         return stream;
     }

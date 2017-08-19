@@ -61,7 +61,6 @@ public abstract class JDBCDecoder extends SQLDecoder {
         }
     }
     
-    // TODO: why not return boolean in this case?
     @Impure
     @Override
     public boolean moveToFirstRow() throws DatabaseException {
@@ -106,6 +105,8 @@ public abstract class JDBCDecoder extends SQLDecoder {
             return resultSet.getBoolean(columnIndex++);
         } catch (SQLException exception) {
             throw DatabaseExceptionBuilder.withCause(exception).build();
+        } finally {
+            if (wasNull()) { throwNullException(); }
         }
     }
     
@@ -116,6 +117,8 @@ public abstract class JDBCDecoder extends SQLDecoder {
             return resultSet.getByte(columnIndex++);
         } catch (SQLException exception) {
             throw DatabaseExceptionBuilder.withCause(exception).build();
+        } finally {
+            if (wasNull()) { throwNullException(); }
         }
     }
     
@@ -126,6 +129,8 @@ public abstract class JDBCDecoder extends SQLDecoder {
             return resultSet.getShort(columnIndex++);
         } catch (SQLException exception) {
             throw DatabaseExceptionBuilder.withCause(exception).build();
+        } finally {
+            if (wasNull()) { throwNullException(); }
         }
     }
     
@@ -136,6 +141,8 @@ public abstract class JDBCDecoder extends SQLDecoder {
             return resultSet.getInt(columnIndex++);
         } catch (SQLException exception) {
             throw DatabaseExceptionBuilder.withCause(exception).build();
+        } finally {
+            if (wasNull()) { throwNullException(); }
         }
     }
     
@@ -146,6 +153,8 @@ public abstract class JDBCDecoder extends SQLDecoder {
             return resultSet.getLong(columnIndex++);
         } catch (SQLException exception) {
             throw DatabaseExceptionBuilder.withCause(exception).build();
+        } finally {
+            if (wasNull()) { throwNullException(); }
         }
     }
     
@@ -153,7 +162,8 @@ public abstract class JDBCDecoder extends SQLDecoder {
     @Override
     public @Nonnull BigInteger decodeInteger() throws DatabaseException {
         try {
-            final byte[] bytes = resultSet.getBytes(columnIndex++);
+            final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex++);
+            if (wasNull()) { throwNullException(); }
             final @Nonnull BigInteger bigInteger = new BigInteger(bytes);
             return bigInteger;
         } catch (SQLException exception) {
@@ -168,6 +178,8 @@ public abstract class JDBCDecoder extends SQLDecoder {
             return resultSet.getFloat(columnIndex++);
         } catch (SQLException exception) {
             throw DatabaseExceptionBuilder.withCause(exception).build();
+        } finally {
+            if (wasNull()) { throwNullException(); }
         }
     }
     
@@ -178,6 +190,8 @@ public abstract class JDBCDecoder extends SQLDecoder {
             return resultSet.getDouble(columnIndex++);
         } catch (SQLException exception) {
             throw DatabaseExceptionBuilder.withCause(exception).build();
+        } finally {
+            if (wasNull()) { throwNullException(); }
         }
     }
     
@@ -186,6 +200,7 @@ public abstract class JDBCDecoder extends SQLDecoder {
     public char decodeString01() throws DatabaseException {
         try {
             final @Nonnull String string = resultSet.getString(columnIndex++);
+            if (wasNull()) { throwNullException(); }
             Ensure.that(string.length() == 1).orThrow("The encoded object is not a character.");
             return string.charAt(0);
         } catch (SQLException exception) {
@@ -198,6 +213,7 @@ public abstract class JDBCDecoder extends SQLDecoder {
     public @Nonnull String decodeString64() throws DatabaseException {
         try {
             final @Nonnull String string = resultSet.getString(columnIndex++);
+            if (wasNull()) { throwNullException(); }
             Ensure.that(string.length() <= 64).orThrow("The encoded object is not a string with less or equal than 64 characters.");
             return string;
         } catch (SQLException exception) {
@@ -212,6 +228,8 @@ public abstract class JDBCDecoder extends SQLDecoder {
             return resultSet.getString(columnIndex++);
         } catch (SQLException exception) {
             throw DatabaseExceptionBuilder.withCause(exception).build();
+        } finally {
+            if (wasNull()) { throwNullException(); }
         }
     }
     
@@ -220,6 +238,7 @@ public abstract class JDBCDecoder extends SQLDecoder {
     public @Nonnull @Size(16) byte[] decodeBinary128() throws DatabaseException {
         try {
             final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex++);
+            if (wasNull()) { throwNullException(); }
             Ensure.that(bytes.length <= 16).orThrow("The encoded byte array is not less or equal to 16 bytes");
             return bytes;
         } catch (SQLException exception) {
@@ -232,6 +251,7 @@ public abstract class JDBCDecoder extends SQLDecoder {
     public @Nonnull @Size(32) byte[] decodeBinary256() throws DatabaseException {
         try {
             final @Nonnull byte[] bytes = resultSet.getBytes(columnIndex++);
+            if (wasNull()) { throwNullException(); }
             Ensure.that(bytes.length <= 16).orThrow("The encoded byte array is not less or equal to 16 bytes");
             return bytes;
         } catch (SQLException exception) {
@@ -246,6 +266,8 @@ public abstract class JDBCDecoder extends SQLDecoder {
             return resultSet.getBytes(columnIndex++);
         } catch (SQLException exception) {
             throw DatabaseExceptionBuilder.withCause(exception).build();
+        } finally {
+            if (wasNull()) { throwNullException(); }
         }
     }
     
@@ -256,6 +278,8 @@ public abstract class JDBCDecoder extends SQLDecoder {
             return resultSet.getBinaryStream(columnIndex++);
         } catch (SQLException exception) {
             throw DatabaseExceptionBuilder.withCause(exception).build();
+        } finally {
+            if (wasNull()) { throwNullException(); }
         }
     }
     

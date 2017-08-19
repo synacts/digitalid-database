@@ -62,11 +62,11 @@ public @interface GeneratePersistentProperty {
         }
         
         @Pure
-        private @Nonnull String getExternallyProvidedType(@Nonnull JavaFileGenerator javaFileGenerator, @Nonnull String type, @Nullable DeclaredType converter) {
+        protected @Nonnull String getExternallyProvidedType(@Nonnull JavaFileGenerator javaFileGenerator, @Nonnull String simpleTypeName, @Nullable DeclaredType converter) {
             final @Nonnull String externallyProvidedType;
-            if (type.endsWith("Role")) { // TODO: This hardcoding is only temporary, of course, and should be replaced as soon as the type information can be cached and retrieved.
+            if (simpleTypeName.endsWith("Role")) { // TODO: This hardcoding is only temporary, of course, and should be replaced as soon as the type information can be cached and retrieved.
                 externallyProvidedType = javaFileGenerator.importIfPossible("net.digitalid.core.client.Client");
-            } else if (type.equals("Student")) { // TODO: This hardcoding is only temporary, of course, and should be replaced as soon as the type information can be cached and retrieved.
+            } else if (simpleTypeName.equals("Student")) { // TODO: This hardcoding is only temporary, of course, and should be replaced as soon as the type information can be cached and retrieved.
                 externallyProvidedType = javaFileGenerator.importIfPossible(Unit.class);
             } else if (converter != null) {
                 externallyProvidedType = javaFileGenerator.importIfPossible(converter.getTypeArguments().get(1));
@@ -118,8 +118,6 @@ public @interface GeneratePersistentProperty {
             
             final @Nonnull String unitType = javaFileGenerator.importIfPossible(ProcessingUtility.getSupertype(typeInformation.getType(), Subject.class).getTypeArguments().get(0));
             
-//            final @Nonnull String converter = (valueType.equals("String") ? javaFileGenerator.importIfPossible("net.digitalid.utility.conversion.converters.StringConverter") : javaFileGenerator.importIfPossible(ProcessingUtility.getQualifiedName(typeArguments.get(1)) + "Converter")) + ".INSTANCE";
-            
             final @Nonnull String withConverters;
             final @Nonnull String genericTypesTable;
             final @Nonnull String genericTypesProperty;
@@ -160,9 +158,42 @@ public @interface GeneratePersistentProperty {
             final @Nonnull String defaultValue = ".withDefaultValue" + Brackets.inRound(method.hasAnnotation(Default.class) ? method.getAnnotation(Default.class).value() : "null");
             final @Nonnull String providedObject = method.hasAnnotation(Provide.class) ? ".withProvidedObjectExtractor" + Brackets.inRound(method.getAnnotation(Provide.class).value()) : "";
             
-            javaFileGenerator.addField("/* TODO: private */ static final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(propertyPackage + "." + propertyType.replace("Simple", "") + "Table") + genericTypesTable + " " + upperCasePropertyName + "_TABLE = " + javaFileGenerator.importIfPossible(propertyPackage + "." + propertyType.replace("Simple", "") + "TableBuilder") + "." + genericTypesTable + "withName" + Brackets.inRound(Quotes.inDouble(method.getName())) + ".withParentModule(MODULE)" + withConverters + (propertyType.contains("Value") ? defaultValue : "") + providedObject + ".build()");
+            final @Nonnull StringBuilder tableField = new StringBuilder("private static final @");
+            tableField.append(javaFileGenerator.importIfPossible(Nonnull.class));
+            tableField.append(" ");
+            tableField.append(javaFileGenerator.importIfPossible(propertyPackage + "." + propertyType.replace("Simple", "") + "Table"));
+            tableField.append(genericTypesTable);
+            tableField.append(" ");
+            tableField.append(upperCasePropertyName);
+            tableField.append("_TABLE = ");
+            tableField.append(javaFileGenerator.importIfPossible(propertyPackage + "." + propertyType.replace("Simple", "") + "TableBuilder"));
+            tableField.append(".");
+            tableField.append(genericTypesTable);
+            tableField.append("withName(");
+            tableField.append(Quotes.inDouble(method.getName()));
+            tableField.append(").withParentModule(MODULE)");
+            tableField.append(withConverters);
+            tableField.append(propertyType.contains("Value") ? defaultValue : "");
+            tableField.append(providedObject);
+            tableField.append(".build()");
+            javaFileGenerator.addField(tableField.toString());
             
-            javaFileGenerator.addField("private final @" + javaFileGenerator.importIfPossible(Nonnull.class) + " " + javaFileGenerator.importIfPossible(propertyPackage + ".Writable" + propertyType) + genericTypesProperty + " " + method.getName() + " = " + javaFileGenerator.importIfPossible(propertyPackage + ".Writable" + propertyType + "ImplementationBuilder") + "." + genericTypesPropertyTable + "withSubject(this).withTable" + Brackets.inRound(upperCasePropertyName + "_TABLE") + ".build()");
+            
+            final @Nonnull StringBuilder propertyField = new StringBuilder("private final @");
+            propertyField.append(javaFileGenerator.importIfPossible(Nonnull.class));
+            propertyField.append(" ");
+            propertyField.append(javaFileGenerator.importIfPossible(propertyPackage + ".Writable" + propertyType));
+            propertyField.append(genericTypesProperty);
+            propertyField.append(" ");
+            propertyField.append(method.getName());
+            propertyField.append(" = ");
+            propertyField.append(javaFileGenerator.importIfPossible(propertyPackage + ".Writable" + propertyType + "ImplementationBuilder"));
+            propertyField.append(".");
+            propertyField.append(genericTypesPropertyTable);
+            propertyField.append("withSubject(this).withTable(");
+            propertyField.append(upperCasePropertyName);
+            propertyField.append("_TABLE).build()");
+            javaFileGenerator.addField(propertyField.toString());
         }
         
         @Pure

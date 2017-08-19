@@ -79,11 +79,7 @@ public class ValuePropertyTest extends DatabaseTest {
     @BeforeClass
     public static void createTables() throws Exception {
         SQL.createTable(StudentConverter.INSTANCE, Unit.DEFAULT);
-        SQL.createTable(StudentSubclass.NAME_TABLE, Unit.DEFAULT);
-        SQL.createTable(StudentSubclass.SPOUSE_TABLE, Unit.DEFAULT);
-        SQL.createTable(StudentSubclass.AGE_TABLE, Unit.DEFAULT);
-        SQL.createTable(StudentSubclass.FRIENDS_TABLE, Unit.DEFAULT);
-        SQL.createTable(StudentSubclass.GRADES_TABLE, Unit.DEFAULT);
+        StudentSubclass.MODULE.accept(table -> SQL.createTable(table, Unit.DEFAULT));
         SQL.insertOrAbort(StudentConverter.INSTANCE, object, Unit.DEFAULT);
         SQL.insertOrAbort(StudentConverter.INSTANCE, friend, Unit.DEFAULT);
         Database.instance.get().commit();
