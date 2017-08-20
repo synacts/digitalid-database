@@ -66,6 +66,8 @@ public @interface GeneratePersistentProperty {
             final @Nonnull String externallyProvidedType;
             if (simpleTypeName.endsWith("Role")) { // TODO: This hardcoding is only temporary, of course, and should be replaced as soon as the type information can be cached and retrieved.
                 externallyProvidedType = javaFileGenerator.importIfPossible("net.digitalid.core.client.Client");
+            } else if (simpleTypeName.equals("Context") || simpleTypeName.equals("Contact")) { // TODO: This hardcoding is only temporary, of course, and should be replaced as soon as the type information can be cached and retrieved.
+                externallyProvidedType = javaFileGenerator.importIfPossible("net.digitalid.core.entity.NonHostEntity");
             } else if (simpleTypeName.equals("Student")) { // TODO: This hardcoding is only temporary, of course, and should be replaced as soon as the type information can be cached and retrieved.
                 externallyProvidedType = javaFileGenerator.importIfPossible(Unit.class);
             } else if (converter != null) {
