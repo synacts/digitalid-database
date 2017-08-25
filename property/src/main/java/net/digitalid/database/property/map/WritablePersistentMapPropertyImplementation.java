@@ -35,6 +35,7 @@ import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.property.subject.Subject;
 import net.digitalid.database.property.subject.SubjectUtility;
 
@@ -127,11 +128,13 @@ public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable
         try {
             if (!loaded) { load(false); }
             if (getMap().containsKey(key)) {
+                Database.commit();
                 return false;
             } else {
                 final @Nonnull PersistentMapPropertyEntry<SUBJECT, KEY, VALUE> entry = new PersistentMapPropertyEntrySubclass<>(getSubject(), key, value);
                 SQL.insertOrAbort(getTable(), entry, getSubject().getUnit());
                 getMap().put(key, value);
+                Database.commit();
                 notifyObservers(key, value, true);
                 return true;
             }
@@ -153,9 +156,11 @@ public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable
                 final @Nonnull PersistentMapPropertyEntry<SUBJECT, KEY, VALUE> entry = new PersistentMapPropertyEntrySubclass<>(getSubject(), key, value); // TODO: The value should actually not be necessary.
                 SQL.delete(getTable(), getTable(), entry, getSubject().getUnit());
                 getMap().remove(key);
+                Database.commit();
                 notifyObservers(key, value, false);
                 return value;
             } else {
+                Database.commit();
                 return null;
             }
         } finally {

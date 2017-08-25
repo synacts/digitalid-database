@@ -30,6 +30,7 @@ import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.property.subject.Subject;
 import net.digitalid.database.property.subject.SubjectUtility;
 
@@ -110,11 +111,13 @@ public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable
         try {
             if (!loaded) { load(false); }
             if (getSet().contains(value)) {
+                Database.commit();
                 return false;
             } else {
                 final @Nonnull PersistentSetPropertyEntry<SUBJECT, VALUE> entry = new PersistentSetPropertyEntrySubclass<>(getSubject(), value);
                 SQL.insertOrAbort(getTable(), entry, getSubject().getUnit());
                 getSet().add(value);
+                Database.commit();
                 notifyObservers(value, true);
                 return true;
             }
@@ -135,9 +138,11 @@ public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable
                 final @Nonnull PersistentSetPropertyEntry<SUBJECT, VALUE> entry = new PersistentSetPropertyEntrySubclass<>(getSubject(), value);
                 SQL.delete(getTable(), getTable(), entry, getSubject().getUnit());
                 getSet().remove(value);
+                Database.commit();
                 notifyObservers(value, false);
                 return true;
             } else {
+                Database.commit();
                 return false;
             }
         } finally {

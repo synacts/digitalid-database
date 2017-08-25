@@ -31,6 +31,7 @@ import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
 import net.digitalid.database.exceptions.DatabaseException;
+import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.property.subject.Subject;
 import net.digitalid.database.property.subject.SubjectUtility;
 
@@ -124,8 +125,9 @@ public abstract class WritablePersistentValuePropertyImplementation<@Unspecifiab
                 SQL.insertOrReplace(getTable(), entry, getSubject().getUnit());
                 this.time = newTime;
                 this.value = newValue;
+                Database.commit();
                 notifyObservers(oldValue, newValue);
-            }
+            } else { Database.commit(); }
             return oldValue;
         } finally {
             lock.unlock();
