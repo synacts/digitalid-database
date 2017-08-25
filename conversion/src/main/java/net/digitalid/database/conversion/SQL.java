@@ -88,7 +88,7 @@ public abstract class SQL {
         }
         final @Nonnull SQLCreateTableStatement createTableStatement = sqlCreateTableStatementBuilder.build();
         Database.instance.get().execute(createTableStatement, unit);
-        Database.instance.get().commit();
+        Database.commit();
     }
     
     /* -------------------------------------------------- Drop Table -------------------------------------------------- */
@@ -102,7 +102,7 @@ public abstract class SQL {
         final @Nonnull SQLQualifiedTable tableName = SQLConversionUtility.getQualifiedTableName(table, unit);
         final @Nonnull SQLDropTableStatement dropTableStatement = SQLDropTableStatementBuilder.withTable(tableName).build();
         Database.instance.get().execute(dropTableStatement, unit);
-        Database.instance.get().commit();
+        Database.commit();
     }
     
     /* -------------------------------------------------- Insert -------------------------------------------------- */

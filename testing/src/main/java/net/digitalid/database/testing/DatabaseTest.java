@@ -75,7 +75,7 @@ public class DatabaseTest extends UtilityTest {
     @Committing
     @PureWithSideEffects
     public void commit() throws DatabaseException {
-        Database.instance.get().commit();
+        Database.commit();
     }
     
     /* -------------------------------------------------- Assertions -------------------------------------------------- */

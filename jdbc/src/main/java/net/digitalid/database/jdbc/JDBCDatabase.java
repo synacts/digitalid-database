@@ -160,7 +160,7 @@ public abstract class JDBCDatabase extends Database {
     @Impure
     @Override
     @Committing
-    public void commit() throws DatabaseException {
+    protected void commitTransaction() throws DatabaseException {
         try {
             getConnection().commit();
             transaction.set(Boolean.FALSE);
@@ -175,7 +175,7 @@ public abstract class JDBCDatabase extends Database {
     @Impure
     @Override
     @Committing
-    public void rollback() {
+    protected void rollbackTransaction() {
         try {
             getConnection().rollback();
             transaction.set(Boolean.FALSE);

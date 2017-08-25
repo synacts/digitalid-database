@@ -97,7 +97,7 @@ public class AndroidDatabase extends Database {
     
     @Impure
     @Override
-    public void commit() {
+    protected void commitTransaction() {
         helper.getWritableDatabase().setTransactionSuccessful();
         helper.getWritableDatabase().endTransaction();
         runRunnablesAfterCommit();
@@ -105,7 +105,7 @@ public class AndroidDatabase extends Database {
     
     @Impure
     @Override
-    public void rollback() {
+    protected void rollbackTransaction() {
         helper.getWritableDatabase().endTransaction();
         runRunnablesAfterRollback();
     }

@@ -48,7 +48,7 @@ public abstract class Database implements AutoCloseable {
      */
     @Impure
     @Committing
-    public abstract void commit() throws DatabaseException;
+    protected abstract void commitTransaction() throws DatabaseException;
     
     /**
      * Rolls back all changes of the current thread since the last commit or rollback.
@@ -56,7 +56,29 @@ public abstract class Database implements AutoCloseable {
      */
     @Impure
     @Committing
-    public abstract void rollback();
+    protected abstract void rollbackTransaction();
+    
+    /* -------------------------------------------------- Static Access -------------------------------------------------- */
+    
+    /**
+     * Commits all changes of the current thread since the last commit or rollback.
+     * (On the server, this method should only be called by the worker.)
+     */
+    @Impure
+    @Committing
+    public static void commit() throws DatabaseException {
+        instance.get().commitTransaction();
+    }
+    
+    /**
+     * Rolls back all changes of the current thread since the last commit or rollback.
+     * (On the server, this method should only be called by the worker.)
+     */
+    @Impure
+    @Committing
+    public static void rollback() {
+        instance.get().rollbackTransaction();
+    }
     
     /* -------------------------------------------------- Create Schema -------------------------------------------------- */
     

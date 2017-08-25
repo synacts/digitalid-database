@@ -82,7 +82,7 @@ public class ValuePropertyTest extends DatabaseTest {
         StudentSubclass.MODULE.accept(table -> SQL.createTable(table, Unit.DEFAULT));
         SQL.insertOrAbort(StudentConverter.INSTANCE, object, Unit.DEFAULT);
         SQL.insertOrAbort(StudentConverter.INSTANCE, friend, Unit.DEFAULT);
-        Database.instance.get().commit();
+        Database.commit();
     }
     
     @Test
