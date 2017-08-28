@@ -276,7 +276,7 @@ public abstract class SQL {
     public static @Capturable <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Nonnull @NonNullableElements @NonFrozen FreezableList<SELECT_TYPE> selectAll(@Nonnull Table<SELECT_TYPE, PROVIDED> selectTable, @Shared PROVIDED provided, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
         final @Nonnull SQLDecoder decoder = getDecoder(selectTable, whereConverter, whereObject, wherePrefix, unit);
         final @Nonnull FreezableArrayList<SELECT_TYPE> results = FreezableArrayList.withNoElements();
-        if (decoder.moveToFirstRow()) {
+        if (decoder.moveToNextRow()) {
             do {
                 results.add(selectTable.recover(decoder, provided));
             } while (decoder.moveToNextRow());

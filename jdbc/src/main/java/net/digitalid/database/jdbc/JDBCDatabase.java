@@ -90,12 +90,13 @@ public abstract class JDBCDatabase extends Database {
      */
     @Impure
     @NonCommitting
+    @TODO(task = "The isolation was Connection.TRANSACTION_READ_COMMITTED but SQLite does not support this.", date = "2017-08-28", author = Author.KASPAR_ETTER)
     private void setConnection() throws DatabaseException {
         try {
             final @Nonnull Connection connection;
             if (getUser() == null || getPassword() == null) { connection = DriverManager.getConnection(getURL()); }
             else { connection = DriverManager.getConnection(getURL(), getUser(), getPassword()); }
-            connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+            connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
             connection.setAutoCommit(false);
             this.connection.set(connection);
         } catch (@Nonnull SQLException exception) {
@@ -196,12 +197,12 @@ public abstract class JDBCDatabase extends Database {
     /* -------------------------------------------------- Execution -------------------------------------------------- */
     
     @PureWithSideEffects
+    @TODO(task = "Removed the parameters ResultSet.TYPE_SCROLL_INSENSITIVE and ResultSet.CONCUR_READ_ONLY from the create statement methods because SQLite only supports TYPE_FORWARD_ONLY cursors.", date = "2017-08-28", author = Author.KASPAR_ETTER)
     private void executeStatement(@Nonnull SQLStatementNode statement, @Nonnull Unit unit) throws DatabaseException {
         final @Nonnull String statementAsString = SQLDialect.unparse(statement, unit);
         Log.debugging("Executing $", statementAsString);
         try {
-            // TODO: do we really need to set the result set type and result set concurrency?
-            getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY).execute(statementAsString);
+            getConnection().createStatement().execute(statementAsString);
         } catch (@Nonnull SQLException exception) {
             throw DatabaseExceptionBuilder.withCause(exception).build();
         }
@@ -231,9 +232,10 @@ public abstract class JDBCDatabase extends Database {
      * Prepares the given statement at the given site.
      */
     @Pure
+    @TODO(task = "Removed the parameters ResultSet.TYPE_SCROLL_INSENSITIVE and ResultSet.CONCUR_READ_ONLY from the prepare statement methods because SQLite only supports TYPE_FORWARD_ONLY cursors.", date = "2017-08-28", author = Author.KASPAR_ETTER)
     protected @Nonnull PreparedStatement prepare(@Nonnull String statement) throws DatabaseException {
         try {
-            return getConnection().prepareStatement(statement, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            return getConnection().prepareStatement(statement);
         } catch (@Nonnull SQLException exception) {
             throw DatabaseExceptionBuilder.withCause(exception).build();
         }

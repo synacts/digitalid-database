@@ -79,6 +79,7 @@ public abstract class MySQLDialect extends SQLDialect {
     /* -------------------------------------------------- TODO -------------------------------------------------- */
     
     @Pure
+    @Deprecated
     @TODO(task = "How shall we model this?", date = "2017-03-07", author = Author.KASPAR_ETTER)
     public @Nonnull String PRIMARY_KEY() {
         return "BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY";
@@ -90,6 +91,7 @@ public abstract class MySQLDialect extends SQLDialect {
      * @param columns the columns for which the index is to be created.
      */
     @Pure
+    @Deprecated
     @TODO(task = "Do we still need this? If yes, create a corresponding table constraint.", date = "2017-03-07", author = Author.KASPAR_ETTER)
     public @Nonnull String INDEX(@Nonnull @NonNullableElements @NonEmpty String... columns) {
         final @Nonnull StringBuilder string = new StringBuilder(", INDEX(");
