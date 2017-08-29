@@ -12,14 +12,19 @@ import net.digitalid.utility.contracts.Ensure;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.size.Size;
+import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
 import net.digitalid.database.interfaces.SQLDecoder;
+import net.digitalid.database.jdbc.encoder.JDBCEncoder;
 
 /**
- *
+ * This class implements the {@link SQLDecoder} for JDBC.
+ * 
+ * @see JDBCEncoder
  */
+@Mutable
 @GenerateBuilder
 @GenerateSubclass
 public abstract class JDBCDecoder extends SQLDecoder {

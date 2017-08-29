@@ -12,6 +12,7 @@ import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.Size;
+import net.digitalid.utility.validation.annotations.type.Mutable;
 
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
@@ -20,6 +21,7 @@ import net.digitalid.database.interfaces.encoder.SQLEncoderImplementation;
 /**
  * This classes uses the JDBC prepared statement to collect the values.
  */
+@Mutable
 @GenerateBuilder
 @GenerateSubclass
 public abstract class JDBCEncoder extends SQLEncoderImplementation {
