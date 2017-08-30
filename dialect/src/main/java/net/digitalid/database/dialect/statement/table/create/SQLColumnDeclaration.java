@@ -1,6 +1,5 @@
 package net.digitalid.database.dialect.statement.table.create;
 
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -127,9 +126,8 @@ public interface SQLColumnDeclaration extends SQLNode {
         
         final @Nullable SQLExpression defaultValue = getDefaultValue();
         if (defaultValue != null) {
-            string.append(" DEFAULT (");
+            string.append(" DEFAULT ");
             dialect.unparse(defaultValue, unit, string);
-            string.append(")");
         }
         
         final @Nullable SQLReference reference = getReference();
