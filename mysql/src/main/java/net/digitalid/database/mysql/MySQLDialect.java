@@ -62,7 +62,7 @@ public abstract class MySQLDialect extends SQLDialect {
     @TODO(task = "Should we throw an exception in the other cases?", date = "2017-03-07", author = Author.KASPAR_ETTER)
     protected void unparse(@Nonnull SQLConflictClause conflictClause, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         if (conflictClause == SQLConflictClause.REPLACE) { string.append("REPLACE"); }
-        if (conflictClause == SQLConflictClause.IGNORE) { string.append("INSERT IGNORE"); }
+        else if (conflictClause == SQLConflictClause.IGNORE) { string.append("INSERT IGNORE"); }
         else { string.append("INSERT"); }
     }
     
