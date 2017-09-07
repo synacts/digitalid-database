@@ -26,6 +26,7 @@ import net.digitalid.utility.validation.annotations.type.Utility;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.utility.SQLConversionUtility;
+import net.digitalid.database.conversion.utility.WhereCondition;
 import net.digitalid.database.dialect.expression.SQLParameter;
 import net.digitalid.database.dialect.expression.bool.SQLBinaryBooleanExpressionBuilder;
 import net.digitalid.database.dialect.expression.bool.SQLBinaryBooleanOperator;
@@ -243,38 +244,43 @@ public abstract class SQL {
     
     @NonCommitting
     @PureWithSideEffects
-    private static @Capturable <@Unspecifiable WHERE_TYPE> SQLDecoder getDecoder(@Nonnull Table<?, ?> selectTable, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException {
+    private static @Capturable SQLDecoder getDecoder(@Nonnull Table<?, ?> selectTable, @Nonnull Unit unit, @Nonnull @NonNullableElements WhereCondition<?>... whereConditions) throws DatabaseException {
         final @Nonnull SQLQualifiedTable qualifiedTable = SQLConversionUtility.getQualifiedTableName(selectTable, unit);
         final @Nonnull SQLSimpleSelectStatementBuilder.@Nonnull InnerSQLSimpleSelectStatementBuilder simpleSelectStatementBuilder = SQLSimpleSelectStatementBuilder.withColumns(ImmutableList.withElements(SQLAllColumnsBuilder.buildWithTable(qualifiedTable))).withSources(ImmutableList.withElements(SQLTableSourceBuilder.withSource(qualifiedTable).build()));
-        
-        if (whereConverter != null) {
+    
+        @Nullable SQLBooleanExpression whereClauseExpression = null;
+        for (@Nonnull WhereCondition<?> whereCondition : whereConditions) {
             final @Nonnull FreezableArrayList<@Nonnull SQLColumnName> whereColumns = FreezableArrayList.withNoElements();
-            SQLConversionUtility.fillColumnNames(whereConverter, whereColumns, wherePrefix);
-            
-            final @Nonnull FiniteIterable<@Nonnull SQLBooleanExpression> whereClauseExpressions = whereColumns.map(column -> SQLBinaryBooleanExpressionBuilder.withOperator(SQLBinaryBooleanOperator.EQUAL).withLeftExpression(column).withRightExpression(SQLParameter.INSTANCE).build());
-            final @Nonnull SQLBooleanExpression whereClauseExpression = whereClauseExpressions.reduce((left, right) -> SQLBinaryBooleanExpressionBuilder.withOperator(SQLBinaryBooleanOperator.AND).withLeftExpression(left).withRightExpression(right).build());
-            simpleSelectStatementBuilder.withWhereClause(whereClauseExpression);
+            SQLConversionUtility.fillColumnNames(whereCondition.getWhereConverter(), whereColumns, whereCondition.getWherePrefix());
+        
+            final @Nonnull FiniteIterable<@Nonnull SQLBooleanExpression> whereClauseExpressions = whereColumns.map(column -> column.equal(SQLParameter.BOOLEAN));
+    
+            final @Nonnull SQLBooleanExpression whereClauseExpressionPart = whereClauseExpressions.reduce((left, right) -> left.and(right));
+            if (whereClauseExpression != null) {
+                whereClauseExpression = whereClauseExpression.and(whereClauseExpressionPart);
+            } else {
+                whereClauseExpression = whereClauseExpressionPart;
+            }
         }
+        simpleSelectStatementBuilder.withWhereClause(whereClauseExpression);
         
         final SQLSimpleSelectStatement selectStatement = simpleSelectStatementBuilder.build();
         
         final @Nonnull SQLQueryEncoder queryEncoder = Database.instance.get().getEncoder(selectStatement, unit);
-        if (whereConverter != null) {
-            queryEncoder.encodeNullableObject(whereConverter, whereObject);
+        for (@Nonnull WhereCondition<?> whereCondition : whereConditions) {
+            whereCondition.encode(queryEncoder);
         }
         
         return queryEncoder.execute();
     }
     
     /**
-     * Returns the entries of the given converter's table as a list of decoded objects with the given where condition in the given unit.
-     * 
-     * @param wherePrefix indicates on which field the where clause should match.
+     * Returns the entries of the given converter's table as a list of decoded objects with the given where conditions in the given unit.
      */
     @NonCommitting
     @PureWithSideEffects
-    public static @Capturable <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Nonnull @NonNullableElements @NonFrozen FreezableList<SELECT_TYPE> selectAll(@Nonnull Table<SELECT_TYPE, PROVIDED> selectTable, @Shared PROVIDED provided, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
-        final @Nonnull SQLDecoder decoder = getDecoder(selectTable, whereConverter, whereObject, wherePrefix, unit);
+    public static @Capturable <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED> @Nonnull @NonNullableElements @NonFrozen FreezableList<SELECT_TYPE> selectAll(@Nonnull Table<SELECT_TYPE, PROVIDED> selectTable, @Shared PROVIDED provided, @Nonnull Unit unit, @Nonnull @NonNullableElements WhereCondition<?>... whereConditions) throws DatabaseException, RecoveryException {
+        final @Nonnull SQLDecoder decoder = getDecoder(selectTable, unit, whereConditions);
         final @Nonnull FreezableArrayList<SELECT_TYPE> results = FreezableArrayList.withNoElements();
         if (decoder.moveToNextRow()) {
             do {
@@ -285,55 +291,35 @@ public abstract class SQL {
     }
     
     /**
-     * Returns the entries of the given converter's table as a list of decoded objects with the given where condition in the given unit.
+     * Returns the first entry of the given converter's table as a decoded object with the given where conditions in the given unit or null if there is no such entry.
      */
     @NonCommitting
     @PureWithSideEffects
-    public static @Capturable <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Nonnull @NonNullableElements @NonFrozen FreezableList<SELECT_TYPE> selectAll(@Nonnull Table<SELECT_TYPE, PROVIDED> selectTable, @Shared PROVIDED provided, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
-        return selectAll(selectTable, provided, whereConverter, whereObject, "", unit);
-    }
-    
-    /**
-     * Returns the first entry of the given converter's table as a decoded object with the given where condition in the given unit or null if there is no such entry.
-     * 
-     * @param wherePrefix indicates on which field the where clause should match.
-     */
-    @NonCommitting
-    @PureWithSideEffects
-    public static <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Nullable SELECT_TYPE selectFirst(@Nonnull Table<SELECT_TYPE, PROVIDED> selectTable, @Shared PROVIDED provided, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
-        final @Nonnull FreezableList<SELECT_TYPE> results = selectAll(selectTable, provided, whereConverter, whereObject, wherePrefix, unit);
+    public static <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED> @Nullable SELECT_TYPE selectFirst(@Nonnull Table<SELECT_TYPE, PROVIDED> selectTable, @Shared PROVIDED provided, @Nonnull Unit unit, @Nonnull @NonNullableElements WhereCondition<?>... whereConditions) throws DatabaseException, RecoveryException {
+        final @Nonnull FreezableList<SELECT_TYPE> results = selectAll(selectTable, provided, unit, whereConditions);
         if (results.isEmpty()) { return null; } else { return results.getFirst(); }
     }
     
     /**
-     * Returns the first entry of the given converter's table as a decoded object with the given where condition in the given unit or null if there is no such entry.
+     * Returns the first entry of the given converter's table as a decoded object with the given where conditions in the given unit or throws a {@link RecoveryException} if there is none.
      */
     @NonCommitting
     @PureWithSideEffects
-    public static <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Nullable SELECT_TYPE selectFirst(@Nonnull Table<SELECT_TYPE, PROVIDED> selectTable, @Shared PROVIDED provided, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
-        return selectFirst(selectTable, provided, whereConverter, whereObject, "", unit);
-    }
-    
-    /**
-     * Returns the first entry of the given converter's table as a decoded object with the given where condition in the given unit or throws a {@link RecoveryException} if there is none.
-     * 
-     * @param wherePrefix indicates on which field the where clause should match.
-     */
-    @NonCommitting
-    @PureWithSideEffects
-    public static <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Nonnull SELECT_TYPE selectOne(@Nonnull Table<SELECT_TYPE, PROVIDED> selectTable, @Shared PROVIDED provided, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull String wherePrefix, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
-        final @Nullable SELECT_TYPE entry = selectFirst(selectTable, provided, whereConverter, whereObject, wherePrefix, unit);
-        if (entry == null) { throw RecoveryExceptionBuilder.withMessage("There exists no entry in '" + selectTable.getTypeName() + "' of the unit '" + unit.getName() + "'" + (whereConverter != null ? " where '" + whereConverter.getTypeName() + "'" + (wherePrefix.isEmpty() ? "" : " of '" + wherePrefix + "'") + " is '" + whereObject + "'" : "") + ".").build(); }
+    public static <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED> @Nonnull SELECT_TYPE selectOne(@Nonnull Table<SELECT_TYPE, PROVIDED> selectTable, @Shared PROVIDED provided, @Nonnull Unit unit, @Nonnull @NonNullableElements WhereCondition<?>... whereConditions) throws DatabaseException, RecoveryException {
+        final @Nullable SELECT_TYPE entry = selectFirst(selectTable, provided, unit, whereConditions);
+        if (entry == null) {
+            throw RecoveryExceptionBuilder.withMessage("There exists no entry in " +
+                    "'" + selectTable.getTypeName() + "' " +
+                    "of the unit '" + unit.getName() + "'" +
+                    FiniteIterable.of(whereConditions).map(
+                            (whereCondition) -> 
+                                    "'" + whereCondition.getWhereConverter().getTypeName() + "'" +
+                                            (whereCondition.getWherePrefix().isEmpty() ? "" : " of '" + whereCondition.getWherePrefix() + "'") +
+                                            " is '" + whereCondition.getWhereObject() + "'")
+                            .join(" where ", "", "") + ".")
+                    .build();
+        }
         else { return entry; }
-    }
-    
-    /**
-     * Returns the first entry of the given converter's table as a decoded object with the given where condition in the given unit or throws a {@link RecoveryException} if there is none.
-     */
-    @NonCommitting
-    @PureWithSideEffects
-    public static <@Unspecifiable SELECT_TYPE, @Specifiable PROVIDED, @Unspecifiable WHERE_TYPE> @Nonnull SELECT_TYPE selectOne(@Nonnull Table<SELECT_TYPE, PROVIDED> selectTable, @Shared PROVIDED provided, @Nullable Converter<WHERE_TYPE, ?> whereConverter, @Nullable WHERE_TYPE whereObject, @Nonnull Unit unit) throws DatabaseException, RecoveryException {
-        return selectOne(selectTable, provided, whereConverter, whereObject, "", unit);
     }
     
 }

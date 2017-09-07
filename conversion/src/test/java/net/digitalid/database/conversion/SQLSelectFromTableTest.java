@@ -15,6 +15,8 @@ import net.digitalid.database.conversion.testenvironment.embedded.EmbeddedConver
 import net.digitalid.database.conversion.testenvironment.embedded.EmbeddedConvertiblesConverter;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTable;
 import net.digitalid.database.conversion.testenvironment.simple.SingleBooleanColumnTableConverter;
+import net.digitalid.database.conversion.utility.WhereCondition;
+import net.digitalid.database.conversion.utility.WhereConditionBuilder;
 import net.digitalid.database.testing.DatabaseTest;
 
 import org.junit.Assert;
@@ -40,7 +42,8 @@ public class SQLSelectFromTableTest extends DatabaseTest {
             assertRowCount(SingleBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), 1);
             assertTableContains(SingleBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), Expected.column("value").value("TRUE"));
     
-            final @Nullable SingleBooleanColumnTable singleBooleanColumnTable = SQL.selectFirst(SingleBooleanColumnTableConverter.INSTANCE, null, SingleBooleanColumnTableConverter.INSTANCE, convertibleObject, unit);
+            final @Nonnull WhereCondition<SingleBooleanColumnTable> whereCondition = WhereConditionBuilder.withWhereConverter(SingleBooleanColumnTableConverter.INSTANCE).withWhereObject(convertibleObject).build();
+            final @Nullable SingleBooleanColumnTable singleBooleanColumnTable = SQL.selectFirst(SingleBooleanColumnTableConverter.INSTANCE, null, unit, whereCondition);
     
             Assert.assertNotNull(singleBooleanColumnTable);
             Assert.assertTrue("Expected the value 'true' in the single boolean column table.", singleBooleanColumnTable.value);
@@ -65,7 +68,8 @@ public class SQLSelectFromTableTest extends DatabaseTest {
             assertRowCount(EmbeddedConvertiblesConverter.INSTANCE.getTypeName(), unit.getName(), 1);
             assertTableContains(EmbeddedConvertiblesConverter.INSTANCE.getTypeName(), unit.getName(), Expected.column("convertible1_value").value("2"), Expected.column("convertible2_value").value("3"));
 
-            final @Nullable EmbeddedConvertibles embeddedConvertiblesTable = SQL.selectFirst(EmbeddedConvertiblesConverter.INSTANCE, null, Convertible1Converter.INSTANCE, convertible1, "convertible1", unit);
+            final @Nonnull WhereCondition<Convertible1> whereCondition = WhereConditionBuilder.withWhereConverter(Convertible1Converter.INSTANCE).withWhereObject(convertible1).withWherePrefix("convertible1").build();
+            final @Nullable EmbeddedConvertibles embeddedConvertiblesTable = SQL.selectFirst(EmbeddedConvertiblesConverter.INSTANCE, null, unit, whereCondition);
     
             Assert.assertNotNull(embeddedConvertiblesTable);
             Assert.assertEquals(embeddedConvertibles, embeddedConvertiblesTable);
