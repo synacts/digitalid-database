@@ -7,8 +7,8 @@ import net.digitalid.utility.storage.interfaces.Unit;
 
 import net.digitalid.database.dialect.SQLDialect;
 import net.digitalid.database.dialect.expression.bool.SQLBooleanLiteral;
+import net.digitalid.database.dialect.expression.number.SQLLongLiteralBuilder;
 import net.digitalid.database.dialect.expression.number.SQLNumberLiteral;
-import net.digitalid.database.dialect.expression.number.SQLNumberLiteralBuilder;
 import net.digitalid.database.dialect.expression.string.SQLStringLiteral;
 import net.digitalid.database.dialect.expression.string.SQLStringLiteralBuilder;
 import net.digitalid.database.dialect.statement.SQLStatementTest;
@@ -19,7 +19,7 @@ public class SQLInsertStatementTest extends SQLStatementTest {
     
     @Test
     public void testInsertStatement() {
-        final @Nonnull SQLNumberLiteral firstExpression = SQLNumberLiteralBuilder.withValue(8l).build();
+        final @Nonnull SQLNumberLiteral firstExpression = SQLLongLiteralBuilder.withValue(8).build();
         final @Nonnull SQLBooleanLiteral secondExpression = SQLBooleanLiteral.TRUE;
         final @Nonnull SQLStringLiteral thirdExpression = SQLStringLiteralBuilder.withString("name").build();
         final @Nonnull SQLExpressions expressions = SQLExpressionsBuilder.withExpressions(ImmutableList.withElements(firstExpression, secondExpression, thirdExpression)).build();

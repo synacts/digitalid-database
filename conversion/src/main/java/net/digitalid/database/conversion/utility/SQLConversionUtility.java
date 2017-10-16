@@ -45,7 +45,8 @@ import net.digitalid.database.dialect.expression.bool.SQLNumberComparisonBoolean
 import net.digitalid.database.dialect.expression.bool.SQLNumberComparisonBooleanExpressionBuilder;
 import net.digitalid.database.dialect.expression.number.SQLBinaryNumberExpressionBuilder;
 import net.digitalid.database.dialect.expression.number.SQLBinaryNumberOperator;
-import net.digitalid.database.dialect.expression.number.SQLNumberLiteralBuilder;
+import net.digitalid.database.dialect.expression.number.SQLDoubleLiteralBuilder;
+import net.digitalid.database.dialect.expression.number.SQLLongLiteralBuilder;
 import net.digitalid.database.dialect.expression.string.SQLStringLiteralBuilder;
 import net.digitalid.database.dialect.identifier.column.SQLColumnName;
 import net.digitalid.database.dialect.identifier.column.SQLColumnNameBuilder;
@@ -175,11 +176,16 @@ public abstract class SQLConversionUtility {
                 case Types.SMALLINT:
                 case Types.INTEGER:
                 case Types.BIGINT:
+                    try {
+                        return SQLLongLiteralBuilder.withValue(Long.parseLong(defaultValue)).build();
+                    } catch (@Nonnull NumberFormatException exception) {
+                        return null;
+                    }
                 case Types.FLOAT:
                 case Types.DOUBLE:
                     try {
-                        return SQLNumberLiteralBuilder.withValue(Double.parseDouble(defaultValue)).build();
-                    } catch (NumberFormatException exception) {
+                        return SQLDoubleLiteralBuilder.withValue(Double.parseDouble(defaultValue)).build();
+                    } catch (@Nonnull NumberFormatException exception) {
                         return null;
                     }
                 case Types.VARCHAR:
@@ -202,8 +208,8 @@ public abstract class SQLConversionUtility {
         final @Nonnull SQLNumberComparisonBooleanExpression multipleOfValueExpression = SQLNumberComparisonBooleanExpressionBuilder.withOperator(SQLComparisonOperator.EQUAL)
                 .withLeftExpression(SQLBinaryNumberExpressionBuilder.withOperator(SQLBinaryNumberOperator.MODULO)
                         .withLeftExpression(SQLColumnNameBuilder.withString(customField.getName()).build())
-                        .withRightExpression(SQLNumberLiteralBuilder.withValue(multipleOfValue).build()).build())
-                .withRightExpression(SQLNumberLiteralBuilder.withValue(0L).build()).build();
+                        .withRightExpression(SQLLongLiteralBuilder.withValue(multipleOfValue).build()).build())
+                .withRightExpression(SQLLongLiteralBuilder.withValue(0).build()).build();
         return multipleOfValueExpression;
     }
     
@@ -212,7 +218,7 @@ public abstract class SQLConversionUtility {
         if (!customField.isAnnotatedWith(NonNegative.class)) { return null; }
         final @Nonnull SQLNumberComparisonBooleanExpression nonNegativeValueExpression = SQLNumberComparisonBooleanExpressionBuilder.withOperator(SQLComparisonOperator.GREATER_OR_EQUAL)
                 .withLeftExpression(SQLColumnNameBuilder.withString(customField.getName()).build())
-                .withRightExpression(SQLNumberLiteralBuilder.withValue(0L).build()).build();
+                .withRightExpression(SQLLongLiteralBuilder.withValue(0).build()).build();
         return nonNegativeValueExpression;
     }
     
@@ -221,7 +227,7 @@ public abstract class SQLConversionUtility {
         if (!customField.isAnnotatedWith(NonPositive.class)) { return null; }
         final @Nonnull SQLNumberComparisonBooleanExpression nonPositiveValueExpression = SQLNumberComparisonBooleanExpressionBuilder.withOperator(SQLComparisonOperator.LESS_OR_EQUAL)
                 .withLeftExpression(SQLColumnNameBuilder.withString(customField.getName()).build())
-                .withRightExpression(SQLNumberLiteralBuilder.withValue(0L).build()).build();
+                .withRightExpression(SQLLongLiteralBuilder.withValue(0).build()).build();
         return nonPositiveValueExpression;
     }
     
@@ -230,7 +236,7 @@ public abstract class SQLConversionUtility {
         if (!customField.isAnnotatedWith(Negative.class)) { return null; }
         final @Nonnull SQLNumberComparisonBooleanExpression negativeValueExpression = SQLNumberComparisonBooleanExpressionBuilder.withOperator(SQLComparisonOperator.LESS)
                 .withLeftExpression(SQLColumnNameBuilder.withString(customField.getName()).build())
-                .withRightExpression(SQLNumberLiteralBuilder.withValue(0L).build()).build();
+                .withRightExpression(SQLLongLiteralBuilder.withValue(0).build()).build();
         return negativeValueExpression;
     }
     
@@ -239,7 +245,7 @@ public abstract class SQLConversionUtility {
         if (!customField.isAnnotatedWith(Positive.class)) { return null; }
         final @Nonnull SQLNumberComparisonBooleanExpression positiveValueExpression = SQLNumberComparisonBooleanExpressionBuilder.withOperator(SQLComparisonOperator.GREATER)
                 .withLeftExpression(SQLColumnNameBuilder.withString(customField.getName()).build())
-                .withRightExpression(SQLNumberLiteralBuilder.withValue(0L).build()).build();
+                .withRightExpression(SQLLongLiteralBuilder.withValue(0).build()).build();
         return positiveValueExpression;
     }
     
