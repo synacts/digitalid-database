@@ -38,7 +38,7 @@ public class SQLUpdateTableTest extends DatabaseTest {
             assertTableContains(SingleBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), Expected.column("value").value("TRUE"));
         
             final @Nonnull SingleBooleanColumnTable updatedObject = SingleBooleanColumnTable.get(false);
-            SQL.update(SingleBooleanColumnTableConverter.INSTANCE, updatedObject, SingleBooleanColumnTableConverter.INSTANCE, convertibleObject, unit);
+            SQL.update(SingleBooleanColumnTableConverter.INSTANCE, updatedObject, unit, WhereConditionBuilder.withConverter(SingleBooleanColumnTableConverter.INSTANCE).withObject(convertibleObject).build());
     
             assertRowCount(SingleBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), 1);
             assertTableContains(SingleBooleanColumnTableConverter.INSTANCE.getTypeName(), unit.getName(), Expected.column("value").value("FALSE"));
@@ -62,7 +62,7 @@ public class SQLUpdateTableTest extends DatabaseTest {
     
             final @Nonnull EmbeddedConvertibles updatedEmbeddedConvertibles = EmbeddedConvertiblesBuilder.withConvertible1(Convertible1Builder.withValue(4).build()).withConvertible2(Convertible2Builder.withValue(5).build()).build();
             
-            SQL.update(EmbeddedConvertiblesConverter.INSTANCE, updatedEmbeddedConvertibles, Convertible1Converter.INSTANCE, convertible1, "convertible1", unit);
+            SQL.update(EmbeddedConvertiblesConverter.INSTANCE, updatedEmbeddedConvertibles, unit, WhereConditionBuilder.withConverter(Convertible1Converter.INSTANCE).withObject(convertible1).withPrefix("convertible1").build());
     
             assertRowCount(EmbeddedConvertiblesConverter.INSTANCE.getTypeName(), unit.getName(), 1);
             assertTableContains(EmbeddedConvertiblesConverter.INSTANCE.getTypeName(), unit.getName(), Expected.column("convertible1_value").value("4"), Expected.column("convertible2_value").value("5"));

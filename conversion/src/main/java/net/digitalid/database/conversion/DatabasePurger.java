@@ -1,4 +1,4 @@
-package net.digitalid.database.conversion.utility;
+package net.digitalid.database.conversion;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -10,14 +10,14 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.Impure;
 import net.digitalid.utility.collaboration.annotations.TODO;
 import net.digitalid.utility.collaboration.enumerations.Author;
-import net.digitalid.utility.validation.annotations.type.Stateless;
+import net.digitalid.utility.validation.annotations.type.Utility;
 
 /**
- * Description.
+ * This class provides methods to regularly purge the registered database tables.
  */
-@Stateless
+@Utility
 @TODO(task = "Redo the whole class if it is still useful.", date = "2017-01-18", author = Author.KASPAR_ETTER)
-public abstract class Purger {
+public abstract class DatabasePurger {
     
     /* -------------------------------------------------- Purging -------------------------------------------------- */
     

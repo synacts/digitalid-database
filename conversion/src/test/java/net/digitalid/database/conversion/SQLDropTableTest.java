@@ -9,9 +9,6 @@ import net.digitalid.database.testing.DatabaseTest;
 
 import org.junit.Test;
 
-/**
- *
- */
 public class SQLDropTableTest extends DatabaseTest {
     
     private static final @Nonnull Unit unit = Unit.DEFAULT;

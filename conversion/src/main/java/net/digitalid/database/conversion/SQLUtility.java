@@ -1,4 +1,4 @@
-package net.digitalid.database.conversion.utility;
+package net.digitalid.database.conversion;
 
 import java.sql.Types;
 
@@ -74,7 +74,7 @@ import net.digitalid.database.interfaces.encoder.SQLEncoder;
  * This class helps to convert objects to SQL.
  */
 @Utility
-public abstract class SQLConversionUtility {
+public abstract class SQLUtility {
     
     /* -------------------------------------------------- Not Null -------------------------------------------------- */
     
@@ -291,10 +291,10 @@ public abstract class SQLConversionUtility {
                 if (customType.isObjectType()) {
                     final @Nonnull CustomType.CustomConverterType customConverterType = (CustomType.CustomConverterType) customType;
                     if (!customConverterType.getConverter().isPrimitiveConverter()) {
-                        fillColumnDeclarations(customConverterType.getConverter(), columnDeclarations, mustBeNullable || !SQLConversionUtility.isNotNull(field), (mustBePrimaryKey || (!multiplePrimaryKeys && SQLConversionUtility.isPrimaryKey(field))), multiplePrimaryKeys, false, prefix + field.getName().toLowerCase() + "_");
+                        fillColumnDeclarations(customConverterType.getConverter(), columnDeclarations, mustBeNullable || !SQLUtility.isNotNull(field), (mustBePrimaryKey || (!multiplePrimaryKeys && SQLUtility.isPrimaryKey(field))), multiplePrimaryKeys, false, prefix + field.getName().toLowerCase() + "_");
                         continue;
                     } else { // otherwise we have a boxed primitive type
-                        @Nullable CustomType primitiveType = SQLConversionUtility.getEmbeddedPrimitiveType(customConverterType);
+                        @Nullable CustomType primitiveType = SQLUtility.getEmbeddedPrimitiveType(customConverterType);
                         Require.that(primitiveType != null).orThrow("The custom converter type $ is expected to embed a primitive type", customConverterType);
                         assert primitiveType != null; // suppress compiler warning
                         customType = primitiveType;
@@ -304,11 +304,11 @@ public abstract class SQLConversionUtility {
                 final @Nonnull SQLColumnDeclaration sqlColumnDeclaration = SQLColumnDeclarationBuilder
                         .withName(SQLColumnNameBuilder.withString(prefix + field.getName()).build())
                         .withType(SQLTypeBuilder.withType(customType).build())
-                        .withNotNull(!mustBeNullable && (primitive || SQLConversionUtility.isNotNull(field)))
-                        .withDefaultValue(SQLConversionUtility.getDefaultValue(field))
-                        .withPrimaryKey((mustBePrimaryKey || firstLevel && (!multiplePrimaryKeys && SQLConversionUtility.isPrimaryKey(field))))
-                        .withUnique(SQLConversionUtility.isUnique(field))
-                        .withCheck(SQLConversionUtility.getCheck(field))
+                        .withNotNull(!mustBeNullable && (primitive || SQLUtility.isNotNull(field)))
+                        .withDefaultValue(SQLUtility.getDefaultValue(field))
+                        .withPrimaryKey((mustBePrimaryKey || firstLevel && (!multiplePrimaryKeys && SQLUtility.isPrimaryKey(field))))
+                        .withUnique(SQLUtility.isUnique(field))
+                        .withCheck(SQLUtility.getCheck(field))
                         .build();
                 columnDeclarations.add(sqlColumnDeclaration);
             } else {
@@ -323,7 +323,7 @@ public abstract class SQLConversionUtility {
     @Pure
     public static <@Unspecifiable TYPE> @Nonnull @NonEmpty ImmutableList<@Nonnull SQLColumnDeclaration> getColumnDeclarations(@Nonnull Converter<TYPE, ?> converter) {
         final @Nonnull @Modifiable FreezableArrayList<@Nonnull SQLColumnDeclaration> columnDeclarations = FreezableArrayList.withNoElements();
-        SQLConversionUtility.fillColumnDeclarations(converter, columnDeclarations, false, false, false, true, "");
+        SQLUtility.fillColumnDeclarations(converter, columnDeclarations, false, false, false, true, "");
         return ImmutableList.withElementsOf(columnDeclarations);
     }
     

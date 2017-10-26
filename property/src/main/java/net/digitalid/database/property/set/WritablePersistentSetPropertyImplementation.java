@@ -29,8 +29,8 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
-import net.digitalid.database.conversion.utility.WhereCondition;
-import net.digitalid.database.conversion.utility.WhereConditionBuilder;
+import net.digitalid.database.conversion.WhereCondition;
+import net.digitalid.database.conversion.WhereConditionBuilder;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.property.subject.Subject;
@@ -81,7 +81,7 @@ public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable
         try {
             getSet().clear();
             final @Nonnull String prefix = getTable().getParentModule().getSubjectTable().getTypeName().toLowerCase();
-            final @Nonnull WhereCondition<SUBJECT> whereCondition = WhereConditionBuilder.withWhereConverter(getTable().getParentModule().getSubjectTable()).withWhereObject(getSubject()).withWherePrefix(prefix).build();
+            final @Nonnull WhereCondition<SUBJECT> whereCondition = WhereConditionBuilder.withConverter(getTable().getParentModule().getSubjectTable()).withObject(getSubject()).withPrefix(prefix).build();
             final @Nonnull @NonNullableElements FreezableList<PersistentSetPropertyEntry<SUBJECT, VALUE>> entries = SQL.selectAll(getTable(), getSubject().getUnit(), getSubject().getUnit(), whereCondition);
             for (@Nonnull PersistentSetPropertyEntry<SUBJECT, VALUE> entry : entries) {
                 getSet().add(entry.getValue());
@@ -139,7 +139,7 @@ public abstract class WritablePersistentSetPropertyImplementation<@Unspecifiable
             if (!loaded) { load(false); }
             if (getSet().contains(value)) {
                 final @Nonnull PersistentSetPropertyEntry<SUBJECT, VALUE> entry = new PersistentSetPropertyEntrySubclass<>(getSubject(), value);
-                SQL.delete(getTable(), getTable(), entry, getSubject().getUnit());
+                SQL.delete(getTable(), getSubject().getUnit(), WhereConditionBuilder.withConverter(getTable()).withObject(entry).build());
                 getSet().remove(value);
                 Database.commit();
                 notifyObservers(value, false);

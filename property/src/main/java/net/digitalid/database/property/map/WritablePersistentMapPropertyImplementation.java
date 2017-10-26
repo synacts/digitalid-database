@@ -34,8 +34,8 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
-import net.digitalid.database.conversion.utility.WhereCondition;
-import net.digitalid.database.conversion.utility.WhereConditionBuilder;
+import net.digitalid.database.conversion.WhereCondition;
+import net.digitalid.database.conversion.WhereConditionBuilder;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.property.subject.Subject;
@@ -90,7 +90,7 @@ public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable
         try {
             getMap().clear();
             final @Nonnull String prefix = getTable().getParentModule().getSubjectTable().getTypeName().toLowerCase();
-            final @Nonnull @NonNullableElements WhereCondition<SUBJECT> whereCondition = WhereConditionBuilder.withWhereConverter(getTable().getParentModule().getSubjectTable()).withWhereObject(getSubject()).withWherePrefix(prefix).build();
+            final @Nonnull @NonNullableElements WhereCondition<SUBJECT> whereCondition = WhereConditionBuilder.withConverter(getTable().getParentModule().getSubjectTable()).withObject(getSubject()).withPrefix(prefix).build();
             final @Nonnull @NonNullableElements FreezableList<PersistentMapPropertyEntry<SUBJECT, KEY, VALUE>> entries = SQL.selectAll(getTable(), getSubject().getUnit(), getSubject().getUnit(), whereCondition);
             for (@Nonnull PersistentMapPropertyEntry<SUBJECT, KEY, VALUE> entry : entries) {
                 getMap().put(entry.getKey(), entry.getValue());
@@ -157,7 +157,7 @@ public abstract class WritablePersistentMapPropertyImplementation<@Unspecifiable
             final @Nullable VALUE value = getMap().get(key);
             if (value != null) {
                 final @Nonnull PersistentMapPropertyEntry<SUBJECT, KEY, VALUE> entry = new PersistentMapPropertyEntrySubclass<>(getSubject(), key, value); // TODO: The value should actually not be necessary.
-                SQL.delete(getTable(), getTable(), entry, getSubject().getUnit());
+                SQL.delete(getTable(), getSubject().getUnit(), WhereConditionBuilder.withConverter(getTable()).withObject(entry).build());
                 getMap().remove(key);
                 Database.commit();
                 notifyObservers(key, value, false);

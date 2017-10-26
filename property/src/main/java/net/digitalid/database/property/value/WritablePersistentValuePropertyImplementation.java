@@ -30,8 +30,8 @@ import net.digitalid.utility.validation.annotations.value.Valid;
 import net.digitalid.database.annotations.transaction.Committing;
 import net.digitalid.database.annotations.transaction.NonCommitting;
 import net.digitalid.database.conversion.SQL;
-import net.digitalid.database.conversion.utility.WhereCondition;
-import net.digitalid.database.conversion.utility.WhereConditionBuilder;
+import net.digitalid.database.conversion.WhereCondition;
+import net.digitalid.database.conversion.WhereConditionBuilder;
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.interfaces.Database;
 import net.digitalid.database.property.subject.Subject;
@@ -74,7 +74,7 @@ public abstract class WritablePersistentValuePropertyImplementation<@Unspecifiab
         if (locking) { lock.lock(); }
         try {
             final @Nonnull Converter<SUBJECT, ?> subjectConverter = getTable().getParentModule().getSubjectTable();
-            final @Nonnull WhereCondition<SUBJECT> whereCondition = WhereConditionBuilder.withWhereConverter(subjectConverter).withWhereObject(getSubject()).withWherePrefix(subjectConverter.getTypeName().toLowerCase()).build();
+            final @Nonnull WhereCondition<SUBJECT> whereCondition = WhereConditionBuilder.withConverter(subjectConverter).withObject(getSubject()).withPrefix(subjectConverter.getTypeName().toLowerCase()).build();
             final @Nullable PersistentValuePropertyEntry<SUBJECT, VALUE> entry = SQL.selectFirst(getTable(), getSubject().getUnit(), getSubject().getUnit(), whereCondition);
             if (entry != null) {
                 this.time = entry.getTime();
