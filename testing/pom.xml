@@ -4,7 +4,7 @@
     <parent>
         <groupId>net.digitalid.database</groupId>
         <artifactId>database</artifactId>
-        <version>1.0.0</version>
+        <version>0.8.0</version>
     </parent>
     
     <artifactId>database-testing</artifactId>
@@ -26,7 +26,7 @@
         <dependency>
             <groupId>net.digitalid.utility</groupId>
             <artifactId>utility-testing</artifactId>
-            <version>${project.version}</version>
+            <version>0.7.0</version>
         </dependency>
         
         <dependency>

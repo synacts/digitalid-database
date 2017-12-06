@@ -9,26 +9,19 @@
     
     <groupId>net.digitalid.database</groupId>
     <artifactId>database</artifactId>
-    <version>1.0.0</version>
+    <version>0.8.0</version>
     <packaging>pom</packaging>
     
     <name>Digital ID Database</name>
     <description>This project provides the classes that interact with the database.</description>
-    <url>https://code.digitalid.net/digitalid/database</url>
+    <url>http://www.digitalid.net/library/#database</url>
 
-    <repositories>
-        <repository>
-            <id>digitalid-releases</id>
-            <name>Digital ID Releases</name>
-            <url>https://repo.digitalid.net/content/repositories/releases/</url>
-        </repository>
-        <repository>
-            <id>digitalid-snapshots</id>
-            <name>Digital ID Snapshots</name>
-            <url>https://repo.digitalid.net/content/repositories/snapshots/</url>
-        </repository>
-    </repositories>
-   
+    <scm>
+        <connection>scm:git:git@github.com:synacts/digitalid-database.git</connection>
+        <developerConnection>scm:git:git@github.com:synacts/digitalid-database.git</developerConnection>
+        <url>https://github.com/synacts/digitalid-database</url>
+    </scm>
+    
     <modules>
         <module>annotations</module>
         <module>dialect</module>
@@ -62,13 +55,13 @@
         <dependency>
             <groupId>net.digitalid.utility</groupId>
             <artifactId>utility-all</artifactId>
-            <version>1.0.0</version>
+            <version>0.7.0</version>
         </dependency>
         
         <dependency>
             <groupId>net.digitalid.utility</groupId>
             <artifactId>utility-testing</artifactId>
-            <version>${project.version}</version>
+            <version>0.7.0</version>
             <scope>test</scope>
         </dependency>
         
