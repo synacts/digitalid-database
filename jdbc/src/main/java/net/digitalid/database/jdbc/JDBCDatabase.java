@@ -33,6 +33,7 @@ import net.digitalid.utility.collaboration.enumerations.Author;
 import net.digitalid.utility.conversion.enumerations.Representation;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.logging.Caller;
 import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.type.Mutable;
@@ -105,13 +106,12 @@ public abstract class JDBCDatabase extends Database {
      */
     @Impure
     @NonCommitting
-    @TODO(task = "The isolation was Connection.TRANSACTION_READ_COMMITTED but SQLite does not support this.", date = "2017-08-28", author = Author.KASPAR_ETTER)
-    private void setConnection() throws DatabaseException {
+    protected void setConnection() throws DatabaseException {
         try {
             final @Nonnull Connection connection;
             if (getUser() == null || getPassword() == null) { connection = DriverManager.getConnection(getURL()); }
             else { connection = DriverManager.getConnection(getURL(), getUser(), getPassword()); }
-            connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE); // The isolation was Connection.TRANSACTION_READ_COMMITTED but SQLite does not support this.
             connection.setAutoCommit(false);
             this.connection.set(connection);
         } catch (@Nonnull SQLException exception) {
@@ -124,14 +124,14 @@ public abstract class JDBCDatabase extends Database {
      */
     @Impure
     @NonCommitting
-    private void checkConnection() throws DatabaseException {
+    protected void checkConnection() throws DatabaseException {
         final @Nullable Connection connection = this.connection.get();
         if (connection == null) {
             setConnection();
         } else {
             try {
                 if (!connection.isValid(1)) {
-                    Log.information("The database connection is no longer valid and is thus replaced.");
+                    Log.debugging("The database connection is no longer valid and is thus replaced.");
                     connection.close();
                     setConnection();
                 }
@@ -181,7 +181,7 @@ public abstract class JDBCDatabase extends Database {
             getConnection().commit();
             transaction.set(Boolean.FALSE);
             runRunnablesAfterCommit();
-            Log.debugging("Committed the current transaction.");
+            Log.debugging("Committed the database transaction from $ through $.", Caller.get(6).replace("net.digitalid.", ""), Caller.get(5).replace("net.digitalid.", ""));
         } catch (@Nonnull SQLException exception) {
             runRunnablesAfterRollback();
             throw DatabaseExceptionBuilder.withCause(exception).build();
@@ -195,7 +195,7 @@ public abstract class JDBCDatabase extends Database {
         try {
             getConnection().rollback();
             transaction.set(Boolean.FALSE);
-            Log.debugging("Rolled back the current transaction.");
+            Log.debugging("Rolled back the database transaction from $ through $.", Caller.get(6).replace("net.digitalid.", ""), Caller.get(5).replace("net.digitalid.", ""));
         } catch (@Nonnull SQLException | DatabaseException exception) {
             Log.error("Could not roll back the transaction.", exception);
         } finally {
@@ -209,15 +209,17 @@ public abstract class JDBCDatabase extends Database {
         getConnection().close();
     }
     
-    /* -------------------------------------------------- Execution -------------------------------------------------- */
+    /* -------------------------------------------------- Executions -------------------------------------------------- */
     
+    /**
+     * Executes the given statement on the given unit.
+     */
     @PureWithSideEffects
-    @TODO(task = "Removed the parameters ResultSet.TYPE_SCROLL_INSENSITIVE and ResultSet.CONCUR_READ_ONLY from the create statement methods because SQLite only supports TYPE_FORWARD_ONLY cursors.", date = "2017-08-28", author = Author.KASPAR_ETTER)
-    private void executeStatement(@Nonnull SQLStatementNode statement, @Nonnull Unit unit) throws DatabaseException {
-        final @Nonnull String statementAsString = SQLDialect.unparse(statement, unit);
-        Log.debugging("Executing $", statementAsString);
+    protected void executeStatement(@Nonnull SQLStatementNode statement, @Nonnull Unit unit) throws DatabaseException {
+        final @Nonnull String statementString = SQLDialect.unparse(statement, unit);
+        Log.debugging("Executing $.", statementString);
         try {
-            getConnection().createStatement().execute(statementAsString);
+            getConnection().createStatement().execute(statementString);
         } catch (@Nonnull SQLException exception) {
             throw DatabaseExceptionBuilder.withCause(exception).build();
         }
@@ -241,14 +243,14 @@ public abstract class JDBCDatabase extends Database {
         executeStatement(dropTableStatement, unit);
     }
     
-    /* -------------------------------------------------- Encoder -------------------------------------------------- */
+    /* -------------------------------------------------- Encoders -------------------------------------------------- */
     
     /**
-     * Prepares the given statement at the given site.
+     * Prepares the given statement on the database.
      */
     @Pure
-    @TODO(task = "Removed the parameters ResultSet.TYPE_SCROLL_INSENSITIVE and ResultSet.CONCUR_READ_ONLY from the prepare statement methods because SQLite only supports TYPE_FORWARD_ONLY cursors.", date = "2017-08-28", author = Author.KASPAR_ETTER)
     protected @Nonnull PreparedStatement prepare(@Nonnull String statement) throws DatabaseException {
+        Log.debugging("Preparing $.", statement);
         try {
             return getConnection().prepareStatement(statement);
         } catch (@Nonnull SQLException exception) {
@@ -256,40 +258,38 @@ public abstract class JDBCDatabase extends Database {
         }
     }
     
+    /**
+     * Returns an action encoder for the given table statement on the given unit.
+     */
     @PureWithSideEffects
-    private @Nonnull SQLActionEncoder getEncoderForStatement(@Nonnull SQLTableStatement tableStatement, @Nonnull Unit unit) throws DatabaseException {
-        final @Nonnull String statementAsString = SQLDialect.unparse(tableStatement, unit);
-        Log.debugging("Executing $", statementAsString);
+    protected @Nonnull SQLActionEncoder getActionEncoder(@Nonnull SQLTableStatement tableStatement, @Nonnull Unit unit) throws DatabaseException {
         // FIXME: The converter generator does not recognize that the sql encoder implementation already implements the methods getRepresentation(), isHashing(), isCompressing() and isEncryption().
-        return JDBCActionEncoderBuilder.withPreparedStatement(prepare(statementAsString)).withRepresentation(Representation.INTERNAL).withHashing(false).withCompressing(false).withEncrypting(false).build();
+        return JDBCActionEncoderBuilder.withPreparedStatement(prepare(SQLDialect.unparse(tableStatement, unit))).withRepresentation(Representation.INTERNAL).withHashing(false).withCompressing(false).withEncrypting(false).build();
     }
     
     @Override
     @PureWithSideEffects
     public @Nonnull SQLActionEncoder getEncoder(@Nonnull SQLInsertStatement insertStatement, @Nonnull Unit unit) throws DatabaseException {
-        return getEncoderForStatement(insertStatement, unit);
+        return getActionEncoder(insertStatement, unit);
     }
     
     @Override
     @PureWithSideEffects
     public @Nonnull SQLActionEncoder getEncoder(@Nonnull SQLUpdateStatement updateStatement, @Nonnull Unit unit) throws DatabaseException {
-        return getEncoderForStatement(updateStatement, unit);
+        return getActionEncoder(updateStatement, unit);
     }
     
     @Override
     @PureWithSideEffects
     public @Nonnull SQLActionEncoder getEncoder(@Nonnull SQLDeleteStatement deleteStatement, @Nonnull Unit unit) throws DatabaseException {
-        return getEncoderForStatement(deleteStatement, unit);
+        return getActionEncoder(deleteStatement, unit);
     }
     
     @Override
     @PureWithSideEffects
     public @Nonnull SQLQueryEncoder getEncoder(@Nonnull SQLSelectStatement selectStatement, @Nonnull Unit unit) throws DatabaseException {
-        final @Nonnull StringBuilder sqlStringBuilder = new StringBuilder();
-        selectStatement.unparse(SQLDialect.instance.get(), unit, sqlStringBuilder);
-        Log.debugging("Executing $", sqlStringBuilder.toString());
         // FIXME: The converter generator does not recognize that the sql encoder implementation already implements the methods getRepresentation(), isHashing(), isCompressing() and isEncryption().
-        return JDBCQueryEncoderBuilder.withPreparedStatement(prepare(sqlStringBuilder.toString())).withRepresentation(Representation.INTERNAL).withHashing(false).withCompressing(false).withEncrypting(false).build();
+        return JDBCQueryEncoderBuilder.withPreparedStatement(prepare(SQLDialect.unparse(selectStatement, unit))).withRepresentation(Representation.INTERNAL).withHashing(false).withCompressing(false).withEncrypting(false).build();
     }
     
     /* -------------------------------------------------- Testing -------------------------------------------------- */
@@ -297,6 +297,7 @@ public abstract class JDBCDatabase extends Database {
     @Override
     @PureWithSideEffects
     public @Nonnull ResultSet executeQuery(@Nonnull @SQLStatement String query) throws DatabaseException {
+        Log.debugging("Executing $.", query);
         try {
             return getConnection().createStatement().executeQuery(query);
         } catch (@Nonnull SQLException exception) {
