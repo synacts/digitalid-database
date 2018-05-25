@@ -232,5 +232,4 @@ public abstract class JDBCEncoder extends SQLEncoderImplementation {
         }
     }
     
-    
 }
