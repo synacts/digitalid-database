@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.logging.Log;
 
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
@@ -46,7 +47,9 @@ public class JDBCActionEncoder extends JDBCEncoderSubclass implements SQLActionE
     public void execute() throws DatabaseException {
         try {
             preparedStatement.execute();
+            Log.verbose("Executed the prepared action statement.");
         } catch (SQLException exception) {
+            Log.debugging("Failed to execute the prepared action statement.", exception);
             throw DatabaseExceptionBuilder.withCause(exception).build();
         }
     }

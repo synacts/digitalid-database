@@ -25,8 +25,11 @@ import net.digitalid.utility.annotations.method.Pure;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.logging.Caller;
+import net.digitalid.utility.logging.Log;
 import net.digitalid.utility.storage.interfaces.Unit;
 import net.digitalid.utility.validation.annotations.elements.NonNullableElements;
+import net.digitalid.utility.validation.annotations.math.NonNegative;
 import net.digitalid.utility.validation.annotations.size.MaxSize;
 import net.digitalid.utility.validation.annotations.size.NonEmpty;
 import net.digitalid.utility.validation.annotations.type.Mutable;
@@ -85,7 +88,6 @@ public class AndroidDatabase extends Database {
             @Override
             public void onUpgrade(@Nonnull SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
                 // The creation of the tables is done via the execute method. No need to prepare something here.
-                // TODO: do we need to remember if there was a difference in the version?
             }
             
         };
@@ -115,6 +117,7 @@ public class AndroidDatabase extends Database {
     protected void commitTransaction() {
         helper.getWritableDatabase().setTransactionSuccessful();
         helper.getWritableDatabase().endTransaction();
+        Log.debugging("Committed the database transaction from $ through $.", Caller.get(6).replace("net.digitalid.", ""), Caller.get(5).replace("net.digitalid.", ""));
         runRunnablesAfterCommit();
     }
     
@@ -122,33 +125,37 @@ public class AndroidDatabase extends Database {
     @Override
     protected void rollbackTransaction() {
         helper.getWritableDatabase().endTransaction();
+        Log.debugging("Rolled back the database transaction from $ through $.", Caller.get(6).replace("net.digitalid.", ""), Caller.get(5).replace("net.digitalid.", ""));
         runRunnablesAfterRollback();
     }
     
     /* -------------------------------------------------- Executions -------------------------------------------------- */
     
-    @Impure
-    private void executeStatement(@Nonnull SQLTableStatement tableStatement, @Nonnull Unit unit) throws DatabaseException {
+    /**
+     * Executes the given table statement on the given unit.
+     */
+    @PureWithSideEffects
+    protected void executeStatement(@Nonnull SQLTableStatement tableStatement, @Nonnull Unit unit) throws DatabaseException {
         begin();
-        final @Nonnull StringBuilder stringBuilder = new StringBuilder();
-        tableStatement.unparse(SQLDialect.instance.get(), unit, stringBuilder);
-        helper.getWritableDatabase().execSQL(stringBuilder.toString());
+        final @Nonnull String statementString = SQLDialect.unparse(tableStatement, unit);
+        Log.debugging("Executing $.", statementString);
+        helper.getWritableDatabase().execSQL(statementString);
     }
     
-    @Impure
     @Override
+    @PureWithSideEffects
     public void execute(@Nonnull SQLCreateSchemaStatement createSchemaStatement, @Nonnull Unit unit) throws DatabaseException {
         throw new UnsupportedOperationException("Creating a new schema is not supported on Android.");
     }
     
-    @Impure
     @Override
+    @PureWithSideEffects
     public void execute(@Nonnull SQLCreateTableStatement createTableStatement, @Nonnull Unit unit) throws DatabaseException {
         executeStatement(createTableStatement, unit);
     }
     
-    @Impure
     @Override
+    @PureWithSideEffects
     public void execute(@Nonnull SQLDropTableStatement dropTableStatement, @Nonnull Unit unit) throws DatabaseException {
         executeStatement(dropTableStatement, unit);
     }
@@ -176,7 +183,7 @@ public class AndroidDatabase extends Database {
     }
     
     @Pure
-    private int getNumberWhereClauseParameters(@Nullable String whereClauseString) {
+    private @NonNegative int getNumberWhereClauseParameters(@Nullable String whereClauseString) {
         int sizeWhereArgs = 0;
         if (whereClauseString != null) {
             for (char c : whereClauseString.toCharArray()) {

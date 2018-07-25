@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import net.digitalid.utility.annotations.method.PureWithSideEffects;
 import net.digitalid.utility.generator.annotations.generators.GenerateBuilder;
 import net.digitalid.utility.generator.annotations.generators.GenerateSubclass;
+import net.digitalid.utility.logging.Log;
 
 import net.digitalid.database.exceptions.DatabaseException;
 import net.digitalid.database.exceptions.DatabaseExceptionBuilder;
@@ -50,8 +51,10 @@ public class JDBCQueryEncoder extends JDBCEncoderSubclass implements SQLQueryEnc
     public @Nonnull SQLDecoder execute() throws DatabaseException {
         try {
             final @Nonnull ResultSet resultSet = preparedStatement.executeQuery();
+            Log.verbose("Executed the prepared query statement.");
             return JDBCDecoderBuilder.withResultSet(resultSet).build();
         } catch (SQLException exception) {
+            Log.debugging("Failed to execute the prepared query statement.", exception);
             throw DatabaseExceptionBuilder.withCause(exception).build();
         }
     }
