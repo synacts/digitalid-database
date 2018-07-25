@@ -63,6 +63,7 @@ public abstract class H2Dialect extends SQLDialect {
     @TODO(task = "Should we throw an exception in the other cases?", date = "2017-03-07", author = Author.KASPAR_ETTER)
     protected void unparse(@Nonnull SQLConflictClause conflictClause, @Nonnull Unit unit, @NonCaptured @Modified @Nonnull @SQLFraction StringBuilder string) {
         if (conflictClause == SQLConflictClause.REPLACE) { string.append("MERGE"); }
+        else if (conflictClause == SQLConflictClause.IGNORE) { string.append("INSERT IGNORE"); }
         else { string.append("INSERT"); }
     }
     
